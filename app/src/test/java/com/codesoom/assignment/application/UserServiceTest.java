@@ -169,10 +169,27 @@ class UserServiceTest {
     @DisplayName("findUserByEmail 메서드는")
     class Describe_findUserByEmail {
         private final String givenEmail = "juuni.ni.i@gmail.com";
+        private final Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
         @Nested
         @DisplayName("주어진 email 에 해당하는 등록된 유저가 있을 때")
         class Context_when_exists_registered_email_user {
+            private final User user = new User(
+                    1L,
+                    givenEmail,
+                    "juunini",
+                    "secret",
+                    false
+            );
+
+            @BeforeEach
+            void setup() {
+                userService = new UserService(mapper, userRepository);
+
+                given(userRepository.findByEmail(givenEmail))
+                        .willReturn(Optional.of(user));
+            }
+
             @Test
             @DisplayName("유저를 리턴한다.")
             void It_returns_user() {
@@ -185,6 +202,14 @@ class UserServiceTest {
         @Nested
         @DisplayName("주어진 email 에 해당하는 등록된 유저가 없을 때")
         class Context_when_not_exists_registered_email_user {
+            @BeforeEach
+            void setup() {
+                userService = new UserService(mapper, userRepository);
+
+                given(userRepository.findByEmail(givenEmail))
+                        .willThrow(UserNotFoundByEmailException.class);
+            }
+
             @Test
             @DisplayName("주어진 email 을 통해 유저를 찾을 수 없다는 예외를 던진다.")
             void It_throws_not_found_user_by_email() {

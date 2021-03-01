@@ -3,7 +3,6 @@ package com.codesoom.assignment.product.application;
 import com.codesoom.assignment.product.domain.Product;
 import com.codesoom.assignment.product.domain.ProductRepository;
 import com.codesoom.assignment.product.dto.ProductData;
-import com.codesoom.assignment.product.application.ProductNotFoundException;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 

@@ -6,10 +6,13 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 
 public class JwtUtil {
-    public String encode(Long userId) {
-        String secret = "12345678901234567890123456789012";
-        Key key = Keys.hmacShaKeyFor(secret.getBytes());
+    private final Key key;
 
+    public JwtUtil(String secret) {
+        key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
+    public String encode(Long userId) {
         return Jwts.builder()
                 .claim("userId", 1L)
                 .signWith(key)

@@ -55,7 +55,7 @@ class AuthenticationServiceTest {
                 .build();
     }
 
-    @DisplayName("유효한 회원 정보가 주어진다면 생성된 액세스 토큰을 리턴한다.")
+    @DisplayName("login 메소드에 유효한 회원 정보가 주어진다면 생성된 액세스 토큰을 리턴한다.")
     @Test
     void loginWithValidUserLoginData() {
         given(userService.findUserByEmail(any()))
@@ -66,7 +66,7 @@ class AuthenticationServiceTest {
         assertThat(accessToken).contains(".");
     }
 
-    @DisplayName("유효하지 않은 회원 정보가 주어진다면 '회원 인증에 실패했습니다' 라는 예외를 던진다.")
+    @DisplayName("login 메소드에 유효하지 않은 회원 정보가 주어진다면 '회원 인증에 실패했습니다' 라는 예외를 던진다.")
     @ParameterizedTest
     @MethodSource("provideInvalidUser")
     void loginWithInvalidUserLoginData(User invalidUser) {

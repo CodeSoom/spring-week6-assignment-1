@@ -32,7 +32,7 @@ class JwtUtilTest {
         jwtUtil = new JwtUtil(secret);
     }
 
-    @DisplayName("생성된 토큰을 리턴한다.")
+    @DisplayName("encode 메소드에 회원 id가 주어진다면 생성된 토큰을 리턴한다.")
     @Test
     void encode() {
         String token = jwtUtil.encode(givenUserId);
@@ -40,7 +40,7 @@ class JwtUtilTest {
         assertThat(token).isEqualTo(validToken);
     }
 
-    @DisplayName("유효한 토큰이 주어진다면 클레임을 리턴한다.")
+    @DisplayName("decode 메소드에 유효한 토큰이 주어진다면 클레임을 리턴한다.")
     @Test
     void decodeWithValidToken() {
         Claims claims = jwtUtil.decode(validToken);
@@ -48,7 +48,7 @@ class JwtUtilTest {
         assertThat(claims.get("userId", Long.class)).isEqualTo(givenUserId);
     }
 
-    @DisplayName("유효하지 않은 토큰이 주어진다면 '토큰이 유효하지 않다' 는 예외를 던진다.'")
+    @DisplayName("decode 메소드에 유효하지 않은 토큰이 주어진다면 '토큰이 유효하지 않다' 는 예외를 던진다.'")
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "  "})

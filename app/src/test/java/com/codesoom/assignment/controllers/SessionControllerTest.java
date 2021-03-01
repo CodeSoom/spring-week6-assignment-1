@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.utils.JWT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +13,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Map;
+
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +43,9 @@ class SessionControllerTest {
     @MockBean
     private AuthService authService;
 
+    @MockBean
+    private JWT jwt;
+
     private String generateSignInJSON(String email, String password) {
         return String.format(
                 "{\"email\":\"%s\"," +
@@ -56,10 +64,14 @@ class SessionControllerTest {
             void setup() {
                 given(authService.signIn(givenEmail, givenPassword))
                         .willReturn(givenUser);
+
+                given(jwt.encode(eq(null), any(Map.class))).willReturn("eyJhbGciOiJIUzI1NiJ9."
+                        + "eyJrZXkiOiJ2YWx1ZSJ9."
+                        + "oVwICBWJOb_ggP34mBdxQJumkUGaBYdargu_3um3JsQ");
             }
 
             @Test
-            @DisplayName("status ok 응답과 함께 토큰을 응답한다.")
+            @DisplayName("status created 응답과 함께 토큰을 응답한다.")
             void It_respond_status_ok_and_token() throws Exception {
                 mockMvc.perform(
                         post("/session")

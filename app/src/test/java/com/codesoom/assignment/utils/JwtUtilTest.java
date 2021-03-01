@@ -48,11 +48,11 @@ class JwtUtilTest {
         assertThat(claims.get("userId", Long.class)).isEqualTo(givenUserId);
     }
 
-    @DisplayName("유효하지 않은 토큰이 주어진다면 '토큰이 유효하지 않다' 는 예외가 발생한다.'")
+    @DisplayName("유효하지 않은 토큰이 주어진다면 '토큰이 유효하지 않다' 는 예외를 던진다.'")
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "  "})
-    @CsvSource({inValidToken})
+    @CsvSource(inValidToken)
     void decodeWithInValidToken(String token) {
         assertThrows(InvalidTokenException.class, () -> jwtUtil.decode(token));
     }

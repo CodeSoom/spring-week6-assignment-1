@@ -24,7 +24,7 @@ public class SessionController {
     public String signIn(@RequestBody @Valid UserSignInData userSignInData) {
         User user = userService.findUserByEmail(userSignInData.email());
 
-        if (!user.getEmail().equals(userSignInData.password())) {
+        if (!user.getPassword().equals(userSignInData.password())) {
             throw new WrongUserPasswordException();
         }
         return ".";

@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.dto.SessionData;
 import com.codesoom.assignment.dto.UserSignInData;
 import com.codesoom.assignment.utils.JWT;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String signIn(@RequestBody @Valid UserSignInData userSignInData) {
+    public SessionData signIn(@RequestBody @Valid UserSignInData userSignInData) {
         final User user = authService.signIn(userSignInData.email(), userSignInData.password());
         final Map<String, Object> claims = new HashMap<>() {{
             put("id", user.getId());
@@ -33,6 +34,7 @@ public class SessionController {
             put("name", user.getName());
         }};
 
-        return jwt.encode(null, claims);
+        final String accessToken = jwt.encode(null, claims);
+        return new SessionData(accessToken);
     }
 }

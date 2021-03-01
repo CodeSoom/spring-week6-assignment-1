@@ -14,7 +14,7 @@ import java.util.Map;
 public class JWT {
     private final SecretKey secretKey;
 
-    public JWT(@Value("jwt.secret") String secret) {
+    public JWT(@Value("${jwt.secret}") String secret) {
         secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 

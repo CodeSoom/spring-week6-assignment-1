@@ -1,7 +1,7 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.util.JwtUtil;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
@@ -9,12 +9,13 @@ import java.security.Key;
 
 @Service
 public class AuthenticationService {
-    public String login() {
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private JwtUtil jwtUtil;
 
-        return Jwts.builder()
-                .claim("userId", 1)
-                .signWith(key)
-                .compact();
+    public AuthenticationService(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
+    public String login() {
+        return jwtUtil.encode(1L);
     }
 }

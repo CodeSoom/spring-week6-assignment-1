@@ -9,7 +9,7 @@ import java.security.Key;
 
 @Service
 public class AuthenticationService {
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     public AuthenticationService(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;

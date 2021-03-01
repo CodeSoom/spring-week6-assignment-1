@@ -2,10 +2,12 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.codesoom.assignment.dto.UserSignInData;
+import com.codesoom.assignment.errors.WrongUserPasswordException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/session")
@@ -18,8 +20,13 @@ public class SessionController {
     }
 
     @PostMapping
-    public String signIn() {
-        User user = userService.findUserByEmail("");
-        return "";
+    @ResponseStatus(HttpStatus.CREATED)
+    public String signIn(@RequestBody @Valid UserSignInData userSignInData) {
+        User user = userService.findUserByEmail(userSignInData.email());
+
+        if (!user.getEmail().equals(userSignInData.password())) {
+            throw new WrongUserPasswordException();
+        }
+        return ".";
     }
 }

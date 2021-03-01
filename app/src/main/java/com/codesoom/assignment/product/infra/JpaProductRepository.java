@@ -1,7 +1,7 @@
-package com.codesoom.assignment.infra;
+package com.codesoom.assignment.product.infra;
 
-import com.codesoom.assignment.domain.Product;
-import com.codesoom.assignment.domain.ProductRepository;
+import com.codesoom.assignment.product.domain.Product;
+import com.codesoom.assignment.product.domain.ProductRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

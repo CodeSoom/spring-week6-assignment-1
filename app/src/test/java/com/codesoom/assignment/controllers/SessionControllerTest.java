@@ -1,6 +1,6 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.application.UserService;
+import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,7 +36,7 @@ class SessionControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private AuthService authService;
 
     private String generateSignInJSON(String email, String password) {
         return String.format(
@@ -55,7 +54,7 @@ class SessionControllerTest {
         class Context_with_exists_user_correspond_given_data {
             @BeforeEach
             void setup() {
-                given(userService.findUserByEmail(eq(givenEmail)))
+                given(authService.signIn(givenEmail, givenPassword))
                         .willReturn(givenUser);
             }
 
@@ -70,7 +69,7 @@ class SessionControllerTest {
                         .andExpect(status().isCreated())
                         .andExpect(content().string(containsString(".")));
 
-                verify(userService).findUserByEmail(givenEmail);
+                verify(authService).signIn(givenEmail, givenPassword);
             }
         }
     }

@@ -5,13 +5,10 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundByEmailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -163,59 +160,5 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
-    }
-
-    @Nested
-    @DisplayName("findUserByEmail 메서드는")
-    class Describe_findUserByEmail {
-        private final String givenEmail = "juuni.ni.i@gmail.com";
-        private final Mapper mapper = DozerBeanMapperBuilder.buildDefault();
-
-        @Nested
-        @DisplayName("주어진 email 에 해당하는 등록된 유저가 있을 때")
-        class Context_when_exists_registered_email_user {
-            private final User user = new User(
-                    1L,
-                    givenEmail,
-                    "juunini",
-                    "secret",
-                    false
-            );
-
-            @BeforeEach
-            void setup() {
-                userService = new UserService(mapper, userRepository);
-
-                given(userRepository.findByEmail(givenEmail))
-                        .willReturn(Optional.of(user));
-            }
-
-            @Test
-            @DisplayName("유저를 리턴한다.")
-            void It_returns_user() {
-                final User user = userService.findUserByEmail(givenEmail);
-
-                assertThat(user.getEmail()).isEqualTo(givenEmail);
-            }
-        }
-
-        @Nested
-        @DisplayName("주어진 email 에 해당하는 등록된 유저가 없을 때")
-        class Context_when_not_exists_registered_email_user {
-            @BeforeEach
-            void setup() {
-                userService = new UserService(mapper, userRepository);
-
-                given(userRepository.findByEmail(givenEmail))
-                        .willThrow(UserNotFoundByEmailException.class);
-            }
-
-            @Test
-            @DisplayName("주어진 email 을 통해 유저를 찾을 수 없다는 예외를 던진다.")
-            void It_throws_not_found_user_by_email() {
-                assertThatThrownBy(() -> userService.findUserByEmail(givenEmail))
-                        .isInstanceOf(UserNotFoundByEmailException.class);
-            }
-        }
     }
 }

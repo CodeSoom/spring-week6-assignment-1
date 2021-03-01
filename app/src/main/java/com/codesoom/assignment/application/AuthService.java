@@ -14,7 +14,8 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public User signIn(String email, String password) {
+    public User signIn(String email, String password)
+            throws UserNotFoundByEmailException, WrongUserPasswordException {
         final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundByEmailException(email));
 

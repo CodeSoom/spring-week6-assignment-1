@@ -1,11 +1,23 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.FakeUserRepository;
+import com.codesoom.assignment.domain.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("AuthService 클래스")
 class AuthServiceTest {
+    private AuthService authService;
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setup() {
+        userRepository = new FakeUserRepository();
+        authService = new AuthService(userRepository);
+    }
+
     @Nested
     @DisplayName("signIn 메서드는")
     class Describe_signIn {
@@ -18,7 +30,7 @@ class AuthServiceTest {
                 @Test
                 @DisplayName("email 에 해당하는 유저를 리턴한다.")
                 void It_returns_given_email_user() {
-
+                    
                 }
             }
 
@@ -28,7 +40,7 @@ class AuthServiceTest {
                 @Test
                 @DisplayName("패스워드가 일치하지 않는다는 예외를 던진다.")
                 void It_throws_wrong_password_exception() {
-                    
+
                 }
             }
         }

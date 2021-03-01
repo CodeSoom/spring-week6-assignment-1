@@ -49,6 +49,13 @@ public class UserService {
 
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 회원 식별자가 주어졌으므로 회원을 찾을 수 없습니다. " +
+                        "문제의 id = " + id));
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 회원 이메일이 주어졌으므로 회원을 찾을 수 없습니다. " +
+                        "문제의 email = " + email));
     }
 }

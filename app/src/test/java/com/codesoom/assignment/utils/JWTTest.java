@@ -3,6 +3,7 @@ package com.codesoom.assignment.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("JWT 클래스")
 class JWTTest {
@@ -27,6 +29,10 @@ class JWTTest {
     private final String token = "eyJhbGciOiJIUzI1NiJ9."
             + "eyJrZXkiOiJ2YWx1ZSJ9."
             + "oVwICBWJOb_ggP34mBdxQJumkUGaBYdargu_3um3JsQ";
+
+    private final String invalidToken = "eyJhbGciOiJIUzI1NiJ9."
+            + "eyJrZXkiOiJ2YWx1ZSJ9."
+            + "oVwICBWJOb_ggP34mBdxQJumkUGaBYdargu_3um3JsE";
 
     @Nested
     @DisplayName("encode 메서드는")
@@ -54,6 +60,17 @@ class JWTTest {
 
                 assertThat(headers.get("alg")).isEqualTo(givenHeaders.get("alg"));
                 assertThat(body.get("key")).isEqualTo(givenBody.get("key"));
+            }
+        }
+
+        @Nested
+        @DisplayName("주어진 토큰이 올바르지 않을 때")
+        class Context_given_token_is_invalid {
+            @Test
+            @DisplayName("올바른 토큰이 아니라는 예외를 던진다.")
+            void It_throws_invalid_token_exception() {
+                assertThatThrownBy(() -> jwt.decode(invalidToken))
+                        .isInstanceOf(SignatureException.class);
             }
         }
     }

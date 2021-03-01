@@ -1,11 +1,9 @@
-package com.codesoom.assignment.application;
+package com.codesoom.assignment.user.application;
 
-import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.UserModificationData;
-import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.user.domain.User;
+import com.codesoom.assignment.user.domain.UserRepository;
+import com.codesoom.assignment.user.dto.UserModificationData;
+import com.codesoom.assignment.user.dto.UserRegistrationData;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 

@@ -1,10 +1,10 @@
-package com.codesoom.assignment.controllers;
+package com.codesoom.assignment.user.controller;
 
-import com.codesoom.assignment.application.UserService;
-import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.dto.UserModificationData;
-import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.dto.UserResultData;
+import com.codesoom.assignment.user.application.UserService;
+import com.codesoom.assignment.user.domain.User;
+import com.codesoom.assignment.user.dto.UserModificationData;
+import com.codesoom.assignment.user.dto.UserRegistrationData;
+import com.codesoom.assignment.user.dto.UserResultData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

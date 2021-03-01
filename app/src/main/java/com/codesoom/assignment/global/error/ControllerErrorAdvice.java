@@ -1,8 +1,8 @@
 package com.codesoom.assignment.global.error;
 
 import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.user.application.UserEmailDuplicationException;
+import com.codesoom.assignment.user.application.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

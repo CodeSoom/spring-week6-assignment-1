@@ -1,4 +1,4 @@
-package com.codesoom.assignment.domain;
+package com.codesoom.assignment.user.domain;
 
 import java.util.Optional;
 

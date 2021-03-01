@@ -1,5 +1,6 @@
-package com.codesoom.assignment.domain;
+package com.codesoom.assignment.user.domain;
 
+import com.codesoom.assignment.user.domain.User;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

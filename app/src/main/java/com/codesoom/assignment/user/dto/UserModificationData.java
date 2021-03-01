@@ -1,4 +1,4 @@
-package com.codesoom.assignment.dto;
+package com.codesoom.assignment.user.dto;
 
 import com.github.dozermapper.core.Mapping;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
-package com.codesoom.assignment.infra;
+package com.codesoom.assignment.user.infra;
 
-import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.user.domain.User;
+import com.codesoom.assignment.user.domain.UserRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

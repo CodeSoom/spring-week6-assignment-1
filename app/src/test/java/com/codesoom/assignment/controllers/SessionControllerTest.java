@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SessionController.class)
-@DisplayName("/users")
+@DisplayName("SessionController 클래스")
 class SessionControllerTest {
     private final String givenEmail = "juuni.ni.i@gmail.com";
     private final String givenPassword = "secret";
@@ -31,7 +31,7 @@ class SessionControllerTest {
     }
 
     @Nested
-    @DisplayName("[POST] /users 요청은")
+    @DisplayName("[POST] /session 요청은")
     class Describe_post_root {
         @Nested
         @DisplayName("주어진 데이터와 일치하는 저장된 유저가 있을 때")

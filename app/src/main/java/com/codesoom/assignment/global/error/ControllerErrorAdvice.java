@@ -1,6 +1,5 @@
-package com.codesoom.assignment.controllers;
+package com.codesoom.assignment.global.error;
 
-import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;

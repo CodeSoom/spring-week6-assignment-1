@@ -33,7 +33,7 @@ public class UserService {
     }
 
     public User updateUser(Long id, UserModificationData modificationData) {
-        User user = findUser(id);
+        User user = findUserById(id);
 
         User source = mapper.map(modificationData, User.class);
         user.changeWith(source);
@@ -42,12 +42,12 @@ public class UserService {
     }
 
     public User deleteUser(Long id) {
-        User user = findUser(id);
+        User user = findUserById(id);
         user.destroy();
         return user;
     }
 
-    private User findUser(Long id) {
+    private User findUserById(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException("존재하지 않는 회원 식별자가 주어졌으므로 회원을 찾을 수 없습니다. " +
                         "문제의 id = " + id));

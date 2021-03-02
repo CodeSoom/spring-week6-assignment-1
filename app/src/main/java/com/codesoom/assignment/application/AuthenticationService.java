@@ -43,6 +43,11 @@ public class AuthenticationService {
         return jwtUtil.encode(user.getId());
     }
 
+    public Long parseToken(String accessToken) {
+        return jwtUtil.decode(accessToken)
+                .get("userId", Long.class);
+    }
+
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserAuthenticationFailException("주어진 이메일에 해당하는 회원이 없습니다."));

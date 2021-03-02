@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthenticationServiceTest {
 
-    private static final String SECRET = "12345678901234567890123456789012";
+    private static final String SECRET = "12345678901234567890123456789010";
 
     private AuthenticationService authenticationService;
 

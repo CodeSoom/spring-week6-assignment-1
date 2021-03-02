@@ -2,8 +2,10 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserLoginDto;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.InvalidUserException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
@@ -44,6 +46,17 @@ public class UserService {
     public User deleteUser(Long id) {
         User user = findUser(id);
         user.destroy();
+        return user;
+    }
+
+    public User validUser(UserLoginDto userLoginDto) {
+        User user = userRepository.findByEmail(userLoginDto.getEmail())
+                .orElseThrow(() -> new InvalidUserException());
+
+        if (user.getPassword() != userLoginDto.getPassword()) {
+            throw new InvalidUserException();
+        }
+
         return user;
     }
 

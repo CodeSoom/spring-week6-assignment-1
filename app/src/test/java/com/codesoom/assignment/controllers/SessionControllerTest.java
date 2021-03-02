@@ -1,5 +1,7 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.UserService;
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserLoginDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,9 +10,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,10 +28,21 @@ class SessionControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private UserService userService;
+
+    private User validUser;
     private UserLoginDto userLoginDto;
 
     @BeforeEach
     void setUp(){
+        validUser = User.builder()
+                .id(1L)
+                .name("양승인")
+                .password("1234")
+                .email("rhfpdk92@naver.com")
+                .build();
+
         userLoginDto = UserLoginDto.builder()
                 .email("rhfpdk92@naver.com")
                 .password("1234")
@@ -42,6 +57,11 @@ class SessionControllerTest {
         @DisplayName("로그인하려는 정보가 있고 저장된 유저가 있으면")
         class Context_exist_login_data_and_user{
 
+            @BeforeEach
+            void setUp(){
+                given(userService.validUser(userLoginDto)).willReturn(validUser);
+            }
+
             @Test
             @DisplayName("응답코드는 201이며 토큰을 응답한다.")
             void it_return_token() throws Exception {
@@ -50,6 +70,7 @@ class SessionControllerTest {
                         .content(objectMapper.writeValueAsString(userLoginDto)))
                         .andDo(print())
                         .andExpect(status().isCreated());
+                //TODO JWT 토큰 발행로직을 추가한 이후 토큰이 존재한다정도만 추가
             }
         }
     }

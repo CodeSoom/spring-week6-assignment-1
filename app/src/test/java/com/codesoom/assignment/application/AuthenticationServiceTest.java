@@ -1,16 +1,15 @@
 package com.codesoom.assignment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("AuthenticationService 클래스")
 class AuthenticationServiceTest {
-  final Long userId = 1L;
+  final Long USER_ID = 1L;
+  final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5VoLz2Ug0E6jQK_anP6RND1YHpzlBdxsR2ORgYef_aQ";
   private AuthenticationService authService = new AuthenticationService();
 
   @Nested
@@ -19,13 +18,13 @@ class AuthenticationServiceTest {
     @Nested
     @DisplayName("user id가 주어졌을 때")
     class Context_user_id {
-      Long givenUserId = userId;
+      Long givenUserId = USER_ID;
 
       @DisplayName("인코딩된 token을 반환한다.")
       @Test
       void it_returns_encoded_token() {
         String code = authService.encode(givenUserId);
-        assertThat(code).contains(".");
+        assertThat(code).isEqualTo(VALID_TOKEN);
       }
     }
   }

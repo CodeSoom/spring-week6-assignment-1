@@ -43,6 +43,12 @@ public class AuthenticationService {
         return jwtUtil.encode(user.getId());
     }
 
+    /**
+     * 주어진 액세스 토큰을 파싱한 뒤 파싱된 값을 리턴합니다.
+     *
+     * @param accessToken 액세스 토큰
+     * @return 파싱된 값
+     */
     public Long parseToken(String accessToken) {
         return jwtUtil.decode(accessToken)
                 .get("userId", Long.class);

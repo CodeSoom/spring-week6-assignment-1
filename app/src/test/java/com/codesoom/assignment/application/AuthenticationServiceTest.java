@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.UserAuthenticationFailException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,11 +24,15 @@ import static org.mockito.Mockito.mock;
 
 class AuthenticationServiceTest {
 
-    private final String secret = "12345678901234567890123456789012";
-
     private AuthenticationService authenticationService;
 
     private UserRepository userRepository = mock(UserRepository.class);
+
+    private final String secret = "12345678901234567890123456789012";
+    private final String validToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
+            ".ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private final String inValidToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
+            ".ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDA";
 
     private static final String GIVEN_VALID_EMAIL = "jamie@example.com";
     private static final String GIVEN_VALID_PASSWORD = "12345678";
@@ -77,6 +82,21 @@ class AuthenticationServiceTest {
                 () -> authenticationService.login(invalidUserLoginData));
 
         assertThat(exception.getMessage()).contains(errorKeyword);
+    }
+
+    @DisplayName("parseToken 메소드는 유효한 토큰이 주어진다면 파싱된 값을 리턴한다.")
+    @Test
+    void parseTokenWithValidToken() {
+        Long userId = authenticationService.parseToken(validToken);
+
+        assertThat(userId).isEqualTo(1L);
+    }
+
+    @DisplayName("parseToken 메소드는 유효하지 않은 토큰이 주어진다면 '토큰이 유효하지 않습니다.' 라는 예외를 던진다.")
+    @Test
+    void parseTokenWithInvalidToken() {
+        assertThrows(InvalidTokenException.class,
+                () -> authenticationService.parseToken(inValidToken));
     }
 
     private static Stream<Arguments> provideInvalidUser() {

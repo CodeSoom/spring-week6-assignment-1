@@ -6,4 +6,4 @@ spring:
       ddl-auto: update
 
 jwt:
-  secret: qwertyuiopqwertyuiopqwertyuiopqw
+  secret: "qwertyuiopqwertyuiopqwertyuiopqw"

@@ -8,15 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
-  @Value("${jwt.secret}")
-  private String secret;
+  private final Key key;
 
-  public JwtUtil(String secretKey) {
-    this.secret = secretKey;
+  public JwtUtil(@Value("${jwt.secret}") String secret) {
+    this.key = Keys.hmacShaKeyFor(secret.getBytes());
   }
 
   public String encode(Long userId) {
-    Key key = Keys.hmacShaKeyFor(secret.getBytes());
     return Jwts.builder()
         .claim("userId", userId)
         .signWith(key)

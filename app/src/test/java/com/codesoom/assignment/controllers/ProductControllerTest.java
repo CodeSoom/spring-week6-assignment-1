@@ -178,6 +178,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }

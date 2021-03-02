@@ -10,7 +10,7 @@ public class SessionResponseData {
     /**
      * 사용자 인증 토큰.
      */
-    private String accessToken;
+    private final String accessToken;
 
     public SessionResponseData(String accessToken) {
         this.accessToken = accessToken;

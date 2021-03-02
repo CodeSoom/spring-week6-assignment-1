@@ -19,9 +19,9 @@ class JwtUtilTest {
 
     @Test
     void encode() {
-        String accessToken = jwtUtil.encode(1L);
+        String token = jwtUtil.encode(1L);
 
-        assertThat(accessToken).isEqualTo(accessTokenValue);
+        assertThat(token).isEqualTo(accessTokenValue);
     }
 
     @Test

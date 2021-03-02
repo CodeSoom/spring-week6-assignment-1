@@ -2,13 +2,14 @@ package com.codesoom.assignment.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.Key;
 
 public class JwtUtil {
     private final Key key;
 
-    public JwtUtil(String secret) {
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 

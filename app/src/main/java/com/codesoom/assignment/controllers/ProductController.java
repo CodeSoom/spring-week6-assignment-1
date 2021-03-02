@@ -1,9 +1,9 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +17,12 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
-    private final JwtUtil jwtUtil;
+    private final AuthenticationService authenticationService;
 
-    public ProductController(ProductService productService, JwtUtil jwtUtil) {
+    public ProductController(ProductService productService,
+                             AuthenticationService authenticationService) {
         this.productService = productService;
-        this.jwtUtil = jwtUtil;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping
@@ -41,7 +42,7 @@ public class ProductController {
             @RequestBody @Valid ProductData productData
     ) {
         String accessToken = authorization.substring("Bearer ".length());
-        Claims claims = jwtUtil.decode(accessToken);
+        Long userId = authenticationService.parseToken(accessToken);
 
         return productService.createProduct(productData);
     }

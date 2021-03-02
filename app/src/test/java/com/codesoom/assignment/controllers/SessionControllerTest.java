@@ -39,18 +39,21 @@ class SessionControllerTest {
     private User validUser;
     private UserLoginDto userLoginDto;
 
+    private final String EMAIL = "rhfpdk92@naver.com";
+    private final String PASSWORD = "1234";
+
     @BeforeEach
-    void setUp(){
+    void setUp() {
         validUser = User.builder()
                 .id(1L)
                 .name("양승인")
-                .password("1234")
-                .email("rhfpdk92@naver.com")
+                .password(PASSWORD)
+                .email(EMAIL)
                 .build();
 
         userLoginDto = UserLoginDto.builder()
-                .email("rhfpdk92@naver.com")
-                .password("1234")
+                .email(EMAIL)
+                .password(PASSWORD)
                 .build();
     }
 
@@ -59,11 +62,11 @@ class SessionControllerTest {
     class Describe_post_session {
 
         @Nested
-        @DisplayName("로그인하려는 정보가 있고 저장된 유저가 있으면")
-        class Context_exist_login_data_and_user{
+        @DisplayName("적합한 유저 정보가 주어지면")
+        class Context_exist_login_data_and_user {
 
             @BeforeEach
-            void setUp(){
+            void setUp() {
                 given(userService.validUser(userLoginDto)).willReturn(validUser);
                 given(authenticationService.login(validUser)).willReturn(any(String.class));
             }

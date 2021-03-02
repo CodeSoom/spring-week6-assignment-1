@@ -24,10 +24,11 @@ public class JwtTokenProvider {
 
     /**
      * 토큰을 생성합니다.
+     *
      * @param userId 사용자 id
      * @return 사용자 JWT 토큰
      */
-    public String encode(Long userId) {
+    public String createToken(Long userId) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 

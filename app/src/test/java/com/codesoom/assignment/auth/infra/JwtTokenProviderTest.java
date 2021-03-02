@@ -20,10 +20,10 @@ class JwtTokenProviderTest {
         jwtTokenProvider = new JwtTokenProvider(SECRET);
     }
 
-    @DisplayName("encode 메서드는 전달받은 식별값에 해당하는 토큰을 리턴한다")
+    @DisplayName("createToken 메서드는 전달받은 식별값에 해당하는 토큰을 생성한다")
     @Test
-    void encode_id_to_token() {
-        String token = jwtTokenProvider.encode(GIVEN_ID);
+    void create_token_with_id() {
+        String token = jwtTokenProvider.createToken(GIVEN_ID);
 
         assertThat(token).isNotEmpty();
     }

@@ -4,12 +4,13 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.MissingFormatArgumentException;
 
 @RestController
 @RequestMapping("/products")
@@ -63,5 +64,11 @@ public class ProductController {
             @PathVariable Long id
     ) {
         productService.deleteProduct(id);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public void handleMissingRequestHeaderException() {
+
     }
 }

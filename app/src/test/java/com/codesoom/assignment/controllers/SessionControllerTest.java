@@ -21,6 +21,6 @@ class SessionControllerTest {
     @Test
     void login() throws Exception {
         mockMvc.perform(post("/session"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 }

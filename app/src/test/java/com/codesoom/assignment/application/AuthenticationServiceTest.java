@@ -1,10 +1,13 @@
 package com.codesoom.assignment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.UserAuthenticationFailedException;
+import com.codesoom.assignment.errors.UserEmailNotExistException;
 import com.codesoom.assignment.utils.JwtUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,6 +89,34 @@ class AuthenticationServiceTest {
       void it_returns_token() {
         String token = authService.createSession(givenEmail, givenPassword);
         assertThat(token).isEqualTo(VALID_TOKEN);
+      }
+    }
+
+    @Nested
+    @DisplayName("존재하지 않는 email이 주어진다면")
+    class Context_with_not_exist_email {
+      String givenEmail = "";
+      String givenPassword = "";
+
+      @DisplayName("user email이 존재하지 않는다는 예외를 던진다")
+      @Test
+      void it_returns_user_email_not_exist_exception() {
+        assertThrows(UserEmailNotExistException.class,
+            () -> authService.createSession(givenEmail, givenPassword));
+      }
+    }
+
+    @Nested
+    @DisplayName("유효하지 않은 password가 주어진다면")
+    class Context_with_invalid_password {
+      String givenEmail = VALID_EMAIL;
+      String givenPassword = "";
+
+      @DisplayName("user 인증에 실패했다는 예외를 던진다")
+      @Test
+      void it_returns_user_auth_failed_exception() {
+        assertThrows(UserAuthenticationFailedException.class,
+            () -> authService.createSession(givenEmail, givenPassword));
       }
     }
   }

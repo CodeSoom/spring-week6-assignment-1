@@ -53,7 +53,7 @@ public class UserService {
         User user = userRepository.findByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new InvalidUserException());
 
-        if (user.getPassword() != userLoginDto.getPassword()) {
+        if (!user.getPassword().equals(userLoginDto.getPassword())) {
             throw new InvalidUserException();
         }
 

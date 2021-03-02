@@ -5,13 +5,13 @@ import com.codesoom.assignment.user.application.UserEmailDuplicationException;
 import com.codesoom.assignment.user.application.UserEmailNotFoundException;
 import com.codesoom.assignment.user.application.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @ResponseBody
-@RestControllerAdvice
+@ControllerAdvice
 public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ProductNotFoundException.class)

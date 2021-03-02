@@ -14,4 +14,8 @@ public class AuthenticationService {
   public String encode(Long userId) {
     return jwtUtil.encode(userId);
   }
+
+  public Long decode(String givenToken) {
+    return jwtUtil.decode(givenToken);
+  }
 }

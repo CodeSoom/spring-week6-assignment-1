@@ -46,7 +46,7 @@ public class JwtTokenProvider {
      * 토큰을 복호화합니다.
      *
      * @param token JWT 토큰
-     * @return
+     * @return 사용자 정보
      */
     public Claims decode(String token) {
         if (token == null || token.isBlank()) {

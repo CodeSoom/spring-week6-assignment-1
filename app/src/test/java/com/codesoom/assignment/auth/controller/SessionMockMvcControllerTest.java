@@ -59,7 +59,7 @@ class AuthenticationControllerTest {
                         .willReturn(VALID_TOKEN);
             }
 
-            @DisplayName("201 Created 상태를 응답한다.")
+            @DisplayName("201 Created 상태를 응답한다")
             @Test
             void It_responds_token() throws Exception {
                 mockMvc.perform(post("/session")

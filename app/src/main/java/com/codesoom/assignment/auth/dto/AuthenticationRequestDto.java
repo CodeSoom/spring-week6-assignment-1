@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 /**
- * 사용자 인증 요청 객체
+ * 사용자 인증 요청.
  */
 @Getter
 @NoArgsConstructor

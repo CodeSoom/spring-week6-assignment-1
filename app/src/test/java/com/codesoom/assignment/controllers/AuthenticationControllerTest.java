@@ -3,8 +3,7 @@ package com.codesoom.assignment.controllers;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.User;
@@ -84,7 +83,7 @@ class AuthenticationControllerTest {
 
         subject(loginData)
             .andExpect(status().isCreated())
-            .andExpect(content().string(VALID_TOKEN));
+            .andExpect(jsonPath("$.token").value(VALID_TOKEN));
       }
     }
 

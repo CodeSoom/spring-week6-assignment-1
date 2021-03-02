@@ -51,9 +51,4 @@ public class UserService {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException("주어진 id에 해당하는 회원을 찾을 수 없습니다. 문제의 id = " + id));
     }
-
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("주어진 email에 해당하는 회원을 찾을 수 없습니다. 문제의 email = " + email));
-    }
 }

@@ -1,10 +1,12 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
+import org.apache.catalina.realm.AuthenticatedUserRealm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ class ProductControllerTest {
     private ProductService productService;
 
     @MockBean
-    private JwtUtil jwtUtil;
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
@@ -76,12 +78,6 @@ class ProductControllerTest {
 
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
-
-        given(jwtUtil.decode(any())).will(invocation -> {
-            String token = invocation.getArgument(0);
-            return new JwtUtil("12345678901234567890123456789012")
-                    .decode(token);
-        });
     }
 
     @Test

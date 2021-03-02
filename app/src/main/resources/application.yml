@@ -7,3 +7,4 @@ spring:
 
 jwt:
   secret: "12345678901234567890123456789010"
+  expire-length: 300000 # 5 minutes duration by default: 5 minutes * 60 seconds * 1000 miliseconds

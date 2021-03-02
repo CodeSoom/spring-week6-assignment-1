@@ -4,7 +4,6 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.UserAuthenticationFailException;
-import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,38 +29,26 @@ class AuthenticationServiceTest {
 
     private UserRepository userRepository = mock(UserRepository.class);
 
-    private User user;
-    private UserLoginData validUserLoginData;
-    private UserLoginData inValidUserLoginData;
-    private UserLoginData userLoginDataWithNotExistingEmail;
+    private static final String GIVEN_VALID_EMAIL = "jamie@example.com";
+    private static final String GIVEN_VALID_PASSWORD = "12345678";
+    private static final String GIVEN_INVALID_EMAIL = "invalidEmail@example.com";
+    private static final String GIVEN_INVALID_PASSWORD = "invalidPassword";
+
+    private static final User user = User.builder()
+            .email(GIVEN_VALID_EMAIL)
+            .password(GIVEN_VALID_PASSWORD)
+            .build();
+
+    private static final UserLoginData userLoginData = UserLoginData.builder()
+            .email(GIVEN_VALID_EMAIL)
+            .password(GIVEN_VALID_PASSWORD)
+            .build();
 
     @BeforeEach
     void setUp() {
         JwtUtil jwtUtil = new JwtUtil(secret);
 
         authenticationService = new AuthenticationService(jwtUtil, userRepository);
-
-        user = User.builder()
-                .id(1L)
-                .email("jamie@example.com")
-                .name("Jamie")
-                .password("12345678")
-                .build();
-
-        validUserLoginData = UserLoginData.builder()
-                .email("jamie@example.com")
-                .password("12345678")
-                .build();
-
-        inValidUserLoginData = UserLoginData.builder()
-                .email("invalidEmail@example.com")
-                .password("invalidPassword")
-                .build();
-
-        userLoginDataWithNotExistingEmail = UserLoginData.builder()
-                .email("notExistingEmail@example.com")
-                .password("12345678")
-                .build();
     }
 
     @DisplayName("login 메소드에 유효한 회원 정보가 주어진다면 생성된 액세스 토큰을 리턴한다.")
@@ -70,51 +57,58 @@ class AuthenticationServiceTest {
         given(userRepository.findByEmail(any()))
                 .willReturn(Optional.of(user));
 
-        String accessToken = authenticationService.login(validUserLoginData);
+        String accessToken = authenticationService.login(userLoginData);
 
         assertThat(accessToken).contains(".");
     }
 
-    @DisplayName("login 메소드에 존재하지 않는 회원 email이 주어진다면 '회원을 찾을 수 없습니다' 라는 예외를 던진다.")
-    @Test
-    void loginWithUserLoginDataWithNotExistingEmail() {
-        given(userRepository.findByEmail(any()))
-                .willReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class,
-                () -> authenticationService.login(userLoginDataWithNotExistingEmail));
-    }
-
     @DisplayName("login 메소드에 유효하지 않은 회원 정보가 주어진다면 '회원 인증에 실패했습니다' 라는 예외를 던진다.")
-    @ParameterizedTest
+    @ParameterizedTest(name = "{index} {2}")
     @MethodSource("provideInvalidUser")
-    void loginWithInvalidUserLoginData(User invalidUser) {
-        given(userRepository.findByEmail(any()))
-                .willReturn(Optional.of(invalidUser));
+    void loginWithInvalidUserLoginData(
+            UserLoginData invalidUserLoginData,
+            Optional<User> invalidUser,
+            String representation) {
+        given(userRepository.findByEmail(invalidUserLoginData.getEmail()))
+                .willReturn(invalidUser);
 
         assertThrows(UserAuthenticationFailException.class,
-                () -> authenticationService.login(inValidUserLoginData));
+                () -> authenticationService.login(invalidUserLoginData));
     }
 
     private static Stream<Arguments> provideInvalidUser() {
-        User UserWithWrongPassword = User.builder()
-                .id(2L)
-                .email("jamie@example.com")
-                .name("Jamie")
-                .password("wrongPassword")
+        UserLoginData userLoginDataWithNotExistingEmail = UserLoginData.builder()
+                .email(GIVEN_INVALID_EMAIL)
+                .password(GIVEN_VALID_PASSWORD)
+                .build();
+
+        UserLoginData userLoginDataWithWrongPassword = UserLoginData.builder()
+                .email(GIVEN_VALID_EMAIL)
+                .password(GIVEN_INVALID_PASSWORD)
                 .build();
 
         User deletedUser = User.builder()
-                .id(3L)
-                .email("jamie@example.com")
-                .name("Jamie")
-                .password("12345678")
+                .email(GIVEN_VALID_EMAIL)
+                .password(GIVEN_VALID_PASSWORD)
                 .deleted(true)
                 .build();
 
         return Stream.of(
-                Arguments.of(UserWithWrongPassword),
-                Arguments.of(deletedUser)
+                Arguments.of(
+                        userLoginDataWithNotExistingEmail,
+                        Optional.empty(),
+                        "이메일이 존재하지 않을 경우"
+                ),
+                Arguments.of(
+                        userLoginDataWithWrongPassword,
+                        Optional.of(user),
+                        "비밀번호가 일치하지 않을 경우"
+                ),
+                Arguments.of(
+                        userLoginData,
+                        Optional.of(deletedUser),
+                        "삭제된 회원일 경우"
+                )
         );
     }
 

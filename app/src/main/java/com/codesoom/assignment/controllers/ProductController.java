@@ -6,6 +6,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -61,5 +62,11 @@ public class ProductController {
             @PathVariable Long id
     ) {
         productService.deleteProduct(id);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void handleMissingRequestHeaderException() {
+        //
     }
 }

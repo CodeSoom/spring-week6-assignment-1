@@ -165,12 +165,24 @@ class ProductControllerTest {
     }
 
     @Test
-    void createWithoutAccessToken() throws Exception {
+    void createWithWrongAccessToken() throws Exception {
         mockMvc.perform(
                 post("/products")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + NOT_EXISTED_TOKEN)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+        )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
         )

@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,9 @@ class JwtUtilTest {
     }
 
     @Test
-    void decode() {
-        jwtUtil.decode(accessTokenValue);
+    void decodeWithValidToken() {
+        Claims claims = jwtUtil.decode(accessTokenValue);
+
+        assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
 }

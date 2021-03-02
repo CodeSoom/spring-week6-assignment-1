@@ -37,4 +37,21 @@ class JwtUtilTest {
       }
     }
   }
+
+  @Nested
+  @DisplayName("decode()")
+  class Describe_decode {
+    @Nested
+    @DisplayName("token이 주어졌을 때")
+    class Context_with_token {
+      String givenToken = VALID_TOKEN;
+
+      @DisplayName("user id를 반환한다.")
+      @Test
+      void it_returns_user_id() {
+        Long userId = jwtUtil.decode(givenToken);
+        assertThat(userId).isEqualTo(USER_ID);
+      }
+    }
+  }
 }

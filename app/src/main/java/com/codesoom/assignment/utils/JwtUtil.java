@@ -20,4 +20,8 @@ public class JwtUtil {
         .signWith(key)
         .compact();
   }
+
+  public Long decode(String token) {
+    return 1L;
+  }
 }

@@ -1,7 +1,10 @@
 package com.codesoom.assignment.auth.infra;
 
+import com.codesoom.assignment.auth.application.InvalidTokenException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -37,5 +40,27 @@ public class JwtTokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key).compact();
+    }
+
+    /**
+     * 토큰을 복호화합니다.
+     *
+     * @param token JWT 토큰
+     * @return
+     */
+    public Claims decode(String token) {
+        if (token == null || token.isBlank()) {
+            throw new InvalidTokenException(token);
+        }
+
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (SignatureException e) {
+            throw new InvalidTokenException(token, e);
+        }
     }
 }

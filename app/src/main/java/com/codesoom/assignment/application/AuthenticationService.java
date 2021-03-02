@@ -7,8 +7,18 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 
+/**
+ * 회원 인증 로직을 처리합니다.
+ */
 @Service
 public class AuthenticationService {
+
+    /**
+     * 회원의 access token을 반환합니다.
+     *
+     * @param user token을 발급할 회원
+     * @return JWT Access Token
+     */
     public String login(User user) {
         //TODO JWT 분리 예정
         String secret = "12345678901234567890123456789012";

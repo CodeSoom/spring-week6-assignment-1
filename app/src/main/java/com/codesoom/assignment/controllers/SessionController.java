@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+/**
+ * 회원 인증과 관련된 HTTP 요청을 처리합니다.
+ */
 @RestController
 @RequestMapping("/session")
 @RequiredArgsConstructor

@@ -64,8 +64,8 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
-    @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
     public void handleMissingRequestHeaderException() {
         //
     }

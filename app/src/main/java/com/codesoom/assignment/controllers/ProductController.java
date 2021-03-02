@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
@@ -15,11 +16,11 @@ import java.util.List;
 @RequestMapping("/products")
 @CrossOrigin
 public class ProductController {
-    private final JwtUtil jwtUtil;
+    private final AuthenticationService authenticationService;
     private final ProductService productService;
 
-    public ProductController(JwtUtil jwtUtil, ProductService productService) {
-        this.jwtUtil = jwtUtil;
+    public ProductController(AuthenticationService authenticationService, ProductService productService) {
+        this.authenticationService = authenticationService;
         this.productService = productService;
     }
 
@@ -40,7 +41,7 @@ public class ProductController {
             @RequestBody @Valid ProductData productData
     ) {
         String accessToken = authorization.substring("Bearer ".length());
-        Claims claims = jwtUtil.decode(accessToken);
+        Long userId = authenticationService.parseToken(accessToken);
 
         return productService.createProduct(productData);
     }

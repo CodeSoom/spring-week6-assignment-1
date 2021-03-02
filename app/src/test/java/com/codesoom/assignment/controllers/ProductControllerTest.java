@@ -1,10 +1,13 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.util.JwtUtil;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +41,7 @@ class ProductControllerTest {
     private ProductService productService;
 
     @MockBean
-    private JwtUtil jwtUtil;
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
@@ -76,11 +79,18 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
 
-        given(jwtUtil.decode(NOT_EXISTED_TOKEN)).will(invocation -> {
-                    String token = invocation.getArgument(0);
-                    return new JwtUtil("12345678901234567890123456789010")
-                            .decode(token);
-                });
+//        given(jwtUtil.decode(NOT_EXISTED_TOKEN)).will(invocation -> {
+//                    String token = invocation.getArgument(0);
+//                    return new JwtUtil("12345678901234567890123456789010")
+//                            .decode(token);
+//                });
+        given(authenticationService.parseToken(EXISTED_TOKEN)).willReturn(1L);
+
+        given((authenticationService.parseToken(NOT_EXISTED_TOKEN)))
+                .willThrow(new InvalidAccessTokenException(NOT_EXISTED_TOKEN));
+
+        given((authenticationService.parseToken(null)))
+                .willThrow(new InvalidAccessTokenException(null));
     }
 
     @Test
@@ -131,10 +141,40 @@ class ProductControllerTest {
                 post("/products")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + EXISTED_TOKEN)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
         )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createWithAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + EXISTED_TOKEN)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("쥐돌이")));
+
+        verify(productService).createProduct(any(ProductData.class));
+    }
+
+    @Test
+    void createWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + NOT_EXISTED_TOKEN)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+        )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

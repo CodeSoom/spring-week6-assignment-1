@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
@@ -22,6 +23,12 @@ public class JwtUtil {
   }
 
   public Long decode(String token) {
-    return 1L;
+    Claims body = Jwts.parserBuilder()
+        .setSigningKey(key)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
+
+    return body.get("userId", Long.class);
   }
 }

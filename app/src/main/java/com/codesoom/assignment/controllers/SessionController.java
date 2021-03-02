@@ -1,7 +1,9 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.dto.SessionResponseData;
 import com.codesoom.assignment.dto.UserLoginDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,13 +21,16 @@ import javax.validation.Valid;
 public class SessionController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String login(@RequestBody @Valid UserLoginDto userLoginDto) {
+    public SessionResponseData login(@RequestBody @Valid UserLoginDto userLoginDto) {
         User user = userService.validUser(userLoginDto);
-        //TODO 존재하면 JWT
+        String accessToken = authenticationService.login(user);
 
-        return "";
+        return SessionResponseData.builder()
+                .accessToken(accessToken)
+                .build();
     }
 }

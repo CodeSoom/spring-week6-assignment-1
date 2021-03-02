@@ -25,6 +25,7 @@ public class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@Valid @RequestBody AuthenticationRequestDto requestDto) {
-        return authenticationService.authenticate(requestDto);
+        String token = authenticationService.authenticate(requestDto.getEmail(), requestDto.getPassword());
+        return new SessionResponseData(token);
     }
 }

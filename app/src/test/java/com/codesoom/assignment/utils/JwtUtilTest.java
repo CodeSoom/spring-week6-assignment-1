@@ -23,4 +23,9 @@ class JwtUtilTest {
 
         assertThat(accessToken).isEqualTo(accessTokenValue);
     }
+
+    @Test
+    void decode() {
+        jwtUtil.decode(accessTokenValue);
+    }
 }

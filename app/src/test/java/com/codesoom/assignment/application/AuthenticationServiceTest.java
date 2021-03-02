@@ -63,17 +63,20 @@ class AuthenticationServiceTest {
     }
 
     @DisplayName("login 메소드에 유효하지 않은 회원 정보가 주어진다면 '회원 인증에 실패했습니다' 라는 예외를 던진다.")
-    @ParameterizedTest(name = "{index} {2}")
+    @ParameterizedTest(name = "{index} {3}")
     @MethodSource("provideInvalidUser")
     void loginWithInvalidUserLoginData(
             UserLoginData invalidUserLoginData,
             Optional<User> invalidUser,
+            String errorKeyword,
             String representation) {
         given(userRepository.findByEmail(invalidUserLoginData.getEmail()))
                 .willReturn(invalidUser);
 
-        assertThrows(UserAuthenticationFailException.class,
+        UserAuthenticationFailException exception = assertThrows(UserAuthenticationFailException.class,
                 () -> authenticationService.login(invalidUserLoginData));
+
+        assertThat(exception.getMessage()).contains(errorKeyword);
     }
 
     private static Stream<Arguments> provideInvalidUser() {
@@ -97,16 +100,19 @@ class AuthenticationServiceTest {
                 Arguments.of(
                         userLoginDataWithNotExistingEmail,
                         Optional.empty(),
+                        "이메일",
                         "이메일이 존재하지 않을 경우"
                 ),
                 Arguments.of(
                         userLoginDataWithWrongPassword,
                         Optional.of(user),
+                        "비밀번호",
                         "비밀번호가 일치하지 않을 경우"
                 ),
                 Arguments.of(
                         userLoginData,
                         Optional.of(deletedUser),
+                        "삭제된",
                         "삭제된 회원일 경우"
                 )
         );

@@ -32,7 +32,7 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserAuthenticationFailException.class)
-    public ErrorResponse handleUserAuthenticationFailException(UserAuthenticationFailException e) {
-        return new ErrorResponse(e.getMessage());
+    public ErrorResponse handleUserAuthenticationFailException() {
+        return new ErrorResponse("회원 인증에 실패하였습니다.");
     }
 }

@@ -25,10 +25,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String VALID_TOKEN
+            = "eyJhbGciOiJIUzI1NiJ9."
+            + "eyJ1c2VySWQiOjF9."
+            + "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+
+    private static final String INVALID_TOKEN
+            = "eyJhbGciOiJIUzI1NiJ9."
+            + "eyJ1c2VySWQiOjF9."
+            + "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGG0";
 
     @Autowired
     private MockMvc mockMvc;
@@ -97,6 +102,21 @@ class ProductControllerTest {
     void deatilWithNotExsitedProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createWithAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                            "\"price\":5000}")
+                .header("Authorization", "Bearer " + VALID_TOKEN)
+
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("쥐돌이")));
     }
 
     @Test

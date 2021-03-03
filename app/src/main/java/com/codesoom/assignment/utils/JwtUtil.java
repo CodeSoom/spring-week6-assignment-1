@@ -7,6 +7,9 @@ import java.security.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * JWT Token 발급/해독을 담당.
+ */
 @Component
 public class JwtUtil {
     private final Key key;
@@ -15,6 +18,12 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * 주어진 유저 id로 JWT 토큰을 발급하여 반환합니다.
+     *
+     * @param userId 유저 id
+     * @return JWT 토큰
+     */
     public String encode(Long userId) {
         return Jwts.builder()
                 .claim("userId", userId)
@@ -22,6 +31,12 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * 주어진 JTW 토큰을 해독하여 유저 id를 반환합니다.
+     *
+     * @param token JTW Token
+     * @return 유저 id
+     */
     public Long decode(String token) {
         Claims body = Jwts.parserBuilder()
                 .setSigningKey(key)

@@ -36,7 +36,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 인증 토큰을 생성한다
+     * 인증 토큰을 생성한다.
      *
      * @param userId 사용자 id
      * @return 인증 토큰
@@ -45,6 +45,12 @@ public class AuthenticationService {
         return jwtTokenProvider.createToken(userId);
     }
 
+    /**
+     * 토큰을 풀어 토큰 정보를 확인합니다.
+     *
+     * @param token 인증된 토큰
+     * @return 토큰 정보
+     */
     public Claims decode(String token) {
         return jwtTokenProvider.decode(token);
     }

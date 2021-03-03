@@ -22,6 +22,12 @@ import javax.validation.Valid;
 public class SessionController {
     private final AuthenticationService authenticationService;
 
+    /**
+     * 로그인 처리를 합니다.
+     *
+     * @param requestDto 사용자 인증정보
+     * @return 로그인 응답 정보
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@Valid @RequestBody AuthenticationRequestDto requestDto) {

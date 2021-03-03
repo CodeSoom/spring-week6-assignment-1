@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
+import com.codesoom.assignment.dto.UserLoginData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +19,13 @@ public class SessionController {
         this.authenticationService = authenticationService;
     }
 
+    private UserLoginData userLoginData;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login() {
 
-        String accessToken = authenticationService.login();
+        String accessToken = authenticationService.login(userLoginData);
 
         return SessionResponseData.builder()
                 .accessToken(accessToken)

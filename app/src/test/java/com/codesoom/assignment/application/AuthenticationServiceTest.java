@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,8 @@ class AuthenticationServiceTest {
 
     private AuthenticationService authenticationService;
 
+    private UserLoginData userLoginData;
+
     @BeforeEach
     void setUp() {
         JwtUtil jwtUtil = new JwtUtil(SECRET);
@@ -33,7 +36,7 @@ class AuthenticationServiceTest {
 
     @Test
     void login() {
-        String accessToken = authenticationService.login();
+        String accessToken = authenticationService.login(userLoginData);
 
         assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }

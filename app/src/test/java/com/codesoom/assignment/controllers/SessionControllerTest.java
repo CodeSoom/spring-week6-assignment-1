@@ -1,7 +1,10 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.dto.UserLoginData;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,9 +26,11 @@ class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
+    private UserLoginData userLoginData;
+
     @BeforeEach
     void setup() {
-        given(authenticationService.login()).willReturn("a.b.c");
+        given(authenticationService.login(userLoginData)).willReturn("a.b.c");
     }
 
     @Test

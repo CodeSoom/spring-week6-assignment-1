@@ -37,6 +37,10 @@ public class User {
         deleted = true;
     }
 
+    public Boolean isDestroy() {
+        return deleted;
+    }
+
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);
     }

@@ -82,7 +82,7 @@ class ProductControllerTest {
     @DisplayName("GET /products")
     @Nested
     class Describe_GET_Products {
-        @DisplayName("존재하는 모든 product 집합을 응답한")
+        @DisplayName("존재하는 모든 product 집합을 응답한다")
         @Test
         void it_returns_products_lists() throws Exception {
             mockMvc.perform(

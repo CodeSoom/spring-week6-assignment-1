@@ -42,10 +42,10 @@ class AuthenticationControllerTest {
 
         given(authenticationService.createSession(AuthenticationTestFixture.VALID_EMAIL, AuthenticationTestFixture.VALID_PASSWORD))
                 .willReturn(AuthenticationTestFixture.VALID_TOKEN);
-        given(authenticationService.createSession(AuthenticationTestFixture.VALID_EMAIL, AuthenticationTestFixture.VALID_PASSWORD))
-                .willThrow(new UserEmailNotExistException(AuthenticationTestFixture.VALID_EMAIL));
-        given(authenticationService.createSession(AuthenticationTestFixture.VALID_EMAIL, AuthenticationTestFixture.VALID_PASSWORD))
-                .willThrow(new UserAuthenticationFailedException(AuthenticationTestFixture.VALID_EMAIL));
+        given(authenticationService.createSession(AuthenticationTestFixture.INVALID_EMAIL, AuthenticationTestFixture.VALID_PASSWORD))
+                .willThrow(new UserEmailNotExistException(AuthenticationTestFixture.INVALID_EMAIL));
+        given(authenticationService.createSession(AuthenticationTestFixture.VALID_EMAIL, AuthenticationTestFixture.INVALID_PASSWORD))
+                .willThrow(new UserAuthenticationFailedException(AuthenticationTestFixture.INVALID_PASSWORD));
     }
 
     @Nested
@@ -83,7 +83,7 @@ class AuthenticationControllerTest {
         @Nested
         @DisplayName("존재하지 않는 email이 주어진다면")
         class Context_with_not_exist_email {
-            String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
+            String givenEmail = AuthenticationTestFixture.INVALID_EMAIL;
             String givenPassword = AuthenticationTestFixture.VALID_PASSWORD;
 
             @DisplayName("400 코드를 응답한다")
@@ -103,7 +103,7 @@ class AuthenticationControllerTest {
         @DisplayName("유효하지 않은 password가 주어진다면")
         class Context_with_invalid_password {
             String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
-            String givenPassword = AuthenticationTestFixture.VALID_PASSWORD;
+            String givenPassword = AuthenticationTestFixture.INVALID_PASSWORD;
 
             @DisplayName("400 코드를 응답한다")
             @Test

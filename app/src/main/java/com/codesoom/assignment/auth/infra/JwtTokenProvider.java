@@ -1,6 +1,7 @@
 package com.codesoom.assignment.auth.infra;
 
 import com.codesoom.assignment.auth.application.InvalidTokenException;
+import com.codesoom.assignment.global.utils.TimeUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -18,11 +20,18 @@ import java.util.Date;
 public class JwtTokenProvider {
     private final Key key;
 
-    @Value("${jwt.expire-length}")
     private long validityInMilliseconds;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
+    private LocalDateTime time;
+
+    private TimeUtil timeUtil;
+
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret,
+                            @Value("${jwt.expire-length}") long validityInMilliseconds) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.validityInMilliseconds = validityInMilliseconds;
+        this.time = LocalDateTime.now();
+        this.timeUtil = new TimeUtil();
     }
 
     /**
@@ -32,14 +41,15 @@ public class JwtTokenProvider {
      * @return 사용자 JWT 토큰
      */
     public String createToken(Long userId) {
-        Date now = new Date();
+        Date now = timeUtil.convertLocalDateTime(time);
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
                 .claim("userId", userId)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(key).compact();
+                .signWith(key)
+                .compact();
     }
 
     /**

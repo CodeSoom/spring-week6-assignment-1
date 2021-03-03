@@ -1,9 +1,9 @@
 package com.codesoom.assignment.product.application;
 
+import com.codesoom.assignment.global.config.AppConfig;
 import com.codesoom.assignment.product.domain.Product;
 import com.codesoom.assignment.product.domain.ProductRepository;
 import com.codesoom.assignment.product.dto.ProductData;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,12 +21,15 @@ import static org.mockito.Mockito.verify;
 class ProductServiceTest {
     private ProductService productService;
 
+    private AppConfig appConfig;
+
     private final ProductRepository productRepository =
             mock(ProductRepository.class);
 
     @BeforeEach
     void setUp() {
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        appConfig = new AppConfig();
+        Mapper mapper = appConfig.dozerMapper();
 
         productService = new ProductService(mapper, productRepository);
 

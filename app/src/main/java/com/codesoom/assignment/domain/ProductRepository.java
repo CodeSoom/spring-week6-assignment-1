@@ -3,6 +3,9 @@ package com.codesoom.assignment.domain;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 상품 저장소.
+ */
 public interface ProductRepository {
     List<Product> findAll();
 

@@ -6,6 +6,7 @@ import com.codesoom.assignment.user.application.UserEmailDuplicationException;
 import com.codesoom.assignment.user.application.UserEmailNotFoundException;
 import com.codesoom.assignment.user.application.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,5 +47,10 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
     public void handleInvalidAccessToken() {
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public void handleMissingRequestHeaderException() {
     }
 }

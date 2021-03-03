@@ -42,7 +42,6 @@ public class ControllerErrorAdvice {
         return new ErrorResponse(e.getMessage());
     }
 
-
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingRequestHeaderException.class)
     void handleMissingRequestHeader() {

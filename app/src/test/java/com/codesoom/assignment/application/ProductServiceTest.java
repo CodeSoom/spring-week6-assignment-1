@@ -5,7 +5,6 @@ import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductCreateData;
 import com.codesoom.assignment.dto.ProductResultData;
 import com.codesoom.assignment.dto.ProductUpdateData;
-import com.codesoom.assignment.errors.ProductBadRequestException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
@@ -98,8 +97,8 @@ class ProductServiceTest {
             void itReturnsListOfProducts() {
                 given(productRepository.findAll()).willReturn(products);
 
-                List<ProductResultData> lists = productService.getProducts();
-                assertThat(lists).containsExactly(resultProductOne, resultProductTwo);
+                List<ProductResultData> list = productService.getProducts();
+                assertThat(list).containsExactly(resultProductOne, resultProductTwo);
 
                 verify(productRepository).findAll();
             }
@@ -113,9 +112,9 @@ class ProductServiceTest {
             void itReturnsEmptyListOfProducts() {
                 given(productRepository.findAll()).willReturn(List.of());
 
-                List<ProductResultData> lists = productService.getProducts();
+                List<ProductResultData> list = productService.getProducts();
 
-                assertThat(lists).isEmpty();
+                assertThat(list).isEmpty();
 
                 verify(productRepository).findAll();
             }
@@ -200,78 +199,6 @@ class ProductServiceTest {
                         .isEqualTo(productCreateData.getImageUrl());
 
                 verify(productRepository).save(any(Product.class));
-            }
-        }
-
-        @Nested
-        @DisplayName("만약 이름값이 비어있는 상품이 주어진다면")
-        class Content_WithProductWithOutName {
-            private ProductCreateData productCreateData;
-
-            @BeforeEach
-            void setUp() {
-                productCreateData = ProductCreateData.builder()
-                        .name("")
-                        .maker(CREATED_PRODUCT_MAKER)
-                        .price(CREATED_PRODUCT_PRICE)
-                        .imageUrl(CREATED_PRODUCT_IMAGEURL)
-                        .build();
-            }
-
-            @Test
-            @DisplayName("이름값이 필수라는 메세지를 응답한다")
-            void itReturnsBadRequestMessage() {
-                assertThatThrownBy(() -> productService.createProduct(productCreateData))
-                        .isInstanceOf(ProductBadRequestException.class)
-                        .hasMessageContaining("name 값은 필수입니다");
-            }
-        }
-
-        @Nested
-        @DisplayName("만약 메이커값이 비어있는 상품이 주어진다면")
-        class Content_WithProductWithOutMaker {
-            private ProductCreateData productCreateData;
-
-            @BeforeEach
-            void setUp() {
-                productCreateData = ProductCreateData.builder()
-                        .name(CREATED_PRODUCT_NAME)
-                        .maker("")
-                        .price(CREATED_PRODUCT_PRICE)
-                        .imageUrl(CREATED_PRODUCT_IMAGEURL)
-                        .build();
-            }
-
-            @Test
-            @DisplayName("메이커값이 필수라는 메세지를 응답한다")
-            void itReturnsBadRequestMessage() {
-                assertThatThrownBy(() -> productService.createProduct(productCreateData))
-                        .isInstanceOf(ProductBadRequestException.class)
-                        .hasMessageContaining("maker 값은 필수입니다");
-            }
-        }
-
-        @Nested
-        @DisplayName("만약 가격값이 비어있는 상품이 주어진다면")
-        class Content_WithProductWithOutPrice {
-            private ProductCreateData productCreateData;
-
-            @BeforeEach
-            void setUp() {
-                productCreateData = ProductCreateData.builder()
-                        .name(CREATED_PRODUCT_NAME)
-                        .maker(CREATED_PRODUCT_MAKER)
-                        .price(null)
-                        .imageUrl(CREATED_PRODUCT_IMAGEURL)
-                        .build();
-            }
-
-            @Test
-            @DisplayName("가격값이 필수라는 메세지를 응답한다")
-            void itReturnsBadRequestMessage() {
-                assertThatThrownBy(() -> productService.createProduct(productCreateData))
-                        .isInstanceOf(ProductBadRequestException.class)
-                        .hasMessageContaining("price 값은 필수입니다");
             }
         }
     }

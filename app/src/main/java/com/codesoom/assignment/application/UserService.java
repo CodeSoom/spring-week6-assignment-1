@@ -11,6 +11,8 @@ import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 사용자에 대한 요청을 수행한다.
@@ -43,9 +45,18 @@ public class UserService {
      * @throws UserNotFoundException 만약
      *         {@code id}에 해당되는 사용자가 저장되어 있지 않은 경우
      */
-    public User getUser(Long id) {
-        return userRepository.findById(id)
+    public UserResultData getUser(Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+        return getUserResultData(user);
+    }
+
+
+    public List<UserResultData> getUsers() {
+        List<User> users =  userRepository.findAll();
+        return users.stream()
+                .map(this::getUserResultData)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -76,11 +87,11 @@ public class UserService {
      *         {@code id}에 해당되는 사용자가 저장되어 있지 않은 경우
      */
     public UserResultData updateUser(Long id, UserUpdateData userUpdateData) {
-        User user = getUser(id);
+        UserResultData userResultData = getUser(id);
 
-        mapper.map(userUpdateData, user);
+        mapper.map(userUpdateData, userResultData);
 
-        return getUserResultData(user);
+        return userResultData;
     }
 
     /**
@@ -92,10 +103,17 @@ public class UserService {
      *         {@code id}에 해당되는 사용자가 저장되어 있지 않은 경우
      */
     public UserResultData deleteUser(Long id) {
-        User user = getUser(id);
+        UserResultData userResultData = getUser(id);
 
-        userRepository.delete(user);
+        User deleteUser = User.builder()
+                .id(userResultData.getId())
+                .name(userResultData.getName())
+                .email(userResultData.getEmail())
+                .password(userResultData.getPassword())
+                .build();
 
-        return getUserResultData(user);
+        userRepository.delete(deleteUser);
+
+        return userResultData;
     }
 }

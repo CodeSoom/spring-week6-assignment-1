@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,9 +31,6 @@ class UserServiceTest {
     private UserService userService;
     private UserRepository userRepository;
 
-    private final Long EXISTED_ID = 1L;
-    private final Long NOT_EXISTED_ID = 2L;
-
     private final String SETUP_USER_NAME = "setUpName";
     private final String EXISTED_USER_EMAIL = "setUpEmail";
     private final String SETUP_USER_PASSWORD = "setUpPassword";
@@ -44,8 +42,17 @@ class UserServiceTest {
     private final String UPDATE_USER_NAME = "updatedName";
     private final String UPDATE_USER_PASSWORD = "updatedPassword";
 
+    private final Long EXISTED_ID = 1L;
+    private final Long CREATE_ID = 2L;
+    private final Long NOT_EXISTED_ID = 2L;
+
     private List<User> users;
     private User setUpUser;
+    private User createUser;
+
+    private List<UserResultData> resultUsers;
+    private UserResultData setUpUserResultData;
+    private UserResultData createUserResultData;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +67,54 @@ class UserServiceTest {
                 .password(SETUP_USER_PASSWORD)
                 .build();
 
-        users = List.of(setUpUser);
+        createUser = User.builder()
+                .id(CREATE_ID)
+                .name(CREATE_USER_NAME)
+                .email(CREATE_USER_EMAIL)
+                .password(CREATE_USER_PASSWORD)
+                .build();
+
+        users = Arrays.asList(setUpUser, createUser);
+
+        setUpUserResultData = userService.getUserResultData(setUpUser);
+        createUserResultData = userService.getUserResultData(createUser);
+        resultUsers = Arrays.asList(setUpUserResultData, createUserResultData);
+    }
+
+
+    @Nested
+    @DisplayName("getUsers 메서드는")
+    class Describe_getUsers {
+        @Nested
+        @DisplayName("만약 사용자 목록이 존재한다면")
+        class Context_ExistsListOfUsers {
+            @Test
+            @DisplayName("저장되어 있는 사용자 목록을 리턴한다")
+            void itReturnListOfUsers() {
+                given(userRepository.findAll()).willReturn(users);
+
+                List<UserResultData> list = userService.getUsers();
+                assertThat(list).containsExactly(setUpUserResultData, createUserResultData);
+
+                verify(userRepository).findAll();
+            }
+        }
+
+        @Nested
+        @DisplayName("만약 사용자 목록이 존재하지 않는다면")
+        class Context_NotExistsListsOfUsers {
+            @Test
+            @DisplayName("비어있는 사용자 목록을 리턴한다")
+            void itReturnsEmptyListOfUsers() {
+                given(userRepository.findAll()).willReturn(List.of());
+
+                List<UserResultData> list = userService.getUsers();
+
+                assertThat(list).isEmpty();;
+
+                verify(userRepository).findAll();
+            }
+        }
     }
 
     @Nested
@@ -76,9 +130,9 @@ class UserServiceTest {
             void itReturnsUser() {
                 given(userRepository.findById(givenExistedId)).willReturn(Optional.of(setUpUser));
 
-                User user = userService.getUser(givenExistedId);
+                UserResultData userResultData = userService.getUser(givenExistedId);
 
-                assertThat(user.getId()).isEqualTo(setUpUser.getId());
+                assertThat(userResultData.getId()).isEqualTo(setUpUser.getId());
 
                 verify(userRepository).findById(givenExistedId);
             }
@@ -110,7 +164,6 @@ class UserServiceTest {
         @DisplayName("만약 사용자가 주어진다면")
         class Context_WithUser {
             private UserCreateData userCreateData;
-            private User savedUser;
 
             @BeforeEach
             void setUp() {
@@ -119,14 +172,12 @@ class UserServiceTest {
                         .email(CREATE_USER_EMAIL)
                         .password(CREATE_USER_PASSWORD)
                         .build();
-
-                savedUser = mapper.map(userCreateData, User.class);
             }
 
             @Test
             @DisplayName("주어진 사용자를 저장하고 저장된 사용자를 리턴한다")
             void itSavesUserAndReturnsSavedUser() {
-                given(userRepository.save(any(User.class))).willReturn(savedUser);
+                given(userRepository.save(any(User.class))).willReturn(createUser);
 
                 UserResultData createdUser = userService.createUser(userCreateData);
 
@@ -191,9 +242,9 @@ class UserServiceTest {
                 UserResultData updatedUser = userService.updateUser(givenExistedId, userUpdateData);
 
                 assertThat(updatedUser.getId()).isEqualTo(givenExistedId);
-                assertThat(updatedUser.getName()).isEqualTo(setUpUser.getName());
+                assertThat(updatedUser.getName()).isEqualTo(userUpdateData.getName());
                 assertThat(updatedUser.getEmail()).isEqualTo(EXISTED_USER_EMAIL);
-                assertThat(updatedUser.getPassword()).isEqualTo(setUpUser.getPassword());
+                assertThat(updatedUser.getPassword()).isEqualTo(userUpdateData.getPassword());
                 
                 verify(userRepository).findById(givenExistedId);
             }

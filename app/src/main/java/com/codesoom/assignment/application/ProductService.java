@@ -45,8 +45,8 @@ public class ProductService {
      * @return 저장되어 있는 전체 상품 목록
      */
     public List<ProductResultData> getProducts() {
-        List<Product> product = productRepository.findAll();
-        return product.stream()
+        List<Product> products = productRepository.findAll();
+        return products.stream()
                 .map(this::getProductResultData)
                 .collect(Collectors.toList());
     }
@@ -91,11 +91,11 @@ public class ProductService {
      *         @code id}에 해당되는 상품이 저장되어 있지 않은 경우
      */
     public ProductResultData updateProduct(Long id, ProductUpdateData productUpdateData) {
-        ProductResultData product = getProduct(id);
+        ProductResultData productResultData = getProduct(id);
 
-        mapper.map(productUpdateData, product);
+        mapper.map(productUpdateData, productResultData);
 
-        return product;
+        return productResultData;
     }
 
     /**

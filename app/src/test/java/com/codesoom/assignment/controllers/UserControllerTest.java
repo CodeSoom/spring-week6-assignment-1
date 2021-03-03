@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,8 +47,14 @@ class UserControllerTest {
     @MockBean
     UserService userService;
 
+    private Mapper mapper;
+
     @Autowired
     private WebApplicationContext wac;
+
+    private final String SETUP_USER_NAME = "setUpName";
+    private final String SETUP_USER_EMAIL = "setUpdEmail";
+    private final String SETUP_USER_PASSWORD = "setUpPassword";
 
     private final String CREATE_USER_NAME = "createdName";
     private final String CREATE_USER_EMAIL = "createdEmail";
@@ -57,12 +64,26 @@ class UserControllerTest {
     private final String UPDATE_USER_EMAIL = "updatedEmail";
     private final String UPDATE_USER_PASSWORD = "updatedPassword";
 
-    private final Mapper mapper = DozerBeanMapperBuilder.buildDefault();
     private final Long EXISTED_ID = 1L;
+    private final Long CREATED_ID = 2L;
     private final Long NOT_EXISTED_ID = 100L;
 
     private List<User> users;
     private User setUpUser;
+    private User createUser;
+
+    private List<UserResultData> resultUsers;
+    private UserResultData setupUserResult;
+    private UserResultData createUserResult;
+
+    public UserResultData getUserResultData(User user) {
+        return UserResultData.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .build();
+    }
 
     @BeforeEach
     void setUp() {
@@ -71,14 +92,85 @@ class UserControllerTest {
             chain.doFilter(request, response);
         })).build();
 
+        mapper = DozerBeanMapperBuilder.buildDefault();
+
         setUpUser = User.builder()
                         .id(EXISTED_ID)
-                        .name(CREATE_USER_NAME)
-                        .email(CREATE_USER_EMAIL)
-                        .password(CREATE_USER_PASSWORD)
+                        .name(SETUP_USER_NAME)
+                        .email(SETUP_USER_EMAIL)
+                        .password(SETUP_USER_PASSWORD)
                         .build();
 
-        users = List.of(setUpUser);
+        createUser = User.builder()
+                .id(CREATED_ID)
+                .name(CREATE_USER_NAME)
+                .email(CREATE_USER_EMAIL)
+                .password(CREATE_USER_PASSWORD)
+                .build();
+
+        users = List.of(setUpUser, createUser);
+
+        setupUserResult = getUserResultData(setUpUser);
+        createUserResult = getUserResultData(createUser);
+        resultUsers = List.of(setupUserResult, createUserResult);
+    }
+
+    @Nested
+    @DisplayName("list 메서드는")
+    class Describe_lists {
+        @Test
+        @DisplayName("전체 사용자 목록과 OK를 리턴한다")
+        void itReturnsListOfUsersAndOKHttpStatus() throws Exception {
+            given(userService.getUsers()).willReturn(resultUsers);
+
+            mockMvc.perform(get("/users"))
+                    .andDo(print())
+                    .andExpect(content().string(containsString("\"id\":1")))
+                    .andExpect(content().string(containsString("\"id\":2")))
+                    .andExpect(status().isOk());
+
+            verify(userService).getUsers();
+        }
+    }
+
+    @Nested
+    @DisplayName("detail 메서드는")
+    class Describe_detail {
+        @Nested
+        @DisplayName("만약 저장되어 있는 사용자의 아이디가 주어진다면")
+        class Context_WithExistedId {
+            private final Long givenExistedId = EXISTED_ID;
+
+            @Test
+            @DisplayName("주어진 아이디에 해당하는 사용자와 OK를 리턴한다")
+            void itReturnsUserAndOkHttpStatus() throws Exception {
+                given(userService.getUser(givenExistedId)).willReturn(setupUserResult);
+
+                mockMvc.perform(get("/users/"+givenExistedId))
+                        .andDo(print())
+                        .andExpect(content().string(containsString("{\"id\":1")))
+                        .andExpect(status().isOk());
+            }
+        }
+
+        @Nested
+        @DisplayName("만약 저장되어 있지 않은 사용자의 아이디로 주어진다면")
+        class Context_WithNotExistedId {
+            private final Long givenNotExistedId = NOT_EXISTED_ID;
+
+            @Test
+            @DisplayName("사용자를 찾을 수 없다는 메세지와 NOT_FOUND를 리턴한다")
+            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+                given(userService.getUser(givenNotExistedId))
+                        .willThrow(new UserNotFoundException(givenNotExistedId));
+
+                mockMvc.perform(get("/users/"+givenNotExistedId))
+                        .andExpect(content().string(containsString("User not found")))
+                        .andExpect(status().isNotFound());
+
+                verify(userService).getUser(givenNotExistedId);
+            }
+        }
     }
 
     @Nested

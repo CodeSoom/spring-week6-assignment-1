@@ -1,8 +1,12 @@
 package com.codesoom.assignment.domain;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
+    /** 모든 유저 목록을 리턴한다. */
+    List<User> findAll();
+
     /** 주어진 아이디에 해당하는 사용자를 조회한다. */
     Optional<User> findById(Long id);
 

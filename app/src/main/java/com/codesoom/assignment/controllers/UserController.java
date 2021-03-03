@@ -6,6 +6,7 @@ import com.codesoom.assignment.dto.UserResultData;
 import com.codesoom.assignment.dto.UserUpdateData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 사용자에 대한 요청을 한다.
@@ -26,6 +28,27 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    /**
+     * 전체 사용자 목록을 리턴한다.
+     *
+     * @return 저장되어 있는 전체 사용자 목록
+     */
+    @GetMapping
+    public List<UserResultData> lists() {
+        return userService.getUsers();
+    }
+
+    /**
+     * 주어진 아이디에 햐덩허눈 사용자르 리턴한다.
+     *
+     * @param id - 조회하고자 하는 사용자의 식별자
+     * @return 저장되어 있는 사용자
+     */
+    @GetMapping("/{id}")
+    public UserResultData detail(@PathVariable Long id) {
+        return userService.getUser(id);
     }
 
     /**

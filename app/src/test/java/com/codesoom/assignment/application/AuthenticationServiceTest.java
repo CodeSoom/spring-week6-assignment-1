@@ -40,7 +40,7 @@ class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("encode()")
+    @DisplayName("encode")
     class Describe_encode {
         @Nested
         @DisplayName("user id가 주어졌을 때")
@@ -57,7 +57,7 @@ class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("decode()")
+    @DisplayName("decode")
     class Describe_decode {
         @Nested
         @DisplayName("token이 주어졌을 때")
@@ -74,7 +74,7 @@ class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("createSession()")
+    @DisplayName("createSession")
     class Describe_create_session {
         @Nested
         @DisplayName("유효한 email, password가 주어진다면")

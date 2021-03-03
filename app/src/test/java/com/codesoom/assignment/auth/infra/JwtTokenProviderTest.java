@@ -22,6 +22,8 @@ class JwtTokenProviderTest {
     private static final long EXPIRED_TIME = 300_000;
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MDk2MjgwMCwiZXh" +
             "wIjoxNjQwOTYzMTAwfQ.2siRnBJmRU2JXjZY0CkQMgnCHRJN4Dld4_wG6R7T-HQ";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
     private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
@@ -94,4 +96,15 @@ class JwtTokenProviderTest {
         }
     }
 
+    @Nested
+    @DisplayName("유효하지 않은 토큰이 주어지면")
+    class Context_with_invalid_token {
+
+        @DisplayName("예외를 발생시킨다.")
+        @Test
+        void It_throws_exception() {
+            assertThrows(InvalidTokenException.class,
+                    () -> jwtTokenProvider.decode(INVALID_TOKEN));
+        }
+    }
 }

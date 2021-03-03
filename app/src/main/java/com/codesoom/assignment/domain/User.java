@@ -32,22 +32,20 @@ public class User {
     /** 사용자 비밀번호 */
     private String password;
 
-//    /** 사용자 삭제여부 */
-//    @Builder.Default
-//    private boolean deleted = false;
-//
-//    public void delete() {
-//        this.deleted = true;
-//    }
+    /** 사용자 삭제여부 */
+    private boolean deleted = false;
+
+    public void delete() {
+        this.deleted = true;
+    }
 
     @Builder
-    public User(Long id, String name, String email, String password) {
+    public User(Long id, String name, String email, String password, boolean deleted) {
         this.id = id;
         this.name = name;
-
         this.email = email;
         this.password = password;
-        //this.deleted = false;
+        this.deleted = deleted;
     }
 
 //    public boolean authenticate(String password) {
@@ -57,10 +55,6 @@ public class User {
 //    public void changeWith(User source) {
 //        name = source.name;
 //        password = source.password;
-//    }
-//
-//    public void destroy() {
-//        deleted = true;
 //    }
 
     /** 사용자 정보를 업데이트한다. */

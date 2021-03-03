@@ -34,7 +34,20 @@ public class UserService {
                 .name(user.getName())
                 .email(user.getEmail())
                 .password(user.getPassword())
+                .deleted(user.isDeleted())
                 .build();
+    }
+
+    /**
+     * 전체 사용자 목록을 리턴한다.
+     *
+     * @return 저장되어 있는 전체 사용자 목록
+     */
+    public List<UserResultData> getUsers() {
+        List<User> users =  userRepository.findAll();
+        return users.stream()
+                .map(this::getUserResultData)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -46,17 +59,9 @@ public class UserService {
      *         {@code id}에 해당되는 사용자가 저장되어 있지 않은 경우
      */
     public UserResultData getUser(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         return getUserResultData(user);
-    }
-
-
-    public List<UserResultData> getUsers() {
-        List<User> users =  userRepository.findAll();
-        return users.stream()
-                .map(this::getUserResultData)
-                .collect(Collectors.toList());
     }
 
     /**
@@ -112,8 +117,8 @@ public class UserService {
                 .password(userResultData.getPassword())
                 .build();
 
-        userRepository.delete(deleteUser);
+        deleteUser.delete();
 
-        return userResultData;
+        return getUserResultData(deleteUser);
     }
 }

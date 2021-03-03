@@ -11,7 +11,7 @@ public interface JpaUserRepository
         extends UserRepository, CrudRepository<User, Long> {
     List<User> findAll();
 
-    Optional<User> findById(Long id);
+//    Optional<User> findById(Long id);
 
     boolean existsByEmail(String email);
 
@@ -19,7 +19,7 @@ public interface JpaUserRepository
 
     void delete(User user);
 
-//    Optional<User> findByIdAndDeletedIsFalse(Long id);
-//
+    Optional<User> findByIdAndDeletedIsFalse(Long id);
+
 //    Optional<User> findByEmail(String email);
 }

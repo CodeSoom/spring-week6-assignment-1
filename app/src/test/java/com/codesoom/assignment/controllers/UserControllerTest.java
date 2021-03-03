@@ -61,11 +61,11 @@ class UserControllerTest {
     private final String CREATE_USER_PASSWORD = "createdPassword";
 
     private final String UPDATE_USER_NAME = "updatedName";
-    private final String UPDATE_USER_EMAIL = "updatedEmail";
     private final String UPDATE_USER_PASSWORD = "updatedPassword";
 
     private final Long EXISTED_ID = 1L;
     private final Long CREATED_ID = 2L;
+    private final Long DELETE_ID = 1L;
     private final Long NOT_EXISTED_ID = 100L;
 
     private List<User> users;
@@ -82,6 +82,7 @@ class UserControllerTest {
                 .name(user.getName())
                 .email(user.getEmail())
                 .password(user.getPassword())
+                .deleted(user.isDeleted())
                 .build();
     }
 
@@ -326,14 +327,22 @@ class UserControllerTest {
         @DisplayName("만약 저장되어 있는 사용자의 아이디가 주어진다면")
         class Context_WithExistedId {
             private final Long givenExistedId = EXISTED_ID;
+            private UserResultData userResultData;
+
+            @BeforeEach
+            void setUp() {
+                setUpUser.delete();
+                userResultData = getUserResultData(setUpUser);
+            }
 
             @Test
             @DisplayName("주어진 아이디에 해당하는 사용자를 삭제하고 삭제된 사용자와 NO_CONTENT를 리턴한다")
             void itDeletesUserAndReturnsDeletedUserAndNO_CONTENTHttpStatus() throws Exception {
-                given(userService.deleteUser(givenExistedId)).willReturn(mapper.map(setUpUser, UserResultData.class));
+                given(userService.deleteUser(givenExistedId)).willReturn(userResultData);
 
                 mockMvc.perform(delete("/users/" + givenExistedId))
                         .andDo(print())
+                        .andExpect(content().string(containsString("\"deleted\":true")))
                         .andExpect(status().isNoContent());
 
                 verify(userService).deleteUser(givenExistedId);
@@ -357,6 +366,31 @@ class UserControllerTest {
                         .andExpect(status().isNotFound());
 
                 verify(userService).deleteUser(givenNotExistedId);
+            }
+        }
+
+        @Nested
+        @DisplayName("만약 이미 삭제된 사용자의 아이디가 주어진다면")
+        class Context_WithDeletedId {
+            private final Long givenDeletedId = DELETE_ID;
+
+            @BeforeEach
+            void setUp() {
+                setUpUser.delete();
+            }
+
+            @Test
+            @DisplayName("사용자를 찾을 수 없다는 메세지와 NOT_FOUND를 리턴한다")
+            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+                given(userService.deleteUser(givenDeletedId))
+                        .willThrow(new UserNotFoundException(givenDeletedId));
+
+                mockMvc.perform(delete("/users/"+DELETE_ID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(content().string(containsString("User not found")))
+                        .andExpect(status().isNotFound());
+
+                verify(userService).deleteUser(givenDeletedId);
             }
         }
     }

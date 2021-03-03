@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * HTTP 요청 에러 핸들러.
+ */
 @ResponseBody
 @ControllerAdvice
 public class ControllerErrorAdvice {

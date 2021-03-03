@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+/**
+ * 상품에 대한 HTTP 요청 핸들러.
+ *
+ * @see ProductService
+ * @see Product
+ */
 @RestController
 @RequestMapping("/products")
 @CrossOrigin
@@ -28,16 +34,33 @@ public class ProductController {
         this.productService = productService;
     }
 
+    /**
+     * 저장된 모든 상품의 집합을 응답합니다.
+     *
+     * @return 저장된 모든 상품 집합
+     */
     @GetMapping
     public List<Product> list() {
         return productService.getProducts();
     }
 
+    /**
+     * 주어진 id와 일치하는 상품을 응답합니다.
+     *
+     * @param id 상품 식별자
+     * @return 주어진 id와 일치하는 상품
+     */
     @GetMapping("{id}")
     public Product detail(@PathVariable Long id) {
         return productService.getProduct(id);
     }
 
+    /**
+     * 주어진 상품을 저장하고 저장된 상품을 응답합니다.
+     *
+     * @param productData 저장하고자 하는 상품 정보
+     * @return 저장된 상품
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
@@ -46,6 +69,13 @@ public class ProductController {
         return productService.createProduct(productData);
     }
 
+    /**
+     * 주어진 id와 일치하는 상품을 수정하고 수정된 상품을 응답합니다.
+     *
+     * @param id          상품 식별자
+     * @param productData 수정하고자 하는 상품
+     * @return 수정된 상품
+     */
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
@@ -54,6 +84,11 @@ public class ProductController {
         return productService.updateProduct(id, productData);
     }
 
+    /**
+     * 주어진 id와 일치하는 상품을 삭제합니다.
+     *
+     * @param id 상품 식별자
+     */
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(

@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+/**
+ * 유저 인증에 대한 HTTP 요청 핸들러.
+ */
 @RestController
 @RequestMapping("/session")
 public class AuthenticationController {
@@ -21,6 +24,12 @@ public class AuthenticationController {
         this.authService = authService;
     }
 
+    /**
+     * 주어진 유저 로그인 정보로 인증을 시도하고 토큰을 응답합니다.
+     *
+     * @param loginData 유저 로그인 정보
+     * @return 토큰
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     TokenResponse login(@RequestBody @Valid UserLoginData loginData) {

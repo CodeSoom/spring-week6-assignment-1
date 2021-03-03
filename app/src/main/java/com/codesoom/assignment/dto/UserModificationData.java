@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * 유저 정보 변경 요청.
+ */
 @Getter
 @Builder
 @NoArgsConstructor

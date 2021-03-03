@@ -10,6 +10,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * 유저 로그인 요청.
+ */
 @Getter
 @Builder
 @NoArgsConstructor

@@ -95,7 +95,7 @@ class ProductControllerTest {
                 .build();
 
         given(authenticationService.parseToken(validToken))
-                .willReturn(1L);
+                .willReturn(existingId);
     }
 
     @AfterEach
@@ -118,7 +118,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("모든 상품 목록과 상태코드 200을 응답한다")
+            @DisplayName("모든 상품 목록과 상태코드 200 OK 를 응답한다")
             void it_responds_all_product_list_and_status_code_200() throws Exception {
                 mockMvc.perform(get("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +138,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("비어있는 상품 목록과 상태코드 200을 응답한다")
+            @DisplayName("비어있는 상품 목록과 상태코드 200 OK 를 응답한다")
             void it_responds_empty_product_list_and_status_code_200() throws Exception {
                 mockMvc.perform(get("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -158,7 +158,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("찾은 상품과 상태코드 200을 응답한다")
+            @DisplayName("찾은 상품과 상태코드 200 OK 를 응답한다")
             void it_responds_the_found_product_and_status_code_200() throws Exception {
                 mockMvc.perform(get("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +182,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("에러메시지와 상태코드 404를 응답한다")
+            @DisplayName("에러메시지와 상태코드 404 Not Found 를 응답한다")
             void it_responds_the_error_message_and_status_code_404() throws Exception {
                 mockMvc.perform(get("/products/{id}", notExistingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -207,7 +207,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("생성된 상품과 상태코드 201을 응답한다.")
+            @DisplayName("생성된 상품과 상태코드 201 Created 를 응답한다.")
             void it_responds_the_created_product_and_status_code_201() throws Exception {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -227,7 +227,7 @@ class ProductControllerTest {
         @DisplayName("올바르지 않은 상품 정보가 주어진다면")
         class Context_with_an_invalid_product {
             @Test
-            @DisplayName("상태코드 400을 응답한다.")
+            @DisplayName("상태코드 400 Bad Request 를 응답한다.")
             void it_responds_status_code_400() throws Exception {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -242,7 +242,7 @@ class ProductControllerTest {
         @DisplayName("액세스 토큰이 주어지지 않는다면")
         class Context_without_access_token {
             @Test
-            @DisplayName("상태코드 401을 응답한다.")
+            @DisplayName("상태코드 401 Unauthorized 를 응답한다.")
             void it_responds_status_code_401() throws Exception {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -262,7 +262,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("상태코드 401을 응답한다.")
+            @DisplayName("상태코드 401 Unauthorized 를 응답한다.")
             void it_responds_status_code_401() throws Exception {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -287,7 +287,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("수정된 상품과 상태코드 200을 응답한다.")
+            @DisplayName("수정된 상품과 상태코드 200 OK 를 응답한다.")
             void it_responds_the_updated_product_and_status_code_200() throws Exception {
                 mockMvc.perform(patch("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -313,7 +313,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("에러메시지와 상태코드 404를 응답한다.")
+            @DisplayName("에러메시지와 상태코드 404 Not Found 를 응답한다.")
             void it_responds_the_error_message_and_status_code_404() throws Exception {
                 mockMvc.perform(patch("/products/{id}", notExistingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -330,7 +330,7 @@ class ProductControllerTest {
         @DisplayName("올바르지 않은 상품 정보가 주어진다면")
         class Context_with_an_invalid_product {
             @Test
-            @DisplayName("상태코드 400을 응답한다.")
+            @DisplayName("상태코드 400 Bad Request 를 응답한다.")
             void it_responds_status_code_400() throws Exception {
                 mockMvc.perform(patch("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -345,7 +345,7 @@ class ProductControllerTest {
         @DisplayName("액세스 토큰이 주어지지 않는다면")
         class Context_without_access_token {
             @Test
-            @DisplayName("상태코드 401을 응답한다.")
+            @DisplayName("상태코드 401 Unauthorized 를 응답한다.")
             void it_responds_status_code_401() throws Exception {
                 mockMvc.perform(patch("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -365,7 +365,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("상태코드 401을 응답한다.")
+            @DisplayName("상태코드 401 Unauthorized 를 응답한다.")
             void it_responds_status_code_401() throws Exception {
                 mockMvc.perform(patch("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -384,7 +384,7 @@ class ProductControllerTest {
         @DisplayName("존재하는 상품 id가 주어진다면")
         class Context_with_an_existing_product_id {
             @Test
-            @DisplayName("상태코드 204을 응답한다")
+            @DisplayName("상태코드 204 No Content 를 응답한다")
             void it_responds_status_code_204() throws Exception {
                 mockMvc.perform(delete("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -404,7 +404,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("에러메시지와 상태코드 404를 응답한다.")
+            @DisplayName("에러메시지와 상태코드 404 Not Found 를 응답한다.")
             void it_responds_the_error_message_and_status_code_404() throws Exception {
                 mockMvc.perform(delete("/products/{id}", notExistingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -420,7 +420,7 @@ class ProductControllerTest {
         @DisplayName("액세스 토큰이 주어지지 않는다면")
         class Context_without_access_token {
             @Test
-            @DisplayName("상태코드 401을 응답한다.")
+            @DisplayName("상태코드 401 Unauthorized 를 응답한다.")
             void it_responds_status_code_401() throws Exception {
                 mockMvc.perform(delete("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -439,7 +439,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("상태코드 401을 응답한다.")
+            @DisplayName("상태코드 401 Unauthorized 를 응답한다.")
             void it_responds_status_code_401() throws Exception {
                 mockMvc.perform(delete("/products/{id}", existingId)
                         .contentType(MediaType.APPLICATION_JSON)

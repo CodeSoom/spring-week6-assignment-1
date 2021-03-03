@@ -1,14 +1,16 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.UserNotFoundException;
+import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.UserModificationData;
-import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.dto.UserCreateRequestDto;
+import com.codesoom.assignment.dto.UserUpdateRequestDto;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -21,146 +23,138 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class UserServiceTest {
-    private static final String EXISTED_EMAIL_ADDRESS = "existed@example.com";
-    private static final Long DELETED_USER_ID = 200L;
+    private static final Long EXIST_ID = 1L;
+    private static final Long NOT_EXIST_ID = 123L;
+
+    private static final String NAME = "양효주";
+    private static final String EMAIL = "yhyojoo@codesoom.com";
+    private static final String PASSWORD = "112233!!";
+
+    private static final String UPDATE_EMAIL = "joo@codesoom.com";
+    private static final String UPDATE_PASSWORD = "123!";
 
     private UserService userService;
 
     private final UserRepository userRepository = mock(UserRepository.class);
 
+    private final Mapper dozerMapper = DozerBeanMapperBuilder.buildDefault();
+
+    private User user;
+
     @BeforeEach
     void setUp() {
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        userService = new UserService(dozerMapper, userRepository);
 
-        userService = new UserService(mapper, userRepository);
-
-        given(userRepository.existsByEmail(EXISTED_EMAIL_ADDRESS))
-                .willReturn(true);
-
-        given(userRepository.save(any(User.class))).will(invocation -> {
-            User source = invocation.getArgument(0);
-            return User.builder()
-                    .id(13L)
-                    .email(source.getEmail())
-                    .name(source.getName())
-                    .build();
-        });
-
-        given(userRepository.findByIdAndDeletedIsFalse(1L))
-                .willReturn(Optional.of(
-                        User.builder()
-                                .id(1L)
-                                .email(EXISTED_EMAIL_ADDRESS)
-                                .name("Tester")
-                                .password("test")
-                                .build()));
-
-        given(userRepository.findByIdAndDeletedIsFalse(100L))
-                .willReturn(Optional.empty());
-
-        given(userRepository.findByIdAndDeletedIsFalse(DELETED_USER_ID))
-                .willReturn(Optional.empty());
-    }
-
-    @Test
-    void registerUser() {
-        UserRegistrationData registrationData = UserRegistrationData.builder()
-                .email("tester@example.com")
-                .name("Tester")
-                .password("test")
+        user = User.builder()
+                .name(NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
                 .build();
 
-        User user = userService.registerUser(registrationData);
+        given(userRepository.save(any(User.class)))
+                .will(invocation -> invocation.<Product>getArgument(0));
 
-        assertThat(user.getId()).isEqualTo(13L);
-        assertThat(user.getEmail()).isEqualTo("tester@example.com");
-        assertThat(user.getName()).isEqualTo("Tester");
-
-        verify(userRepository).save(any(User.class));
+        given(userRepository.findById(EXIST_ID))
+                .willReturn(Optional.of(user));
     }
 
-    @Test
-    void registerUserWithDuplicatedEmail() {
-        UserRegistrationData registrationData = UserRegistrationData.builder()
-                .email(EXISTED_EMAIL_ADDRESS)
-                .name("Tester")
-                .password("test")
-                .build();
-
-        assertThatThrownBy(() -> userService.registerUser(registrationData))
-                .isInstanceOf(UserEmailDuplicationException.class);
-
-        verify(userRepository).existsByEmail(EXISTED_EMAIL_ADDRESS);
+    void updateTest(UserUpdateRequestDto update) {
+        assertThat(update.getEmail()).isEqualTo(UPDATE_EMAIL);
+        assertThat(update.getPassword()).isEqualTo(UPDATE_PASSWORD);
     }
 
-    @Test
-    void updateUserWithExistedId() {
-        UserModificationData modificationData = UserModificationData.builder()
-                .name("TEST")
-                .password("TEST")
-                .build();
+    @Nested
+    @DisplayName("createUser 메소드는")
+    class Describe_createUser {
+        UserCreateRequestDto creationData;
 
-        User user = userService.updateUser(1L, modificationData);
+        @Test
+        @DisplayName("새로운 사용자를 등록한다")
+        void it_returns_user() {
+            creationData = new UserCreateRequestDto();
 
-        assertThat(user.getId()).isEqualTo(1L);
-        assertThat(user.getEmail()).isEqualTo(EXISTED_EMAIL_ADDRESS);
-        assertThat(user.getName()).isEqualTo("TEST");
+            userService.createUser(creationData);
 
-        verify(userRepository).findByIdAndDeletedIsFalse(1L);
+            verify(userRepository).save(any(User.class));
+        }
     }
 
-    @Test
-    void updateUserWithNotExistedId() {
-        UserModificationData modificationData = UserModificationData.builder()
-                .name("TEST")
-                .password("TEST")
-                .build();
+    @Nested
+    @DisplayName("updateUser 메소드는")
+    class Describe_updateProduct {
+        UserUpdateRequestDto updateRequest;
+        User updatedUser;
 
-        assertThatThrownBy(() -> userService.updateUser(100L, modificationData))
-                .isInstanceOf(UserNotFoundException.class);
+        @Nested
+        @DisplayName("등록된 사용자의 ID와 수정할 정보가 주어진다면")
+        class Context_with_valid_id_and_product {
 
-        verify(userRepository).findByIdAndDeletedIsFalse(100L);
+            @BeforeEach
+            void setUp() {
+                updateRequest = UserUpdateRequestDto.builder()
+                        .email(UPDATE_EMAIL)
+                        .password(UPDATE_PASSWORD)
+                        .build();
+
+                userService.updateUser(EXIST_ID, updateRequest);
+
+                given(userRepository.findById(EXIST_ID))
+                        .willReturn(Optional.of(user));
+            }
+
+            @Test
+            @DisplayName("해당 ID를 갖는 사용자의 정보를 수정한다")
+            void it_returns_updated_product() {
+                verify(userRepository).findById(EXIST_ID);
+
+                updateTest(updateRequest);
+            }
+        }
+
+        @Nested
+        @DisplayName("등록되지 않은 사용자의 ID가 주어진다면")
+        class Context_with_invalid_id {
+
+            @Test
+            @DisplayName("수정할 사용자를 찾을 수 없다는 예외를 던진다")
+            void it_returns_warning_message() {
+                assertThatThrownBy(() -> userService.updateUser(NOT_EXIST_ID, updateRequest))
+                        .isInstanceOf(UserNotFoundException.class);
+            }
+        }
     }
 
+    @Nested
+    @DisplayName("deleteProduct 메소드는")
+    class Describe_deleteProduct {
+        User user;
 
-    @Test
-    void updateUserWithDeletedId() {
-        UserModificationData modificationData = UserModificationData.builder()
-                .name("TEST")
-                .password("TEST")
-                .build();
+        @Nested
+        @DisplayName("등록된 사용자의 ID가 주어진다면")
+        class Context_with_valid_id {
 
-        assertThatThrownBy(
-                () -> userService.updateUser(DELETED_USER_ID, modificationData)
-        )
-                .isInstanceOf(UserNotFoundException.class);
+            @Test
+            @DisplayName("해당 ID를 갖는 사용자를 삭제한다")
+            void it_returns_deleted_user() {
+                user = new User();
 
-        verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
-    }
+                userService.deleteUser(EXIST_ID);
 
-    @Test
-    void deleteUserWithExistedId() {
-        User user = userService.deleteUser(1L);
+                verify(userRepository).findById(EXIST_ID);
+                verify(userRepository).delete(any(User.class));
+            }
+        }
 
-        assertThat(user.getId()).isEqualTo(1L);
-        assertThat(user.isDeleted()).isTrue();
+        @Nested
+        @DisplayName("등록되지 않은 사용자의 ID가 주어진다면")
+        class Context_without_invalid_id {
 
-        verify(userRepository).findByIdAndDeletedIsFalse(1L);
-    }
-
-    @Test
-    void deleteUserWithNotExistedId() {
-        assertThatThrownBy(() -> userService.deleteUser(100L))
-                .isInstanceOf(UserNotFoundException.class);
-
-        verify(userRepository).findByIdAndDeletedIsFalse(100L);
-    }
-
-    @Test
-    void deleteUserWithDeletedId() {
-        assertThatThrownBy(() -> userService.deleteUser(DELETED_USER_ID))
-                .isInstanceOf(UserNotFoundException.class);
-
-        verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
+            @Test
+            @DisplayName("삭제할 사용자를 찾을 수 없다는 예외를 던진다")
+            void it_returns_warning_message() {
+                assertThatThrownBy(() -> userService.deleteUser(NOT_EXIST_ID))
+                        .isInstanceOf(UserNotFoundException.class);
+            }
+        }
     }
 }

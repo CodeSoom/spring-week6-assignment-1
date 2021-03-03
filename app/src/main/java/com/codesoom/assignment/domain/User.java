@@ -1,43 +1,45 @@
 package com.codesoom.assignment.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@ToString(exclude = "id")
 public class User {
     @Id
     @GeneratedValue
     private Long id;
 
-    private String email;
-
+    @Setter
     private String name;
 
+    @Setter
+    private String email;
+
+    @Setter
     private String password;
 
-    @Builder.Default
-    private boolean deleted = false;
-
-    public void changeWith(User source) {
-        name = source.name;
-        password = source.password;
+    @Builder
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
 
-    public void destroy() {
-        deleted = true;
-    }
+    public User updateWith(User user) {
+        this.email = user.getEmail();
+        this.password = user.getPassword();
 
-    public boolean authenticate(String password) {
-        return !deleted && password.equals(this.password);
+        return this;
     }
 }

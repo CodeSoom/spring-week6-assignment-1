@@ -30,4 +30,16 @@ public class SessionControllerTest {
                 content().string(containsString("."))
             );
     }
+
+    @Test
+    void loginWithInvalidUser() throws Exception {
+        String validUserJson = "{\"email\":\"aaa@bbb.ccc\", \"password\": \"invalid password\"}";
+        mockMvc.perform(
+            post("/session")
+                .content(validUserJson)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(
+                status().isBadRequest()
+            );
+    }
 }

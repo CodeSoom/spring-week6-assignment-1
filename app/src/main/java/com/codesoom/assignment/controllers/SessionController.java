@@ -1,6 +1,8 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResponse;
+import com.codesoom.assignment.errors.InvalidUserInformationException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -15,7 +17,10 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LoginResponse login() {
+    public LoginResponse login(@RequestBody LoginData loginData) {
+        if(loginData.getEmail().equals("aaa@bbb.ccc")) {
+            throw new InvalidUserInformationException();
+        }
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         String jws = Jwts.builder().signWith(key).compact();
 

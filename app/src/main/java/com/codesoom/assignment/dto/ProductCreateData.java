@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = "id")
-public class ProductData {
+public class ProductCreateData {
     private Long id;
 
     @Mapping("name")
@@ -32,7 +32,7 @@ public class ProductData {
     private String imageUrl;
 
     @Builder(toBuilder = true)
-    public ProductData(String name, String maker, Integer price, String imageUrl) {
+    public ProductCreateData(String name, String maker, Integer price, String imageUrl) {
         this.name = name;
         this.maker = maker;
         this.price = price;

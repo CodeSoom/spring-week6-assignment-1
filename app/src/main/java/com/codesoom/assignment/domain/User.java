@@ -1,43 +1,72 @@
 package com.codesoom.assignment.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+/**
+ * 사용자 정보를 다룬다.
+ */
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class User {
+    /** 사용자 식별자 */
     @Id
     @GeneratedValue
     private Long id;
 
-    private String email;
-
+    /** 사용자 이름 */
     private String name;
 
+    /** 사용자 이메일 */
+    private String email;
+
+    /** 사용자 비밀번호 */
     private String password;
 
-    @Builder.Default
-    private boolean deleted = false;
+//    /** 사용자 삭제여부 */
+//    @Builder.Default
+//    private boolean deleted = false;
+//
+//    public void delete() {
+//        this.deleted = true;
+//    }
 
-    public void changeWith(User source) {
-        name = source.name;
-        password = source.password;
+    @Builder
+    public User(Long id, String name, String email, String password) {
+        this.id = id;
+        this.name = name;
+
+        this.email = email;
+        this.password = password;
+        //this.deleted = false;
     }
 
-    public void destroy() {
-        deleted = true;
-    }
+//    public boolean authenticate(String password) {
+//        return !deleted && password.equals(this.password);
+//    }
 
-    public boolean authenticate(String password) {
-        return !deleted && password.equals(this.password);
-    }
+//    public void changeWith(User source) {
+//        name = source.name;
+//        password = source.password;
+//    }
+//
+//    public void destroy() {
+//        deleted = true;
+//    }
+
+    /** 사용자 정보를 업데이트한다. */
+//    public void update(String name, String email, String password) {
+//        this.name = name;
+//        this.email = email;
+//        this.password = password;
+//    }
 }

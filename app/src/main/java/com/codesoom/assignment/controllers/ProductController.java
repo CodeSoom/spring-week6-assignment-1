@@ -4,37 +4,62 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.util.JwtUtil;
-import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MissingRequestHeaderException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * 상품에 대한 요청을 한다.
+ */
 @RestController
 @RequestMapping("/products")
-@CrossOrigin
 public class ProductController {
     private final AuthenticationService authenticationService;
     private final ProductService productService;
 
     public ProductController(AuthenticationService authenticationService, ProductService productService) {
-        this.authenticationService = authenticationService;
+        this.authenticationService =authenticationService;
         this.productService = productService;
     }
 
+    /**
+     * 전체 상품 목록을 리턴한다.
+     * 
+     * @return 저장되어 있는 전체 상품 목록
+     */
     @GetMapping
     public List<Product> list() {
         return productService.getProducts();
     }
 
-    @GetMapping("{id}")
+    /**
+     * 주어진 식별자에 해당하는 상품을 리턴한다.
+     * 
+     * @param id - 조회하고자 하는 상품의 식별자
+     * @return 주어진 식별자에 해당하는 상품
+     */
+    @GetMapping("/{id}")
     public Product detail(@PathVariable Long id) {
         return productService.getProduct(id);
     }
 
+    /**
+     * 주어진 상품을 저장하고 해당 객체를 리턴한다.
+     *
+     * @param productData - 저장하고자 하는 상품
+     * @return 저장 된 상품
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
@@ -47,6 +72,13 @@ public class ProductController {
         return productService.createProduct(productData);
     }
 
+    /**
+     * 주어진 식별자에 해당하는 상품을 수정하고 해당 객체를 리턴한다.
+     *
+     * @param id - 수정하고자 하는 상품의 식별자
+     * @param productData - 수정할 새로운 상품
+     * @return 수정 된 상품
+     */
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
@@ -55,17 +87,15 @@ public class ProductController {
         return productService.updateProduct(id, productData);
     }
 
-    @DeleteMapping("{id}")
+    /**
+     * 주어진 식별자에 해당하는 상품을 삭제하고 해당 객체를 리턴한다.
+     *
+     * @param id - 삭제하고자 하는 상품의 식별자
+     * @return 삭제 된 상품
+     */
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(
-            @PathVariable Long id
-    ) {
-        productService.deleteProduct(id);
-    }
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    public void handleMissingRequestHeaderException() {
-        //
+    public Product delete(@PathVariable Long id) {
+        return productService.deleteProduct(id);
     }
 }

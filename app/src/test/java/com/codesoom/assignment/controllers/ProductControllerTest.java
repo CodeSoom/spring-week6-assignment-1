@@ -1,11 +1,11 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.ProductNotFoundException;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.utils.JwtUtil;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +59,7 @@ public class ProductControllerTest {
     private static final String UPDATE_IMAGE = "https://bit.ly/2M4YXkw";
 
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIElEIjoxfQ.K7brB9EalPWQiDi8EF6XriOiJiKgksnJxIujpPVY";
 
     private Product product;
     private Product updated;
@@ -109,6 +110,8 @@ public class ProductControllerTest {
 
         given(productService.deleteProduct(NOT_EXIST_ID))
                 .willThrow(new ProductNotFoundException(NOT_EXIST_ID));
+
+        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
     }
 
     @Test
@@ -142,12 +145,12 @@ public class ProductControllerTest {
     }
 
     @Test
-    void createWithAccessToken() throws Exception {
+    void createWithValidAccessToken() throws Exception {
         mockMvc.perform(
                 post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(product))
-                .header("Authorization", "Bearer " + VALID_TOKEN)
+                .header("Authorization", "Bearer " + INVALID_TOKEN)
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(NAME))
@@ -158,6 +161,16 @@ public class ProductControllerTest {
         verify(productService).createProduct(any(ProductData.class));
     }
 
+    @Test
+    void createWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(product))
+        )
+                .andExpect(status().isUnauthorized());
+    }
 
     @Test
     void createWithValidAttributes() throws Exception {
@@ -165,6 +178,7 @@ public class ProductControllerTest {
                 post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(product))
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(NAME))
@@ -183,6 +197,7 @@ public class ProductControllerTest {
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidAttributes))
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }

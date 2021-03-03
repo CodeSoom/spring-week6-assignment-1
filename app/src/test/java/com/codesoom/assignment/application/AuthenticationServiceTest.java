@@ -7,6 +7,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthenticationServiceTest {
+    final String validToken
+            = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    final String invalidToken
+            = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+
     private AuthenticationService authenticationService;
 
     @BeforeEach
@@ -23,5 +28,12 @@ class AuthenticationServiceTest {
         String accessToken = authenticationService.login();
 
         assertThat(accessToken).contains(".");
+    }
+
+    @Test
+    void parseToken() {
+        Long userId = authenticationService.parseToken(validToken);
+
+        assertThat(userId).isEqualTo(1L);
     }
 }

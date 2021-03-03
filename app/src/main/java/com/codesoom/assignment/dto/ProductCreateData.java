@@ -12,10 +12,8 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = "id")
+@ToString
 public class ProductCreateData {
-    private Long id;
-
     @Mapping("name")
     @NotBlank(message = "name 값은 필수입니다")
     private String name;
@@ -31,7 +29,7 @@ public class ProductCreateData {
     @Mapping("imageUrl")
     private String imageUrl;
 
-    @Builder(toBuilder = true)
+    @Builder
     public ProductCreateData(String name, String maker, Integer price, String imageUrl) {
         this.name = name;
         this.maker = maker;

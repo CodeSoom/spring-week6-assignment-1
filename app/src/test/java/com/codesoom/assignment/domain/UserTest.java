@@ -9,44 +9,44 @@ class UserTest {
     void changeWith() {
         User user = User.builder().build();
 
-        user.changeWith(User.builder()
-                .name("TEST")
-                .password("TEST")
-                .build());
+//        user.changeWith(User.builder()
+//                .name("TEST")
+//                .password("TEST")
+//                .build());
 
         assertThat(user.getName()).isEqualTo("TEST");
         assertThat(user.getPassword()).isEqualTo("TEST");
     }
 
-    @Test
-    void destroy() {
-        User user = User.builder().build();
+//    @Test
+//    void destroy() {
+//        User user = User.builder().build();
+//
+//        assertThat(user.isDeleted()).isFalse();
+//
+//        user.destroy();
+//
+//        assertThat(user.isDeleted()).isTrue();
+//    }
 
-        assertThat(user.isDeleted()).isFalse();
+//    @Test
+//    void authenticate() {
+//        User user = User.builder()
+//                .password("test")
+//                .build();
+//
+//        assertThat(user.authenticate("test")).isTrue();
+//        assertThat(user.authenticate("xxx")).isFalse();
+//    }
 
-        user.destroy();
-
-        assertThat(user.isDeleted()).isTrue();
-    }
-
-    @Test
-    void authenticate() {
-        User user = User.builder()
-                .password("test")
-                .build();
-
-        assertThat(user.authenticate("test")).isTrue();
-        assertThat(user.authenticate("xxx")).isFalse();
-    }
-
-    @Test
-    void authenticateWithDeletedUser() {
-        User user = User.builder()
-                .password("test")
-                .deleted(true)
-                .build();
-
-        assertThat(user.authenticate("test")).isFalse();
-        assertThat(user.authenticate("xxx")).isFalse();
-    }
+//    @Test
+//    void authenticateWithDeletedUser() {
+//        User user = User.builder()
+//                .password("test")
+//                .deleted(true)
+//                .build();
+//
+//        assertThat(user.authenticate("test")).isFalse();
+//        assertThat(user.authenticate("xxx")).isFalse();
+//    }
 }

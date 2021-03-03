@@ -2,8 +2,9 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
-import com.codesoom.assignment.domain.Product;
-import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.dto.ProductCreateData;
+import com.codesoom.assignment.dto.ProductResultData;
+import com.codesoom.assignment.dto.ProductUpdateData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class ProductController {
      * @return 저장되어 있는 전체 상품 목록
      */
     @GetMapping
-    public List<Product> list() {
+    public List<ProductResultData> list() {
         return productService.getProducts();
     }
 
@@ -50,41 +51,41 @@ public class ProductController {
      * @return 주어진 식별자에 해당하는 상품
      */
     @GetMapping("/{id}")
-    public Product detail(@PathVariable Long id) {
+    public ProductResultData detail(@PathVariable Long id) {
         return productService.getProduct(id);
     }
 
     /**
      * 주어진 상품을 저장하고 해당 객체를 리턴한다.
      *
-     * @param productData - 저장하고자 하는 상품
+     * @param productCreateData - 저장하고자 하는 상품
      * @return 저장 된 상품
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Product create(
+    public ProductResultData create(
             @RequestHeader("Authorization") String authorization,
-            @RequestBody @Valid ProductData productData
+            @RequestBody @Valid ProductCreateData productCreateData
     ) {
         String accessToken = authorization.substring("Bearer ".length());
         Long userId = authenticationService.parseToken(accessToken);
 
-        return productService.createProduct(productData);
+        return productService.createProduct(productCreateData);
     }
 
     /**
      * 주어진 식별자에 해당하는 상품을 수정하고 해당 객체를 리턴한다.
      *
      * @param id - 수정하고자 하는 상품의 식별자
-     * @param productData - 수정할 새로운 상품
+     * @param productUpdateData - 수정할 새로운 상품
      * @return 수정 된 상품
      */
     @PatchMapping("{id}")
-    public Product update(
+    public ProductResultData update(
             @PathVariable Long id,
-            @RequestBody @Valid ProductData productData
+            @RequestBody @Valid ProductUpdateData productUpdateData
     ) {
-        return productService.updateProduct(id, productData);
+        return productService.updateProduct(id, productUpdateData);
     }
 
     /**
@@ -95,7 +96,7 @@ public class ProductController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Product delete(@PathVariable Long id) {
+    public ProductResultData delete(@PathVariable Long id) {
         return productService.deleteProduct(id);
     }
 }

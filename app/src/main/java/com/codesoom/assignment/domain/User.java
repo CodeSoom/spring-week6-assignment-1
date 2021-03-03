@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.errors.AuthenticationFailException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,6 +39,14 @@ public class User {
     }
 
     public boolean authenticate(String password) {
-        return !deleted && password.equals(this.password);
+        if (deleted) {
+            throw new AuthenticationFailException("존재 하지 않는 사용자 입니다");
+        }
+
+        if (!password.equals(this.password)) {
+            throw new AuthenticationFailException("비밀번호가 일치하지 않습니다");
+        }
+        
+        return true;
     }
 }

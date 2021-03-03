@@ -1,5 +1,7 @@
 package com.codesoom.assignment.product.controller;
 
+import com.codesoom.assignment.auth.application.AuthenticationService;
+import com.codesoom.assignment.auth.application.InvalidTokenException;
 import com.codesoom.assignment.product.application.ProductNotFoundException;
 import com.codesoom.assignment.product.application.ProductService;
 import com.codesoom.assignment.product.domain.Product;
@@ -39,6 +41,9 @@ class ProductControllerTest {
     @MockBean
     private ProductService productService;
 
+    @MockBean
+    private AuthenticationService authenticationService;
+
     @BeforeEach
     void setUp() {
         Product product = Product.builder()
@@ -74,6 +79,9 @@ class ProductControllerTest {
 
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
+
+        given(authenticationService.parseToken(INVALID_TOKEN))
+                .willThrow(new InvalidTokenException(INVALID_TOKEN));
     }
 
     @Test
@@ -110,6 +118,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -127,6 +136,17 @@ class ProductControllerTest {
                                 "\"price\":0}")
         )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createWithWrongAccessToken() throws Exception {
+        mockMvc.perform(post("/products")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\",\"price\":5000}")
+                .header("Authorization", "Bearer " + INVALID_TOKEN)
+        )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

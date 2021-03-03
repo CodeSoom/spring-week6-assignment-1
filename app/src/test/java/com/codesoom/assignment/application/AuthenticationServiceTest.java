@@ -81,8 +81,8 @@ class AuthenticationServiceTest {
     @DisplayName("login")
     class Describe_login {
         @Nested
-        @DisplayName("주어진 로그인 정보에 해당하는 회원이 있다면")
-        class Context_when_the_user_exists {
+        @DisplayName("유효한 로그인 정보가 주어진다면")
+        class Context_with_valid_user_login_data {
             @BeforeEach
             void setUp() {
                 given(userRepository.findByEmail(userLoginData.getEmail()))

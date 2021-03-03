@@ -3,7 +3,6 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,9 @@ public class AuthenticationService {
     }
 
     public Long parseToken(String accessToken) {
+        if (accessToken.isBlank()) {
+            throw new InvalidAccessTokenException(accessToken);
+        }
         try {
             Claims claims = jwtUtil.decode(accessToken);
             return claims.get("userId", Long.class);

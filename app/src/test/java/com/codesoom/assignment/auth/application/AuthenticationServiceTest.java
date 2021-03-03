@@ -129,4 +129,21 @@ class AuthenticationServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("decode 메서드는")
+    class Describe_decode {
+        @Nested
+        @DisplayName("토큰이 주어지면")
+        class Context_with_token {
+            String token = VALID_TOKEN;
+
+            @DisplayName("토큰 정보를 리턴한다.")
+            @Test
+            void it_returns_user_id() {
+                String actual = authenticationService.decode(token);
+
+                assertThat(actual).isEqualTo(GIVEN_ID);
+            }
+        }
+    }
 }

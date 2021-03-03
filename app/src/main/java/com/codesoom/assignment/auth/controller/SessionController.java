@@ -5,6 +5,7 @@ import com.codesoom.assignment.auth.dto.AuthenticationRequestDto;
 import com.codesoom.assignment.auth.dto.SessionResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
  * 사용자 인증 요청을 처리합니다.
  */
 @RequestMapping("/session")
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class SessionController {

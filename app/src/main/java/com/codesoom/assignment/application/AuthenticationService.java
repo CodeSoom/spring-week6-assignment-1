@@ -21,15 +21,14 @@ public class AuthenticationService {
     private final UserRepository userRepository;
 
     /**
-     * 주어진 회원 로그인 정보에 해당하는 액세스 토큰을 리턴합니다.
+     * 주어진 회원을 로그인 처리하고, 액세스 토큰을 리턴합니다.
      *
      * @param userLoginData 회원 로그인 정보
      * @return 생성된 액세스 토큰
      * @throws UserAuthenticationFailException 주어진 회원 로그인 정보가 유효하지 않을 경우
      */
     @Transactional(readOnly = true)
-    public String login(UserLoginData userLoginData)
-            throws UserAuthenticationFailException {
+    public String login(UserLoginData userLoginData) throws UserAuthenticationFailException {
         User user = findUserByEmail(userLoginData.getEmail());
 
         if (!user.matchPassword(userLoginData.getPassword())) {

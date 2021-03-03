@@ -112,6 +112,9 @@ public class ProductControllerTest {
                 .willThrow(new ProductNotFoundException(NOT_EXIST_ID));
 
         given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
+        given(authenticationService.parseToken(INVALID_TOKEN))
+                .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
     }
 
     @Test
@@ -159,6 +162,17 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("image").value(IMAGE));
 
         verify(productService).createProduct(any(ProductData.class));
+    }
+
+    @Test
+    void createWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(product))
+                        .header("Authorization", "Bearer " + INVALID_TOKEN)
+        )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

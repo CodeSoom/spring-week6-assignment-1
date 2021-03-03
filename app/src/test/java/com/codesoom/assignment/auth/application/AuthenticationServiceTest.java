@@ -4,6 +4,7 @@ import com.codesoom.assignment.auth.infra.JwtTokenProvider;
 import com.codesoom.assignment.user.application.UserEmailNotFoundException;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.domain.UserRepository;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,11 +29,10 @@ class AuthenticationServiceTest {
     private static final String GIVEN_USER_PASSWORD = "password";
     private static final String NOT_EXIST_EMAIL = "not_exist@test.com";
     private static final String WRONG_PASSWORD = "wrong_password";
-
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MDk2MjgwMCwiZXh" +
-            "wIjoxNjQwOTYzMTAwfQ.2siRnBJmRU2JXjZY0CkQMgnCHRJN4Dld4_wG6R7T-HQ";
     private static final Long GIVEN_ID = 1L;
     private static final long EXPIRED_TIME = 300000;
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MDk2MjgwMCwiZXh" +
+            "wIjoxNjQwOTYzMTAwfQ.2siRnBJmRU2JXjZY0CkQMgnCHRJN4Dld4_wG6R7T-HQ";
 
     private AuthenticationService authenticationService;
 
@@ -137,12 +137,14 @@ class AuthenticationServiceTest {
         class Context_with_token {
             String token = VALID_TOKEN;
 
-            @DisplayName("토큰 정보를 리턴한다.")
+            @DisplayName("토큰에 담긴 정보를 리턴한다.")
             @Test
             void it_returns_user_id() {
-                String actual = authenticationService.decode(token);
+                Claims actual = authenticationService.decode(token);
 
-                assertThat(actual).isEqualTo(GIVEN_ID);
+                assertThat(actual.get("userId", Long.class)).isEqualTo(GIVEN_ID);
+                assertThat(actual.getIssuedAt()).isNotNull();
+                assertThat(actual.getExpiration()).isNotNull();
             }
         }
     }

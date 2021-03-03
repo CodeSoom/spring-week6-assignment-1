@@ -6,6 +6,7 @@ import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +25,12 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserNotFoundException.class)
     public ErrorResponse handleUserNotFound() {
         return new ErrorResponse("User not found");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ErrorResponse handleUserLoginDtoParameter() {
+        return new ErrorResponse("Email or password cannot be blank");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

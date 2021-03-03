@@ -51,7 +51,7 @@ public class AuthenticationService {
      * @param token 인증된 토큰
      * @return 토큰 정보
      */
-    public Claims decode(String token) {
+    public Claims parseToken(String token) {
         return jwtTokenProvider.decode(token);
     }
 }

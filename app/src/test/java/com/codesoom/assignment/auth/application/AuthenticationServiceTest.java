@@ -130,8 +130,8 @@ class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("decode 메서드는")
-    class Describe_decode {
+    @DisplayName("parseToken 메서드는")
+    class Describe_parseToken {
         @Nested
         @DisplayName("토큰이 주어지면")
         class Context_with_token {
@@ -140,7 +140,7 @@ class AuthenticationServiceTest {
             @DisplayName("토큰에 담긴 정보를 리턴한다.")
             @Test
             void it_returns_user_id() {
-                Claims actual = authenticationService.decode(token);
+                Claims actual = authenticationService.parseToken(token);
 
                 assertThat(actual.get("userId", Long.class)).isEqualTo(GIVEN_ID);
                 assertThat(actual.getIssuedAt()).isNotNull();

@@ -1,5 +1,6 @@
 package com.codesoom.assignment.user.controller;
 
+import com.codesoom.assignment.user.application.UserEmailDuplicationException;
 import com.codesoom.assignment.user.application.UserNotFoundException;
 import com.codesoom.assignment.user.application.UserService;
 import com.codesoom.assignment.user.domain.User;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
+    public static final String EXIST_EMAIL = "exist@email.com";
     @Autowired
     private MockMvc mockMvc;
 
@@ -84,6 +86,21 @@ class UserControllerTest {
                 ));
 
         verify(userService).registerUser(any(UserRegistrationData.class));
+    }
+
+
+    @Test
+    void registerUserWithExistedEmail() throws Exception {
+        given(userService.registerUser(any(UserRegistrationData.class)))
+                .willThrow(new UserEmailDuplicationException(EXIST_EMAIL));
+
+        mockMvc.perform(
+                post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"tester@example.com\"," +
+                                "\"name\":\"Tester\",\"password\":\"test\"}")
+        )
+                .andExpect(status().isBadRequest());
     }
 
     @Test

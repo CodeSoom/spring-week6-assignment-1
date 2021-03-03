@@ -24,4 +24,10 @@ public class ControllerErrorAdvice {
     public ErrorResponse handleUserNotFound() {
         return new ErrorResponse("User not found");
     }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidAccessTokenException.class)
+    public void handleInvalidAccessToken() {
+        //
+    }
 }

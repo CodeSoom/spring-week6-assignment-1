@@ -98,7 +98,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("이미 존재하는 이메일로 회원가입 한다면 상태코드 400을 응답한다.")
+    @DisplayName("이미 존재하는 이메일로 회원가입 한다면 상태코드로 400 Bad Request 를 응답한다.")
     @Test
     void registerUserWithAlreadyExistingEmail() throws Exception {
         given(userService.registerUser(any(UserRegistrationData.class)))

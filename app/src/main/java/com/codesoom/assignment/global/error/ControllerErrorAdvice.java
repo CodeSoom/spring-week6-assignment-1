@@ -1,5 +1,6 @@
 package com.codesoom.assignment.global.error;
 
+import com.codesoom.assignment.auth.application.InvalidTokenException;
 import com.codesoom.assignment.product.application.ProductNotFoundException;
 import com.codesoom.assignment.user.application.UserEmailDuplicationException;
 import com.codesoom.assignment.user.application.UserEmailNotFoundException;
@@ -40,5 +41,10 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserEmailDuplicationException.class)
     public ErrorResponse handleUserEmailIsAlreadyExisted() {
         return new ErrorResponse("User's email address is already existed");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidTokenException.class)
+    public void handleInvalidAccessToken() {
     }
 }

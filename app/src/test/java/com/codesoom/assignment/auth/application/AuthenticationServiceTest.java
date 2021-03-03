@@ -1,6 +1,7 @@
 package com.codesoom.assignment.auth.application;
 
 import com.codesoom.assignment.auth.infra.JwtTokenProvider;
+import com.codesoom.assignment.user.application.UserEmailNotFoundException;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,13 +18,17 @@ import java.time.Month;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789010";
-    private static final String USER_EMAIL = "test@test.com";
-    private static final String USER_PASSWORD = "password";
+    private static final String GIVEN_USER_EMAIL = "test@test.com";
+    private static final String GIVEN_USER_PASSWORD = "password";
+    private static final String NOT_EXIST_EMAIL = "not_exist@test.com";
+    private static final String WRONG_PASSWORD = "wrong_password";
+
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MDk2MjgwMCwiZXh" +
             "wIjoxNjQwOTYzMTAwfQ.2siRnBJmRU2JXjZY0CkQMgnCHRJN4Dld4_wG6R7T-HQ";
     private static final Long GIVEN_ID = 1L;
@@ -45,27 +50,81 @@ class AuthenticationServiceTest {
 
         user = User.builder()
                 .id(GIVEN_ID)
-                .email(USER_EMAIL)
+                .password(GIVEN_USER_PASSWORD)
+                .email(GIVEN_USER_EMAIL)
                 .build();
-
-        given(userRepository.findByEmail(USER_EMAIL))
-                .willReturn(Optional.of(user));
     }
 
     @Nested
     @DisplayName("authenticate 메서드는")
     class Describe_authenticate {
+
         @Nested
-        @DisplayName("사용자 이메일과 비밀번호가 주어지면")
-        class Context_with_user_id_password {
-            String email = USER_EMAIL;
-            String password = USER_PASSWORD;
+        @DisplayName("등록된 이메일과 비밀번호가 주어지면")
+        class Context_with_exist_email_password {
+            String email;
+            String password;
+
+            @BeforeEach
+            void setUp() {
+                email = GIVEN_USER_EMAIL;
+                password = GIVEN_USER_PASSWORD;
+
+                given(userRepository.findByEmail(GIVEN_USER_EMAIL))
+                        .willReturn(Optional.of(user));
+            }
 
             @DisplayName("인증 토큰을 리턴한다.")
             @Test
             void it_returns_token() {
                 String token = authenticationService.authenticate(email, password);
                 assertThat(token).isEqualTo(VALID_TOKEN);
+            }
+        }
+
+        @Nested
+        @DisplayName("등록되지 않은 이메일이 주어지면")
+        class Context_with_not_exist_email {
+            String email;
+            String password;
+
+            @BeforeEach
+            void setUp() {
+                email = NOT_EXIST_EMAIL;
+                password = GIVEN_USER_PASSWORD;
+
+                given(userRepository.findByEmail(NOT_EXIST_EMAIL))
+                        .willThrow(new UserEmailNotFoundException(NOT_EXIST_EMAIL));
+            }
+
+            @DisplayName("예외를 발생시킨다.")
+            @Test
+            void It_throws_exception() {
+                assertThrows(UserEmailNotFoundException.class,
+                        () -> authenticationService.authenticate(email, password));
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지않는 비밀번호가 주어지면")
+        class Context_with_wrong_password {
+            String email;
+            String password;
+
+            @BeforeEach
+            void setUp() {
+                email = GIVEN_USER_EMAIL;
+                password = WRONG_PASSWORD;
+
+                given(userRepository.findByEmail(GIVEN_USER_EMAIL))
+                        .willReturn(Optional.of(user));
+            }
+
+            @DisplayName("예외를 발생시킨다.")
+            @Test
+            void It_throws_exception() {
+                assertThrows(IllegalArgumentException.class,
+                        () -> authenticationService.authenticate(email, password));
             }
         }
     }

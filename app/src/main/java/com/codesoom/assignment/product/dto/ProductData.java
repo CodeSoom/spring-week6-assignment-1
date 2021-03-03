@@ -45,10 +45,10 @@ public class ProductData {
     /**
      * 상품 명세서
      *
-     * @param id       상품식별자
-     * @param name     상품명
-     * @param maker    상품제조사
-     * @param price    상품가격
+     * @param id 상품식별자
+     * @param name 상품명
+     * @param maker 상품제조사
+     * @param price 상품가격
      * @param imageUrl 상품이미지
      */
     @Builder

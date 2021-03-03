@@ -4,6 +4,7 @@ import com.codesoom.assignment.auth.infra.JwtTokenProvider;
 import com.codesoom.assignment.user.application.UserEmailNotFoundException;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.domain.UserRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +43,9 @@ public class AuthenticationService {
      */
     private String createToken(Long userId) {
         return jwtTokenProvider.createToken(userId);
+    }
+
+    public Claims decode(String token) {
+        return jwtTokenProvider.decode(token);
     }
 }

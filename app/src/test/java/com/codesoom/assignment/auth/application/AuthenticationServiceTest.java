@@ -92,9 +92,6 @@ class AuthenticationServiceTest {
             void setUp() {
                 email = NOT_EXIST_EMAIL;
                 password = GIVEN_USER_PASSWORD;
-
-                given(userRepository.findByEmail(NOT_EXIST_EMAIL))
-                        .willThrow(new UserEmailNotFoundException(NOT_EXIST_EMAIL));
             }
 
             @DisplayName("예외를 발생시킨다.")

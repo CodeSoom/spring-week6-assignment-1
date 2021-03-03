@@ -80,6 +80,16 @@ class ProductControllerTest {
     private ProductResultData resultProductOne;
     private ProductResultData resultProductTwo;
 
+    public ProductResultData getProductResultData(Product product) {
+        return ProductResultData.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .maker(product.getMaker())
+                .price(product.getPrice())
+                .imageUrl(product.getImageUrl())
+                .build();
+    }
+
     @BeforeEach
     void setUp() {
         mockMvc = webAppContextSetup(wac).addFilter(((request, response, chain) -> {
@@ -105,8 +115,9 @@ class ProductControllerTest {
 
         products = Arrays.asList(setupProductOne, setupProductTwo);
 
-        resultProductOne = productService.getProductResultData(setupProductOne);
-        resultProductTwo = productService.getProductResultData(setupProductTwo);
+        resultProductOne = getProductResultData(setupProductOne);
+
+        resultProductTwo = getProductResultData(setupProductTwo);
         resultProducts = Arrays.asList(resultProductOne, resultProductTwo);
     }
 

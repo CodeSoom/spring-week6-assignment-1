@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789010";
@@ -17,6 +16,7 @@ class AuthenticationServiceTest {
             "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGW";
 
     private AuthenticationService authenticationService;
+    private final Long EXISTED_ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -26,7 +26,7 @@ class AuthenticationServiceTest {
 
     @Test
     void login(){
-        String accessToken = authenticationService.login();
+        String accessToken = authenticationService.login(EXISTED_ID);
 
         assertThat(accessToken).isEqualTo(EXISTED_TOKEN);
     }

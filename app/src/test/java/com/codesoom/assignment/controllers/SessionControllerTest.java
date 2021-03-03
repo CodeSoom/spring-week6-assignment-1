@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -26,9 +24,11 @@ class SessionControllerTest {
     @MockBean
     AuthenticationService authenticationService;
 
+    private final Long EXISTED_ID = 1L;
+
     @BeforeEach
     void setUp() {
-        given(authenticationService.login()).willReturn("a.b.c");
+        given(authenticationService.login(EXISTED_ID)).willReturn("a.b.c");
     }
 
     @Test

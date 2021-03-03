@@ -15,7 +15,7 @@ public interface UserRepository {
     /** 주어진 유저를 삭제한다. */
     void delete(User user);
 
-    Optional<User> findByIdAndDeletedIsFalse(Long id);
-
-    Optional<User> findByEmail(String email);
+//    Optional<User> findByIdAndDeletedIsFalse(Long id);
+//
+//    Optional<User> findByEmail(String email);
 }

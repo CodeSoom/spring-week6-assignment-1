@@ -10,10 +10,13 @@ import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
  * 사용자에 대한 요청을 수행한다.
  */
 @Service
+@Transactional
 public class UserService {
     private final Mapper mapper;
     private final UserRepository userRepository;

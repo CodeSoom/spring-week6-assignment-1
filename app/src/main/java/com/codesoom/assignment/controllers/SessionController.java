@@ -18,8 +18,8 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login() {
-        String accessToken = authenticationService.login();
+    public SessionResponseData login(Long id) {
+        String accessToken = authenticationService.login(id);
 
         return SessionResponseData.builder()
                 .accessToken(accessToken)

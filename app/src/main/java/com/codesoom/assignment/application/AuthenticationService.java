@@ -6,7 +6,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
 
@@ -14,8 +17,8 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String login() {
-        return jwtUtil.encode(1L);
+    public String login(Long id) {
+        return jwtUtil.encode(id);
     }
 
     public Long parseToken(String accessToken) {

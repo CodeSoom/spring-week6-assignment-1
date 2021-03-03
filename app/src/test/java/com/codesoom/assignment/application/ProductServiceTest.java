@@ -166,8 +166,6 @@ class ProductServiceTest {
         @DisplayName("만약 상품이 주어진다면")
         class Content_WithProduct {
             private ProductCreateData productCreateData;
-            private ProductResultData productResultData;
-            private Product product;
 
             @BeforeEach
             void setUp() {
@@ -177,16 +175,12 @@ class ProductServiceTest {
                         .price(CREATED_PRODUCT_PRICE)
                         .imageUrl(CREATED_PRODUCT_IMAGEURL)
                         .build();
-
-                productResultData = dozerMapper.map(productCreateData, ProductResultData.class);
-
-                product = dozerMapper.map(productCreateData, Product.class);
             }
 
             @Test
             @DisplayName("상품을 저장하고 저장된 상품를 리턴한다")
             void itSavesProductAndReturnsSavedProduct() {
-                given(productRepository.save(any(Product.class))).willReturn(product);
+                given(productRepository.save(any(Product.class))).willReturn(setupProductTwo);
 
                 ProductResultData productResultData = productService.createProduct(productCreateData);
                 assertThat(productResultData.getName())
@@ -290,8 +284,6 @@ class ProductServiceTest {
         class Context_WithExistedIdAndProduct {
             private final Long givenExistedId = EXISTED_ID;
             private ProductUpdateData productUpdateData;
-            private ProductResultData productResultData;
-            private Product product;
 
             @BeforeEach
             void setUp() {
@@ -301,15 +293,12 @@ class ProductServiceTest {
                         .price(UPDATED_PRODUCT_PRICE)
                         .imageUrl(UPDATED_PRODUCT_IMAGEURL)
                         .build();
-
-                productResultData = dozerMapper.map(productUpdateData, ProductResultData.class);
-                product = dozerMapper.map(productResultData, Product.class);
             }
 
             @Test
             @DisplayName("주어진 아이디에 해당하는 상품을 수정하고 수정된 상품을 리턴한다")
             void itUpdatesProductAndReturnsUpdatedProduct() {
-                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(product));
+                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProductOne));
 
                 ProductResultData productResultData = productService.updateProduct(givenExistedId, productUpdateData);
 
@@ -345,8 +334,9 @@ class ProductServiceTest {
                 given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProductOne));
 
                 ProductResultData productResultData = productService.deleteProduct(givenExistedId);
+
                 assertThat(productResultData.getId())
-                        .as("상품의 아이디는 %f 이어야 한다", givenExistedId)
+                        .as("상품의 아이디는 %d 이어야 한다", givenExistedId)
                         .isEqualTo(givenExistedId);
                 assertThat(productResultData.getName())
                         .as("상품의 이름은 %s 이어야 한다", setupProductOne.getName())

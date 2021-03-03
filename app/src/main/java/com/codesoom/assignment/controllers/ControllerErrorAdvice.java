@@ -72,7 +72,7 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidAccessTokenException.class)
-    public void handleInvalidAccessTokenException() {
-
+    public ErrorResponse handleInvalidAccessTokenException(InvalidAccessTokenException e) {
+        return new ErrorResponse(e.getMessage());
     }
 }

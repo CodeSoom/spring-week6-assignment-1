@@ -11,6 +11,7 @@ import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,7 @@ public class ProductService {
     public ProductResultData getProduct(Long id) {
         Product product =  productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
+
         return getProductResultData(product);
     }
 
@@ -72,7 +74,7 @@ public class ProductService {
      * @throws ProductBadRequestException 만약 주어진 상품의
      *         이름이 비어있거나, 메이커가 비어있거나, 가격이 비어있는 경우
      */
-    public ProductResultData createProduct(ProductCreateData productCreateData) {
+    public ProductResultData createProduct(@Valid ProductCreateData productCreateData) {
         Product product = mapper.map(productCreateData, Product.class);
         Product savedProduct =  productRepository.save(product);
 
@@ -107,7 +109,14 @@ public class ProductService {
     public ProductResultData deleteProduct(Long id) {
         ProductResultData product = getProduct(id);
 
-        Product deletedProduct = mapper.map(product, Product.class);
+        Product deletedProduct = Product.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .maker(product.getMaker())
+                .price((product.getPrice()))
+                .imageUrl(product.getImageUrl())
+                .build();
+
         productRepository.delete(deletedProduct);
 
         return product;

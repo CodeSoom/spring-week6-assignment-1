@@ -2,6 +2,7 @@ package com.codesoom.assignment.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -16,7 +17,8 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = "id")
+@ToString
+@EqualsAndHashCode
 public class Product {
 
     /** 상품 식별자 */

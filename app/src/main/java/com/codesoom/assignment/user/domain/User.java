@@ -33,6 +33,10 @@ public class User {
         password = source.password;
     }
 
+    public boolean matchPassword(String password) {
+        return this.password.equals(password);
+    }
+
     public void destroy() {
         deleted = true;
     }

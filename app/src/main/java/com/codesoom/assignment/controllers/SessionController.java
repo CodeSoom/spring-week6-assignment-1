@@ -12,11 +12,15 @@ public class SessionController {
 
     private AuthenticationService authenticationService;
 
+    public SessionController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/session")
     public SessionResponseData login(){
 
-        authenticationService.login();
+        String accessToken = authenticationService.login();
 
         return SessionResponseData.builder()
                 .accessToken(accessToken)

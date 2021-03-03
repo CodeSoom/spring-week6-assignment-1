@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.AuthenticationTestFixture;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.errors.UserAuthenticationFailedException;
@@ -18,17 +19,11 @@ import static org.mockito.BDDMockito.given;
 
 @DisplayName("AuthenticationService 클래스")
 class AuthenticationServiceTest {
-    final Long USER_ID = 1L;
-    final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5VoLz2Ug0E6jQK_anP6RND1YHpzlBdxsR2ORgYef_aQ";
-    final String secretKey = "qwertyuiopqwertyuiopqwertyuiopqw";
-    final String VALID_EMAIL = "rlawlstjd@gmail.com";
-    final String VALID_PASSWORD = "12345";
-
     final User GIVEN_USER = User.builder()
             .id(1L)
             .name("rlawlstjd")
-            .email(VALID_EMAIL)
-            .password(VALID_PASSWORD)
+            .email(AuthenticationTestFixture.VALID_EMAIL)
+            .password(AuthenticationTestFixture.VALID_PASSWORD)
             .build();
 
     AuthenticationService authService;
@@ -36,9 +31,12 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         UserRepository userRepository = Mockito.mock(UserRepository.class);
-        authService = new AuthenticationService(new JwtUtil(secretKey), userRepository);
+        authService = new AuthenticationService(
+                new JwtUtil(AuthenticationTestFixture.SECRET_KEY),
+                userRepository
+        );
 
-        given(userRepository.findByEmail(VALID_EMAIL)).willReturn(Optional.of(GIVEN_USER));
+        given(userRepository.findByEmail(AuthenticationTestFixture.VALID_EMAIL)).willReturn(Optional.of(GIVEN_USER));
     }
 
     @Nested
@@ -47,13 +45,13 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("user id가 주어졌을 때")
         class Context_user_id {
-            Long givenUserId = USER_ID;
+            Long givenUserId = AuthenticationTestFixture.USER_ID;
 
             @DisplayName("인코딩된 token을 반환한다.")
             @Test
             void it_returns_encoded_token() {
                 String code = authService.encode(givenUserId);
-                assertThat(code).isEqualTo(VALID_TOKEN);
+                assertThat(code).isEqualTo(AuthenticationTestFixture.VALID_TOKEN);
             }
         }
     }
@@ -64,13 +62,13 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("token이 주어졌을 때")
         class Context_with_token {
-            String givenToken = VALID_TOKEN;
+            String givenToken = AuthenticationTestFixture.VALID_TOKEN;
 
             @DisplayName("user id를 반환한다.")
             @Test
             void it_returns_user_id() {
                 Long userId = authService.decode(givenToken);
-                assertThat(userId).isEqualTo(USER_ID);
+                assertThat(userId).isEqualTo(AuthenticationTestFixture.USER_ID);
             }
         }
     }
@@ -81,14 +79,14 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효한 email, password가 주어진다면")
         class Context_with_valid_email_password {
-            String givenEmail = VALID_EMAIL;
-            String givenPassword = VALID_PASSWORD;
+            String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
+            String givenPassword = AuthenticationTestFixture.VALID_PASSWORD;
 
             @DisplayName("token을 반환한다")
             @Test
             void it_returns_token() {
                 String token = authService.createSession(givenEmail, givenPassword);
-                assertThat(token).isEqualTo(VALID_TOKEN);
+                assertThat(token).isEqualTo(AuthenticationTestFixture.VALID_TOKEN);
             }
         }
 
@@ -109,7 +107,7 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효하지 않은 password가 주어진다면")
         class Context_with_invalid_password {
-            String givenEmail = VALID_EMAIL;
+            String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
             String givenPassword = "";
 
             @DisplayName("user 인증에 실패했다는 예외를 던진다")

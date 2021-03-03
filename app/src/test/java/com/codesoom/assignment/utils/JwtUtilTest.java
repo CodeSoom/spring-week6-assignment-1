@@ -16,16 +16,18 @@ class JwtUtilTest {
 
     private JwtUtil jwtUtil;
 
+    private final Long USER_ID = 1L;
+
     @BeforeEach
     void setUp() {
         jwtUtil = new JwtUtil(SECRET);
     }
 
     @Test
-    @DisplayName("Jwt encode()는 생선된 토큰을 리턴한다")
+    @DisplayName("Jwt encode()는 userId가 주어지면 생성된 토큰을 리턴한다")
     void encode() {
 
-        String token = jwtUtil.encode();
+        String token = jwtUtil.encode(USER_ID);
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 }

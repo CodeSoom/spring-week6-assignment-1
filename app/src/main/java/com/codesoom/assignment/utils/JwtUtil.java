@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 
+/**
+ * Jwt 토큰을 관리합니다.
+ */
 @Component
 public class JwtUtil {
 
@@ -19,6 +22,12 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * 주어진 회원 id와 secert key로 Jwt 토큰을 생성합니다.
+     *
+     * @param userId 회원 식별자
+     * @return 생성된 토큰
+     */
     public String encode(Long userId) {
         return Jwts.builder()
                 .claim("userId", userId)
@@ -26,7 +35,14 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Claims decode(String token) {
+    /**
+     * 주어진 토큰을 복호화하고 복호화된 정보를 리턴합니다.
+     *
+     * @param token 토큰
+     * @return 복호화된 정보
+     * @throws InvalidTokenException 토큰이 유효하지 않을 경우
+     */
+    public Claims decode(String token) throws InvalidTokenException {
         if (token == null || token.isBlank()) {
             throw new InvalidTokenException(token);
         }

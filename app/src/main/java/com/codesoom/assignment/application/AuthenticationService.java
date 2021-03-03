@@ -17,7 +17,7 @@ public class AuthenticationService {
     }
 
     public Long parseToken(String accessToken) {
-        if (accessToken.isBlank()) {
+        if (accessToken == null || accessToken.isBlank()) {
             throw new InvalidAccessTokenException(accessToken);
         }
         try {

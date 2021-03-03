@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+/**
+ * 유저에 대한 비즈니스 로직을 담당.
+ *
+ * @see User
+ */
 @Service
 @Transactional
 public class UserService {
@@ -22,6 +27,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 주어진 유저를 저장소에 저장한 뒤 반환합니다.
+     *
+     * @param registrationData 저장하고자 하는 유저 정보
+     * @return 저장된 유저
+     */
     public User registerUser(UserRegistrationData registrationData) {
         String email = registrationData.getEmail();
         if (userRepository.existsByEmail(email)) {
@@ -32,6 +43,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * 주어진 id와 일치하는 유저를 저장소에서 찾아 수정한 뒤 반환합니다.
+     *
+     * @param id               유저 식별자
+     * @param modificationData 수정하고자 하는 유저 정보
+     * @return 수정된 user
+     */
     public User updateUser(Long id, UserModificationData modificationData) {
         User user = findUser(id);
 
@@ -41,12 +59,24 @@ public class UserService {
         return user;
     }
 
+    /**
+     * 주어진 id와 일치하는 유저를 저장소에서 삭제합니다.
+     *
+     * @param id 유저 식별자
+     * @return 삭제된 유
+     */
     public User deleteUser(Long id) {
         User user = findUser(id);
         user.destroy();
         return user;
     }
 
+    /**
+     * 주어진 id와 일치하는 유저를 저장소에서 찾아 반환합니다.
+     *
+     * @param id 유저 식별자
+     * @return 주어진 id와 일치하는 유저
+     */
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));

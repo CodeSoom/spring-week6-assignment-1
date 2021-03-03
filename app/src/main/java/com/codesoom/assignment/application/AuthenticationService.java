@@ -1,11 +1,18 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.AuthenticationFailException;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
+/**
+ * 인증을 담당합니다.
+ */
 @Service
 public class AuthenticationService {
     private JwtUtil jwtUtil;
@@ -14,10 +21,33 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String login() {
-        return jwtUtil.encode(1L);
+    private UserRepository userRepository;
+
+    /**
+     * 주어진 회원을 로그인 처리하고, 액세스 토큰을 리턴합니다.
+     *
+     * @param userLoginData 회원 로그인 정보
+     * @return 생성된 액세스 토큰
+     * @throws AuthenticationFailException 주어진 회원 로그인 정보가 유효하지 않을 경우
+     */
+    public String login(UserLoginData userLoginData) {
+        User user = findUserByEmail(userLoginData.getEmail());
+
+        return jwtUtil.encode(user.getId());
     }
 
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthenticationFailException("입력하신 이메일에 해당하는 회원이 존재하지 않습니다."));
+    }
+
+    /**
+     * 주어진 토큰을 파싱한 뒤 파싱된 값을 리턴합니다.
+     *
+     * @param accessToken 액세스 토큰
+     * @return 파싱된 값
+     * @throws InvalidAccessTokenException 주어진 토큰이 null이거나 비어있는 경우
+     */
     public Long parseToken(String accessToken) {
         if (accessToken == null || accessToken.isBlank()) {
             throw new InvalidAccessTokenException(accessToken);

@@ -63,7 +63,7 @@ class SessionControllerTest {
                         .willReturn("a.b.c");
             }
 
-            @DisplayName("액세스 토큰과 상태코드 201을 응답한다.")
+            @DisplayName("액세스 토큰과 상태코드 201 Created 를 응답한다.")
             @Test
             void it_responds_the_access_token_and_status_code_201() throws Exception {
                 mockMvc.perform(post("/session")
@@ -76,15 +76,15 @@ class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("유효하지 않는 회원 로그인 정보가 주어진다면")
-        class Context_with_invalid_user_login_data {
+        @DisplayName("주어진 회원 로그인 정보로 인증에 실패했다면")
+        class Context_when_the_authentication_fails {
             @BeforeEach
             void setUp() {
                 given(authenticationService.login(any(UserLoginData.class)))
                         .willThrow(new UserAuthenticationFailException());
             }
 
-            @DisplayName("에러 메시지와 상태코드 400을 응답한다.")
+            @DisplayName("에러 메시지와 상태코드 400 Bad Request 를 응답한다.")
             @Test
             void it_responds_the_error_message_and_status_code_400() throws Exception {
                 mockMvc.perform(post("/session")

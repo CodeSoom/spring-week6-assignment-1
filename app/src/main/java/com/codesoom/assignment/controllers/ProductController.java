@@ -8,8 +8,10 @@ import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,9 +71,8 @@ public class ProductController {
             @RequestBody @Valid ProductData productData
     ) {
         String accessToken = authorization.substring("Bearer ".length());
-        Long userId = authenticationService.parseToken(accessToken);
 
-        System.out.println("***** userId: " + userId);
+        Long userId = authenticationService.parseToken(accessToken);
 
         return productService.createProduct(productData);
     }
@@ -83,7 +84,7 @@ public class ProductController {
      * @param productData
      * @return
      */
-    @RequestMapping(value = "{id}", method = { RequestMethod.PUT, RequestMethod.PATCH })
+    @RequestMapping(value = "{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
     public Product update(@PathVariable Long id, @RequestBody @Valid ProductData productData) {
         return productService.updateProduct(id, productData);
     }
@@ -97,5 +98,13 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable Long id) {
         productService.deleteProduct(id);
+    }
+
+    /**
+     * Authorization 헤더에 대한 예외를 처리합니다.
+     */
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void handleMissingRequestHeaderException() {
     }
 }

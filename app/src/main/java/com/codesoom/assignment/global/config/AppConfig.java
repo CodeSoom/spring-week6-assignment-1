@@ -1,4 +1,4 @@
-package com.codesoom.assignment.global.confing;
+package com.codesoom.assignment.global.config;
 
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;

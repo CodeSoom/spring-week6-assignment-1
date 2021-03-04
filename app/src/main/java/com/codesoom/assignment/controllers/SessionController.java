@@ -18,10 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/session")
 @CrossOrigin
-@RequiredArgsConstructor
 public class SessionController {
 
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     public SessionController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;

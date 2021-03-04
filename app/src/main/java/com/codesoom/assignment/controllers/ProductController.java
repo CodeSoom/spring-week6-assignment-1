@@ -62,6 +62,7 @@ public class ProductController {
     /**
      * 주어진 상품을 저장하고 해당 객체를 리턴한다.
      *
+     * @param authorization - 증명하고자 하는 토큰 문자열
      * @param productCreateData - 저장하고자 하는 상품
      * @return 저장 된 상품
      */
@@ -80,27 +81,39 @@ public class ProductController {
     /**
      * 주어진 식별자에 해당하는 상품을 수정하고 해당 객체를 리턴한다.
      *
+     * @param authorization - 증명하고자 하는 토큰 문자열
      * @param id - 수정하고자 하는 상품의 식별자
      * @param productUpdateData - 수정할 새로운 상품
      * @return 수정 된 상품
      */
     @PatchMapping("{id}")
     public ProductResultData update(
-            @PathVariable Long id,
-            @RequestBody @Valid ProductUpdateData productUpdateData
+            @RequestHeader("Authorization") String authorization
+            ,@PathVariable Long id
+            ,@RequestBody @Valid ProductUpdateData productUpdateData
     ) {
+        String accessToken = authorization.substring("Bearer ".length());
+        AuthenticationResultData authenticationResultData = authenticationService.parseToken(accessToken);
+
         return productService.updateProduct(id, productUpdateData);
     }
 
     /**
      * 주어진 식별자에 해당하는 상품을 삭제하고 해당 객체를 리턴한다.
      *
+     * @param authorization - 증명하고자 하는 토큰 문자열
      * @param id - 삭제하고자 하는 상품의 식별자
      * @return 삭제 된 상품
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ProductResultData delete(@PathVariable Long id) {
+    public ProductResultData delete(
+            @RequestHeader("Authorization") String authorization
+            ,@PathVariable Long id
+    ) {
+        String accessToken = authorization.substring("Bearer ".length());
+        AuthenticationResultData authenticationResultData = authenticationService.parseToken(accessToken);
+
         return productService.deleteProduct(id);
     }
 }

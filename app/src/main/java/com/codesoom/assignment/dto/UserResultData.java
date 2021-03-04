@@ -1,5 +1,6 @@
 package com.codesoom.assignment.dto;
 
+import com.codesoom.assignment.domain.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -29,5 +30,15 @@ public class UserResultData {
         this.email = email;
         this.password = password;
         this.deleted = deleted;
+    }
+
+    public User toEntity() {
+        return User.builder()
+            .id(this.id)
+            .name(this.name)
+            .email(this.email)
+            .password(this.password)
+            .deleted(this.deleted)
+            .build();
     }
 }

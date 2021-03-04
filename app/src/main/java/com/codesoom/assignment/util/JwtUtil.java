@@ -2,6 +2,7 @@ package com.codesoom.assignment.util;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserResultData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.UserBadRequestException;
 import io.jsonwebtoken.Claims;
@@ -26,6 +27,16 @@ public class JwtUtil {
         this.userRepository = userRepository;
     }
 
+    public UserResultData getUserResultData(User user) {
+        return UserResultData.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .deleted(user.isDeleted())
+                .build();
+    }
+
     /**
      * 주어진 이메일에 해당하는 사용자를 리턴한다.
      *
@@ -34,9 +45,11 @@ public class JwtUtil {
      * @throws UserBadRequestException 만약
      *         {@code email}에 해당되는 사용자가 저장되어 있지 않은 경우
      */
-    public User getUser(String email) {
-        return userRepository.findByEmail(email)
+    public UserResultData getUser(String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(UserBadRequestException::new);
+
+        return getUserResultData(user);
     }
 
     /**
@@ -50,7 +63,8 @@ public class JwtUtil {
      *         ,이미 삭제되어 있는 경우
      */
     public String encode(String email, String password) {
-        User user = getUser(email);
+        UserResultData userResultData = getUser(email);
+        User user = userResultData.toEntity();
 
         if(!user.authenticate(password)) {
             throw new UserBadRequestException();

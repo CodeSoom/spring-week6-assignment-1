@@ -110,12 +110,7 @@ public class UserService {
     public UserResultData deleteUser(Long id) {
         UserResultData userResultData = getUser(id);
 
-        User deleteUser = User.builder()
-                .id(userResultData.getId())
-                .name(userResultData.getName())
-                .email(userResultData.getEmail())
-                .password(userResultData.getPassword())
-                .build();
+        User deleteUser = userResultData.toEntity();
 
         deleteUser.delete();
 

@@ -1,5 +1,6 @@
 package com.codesoom.assignment.dto;
 
+import com.codesoom.assignment.domain.Product;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -29,5 +30,15 @@ public class ProductResultData {
         this.maker = maker;
         this.price = price;
         this.imageUrl = imageUrl;
+    }
+
+    public Product toEntity() {
+        return Product.builder()
+                .id(this.id)
+                .name(this.name)
+                .maker(this.maker)
+                .price(this.price)
+                .imageUrl(this.imageUrl)
+                .build();
     }
 }

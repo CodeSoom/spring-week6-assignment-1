@@ -107,18 +107,12 @@ public class ProductService {
      *         @code id}에 해당되는 상품이 저장되어 있지 않은 경우
      */
     public ProductResultData deleteProduct(Long id) {
-        ProductResultData product = getProduct(id);
+        ProductResultData productResultData = getProduct(id);
 
-        Product deletedProduct = Product.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .maker(product.getMaker())
-                .price((product.getPrice()))
-                .imageUrl(product.getImageUrl())
-                .build();
+        Product deletedProduct = productResultData.toEntity();
 
         productRepository.delete(deletedProduct);
 
-        return product;
+        return productResultData;
     }
 }

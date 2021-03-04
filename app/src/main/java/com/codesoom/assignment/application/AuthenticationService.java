@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+<<<<<<< HEAD
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;

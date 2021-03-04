@@ -3,17 +3,21 @@ package com.codesoom.assignment.util;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserResultData;
+import com.codesoom.assignment.errors.InvalidTokenException;
+import com.codesoom.assignment.errors.UserBadRequestException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 class JwtUtilTest {
@@ -81,6 +85,8 @@ class JwtUtilTest {
             @Test
             @DisplayName("주어진 이메일과 비밀번호로 토큰을 생성하고 리턴한다")
             void itCreatesTokenAndReturnsToken () {
+                given(userRepository.findByEmail(givenExistedEmail)).willReturn(Optional.of(setUpUser));
+
                 String token = jwtUtil.encode(givenExistedEmail, givenExistedPassword);
 
                 assertThat(token).isEqualTo(EXISTED_TOKEN);
@@ -96,9 +102,12 @@ class JwtUtilTest {
             @Test
             @DisplayName("이메일이 저장되어 있지 않다는 메세지를 리턴한다")
             void itReturnsEmailNotExistedMessage() {
-                String token = jwtUtil.encode(givenNotExistedEmail, givenExistedPassword);
+                given(userRepository.findByEmail(givenNotExistedEmail))
+                        .willReturn(Optional.empty());
 
-                assertThat(token).isNotEqualTo(EXISTED_TOKEN);
+                assertThatThrownBy(() -> jwtUtil.encode(givenNotExistedEmail,givenExistedPassword))
+                        .isInstanceOf(UserBadRequestException.class)
+                        .hasMessageContaining("User bad request");
             }
         }
 
@@ -109,13 +118,16 @@ class JwtUtilTest {
             private final String givenNotExistedPassword = NOT_EXISTED_PASSWORD;
 
             @Test
-            @DisplayName("요청이 잘못되었다는 메세지를 리턴합니다")
+            @DisplayName("요청이 잘못되었다는 메세지를 리턴한다")
             void itReturnsUserBadRequestMessage() {
-                //given(userRepository.findByEmail(EXISTED_EMAIL)).willReturn(Optional.of(givenExistedEmail));
+                given(userRepository.findByEmail(givenExistedEmail)).willReturn(Optional.of(setUpUser));
 
-                String token = jwtUtil.encode(givenExistedEmail, givenNotExistedPassword);
+                UserResultData user = jwtUtil.getUser(givenExistedEmail);
 
-                assertThat(token).isNotEqualTo(EXISTED_TOKEN);
+                assertThat(user.getPassword()).isEqualTo(EXISTED_PASSWORD);
+                assertThatThrownBy(() -> jwtUtil.encode(givenExistedEmail,givenNotExistedPassword))
+                        .isInstanceOf(UserBadRequestException.class)
+                        .hasMessageContaining("User bad request");
             }
         }
     }
@@ -124,12 +136,12 @@ class JwtUtilTest {
     @DisplayName("decode 메서드는")
     class Describe_decode {
         @Nested
-        @DisplayName("만약 저장되어 있는 토큰이 주어진다면")
+        @DisplayName("만약 유효한 토큰이 주어진다면")
         class Context_WithExistedToken {
             private final String givenExistedToken = EXISTED_TOKEN;
 
             @Test
-            @DisplayName("주어진 토큰에 해당하는 이메일과 비밀번호를 리턴한다")
+            @DisplayName("주어진 토큰을 파싱하여 이메일과 비밀번호를 리턴한다")
             void itReturnsEmailAndPassword() {
                 Claims claims = jwtUtil.decode(givenExistedToken);
 
@@ -137,10 +149,31 @@ class JwtUtilTest {
                 assertThat(claims.get("password", String.class)).isEqualTo(EXISTED_PASSWORD);
             }
         }
-    }
-    @Test
-    void decodeWithInvalidToken() {
-        assertThatThrownBy(() -> jwtUtil.decode(NOT_EXISTED_TOKEN))
-                .isInstanceOf(SignatureException.class);
+
+        @Nested
+        @DisplayName("만약 내용이 비어 있는 토큰이 주어진다면")
+        class Context_WithEmptyToken {
+            private final String token = "";
+
+            @Test
+            @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
+            void itReturnsInValidTokenMessage() {
+                assertThatThrownBy(() -> jwtUtil.decode(token))
+                        .isInstanceOf(InvalidTokenException.class)
+                        .hasMessageContaining("Invalid token");
+            }
+       }
+
+       @Nested
+       @DisplayName("만약 아무런 값이 없는 null 이 주어진다면")
+       class Context_WithNull {
+           @Test
+           @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
+           void itReturnsInvalidTokenMessage() {
+               assertThatThrownBy(() -> jwtUtil.decode(null))
+                       .isInstanceOf(InvalidTokenException.class)
+                       .hasMessageContaining("Invalid token");
+           }
+       }
     }
 }

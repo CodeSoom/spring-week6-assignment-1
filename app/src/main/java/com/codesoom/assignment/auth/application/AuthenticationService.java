@@ -27,7 +27,6 @@ public class AuthenticationService {
      */
     public String authenticate(String email, String password) throws IllegalArgumentException {
         final User user = userRepository.findByEmail(email)
-                .filter(u -> !u.isDeleted())
                 .orElseThrow(() -> new IllegalArgumentException(email));
 
         if (!user.authenticate(password)) {

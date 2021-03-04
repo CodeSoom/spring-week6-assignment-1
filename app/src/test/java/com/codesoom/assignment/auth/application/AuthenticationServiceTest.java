@@ -62,14 +62,11 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("등록된 이메일과 비밀번호가 주어지면")
         class Context_with_exist_email_password {
-            String email;
-            String password;
+            final String email = GIVEN_USER_EMAIL;
+            final String password = GIVEN_USER_PASSWORD;
 
             @BeforeEach
             void setUp() {
-                email = GIVEN_USER_EMAIL;
-                password = GIVEN_USER_PASSWORD;
-
                 given(userRepository.findByEmail(GIVEN_USER_EMAIL))
                         .willReturn(Optional.of(user));
             }
@@ -85,14 +82,8 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("등록되지 않은 이메일이 주어지면")
         class Context_with_not_exist_email {
-            String email;
-            String password;
-
-            @BeforeEach
-            void setUp() {
-                email = NOT_EXIST_EMAIL;
-                password = GIVEN_USER_PASSWORD;
-            }
+            final String email = NOT_EXIST_EMAIL;
+            final String password = GIVEN_USER_PASSWORD;
 
             @DisplayName("예외를 던진다.")
             @Test
@@ -105,14 +96,11 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효하지않는 비밀번호가 주어지면")
         class Context_with_wrong_password {
-            String email;
-            String password;
+            final String email = GIVEN_USER_EMAIL;
+            final String password = WRONG_PASSWORD;
 
             @BeforeEach
             void setUp() {
-                email = GIVEN_USER_EMAIL;
-                password = WRONG_PASSWORD;
-
                 given(userRepository.findByEmail(GIVEN_USER_EMAIL))
                         .willReturn(Optional.of(user));
             }
@@ -132,12 +120,12 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("토큰이 주어지면")
         class Context_with_token {
-            String token = VALID_TOKEN;
+            final String token = VALID_TOKEN;
 
             @DisplayName("토큰에 담긴 정보를 리턴한다.")
             @Test
             void it_returns_user_id() {
-                Claims actual = authenticationService.parseToken(token);
+                final Claims actual = authenticationService.parseToken(token);
 
                 assertThat(actual.get("userId", Long.class)).isEqualTo(GIVEN_ID);
                 assertThat(actual.getIssuedAt()).isNotNull();

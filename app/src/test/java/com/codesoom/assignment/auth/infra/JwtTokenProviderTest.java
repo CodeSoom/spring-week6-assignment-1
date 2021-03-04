@@ -40,12 +40,7 @@ class JwtTokenProviderTest {
         @Nested
         @DisplayName("사용자 id가 주어지면")
         class Context_with_user_id {
-            Long userid;
-
-            @BeforeEach
-            void setUp() {
-                userid = GIVEN_ID;
-            }
+            final Long userid = GIVEN_ID;
 
             @DisplayName("사용자 토큰을 리턴한다.")
             @Test
@@ -64,12 +59,7 @@ class JwtTokenProviderTest {
         @Nested
         @DisplayName("토큰이 주어지면")
         class Context_with_token {
-            String token;
-
-            @BeforeEach
-            void setUp() {
-                token = VALID_TOKEN;
-            }
+            final String token = VALID_TOKEN;
 
             @DisplayName("토큰을 해독해 사용자 정보를 리턴한다.")
             @Test

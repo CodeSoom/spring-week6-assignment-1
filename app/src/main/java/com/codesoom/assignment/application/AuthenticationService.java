@@ -17,7 +17,7 @@ public class AuthenticationService {
     /**
      * 회원의 access token을 반환합니다.
      *
-     * @param user token을 발급할 회원
+     * @param user 회원
      * @return JWT Access Token
      */
     public String login(User user) {

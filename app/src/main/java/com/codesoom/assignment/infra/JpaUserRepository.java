@@ -15,11 +15,11 @@ public interface JpaUserRepository
 
     boolean existsByEmail(String email);
 
+    Optional<User> findByEmail(String email);
+
     User save(User user);
 
     void delete(User user);
 
     Optional<User> findByIdAndDeletedIsFalse(Long id);
-
-//    Optional<User> findByEmail(String email);
 }

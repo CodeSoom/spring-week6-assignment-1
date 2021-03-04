@@ -338,14 +338,13 @@ class UserControllerTest {
             @Test
             @DisplayName("주어진 아이디에 해당하는 사용자를 삭제하고 삭제된 사용자와 NO_CONTENT를 리턴한다")
             void itDeletesUserAndReturnsDeletedUserAndNO_CONTENTHttpStatus() throws Exception {
-                given(userService.deleteUser(givenExistedId)).willReturn(userResultData);
+                given(userService.deleteUser(eq(givenExistedId))).willReturn(userResultData);
 
-                mockMvc.perform(delete("/users/" + givenExistedId))
+                mockMvc.perform(delete("/users/" + givenExistedId)
+                        .contentType(MediaType.APPLICATION_JSON))
                         .andDo(print())
                         .andExpect(content().string(containsString("\"deleted\":true")))
                         .andExpect(status().isNoContent());
-
-                verify(userService).deleteUser(givenExistedId);
             }
         }
 

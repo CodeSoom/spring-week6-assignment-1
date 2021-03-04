@@ -48,9 +48,9 @@ public class User {
         this.deleted = deleted;
     }
 
-//    public boolean authenticate(String password) {
-//        return !deleted && password.equals(this.password);
-//    }
+    public boolean authenticate(String password) {
+        return !deleted && password.equals(this.password);
+    }
 
 //    public void changeWith(User source) {
 //        name = source.name;

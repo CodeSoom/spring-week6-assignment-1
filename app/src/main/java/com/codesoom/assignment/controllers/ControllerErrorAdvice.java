@@ -6,6 +6,7 @@ import com.codesoom.assignment.errors.ProductBadRequestException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserBadRequestException;
 import com.codesoom.assignment.errors.UserEmailDuplicatedException;
+import com.codesoom.assignment.errors.UserEmailNotExistedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,17 +36,18 @@ public class ControllerErrorAdvice {
         return new ErrorResponse(message);
     }
 
-    /** 상품 생성 수행 정보가 잘못 되었다는 메세지를 리턴한다. */
+    /** 상품에 대한 요청이 잘못 되었다는 메세지를 리턴한다. */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ProductBadRequestException.class)
     public ErrorResponse handleProductBadRequest(ProductBadRequestException e) {
         return new ErrorResponse(e.getMessage());
     }
 
+    /** 토큰 생성 정보가 비어있다는 메세지를 보낸다. */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingRequestHeaderException.class)
-    void handleMissingRequestHeader() {
-        //
+    public ErrorResponse handleMissingRequestHeader(MissingRequestHeaderException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     /** 사용자를 찾을 수 없다는 메세지를 리턴한다 */
@@ -69,9 +71,17 @@ public class ControllerErrorAdvice {
         return new ErrorResponse(e.getMessage());
     }
 
+    /** 토큰이 유효하지 않다는 메세지를 리턴한다. */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidAccessTokenException.class)
     public ErrorResponse handleInvalidAccessTokenException(InvalidAccessTokenException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    /** 사용자 이메일이 존재하지 않다는 메세지를 리턴한다. */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserEmailNotExistedException.class)
+    public ErrorResponse handleUserEmailNotExistedException(UserEmailNotExistedException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

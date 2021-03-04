@@ -6,9 +6,7 @@ import com.codesoom.assignment.dto.ProductCreateData;
 import com.codesoom.assignment.dto.ProductResultData;
 import com.codesoom.assignment.dto.ProductUpdateData;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -103,11 +101,5 @@ public class ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ProductResultData delete(@PathVariable Long id) {
         return productService.deleteProduct(id);
-    }
-
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    public void handleMissingRequestHeaderException(MissingRequestHeaderException e) {
-        System.out.println(e.getHeaderName());
     }
 }

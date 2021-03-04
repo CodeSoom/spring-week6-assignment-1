@@ -7,16 +7,14 @@ import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class AuthenticationService {
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
     public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {

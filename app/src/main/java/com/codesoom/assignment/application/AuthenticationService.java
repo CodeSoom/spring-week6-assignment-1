@@ -1,23 +1,32 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthenticationService {
     private JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public AuthenticationService(JwtUtil jwtUtil) {
+    public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
-    public String login() {
-        return jwtUtil.encode(1L);
+    public String login(String email) {
+        final Long userId = findUserByEmail(email).getId();
+        return jwtUtil.encode(userId);
     }
 
     public Long parseToken(String accessToken) {
@@ -31,5 +40,10 @@ public class AuthenticationService {
         } catch (SignatureException e){
             throw new InvalidAccessTokenException(accessToken);
         }
+    }
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 }

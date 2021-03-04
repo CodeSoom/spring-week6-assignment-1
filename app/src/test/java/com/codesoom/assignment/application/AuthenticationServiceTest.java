@@ -92,7 +92,7 @@ class AuthenticationServiceTest {
             @DisplayName("액세스 토큰을 리턴한다.")
             @Test
             void it_returns_the_access_token() {
-                String accessToken = authenticationService.login(userLoginData);
+                final String accessToken = authenticationService.login(userLoginData);
 
                 assertThat(accessToken).contains(".");
             }
@@ -171,7 +171,7 @@ class AuthenticationServiceTest {
             @DisplayName("파싱된 값을 리턴한다.")
             @Test
             void it_returns_the_parsed_value() {
-                Long userId = authenticationService.parseToken(validToken);
+                final Long userId = authenticationService.parseToken(validToken);
 
                 assertThat(userId).isEqualTo(parsedUserId);
             }

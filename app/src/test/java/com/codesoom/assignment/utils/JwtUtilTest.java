@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,7 +67,22 @@ class JwtUtilTest {
             @DisplayName("예외를 던진다")
             void It_returns_claim() {
                 assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
-                        .isInstanceOf(SignatureException.class);
+                        .isInstanceOf(InvalidTokenException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("토큰이 주어지지 않는다면")
+        class Context_without_token {
+
+            @Test
+            @DisplayName("예외를 던진다")
+            void It_returns_claim() {
+                assertThatThrownBy(() -> jwtUtil.decode(""))
+                        .isInstanceOf(InvalidTokenException.class);
+
+                assertThatThrownBy(() -> jwtUtil.decode("  "))
+                        .isInstanceOf(InvalidTokenException.class);
             }
         }
     }

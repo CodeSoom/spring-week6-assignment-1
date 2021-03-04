@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.AccountData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -20,6 +22,7 @@ class AuthenticationServiceTest {
     final String invalidToken
             = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
     final String givenEmail = "newoo4297@codesoom.com";
+    final String givenPassword = "1234567890";
 
     private AuthenticationService authenticationService;
 
@@ -38,14 +41,15 @@ class AuthenticationServiceTest {
                                 .id(1L)
                                 .email(givenEmail)
                                 .name("Tester")
-                                .password("test")
+                                .password(givenPassword)
                                 .build())
                 );
     }
 
     @Test
     void login() {
-        String accessToken = authenticationService.login(givenEmail);
+        AccountData accountData = AccountData.builder().email(givenEmail).password(givenPassword).build();
+        String accessToken = authenticationService.login(accountData);
 
         assertThat(accessToken).isEqualTo(validToken);
     }

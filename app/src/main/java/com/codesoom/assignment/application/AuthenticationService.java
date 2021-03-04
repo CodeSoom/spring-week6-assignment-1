@@ -1,6 +1,7 @@
 package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.AccountData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
@@ -23,9 +24,14 @@ public class AuthenticationService {
         this.userRepository = userRepository;
     }
 
-    public String login(String email) {
-        final Long userId = findUserByEmail(email).getId();
-        return jwtUtil.encode(userId);
+    public String login(AccountData accountData) {
+        final User user = findUserByEmail(accountData.getEmail());
+
+        if (user.getPassword().equals(accountData.getPassword())) {
+            return jwtUtil.encode(user.getId());
+        }
+
+        throw new UserNotFoundException(accountData.getEmail());
     }
 
     public Long parseToken(String accessToken) {

@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 사용자 정보.
+ */
 @Getter
 @Builder
 @AllArgsConstructor

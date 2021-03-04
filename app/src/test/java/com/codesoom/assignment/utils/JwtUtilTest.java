@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import io.jsonwebtoken.Claims;
@@ -23,6 +24,7 @@ class JwtUtilTest {
         jwtUtil = new JwtUtil(SECRET);
     }
 
+    @DisplayName("Jwt 유틸을 이용해 암호화 하였을 때, 유호한 토큰을 반환한다.")
     @Test
     void encode() {
         String token = jwtUtil.encode(1L);
@@ -30,6 +32,7 @@ class JwtUtilTest {
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 
+    @DisplayName("유효한 토큰으로 복호화 하였을 때, 유효한 유저 아이디를 반환한다.")
     @Test
     void decodeWithValidToken() {
        Claims claims = jwtUtil.decode(VALID_TOKEN);
@@ -37,9 +40,9 @@ class JwtUtilTest {
        assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
 
+    @DisplayName("유효하지 않은 토큰을 복호화 하였을 때, 예외를 호출한다.")
     @Test
     void decodeWithInValidToken() {
-
         assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
             .isInstanceOf(SignatureException.class);
     }

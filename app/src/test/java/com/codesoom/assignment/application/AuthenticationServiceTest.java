@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -24,6 +25,7 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(jwtUtil);
     }
 
+    @DisplayName("서비스에 로그인을 요청했을 때, 유효한 토큰을 반환한다.")
     @Test
     void login() {
         String accessToken = authenticationService.login();
@@ -31,13 +33,7 @@ class AuthenticationServiceTest {
         assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }
 
-    @Test
-    void parseToken() {
-        Long userId = authenticationService.parseToken(VALID_TOKEN);
-
-        assertThat(userId).isEqualTo(1L);
-    }
-
+    @DisplayName("서비스에 값이 유효한 토큰 분석을 요청했을 때, 유저 아이디를 반환한다.")
     @Test
     void parseTokenWithValidToken() {
         Long userId = authenticationService.parseToken(VALID_TOKEN);
@@ -45,6 +41,7 @@ class AuthenticationServiceTest {
         assertThat(userId).isEqualTo(1L);
     }
 
+    @DisplayName("서비스에 값이 유효하지 않은 토큰을 분석 요청했을 때, 예외가 호출된다.")
     @Test
     void parseTokenWithInValidToken() {
         assertThatThrownBy(
@@ -52,6 +49,7 @@ class AuthenticationServiceTest {
             .isInstanceOf(InvalidAccessTokenException.class);
     }
 
+    @DisplayName("서비스에 형식이 올바르지 않은 토큰을 분석 요청했을 때, 예외가 호출된다.")
     @Test
     void parseTokenWithEmptyToken() {
         assertThatThrownBy(

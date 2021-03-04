@@ -9,6 +9,7 @@ import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -62,6 +63,7 @@ class UserServiceTest {
                 .willReturn(Optional.empty());
     }
 
+    @DisplayName("서비스에 유저 등록을 요청하면 유저가 생성된다.")
     @Test
     void registerUser() {
         UserRegistrationData registrationData = UserRegistrationData.builder()
@@ -79,6 +81,7 @@ class UserServiceTest {
         verify(userRepository).save(any(User.class));
     }
 
+    @DisplayName("서비스에 중복된 이메일로 유저 등록을 요청하면 유저가 중복되었다는 예외가 호출된다.")
     @Test
     void registerUserWithDuplicatedEmail() {
         UserRegistrationData registrationData = UserRegistrationData.builder()
@@ -93,6 +96,7 @@ class UserServiceTest {
         verify(userRepository).existsByEmail(EXISTED_EMAIL_ADDRESS);
     }
 
+    @DisplayName("서비스에 중복된 이메일로 유저 등록을 요청하면 예외가 호출된다.")
     @Test
     void updateUserWithExistedId() {
         UserModificationData modificationData = UserModificationData.builder()
@@ -109,6 +113,7 @@ class UserServiceTest {
         verify(userRepository).findByIdAndDeletedIsFalse(1L);
     }
 
+    @DisplayName("서비스에 존재하지 않는 유저에 대해서 수정을 요청하면 예외가 호출된다.")
     @Test
     void updateUserWithNotExistedId() {
         UserModificationData modificationData = UserModificationData.builder()
@@ -123,6 +128,7 @@ class UserServiceTest {
     }
 
 
+    @DisplayName("서비스에 존재하지 않는 유저에 대해서 삭제을 요청하면 예외가 호출된다.")
     @Test
     void updateUserWithDeletedId() {
         UserModificationData modificationData = UserModificationData.builder()
@@ -138,6 +144,7 @@ class UserServiceTest {
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
     }
 
+    @DisplayName("서비스에 존재하는 유저에 대해서 삭제를 요청하면 삭제되었다는 정보를 가진다.")
     @Test
     void deleteUserWithExistedId() {
         User user = userService.deleteUser(1L);
@@ -148,6 +155,7 @@ class UserServiceTest {
         verify(userRepository).findByIdAndDeletedIsFalse(1L);
     }
 
+    @DisplayName("서비스에 존재하지 않는 유저에 대해서 삭제를 요청하면 예외가 호출된다.")
     @Test
     void deleteUserWithNotExistedId() {
         assertThatThrownBy(() -> userService.deleteUser(100L))
@@ -156,6 +164,7 @@ class UserServiceTest {
         verify(userRepository).findByIdAndDeletedIsFalse(100L);
     }
 
+    @DisplayName("서비스에 삭제된 유저에 대해서 삭제를 요청하면 예외가 호출된다.")
     @Test
     void deleteUserWithDeletedId() {
         assertThatThrownBy(() -> userService.deleteUser(DELETED_USER_ID))

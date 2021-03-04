@@ -6,6 +6,7 @@ import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -62,6 +63,7 @@ class UserControllerTest {
                 .willThrow(new UserNotFoundException(100L));
     }
 
+    @DisplayName("유저 생성을 올바른 형식으로 요청하면 상태코드 201 및 생성된 값을 반환한다.")
     @Test
     void registerUserWithValidAttributes() throws Exception {
         mockMvc.perform(
@@ -84,6 +86,7 @@ class UserControllerTest {
         verify(userService).registerUser(any(UserRegistrationData.class));
     }
 
+    @DisplayName("유저 수정을 올바른 형식으로 요청하면 상태코드 200 및 수정된 값을 반환한다.")
     @Test
     void registerUserWithInvalidAttributes() throws Exception {
         mockMvc.perform(
@@ -94,6 +97,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("유저 수정을 올바른 형식으로 요청하면 상태코드 200 및 수정된 값을 반환한다.")
     @Test
     void updateUserWithValidAttributes() throws Exception {
         mockMvc.perform(
@@ -112,6 +116,7 @@ class UserControllerTest {
         verify(userService).updateUser(eq(1L), any(UserModificationData.class));
     }
 
+    @DisplayName("유저 수정을 올바르지 않은 형식으로 요청하면 상태코드 400을 반환한다.")
     @Test
     void updateUserWithInvalidAttributes() throws Exception {
         mockMvc.perform(
@@ -122,6 +127,7 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("존재하지 않는 유저에 대해서 수정을 요청하면, 상태 코드 404를 반환한다.")
     @Test
     void updateUserWithNotExsitedId() throws Exception {
         mockMvc.perform(
@@ -135,6 +141,7 @@ class UserControllerTest {
                 .updateUser(eq(100L), any(UserModificationData.class));
     }
 
+    @DisplayName("존재하는 유저에 대해서 삭제를 요청하면, 상태코드 204를 반환한다.")
     @Test
     void destroyWithExistedId() throws Exception {
         mockMvc.perform(delete("/users/1"))
@@ -143,6 +150,7 @@ class UserControllerTest {
         verify(userService).deleteUser(1L);
     }
 
+    @DisplayName("존재하지 않는 유저에 대해서 삭제를 요청하면 상태코드 404를 반환한다.")
     @Test
     void destroyWithNotExistedId() throws Exception {
         mockMvc.perform(delete("/users/100"))

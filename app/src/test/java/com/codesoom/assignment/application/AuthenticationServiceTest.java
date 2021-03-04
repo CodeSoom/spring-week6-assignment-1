@@ -20,7 +20,7 @@ public class AuthenticationServiceTest {
     private String userEmail;
     private String userPassword;
     UserRepository userRepository = new InMemoryUserRepository();
-    AuthenticationService authenticationService = new AuthenticationService();
+    AuthenticationService authenticationService = new AuthenticationService(userRepository);
 
     @Given("이미 생성된 유저의 email와 password가 주어졌을 때")
     public void givenAlreadyCreatedUserEmailAndPassword() {

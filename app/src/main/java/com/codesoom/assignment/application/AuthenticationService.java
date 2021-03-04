@@ -30,7 +30,7 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new InvalidUserException());
 
-        if (!user.getPassword().equals(userLoginDto.getPassword()) || user.isDeleted()) {
+        if (!user.authenticate(userLoginDto.getPassword())) {
             throw new InvalidUserException();
         }
         return jwtUtil.encode(user.getId());

@@ -21,7 +21,7 @@ public class JwtUtil {
     }
 
     /**
-     * 암호화한 토큰을 발행합니다.
+     * 회원의 Id로 jwt 토큰을 생성합니다.
      * @param userId 발행할 유저의 아이디
      * @return 유저에게 할당할 토큰
      */

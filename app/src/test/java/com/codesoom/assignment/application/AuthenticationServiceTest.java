@@ -3,11 +3,8 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.InvalidUserInformationException;
 import com.codesoom.assignment.infra.InMemoryUserRepository;
-import com.codesoom.assignment.infra.JpaUserRepository;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
-import io.cucumber.java.bs.A;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -19,6 +16,7 @@ public class AuthenticationServiceTest {
     private User authenticUser;
     private String userEmail;
     private String userPassword;
+    private InvalidUserInformationException exception;
     UserRepository userRepository = new InMemoryUserRepository();
     AuthenticationService authenticationService = new AuthenticationService(userRepository);
 
@@ -36,11 +34,26 @@ public class AuthenticationServiceTest {
 
     @When("인증을 하게된다면")
     public void authenticate() {
-        authenticUser = authenticationService.authenticate(userEmail, userPassword);
+        try {
+            authenticUser = authenticationService.authenticate(userEmail, userPassword);
+        } catch (InvalidUserInformationException invalidUserInformationException) {
+            exception = invalidUserInformationException;
+        }
     }
 
     @Then("올바른 유저로 인증된다")
     public void authenticatedAsRightUser() {
         assertThat(authenticUser).isEqualTo(createdUser);
+    }
+
+    @Given("올바르지 않은 email와 password가 주어졌을 때")
+    public void givenInvalidInformation() {
+        userEmail = "las@magical.dev";
+        userEmail = "TEST_PASSWORD";
+    }
+
+    @Then("에러가 발생한다")
+    public void raiseError() {
+        assertThat(exception).isNotNull();
     }
 }

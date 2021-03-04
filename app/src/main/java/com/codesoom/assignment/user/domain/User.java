@@ -57,20 +57,15 @@ public class User {
     }
 
     /**
-     * 입력받은 비밀번호가 기존의 비밀 번호와 동일하면 true를 리턴하고, 그렇지 않다면 false를 리턴합니다.
-     */
-    public boolean matchPassword(String password) {
-        return this.password.equals(password);
-    }
-
-    /**
      * 사용자 정보를 삭제합니다.
      */
     public void destroy() {
         deleted = true;
     }
 
-
+    /**
+     * 입력받은 비밀번호가 삭제안된 사용자의 기존 비밀 번호와 동일하면 true를 리턴하고, 그렇지 않다면 false를 리턴합니다.
+     */
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);
     }

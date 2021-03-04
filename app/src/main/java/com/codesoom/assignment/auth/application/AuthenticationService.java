@@ -26,10 +26,11 @@ public class AuthenticationService {
      * @throws IllegalArgumentException 유효하지 않은 인자가 들어왔을 경우
      */
     public String authenticate(String email, String password) throws IllegalArgumentException {
-        User user = userRepository.findByEmail(email)
+        final User user = userRepository.findByEmail(email)
+                .filter(u -> !u.isDeleted())
                 .orElseThrow(() -> new IllegalArgumentException(email));
 
-        if (!user.matchPassword(password)) {
+        if (!user.authenticate(password)) {
             throw new IllegalArgumentException(WRONG_PASSWORD);
         }
         return createToken(user.getId());

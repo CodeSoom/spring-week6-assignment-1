@@ -11,11 +11,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
+    private static final String HEADER = "eyJhbGciOiJIUzI1NiJ9";
+    private static final String PAYLOAD= "eyJ1c2VySWQiOjF9";
+    private static final String SIGNATURE = "ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private static final String INVALID_SIGNATURE = "ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDM" + "INVALID";
 
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-        "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-        "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String VALID_TOKEN = String.join(".", HEADER, PAYLOAD, SIGNATURE);
+    private static final String INVALID_TOKEN = String.join(".", HEADER, PAYLOAD, INVALID_SIGNATURE);
 
     private AuthenticationService authenticationService;
 
@@ -25,7 +27,7 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(jwtUtil);
     }
 
-    @DisplayName("서비스에 로그인을 요청했을 때, 유효한 토큰을 반환한다.")
+    @DisplayName("k서비스에 로그인을 요청했을 때, 유효한 토큰을 반환한다.")
     @Test
     void login() {
         String accessToken = authenticationService.login();

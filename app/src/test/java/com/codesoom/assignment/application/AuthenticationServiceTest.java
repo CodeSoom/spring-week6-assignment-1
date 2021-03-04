@@ -49,7 +49,15 @@ class AuthenticationServiceTest {
     @Test
     void parseTokenWithBlankToken() {
         assertThatThrownBy(
+                () -> authenticationService.parseToken(null)
+        ).isInstanceOf(InvalidAccessTokenException.class);
+
+        assertThatThrownBy(
                 () -> authenticationService.parseToken("")
+        ).isInstanceOf(InvalidAccessTokenException.class);
+
+        assertThatThrownBy(
+                () -> authenticationService.parseToken(" ")
         ).isInstanceOf(InvalidAccessTokenException.class);
     }
 }

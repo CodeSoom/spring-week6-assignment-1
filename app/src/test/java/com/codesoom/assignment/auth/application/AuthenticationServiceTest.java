@@ -1,7 +1,6 @@
 package com.codesoom.assignment.auth.application;
 
 import com.codesoom.assignment.auth.infra.JwtTokenProvider;
-import com.codesoom.assignment.user.application.UserEmailNotFoundException;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.domain.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -88,7 +87,7 @@ class AuthenticationServiceTest {
             @DisplayName("예외를 던진다.")
             @Test
             void It_throws_exception() {
-                assertThrows(UserEmailNotFoundException.class,
+                assertThrows(IllegalArgumentException.class,
                         () -> authenticationService.authenticate(email, password));
             }
         }

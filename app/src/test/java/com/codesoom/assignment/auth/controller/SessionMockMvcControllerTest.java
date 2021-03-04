@@ -2,7 +2,6 @@ package com.codesoom.assignment.auth.controller;
 
 import com.codesoom.assignment.auth.application.AuthenticationService;
 import com.codesoom.assignment.auth.dto.AuthenticationRequestDto;
-import com.codesoom.assignment.user.application.UserEmailNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +76,7 @@ class AuthenticationControllerTest {
             void setUp() {
                 requestDto = new AuthenticationRequestDto(NOT_EXIST_EMAIL, GIVEN_PASSWORD);
                 given(authenticationService.authenticate(NOT_EXIST_EMAIL, GIVEN_PASSWORD))
-                        .willThrow(new UserEmailNotFoundException(NOT_EXIST_EMAIL));
+                        .willThrow(new IllegalArgumentException(NOT_EXIST_EMAIL));
             }
 
             @DisplayName("400 BadRequest 상태를 응답한다")

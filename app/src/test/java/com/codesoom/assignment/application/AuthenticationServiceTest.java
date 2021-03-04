@@ -31,7 +31,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void parseToken() {
+    void parseTokenWithValidToken() {
         Long userId = authenticationService.parseToken(validToken);
 
         assertThat(userId).isEqualTo(1L);

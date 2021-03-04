@@ -1,8 +1,6 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
-import com.codesoom.assignment.application.UserService;
-import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.SessionResponseData;
 import com.codesoom.assignment.dto.UserLoginDto;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +22,12 @@ import javax.validation.Valid;
 @RequestMapping("/session")
 @RequiredArgsConstructor
 public class SessionController {
-
-    private final UserService userService;
     private final AuthenticationService authenticationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid UserLoginDto userLoginDto) {
-        User user = userService.validUser(userLoginDto);
-        String accessToken = authenticationService.login(user);
+        String accessToken = authenticationService.login(userLoginDto);
 
         return SessionResponseData.builder()
                 .accessToken(accessToken)

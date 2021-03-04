@@ -49,4 +49,15 @@ class UserTest {
         assertThat(user.authenticate("test")).isFalse();
         assertThat(user.authenticate("xxx")).isFalse();
     }
+
+    @Test
+    void toStringTest() {
+        String user = User.builder()
+                .name("juunini")
+                .password("secret")
+                .toString();
+
+        assertThat(user).contains("juunini");
+        assertThat(user).contains("secret");
+    }
 }

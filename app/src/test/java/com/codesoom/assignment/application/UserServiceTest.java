@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserCreateRequestDto;
 import com.codesoom.assignment.dto.UserUpdateRequestDto;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
@@ -36,6 +37,8 @@ class UserServiceTest {
     private static final String EMAIL = "yhyojoo@codesoom.com";
     private static final String PASSWORD = "112233!!";
 
+    private static final String DUPLICATED_EMAIL = "hyo@codesoom.com";
+
     private static final String UPDATE_EMAIL = "joo@codesoom.com";
     private static final String UPDATE_PASSWORD = "123!";
 
@@ -53,14 +56,15 @@ class UserServiceTest {
                 .password(PASSWORD)
                 .build();
 
-        given(userRepository.findById(givenValidId))
+        given(userRepository.findById(EXIST_ID))
                 .willReturn(Optional.of(user));
+
+        given(userRepository.existsByEmail(DUPLICATED_EMAIL))
+                .willThrow(new UserEmailDuplicationException(
+                        DUPLICATED_EMAIL));
 
         given(userRepository.save(any(User.class)))
                 .will(invocation -> invocation.<Product>getArgument(0));
-
-        given(userRepository.findById(EXIST_ID))
-                .willReturn(Optional.of(user));
     }
 
     void createTest(User user) {
@@ -81,7 +85,7 @@ class UserServiceTest {
         User createdUser;
 
         @Nested
-        @DisplayName("사용자 정보가 주어지면")
+        @DisplayName("사용자 정보가 주어진다면")
         class Context_with_create_request {
 
             @BeforeEach
@@ -101,6 +105,29 @@ class UserServiceTest {
                 verify(userRepository).save(any(User.class));
 
                 createTest(createdUser);
+            }
+        }
+
+        @Nested
+        @DisplayName("중복되는 이메일이 주어진다면")
+        class Context_with_duplicated_email {
+
+            @BeforeEach
+            void setUp() {
+                creationData = UserCreateRequestDto.builder()
+                        .name(NAME)
+                        .email(DUPLICATED_EMAIL)
+                        .password(PASSWORD)
+                        .build();
+            }
+
+            @Test
+            @DisplayName("이미 존재하는 이메일이라는 예외를 던진다")
+            void it_returns_warning_message() {
+                assertThatThrownBy(() -> userService.createUser(creationData))
+                        .isInstanceOf(UserEmailDuplicationException.class);
+
+                verify(userRepository).existsByEmail(DUPLICATED_EMAIL);
             }
         }
     }

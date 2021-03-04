@@ -2,14 +2,13 @@ package com.codesoom.assignment.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 
 /**
- * jwt 토큰 관련 기능을 제공합니다.
+ * JWT 토큰 관련 기능을 제공합니다.
  */
 @Component
 public class JwtUtil {
@@ -21,7 +20,8 @@ public class JwtUtil {
     }
 
     /**
-     * 회원의 Id로 jwt 토큰을 생성합니다.
+     * 회원의 Id로 JWT 토큰을 생성합니다.
+     *
      * @param userId 발행할 유저의 아이디
      * @return 유저에게 할당할 토큰
      */

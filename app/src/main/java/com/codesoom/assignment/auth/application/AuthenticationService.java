@@ -6,11 +6,13 @@ import com.codesoom.assignment.user.domain.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 사용자 인증을 처리한다.
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthenticationService {
     private static final String WRONG_PASSWORD = "잘못된 비밀번호를 입력하였습니다.";

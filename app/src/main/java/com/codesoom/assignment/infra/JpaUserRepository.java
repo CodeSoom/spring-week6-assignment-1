@@ -17,4 +17,10 @@ public interface JpaUserRepository
     Optional<User> findByIdAndDeletedIsFalse(Long id);
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findActiveUserByEmail(String email);
+
+    default Optional<User> findByEmailAndDeletedIsFalse(String email) {
+        return findActiveUserByEmail(email);
+    }
 }

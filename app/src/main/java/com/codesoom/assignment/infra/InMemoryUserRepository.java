@@ -49,4 +49,15 @@ public class InMemoryUserRepository implements UserRepository {
                 user -> user.getEmail().equals(email)
             ).findAny();
     }
+
+    @Override
+    public Optional<User> findActiveUserByEmail(String email) {
+        return map.values()
+            .stream()
+            .filter(
+                user -> user.getEmail().equals(email)
+            ).filter(
+                user -> !user.isDestroy()
+            ).findAny();
+    }
 }

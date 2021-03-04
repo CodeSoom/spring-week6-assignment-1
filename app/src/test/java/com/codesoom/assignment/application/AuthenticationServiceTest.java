@@ -16,13 +16,14 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class AuthenticationServiceTest {
+
+    private static final String VALID_EMAIL = "rhfpdk92@naver.com";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -31,12 +32,7 @@ class AuthenticationServiceTest {
 
     private final UserRepository userRepository = mock(UserRepository.class);
 
-    private UserLoginDto validUserLoginDto;
-    private UserLoginDto userLoginDtoWithWrongPassword;
-    private UserLoginDto invalidUserLoginDto;
-    private UserLoginDto deletedUserLoginDto;
     private User validUser;
-    private User deletedUser;
 
     @BeforeEach
     void setUp() {
@@ -46,37 +42,9 @@ class AuthenticationServiceTest {
 
         validUser = User.builder()
                 .id(1L)
-                .email("rhfpdk92@naver.com")
-                .password("1234")
+                .email(VALID_EMAIL)
+                .password("password")
                 .name("양승인")
-                .build();
-
-        deletedUser = User.builder()
-                .id(2L)
-                .email("delete@naver.com")
-                .password("password")
-                .name("삭제된유저")
-                .deleted(true)
-                .build();
-
-        validUserLoginDto = UserLoginDto.builder()
-                .email(validUser.getEmail())
-                .password(validUser.getPassword())
-                .build();
-
-        userLoginDtoWithWrongPassword = UserLoginDto.builder()
-                .email(validUser.getEmail())
-                .password("wrong password")
-                .build();
-
-        invalidUserLoginDto = UserLoginDto.builder()
-                .email("doesNotExist@naver.com")
-                .password("password")
-                .build();
-
-        deletedUserLoginDto = UserLoginDto.builder()
-                .email(deletedUser.getEmail())
-                .password(deletedUser.getPassword())
                 .build();
     }
 
@@ -87,10 +55,16 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효한 로그인 정보를 주면")
         class Context_with_valid_login_data {
+            private UserLoginDto validUserLoginDto;
 
             @BeforeEach
             void setUp() {
-                given(userRepository.findByEmail("rhfpdk92@naver.com"))
+                validUserLoginDto = UserLoginDto.builder()
+                        .email(validUser.getEmail())
+                        .password(validUser.getPassword())
+                        .build();
+
+                given(userRepository.findByEmail(validUserLoginDto.getEmail()))
                         .willReturn(Optional.of(validUser));
             }
 
@@ -105,48 +79,76 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("로그인 정보에 해당하는 회원이 없으면")
         class Context_does_not_exist_user {
+            private UserLoginDto invalidUserLoginDto;
 
             @BeforeEach
             void setUp() {
+                invalidUserLoginDto = UserLoginDto.builder()
+                        .email("doesNotExist@naver.com")
+                        .password("password")
+                        .build();
+
                 given(userRepository.findByEmail(invalidUserLoginDto.getEmail()))
                         .willReturn(Optional.empty());
             }
 
             @Test
-            @DisplayName("InvalidUserException을 반환한다.")
+            @DisplayName("InvalidUserException을 던진다.")
             void it_return_invalid_user_exception() {
                 assertThrows(InvalidUserException.class, () -> authenticationService.login(invalidUserLoginDto));
             }
         }
+
         @Nested
         @DisplayName("주어진 패스워드와 회원의 패스워드가 일치하지 않으면")
         class Context_do_not_match_password {
+            private UserLoginDto userLoginDtoWithWrongPassword;
 
             @BeforeEach
             void setUp() {
+                userLoginDtoWithWrongPassword = UserLoginDto.builder()
+                        .email(validUser.getEmail())
+                        .password("wrong password")
+                        .build();
+
                 given(userRepository.findByEmail(userLoginDtoWithWrongPassword.getEmail()))
                         .willReturn(Optional.of(validUser));
             }
 
             @Test
-            @DisplayName("InvalidUserException을 반환한다.")
+            @DisplayName("InvalidUserException을 던다.")
             void it_return_invalid_user_exception() {
                 assertThrows(InvalidUserException.class, () -> authenticationService.login(userLoginDtoWithWrongPassword));
                 verify(userRepository).findByEmail(userLoginDtoWithWrongPassword.getEmail());
             }
         }
+
         @Nested
         @DisplayName("삭제된 회원이면 ")
         class Context_deleted_user {
+            private User deletedUser;
+            private UserLoginDto deletedUserLoginDto;
 
             @BeforeEach
             void setUp() {
+                deletedUser = User.builder()
+                        .id(2L)
+                        .email("delete@naver.com")
+                        .password("password")
+                        .name("삭제된유저")
+                        .deleted(true)
+                        .build();
+                deletedUserLoginDto = UserLoginDto.builder()
+                        .email(deletedUser.getEmail())
+                        .password(deletedUser.getPassword())
+                        .build();
+
                 given(userRepository.findByEmail(deletedUserLoginDto.getEmail()))
                         .willReturn(Optional.of(deletedUser));
             }
 
             @Test
-            @DisplayName("InvalidUserException을 반환한다.")
+            @DisplayName("InvalidUserException을 던진다.")
             void it_return_invalid_user_exception() {
                 assertThrows(InvalidUserException.class, () -> authenticationService.login(deletedUserLoginDto));
 

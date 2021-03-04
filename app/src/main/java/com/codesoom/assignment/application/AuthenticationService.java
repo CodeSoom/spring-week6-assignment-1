@@ -29,7 +29,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 유저가 자신을 식별하기 위해 사용할 수 있는 토큰을 발급합니다.
+     * 유저 정보를 받아 토큰을 발급합니다.
      *
      * @param authenticUser 인증과정을 거친 유저
      * @return 유저를 식별할 수 있는 토큰

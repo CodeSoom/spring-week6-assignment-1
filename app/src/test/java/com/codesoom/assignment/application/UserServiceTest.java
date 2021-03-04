@@ -1,11 +1,11 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.UserNotFoundException;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserCreateRequestDto;
 import com.codesoom.assignment.dto.UserUpdateRequestDto;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +23,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class UserServiceTest {
+    private UserService userService;
+
+    private final UserRepository userRepository = mock(UserRepository.class);
+
+    private final Mapper dozerMapper = DozerBeanMapperBuilder.buildDefault();
+
     private static final Long EXIST_ID = 1L;
     private static final Long NOT_EXIST_ID = 123L;
 
@@ -33,13 +39,9 @@ class UserServiceTest {
     private static final String UPDATE_EMAIL = "joo@codesoom.com";
     private static final String UPDATE_PASSWORD = "123!";
 
-    private UserService userService;
-
-    private final UserRepository userRepository = mock(UserRepository.class);
-
-    private final Mapper dozerMapper = DozerBeanMapperBuilder.buildDefault();
-
     private User user;
+    private Long givenValidId;
+    private Long givenInvalidId;
 
     @BeforeEach
     void setUp() {
@@ -51,6 +53,9 @@ class UserServiceTest {
                 .password(PASSWORD)
                 .build();
 
+        given(userRepository.findById(givenValidId))
+                .willReturn(Optional.of(user));
+
         given(userRepository.save(any(User.class)))
                 .will(invocation -> invocation.<Product>getArgument(0));
 
@@ -58,56 +63,76 @@ class UserServiceTest {
                 .willReturn(Optional.of(user));
     }
 
-    void updateTest(UserUpdateRequestDto update) {
-        assertThat(update.getEmail()).isEqualTo(UPDATE_EMAIL);
-        assertThat(update.getPassword()).isEqualTo(UPDATE_PASSWORD);
+    void createTest(User user) {
+        assertThat(user.getName()).isEqualTo(NAME);
+        assertThat(user.getEmail()).isEqualTo(EMAIL);
+        assertThat(user.getPassword()).isEqualTo(PASSWORD);
+    }
+
+    void updateTest(User user) {
+        assertThat(user.getEmail()).isEqualTo(UPDATE_EMAIL);
+        assertThat(user.getPassword()).isEqualTo(UPDATE_PASSWORD);
     }
 
     @Nested
     @DisplayName("createUser 메소드는")
     class Describe_createUser {
         UserCreateRequestDto creationData;
+        User createdUser;
 
-        @Test
-        @DisplayName("새로운 사용자를 등록한다")
-        void it_returns_user() {
-            creationData = new UserCreateRequestDto();
+        @Nested
+        @DisplayName("사용자 정보가 주어지면")
+        class Context_with_create_request {
 
-            userService.createUser(creationData);
+            @BeforeEach
+            void setUp() {
+                creationData = UserCreateRequestDto.builder()
+                        .name(NAME)
+                        .email(EMAIL)
+                        .password(PASSWORD)
+                        .build();
+            }
 
-            verify(userRepository).save(any(User.class));
+            @Test
+            @DisplayName("새로운 사용자를 등록한다")
+            void it_returns_created_user() {
+                createdUser = userService.createUser(creationData);
+
+                verify(userRepository).save(any(User.class));
+
+                createTest(createdUser);
+            }
         }
     }
 
     @Nested
     @DisplayName("updateUser 메소드는")
-    class Describe_updateProduct {
+    class Describe_updateUser {
         UserUpdateRequestDto updateRequest;
         User updatedUser;
 
         @Nested
         @DisplayName("등록된 사용자의 ID와 수정할 정보가 주어진다면")
-        class Context_with_valid_id_and_product {
+        class Context_with_valid_id_and_update_request {
 
             @BeforeEach
             void setUp() {
+                givenValidId = EXIST_ID;
+
                 updateRequest = UserUpdateRequestDto.builder()
                         .email(UPDATE_EMAIL)
                         .password(UPDATE_PASSWORD)
                         .build();
-
-                userService.updateUser(EXIST_ID, updateRequest);
-
-                given(userRepository.findById(EXIST_ID))
-                        .willReturn(Optional.of(user));
             }
 
             @Test
             @DisplayName("해당 ID를 갖는 사용자의 정보를 수정한다")
-            void it_returns_updated_product() {
-                verify(userRepository).findById(EXIST_ID);
+            void it_returns_updated_user() {
+                updatedUser = userService.updateUser(givenValidId, updateRequest);
 
-                updateTest(updateRequest);
+                verify(userRepository).findById(givenValidId);
+
+                updateTest(updatedUser);
             }
         }
 
@@ -115,10 +140,15 @@ class UserServiceTest {
         @DisplayName("등록되지 않은 사용자의 ID가 주어진다면")
         class Context_with_invalid_id {
 
+            @BeforeEach
+            void setUp() {
+                givenInvalidId = NOT_EXIST_ID;
+            }
+
             @Test
             @DisplayName("수정할 사용자를 찾을 수 없다는 예외를 던진다")
             void it_returns_warning_message() {
-                assertThatThrownBy(() -> userService.updateUser(NOT_EXIST_ID, updateRequest))
+                assertThatThrownBy(() -> userService.updateUser(givenInvalidId, updateRequest))
                         .isInstanceOf(UserNotFoundException.class);
             }
         }
@@ -126,21 +156,23 @@ class UserServiceTest {
 
     @Nested
     @DisplayName("deleteProduct 메소드는")
-    class Describe_deleteProduct {
-        User user;
+    class Describe_deleteUser {
 
         @Nested
         @DisplayName("등록된 사용자의 ID가 주어진다면")
         class Context_with_valid_id {
 
+            @BeforeEach
+            void setUp() {
+                givenValidId = EXIST_ID;
+            }
+
             @Test
             @DisplayName("해당 ID를 갖는 사용자를 삭제한다")
             void it_returns_deleted_user() {
-                user = new User();
+                userService.deleteUser(givenValidId);
 
-                userService.deleteUser(EXIST_ID);
-
-                verify(userRepository).findById(EXIST_ID);
+                verify(userRepository).findById(givenValidId);
                 verify(userRepository).delete(any(User.class));
             }
         }
@@ -149,10 +181,15 @@ class UserServiceTest {
         @DisplayName("등록되지 않은 사용자의 ID가 주어진다면")
         class Context_without_invalid_id {
 
+            @BeforeEach
+            void setUp() {
+                givenInvalidId = NOT_EXIST_ID;
+            }
+
             @Test
             @DisplayName("삭제할 사용자를 찾을 수 없다는 예외를 던진다")
             void it_returns_warning_message() {
-                assertThatThrownBy(() -> userService.deleteUser(NOT_EXIST_ID))
+                assertThatThrownBy(() -> userService.deleteUser(givenInvalidId))
                         .isInstanceOf(UserNotFoundException.class);
             }
         }

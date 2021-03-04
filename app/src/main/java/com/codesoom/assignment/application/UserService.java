@@ -1,6 +1,7 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.UserNotFoundException;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserCreateRequestDto;
@@ -38,6 +39,11 @@ public class UserService {
      * @return 등록된 사용자
      */
     public User createUser(UserCreateRequestDto createRequest) {
+        String email = createRequest.getEmail();
+        if (userRepository.existsByEmail(email)) {
+            throw new UserEmailDuplicationException(email);
+        }
+
         Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
         User user = mapper.map(createRequest, User.class);

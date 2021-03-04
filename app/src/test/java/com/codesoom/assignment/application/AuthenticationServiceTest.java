@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,13 +12,14 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp(){
-        authenticationService = new AuthenticationService();
+        JwtUtil jwtUtil = new JwtUtil();
+        authenticationService = new AuthenticationService(jwtUtil);
     }
 
     @Test
     void login(){
         String accessToken = authenticationService.login();
-        assertThat(accessToken).contains(".xxx");
+        assertThat(accessToken).contains(".");
     }
 
 }

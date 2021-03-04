@@ -1,10 +1,12 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AuthenticationServiceTest {
     final String validToken
@@ -35,5 +37,12 @@ class AuthenticationServiceTest {
         Long userId = authenticationService.parseToken(validToken);
 
         assertThat(userId).isEqualTo(1L);
+    }
+
+    @Test
+    void parseTokenWithInvalidToken() {
+        assertThatThrownBy(
+                () -> authenticationService.parseToken(invalidToken)
+        ).isInstanceOf(InvalidAccessTokenException.class);
     }
 }

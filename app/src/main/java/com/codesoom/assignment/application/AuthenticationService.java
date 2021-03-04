@@ -4,7 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.SessionCreateData;
 import com.codesoom.assignment.dto.SessionResultData;
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.UserBadRequestException;
 import com.codesoom.assignment.errors.UserEmailNotExistedException;
 import com.codesoom.assignment.util.JwtUtil;
@@ -44,14 +44,13 @@ public class AuthenticationService {
 
     public Long parseToken(String accessToken) {
         if(accessToken == null || accessToken.isBlank()) {
-            throw new InvalidAccessTokenException(accessToken);
+            throw new InvalidTokenException(accessToken);
         }
-
         try {
             Claims claims = jwtUtil.decode(accessToken);
             return claims.get("userId", Long.class);
         } catch (SignatureException e) {
-            throw new InvalidAccessTokenException(accessToken);
+            throw new InvalidTokenException(accessToken);
         }
     }
 }

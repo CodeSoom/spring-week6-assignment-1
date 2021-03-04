@@ -73,7 +73,7 @@ class AuthenticationServiceTest {
     @DisplayName("createSession")
     class Describe_create_session {
         @Nested
-        @DisplayName("유효한 email, password가 주어진다면")
+        @DisplayName("등록된 유저의 email, 일치하는 password가 주어진다면")
         class Context_with_valid_email_password {
             String givenEmail = GENERAL_USER.getEmail();
             String givenPassword = GENERAL_USER.getPassword();
@@ -87,7 +87,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("존재하지 않는 email이 주어진다면")
+        @DisplayName("등록되지 않은 유저의 email이 주어진다면")
         class Context_with_not_exist_email {
             String givenEmail = NON_EXISTENT_USER.getEmail();
             String givenPassword = GENERAL_USER.getPassword();
@@ -101,7 +101,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("유효하지 않은 password가 주어진다면")
+        @DisplayName("등록된 유저의 email, 일치하지 않는 password가 주어진다면")
         class Context_with_invalid_password {
             String givenEmail = GENERAL_USER.getEmail();
             String givenPassword = NON_EXISTENT_USER.getPassword();

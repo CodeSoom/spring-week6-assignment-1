@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.AuthenticationTestFixture;
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.UserAuthenticationFailedException;
 import com.codesoom.assignment.errors.UserEmailNotExistException;
@@ -36,16 +37,19 @@ class AuthenticationControllerTest {
     @MockBean
     AuthenticationService authenticationService;
 
+    private final User GENERAL_USER = AuthenticationTestFixture.GENERAL_USER;
+    private final User NON_EXISTENT_USER = AuthenticationTestFixture.NON_EXISTENT_USER;
+
     @BeforeEach
     void setUp() {
         Mockito.reset(authenticationService);
 
-        given(authenticationService.createSession(AuthenticationTestFixture.VALID_EMAIL, AuthenticationTestFixture.VALID_PASSWORD))
+        given(authenticationService.createSession(GENERAL_USER.getEmail(), GENERAL_USER.getPassword()))
                 .willReturn(AuthenticationTestFixture.VALID_TOKEN);
-        given(authenticationService.createSession(AuthenticationTestFixture.INVALID_EMAIL, AuthenticationTestFixture.VALID_PASSWORD))
-                .willThrow(new UserEmailNotExistException(AuthenticationTestFixture.INVALID_EMAIL));
-        given(authenticationService.createSession(AuthenticationTestFixture.VALID_EMAIL, AuthenticationTestFixture.INVALID_PASSWORD))
-                .willThrow(new UserAuthenticationFailedException(AuthenticationTestFixture.INVALID_PASSWORD));
+        given(authenticationService.createSession(NON_EXISTENT_USER.getEmail(), GENERAL_USER.getPassword()))
+                .willThrow(new UserEmailNotExistException(NON_EXISTENT_USER.getEmail()));
+        given(authenticationService.createSession(GENERAL_USER.getEmail(), NON_EXISTENT_USER.getPassword()))
+                .willThrow(new UserAuthenticationFailedException(GENERAL_USER.getEmail()));
     }
 
     @Nested
@@ -63,8 +67,8 @@ class AuthenticationControllerTest {
         @Nested
         @DisplayName("유효한 email과 password가 주어진다면")
         class Context_with_email_password {
-            String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
-            String givenPassword = AuthenticationTestFixture.VALID_PASSWORD;
+            String givenEmail = GENERAL_USER.getEmail();
+            String givenPassword = GENERAL_USER.getPassword();
 
             @DisplayName("201코드와 token을 응답한다")
             @Test
@@ -83,8 +87,8 @@ class AuthenticationControllerTest {
         @Nested
         @DisplayName("존재하지 않는 email이 주어진다면")
         class Context_with_not_exist_email {
-            String givenEmail = AuthenticationTestFixture.INVALID_EMAIL;
-            String givenPassword = AuthenticationTestFixture.VALID_PASSWORD;
+            String givenEmail = NON_EXISTENT_USER.getEmail();
+            String givenPassword = GENERAL_USER.getPassword();
 
             @DisplayName("400 코드를 응답한다")
             @Test
@@ -102,8 +106,8 @@ class AuthenticationControllerTest {
         @Nested
         @DisplayName("유효하지 않은 password가 주어진다면")
         class Context_with_invalid_password {
-            String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
-            String givenPassword = AuthenticationTestFixture.INVALID_PASSWORD;
+            String givenEmail = GENERAL_USER.getEmail();
+            String givenPassword = NON_EXISTENT_USER.getPassword();
 
             @DisplayName("400 코드를 응답한다")
             @Test

@@ -19,14 +19,9 @@ import static org.mockito.BDDMockito.given;
 
 @DisplayName("AuthenticationService 클래스")
 class AuthenticationServiceTest {
-    final User GIVEN_USER = User.builder()
-            .id(1L)
-            .name("rlawlstjd")
-            .email(AuthenticationTestFixture.VALID_EMAIL)
-            .password(AuthenticationTestFixture.VALID_PASSWORD)
-            .build();
-
-    AuthenticationService authService;
+    private AuthenticationService authService;
+    private final User GENERAL_USER = AuthenticationTestFixture.GENERAL_USER;
+    private final User NON_EXISTENT_USER = AuthenticationTestFixture.NON_EXISTENT_USER;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +31,8 @@ class AuthenticationServiceTest {
                 userRepository
         );
 
-        given(userRepository.findByEmail(AuthenticationTestFixture.VALID_EMAIL)).willReturn(Optional.of(GIVEN_USER));
+        given(userRepository.findByEmail(GENERAL_USER.getEmail()))
+                .willReturn(Optional.of(GENERAL_USER));
     }
 
     @Nested
@@ -45,7 +41,7 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("user id가 주어졌을 때")
         class Context_user_id {
-            Long givenUserId = AuthenticationTestFixture.USER_ID;
+            Long givenUserId = GENERAL_USER.getId();
 
             @DisplayName("인코딩된 token을 반환한다.")
             @Test
@@ -68,7 +64,7 @@ class AuthenticationServiceTest {
             @Test
             void it_returns_user_id() {
                 Long userId = authService.decode(givenToken);
-                assertThat(userId).isEqualTo(AuthenticationTestFixture.USER_ID);
+                assertThat(userId).isEqualTo(GENERAL_USER.getId());
             }
         }
     }
@@ -79,8 +75,8 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효한 email, password가 주어진다면")
         class Context_with_valid_email_password {
-            String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
-            String givenPassword = AuthenticationTestFixture.VALID_PASSWORD;
+            String givenEmail = GENERAL_USER.getEmail();
+            String givenPassword = GENERAL_USER.getPassword();
 
             @DisplayName("token을 반환한다")
             @Test
@@ -93,8 +89,8 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("존재하지 않는 email이 주어진다면")
         class Context_with_not_exist_email {
-            String givenEmail = "";
-            String givenPassword = "";
+            String givenEmail = NON_EXISTENT_USER.getEmail();
+            String givenPassword = GENERAL_USER.getPassword();
 
             @DisplayName("user email이 존재하지 않는다는 예외를 던진다")
             @Test
@@ -107,8 +103,8 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효하지 않은 password가 주어진다면")
         class Context_with_invalid_password {
-            String givenEmail = AuthenticationTestFixture.VALID_EMAIL;
-            String givenPassword = "";
+            String givenEmail = GENERAL_USER.getEmail();
+            String givenPassword = NON_EXISTENT_USER.getPassword();
 
             @DisplayName("user 인증에 실패했다는 예외를 던진다")
             @Test

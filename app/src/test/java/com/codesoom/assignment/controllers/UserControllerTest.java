@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
+    private final String duplicatedEmail = "duplicated@email.com";
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private UserService userService;
 
@@ -35,6 +36,11 @@ class UserControllerTest {
         given(userService.registerUser(any(UserRegistrationData.class)))
                 .will(invocation -> {
                     UserRegistrationData registrationData = invocation.getArgument(0);
+
+                    if (registrationData.getEmail().equals(duplicatedEmail)) {
+                        throw new UserEmailDuplicationException(duplicatedEmail);
+                    }
+
                     return User.builder()
                             .id(13L)
                             .email(registrationData.getEmail())
@@ -82,6 +88,17 @@ class UserControllerTest {
                 ));
 
         verify(userService).registerUser(any(UserRegistrationData.class));
+    }
+
+    @Test
+    void registerUserWithDuplicatedEmailAttributes() throws Exception {
+        mockMvc.perform(
+                post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"" + duplicatedEmail + "\"," +
+                                "\"name\":\"Tester\",\"password\":\"test\"}")
+        )
+                .andExpect(status().isBadRequest());
     }
 
     @Test

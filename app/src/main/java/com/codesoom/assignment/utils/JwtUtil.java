@@ -23,7 +23,7 @@ public class JwtUtil {
     }
 
     /**
-     * 주어진 회원 id와 secert key로 Jwt 토큰을 생성합니다.
+     * 주어진 회원 id를 이용해 Jwt 토큰을 생성합니다.
      *
      * @param userId 회원 식별자
      * @return 생성된 토큰

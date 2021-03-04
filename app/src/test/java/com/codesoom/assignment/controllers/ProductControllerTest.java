@@ -4,7 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,7 +114,7 @@ public class ProductControllerTest {
         given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
 
         given(authenticationService.parseToken(INVALID_TOKEN))
-                .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
+                .willThrow(new InvalidTokenException(INVALID_TOKEN));
     }
 
     @Test
@@ -153,7 +153,7 @@ public class ProductControllerTest {
                 post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(product))
-                .header("Authorization", "Bearer " + INVALID_TOKEN)
+                .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("name").value(NAME))

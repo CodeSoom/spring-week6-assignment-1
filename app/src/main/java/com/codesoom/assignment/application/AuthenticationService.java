@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -12,12 +13,7 @@ import java.security.Key;
 public class AuthenticationService {
 
     public String login() {
-        String secret = "zxcvqwer";
-        Key key = Keys.hmacShaKeyFor(secret.getBytes());
-        
-        return Jwts.builder()
-                .claim("userId", 1L)
-                .signWith(key)
-                .compact();
+        JwtUtil jwtUtil = new JwtUtil();
+        return jwtUtil.encode(1L);
     }
 }

@@ -2,8 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.errors.UserNotFoundByEmailException;
-import com.codesoom.assignment.errors.WrongUserPasswordException;
+import com.codesoom.assignment.errors.WrongUserException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,12 +14,12 @@ public class AuthService {
     }
 
     public User signIn(String email, String password)
-            throws UserNotFoundByEmailException, WrongUserPasswordException {
+            throws WrongUserException {
         final User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundByEmailException(email));
+                .orElseThrow(WrongUserException::new);
 
         if (!user.getPassword().equals(password)) {
-            throw new WrongUserPasswordException();
+            throw new WrongUserException();
         }
         return user;
     }

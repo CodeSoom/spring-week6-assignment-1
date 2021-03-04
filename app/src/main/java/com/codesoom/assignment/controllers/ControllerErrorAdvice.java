@@ -1,7 +1,10 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
-import com.codesoom.assignment.errors.*;
+import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
+import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.WrongUserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,14 +33,8 @@ public class ControllerErrorAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserNotFoundByEmailException.class)
-    public ErrorResponse handleUserNotFoundByEmail() {
+    @ExceptionHandler(WrongUserException.class)
+    public ErrorResponse handleWrongUser() {
         return new ErrorResponse("User not found");
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(WrongUserPasswordException.class)
-    public ErrorResponse handleWrongUserPassword() {
-        return new ErrorResponse("User's password is wrong");
     }
 }

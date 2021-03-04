@@ -3,8 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.FakeUserRepository;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.errors.UserNotFoundByEmailException;
-import com.codesoom.assignment.errors.WrongUserPasswordException;
+import com.codesoom.assignment.errors.WrongUserException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -66,7 +65,7 @@ class AuthServiceTest {
                 @DisplayName("패스워드가 일치하지 않는다는 예외를 던진다.")
                 void It_throws_wrong_password_exception() {
                     assertThatThrownBy(() -> authService.signIn(givenEmail, "wrong password"))
-                            .isInstanceOf(WrongUserPasswordException.class);
+                            .isInstanceOf(WrongUserException.class);
                 }
             }
         }
@@ -78,7 +77,7 @@ class AuthServiceTest {
             @DisplayName("유저를 찾을 수 없다는 예외를 던진다.")
             void It_throws_user_not_found_exception() {
                 assertThatThrownBy(() -> authService.signIn(givenEmail, "wrong password"))
-                        .isInstanceOf(UserNotFoundByEmailException.class);
+                        .isInstanceOf(WrongUserException.class);
             }
         }
 

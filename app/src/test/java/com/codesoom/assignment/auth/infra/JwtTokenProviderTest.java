@@ -86,7 +86,7 @@ class JwtTokenProviderTest {
         @DisplayName("비어있는 토큰이 주어지면")
         class Context_with_empty_token {
 
-            @DisplayName("예외를 발생시킨다.")
+            @DisplayName("예외를 던진다.")
             @ParameterizedTest
             @NullAndEmptySource
             void It_throws_exception(String token) {
@@ -100,7 +100,7 @@ class JwtTokenProviderTest {
     @DisplayName("유효하지 않은 토큰이 주어지면")
     class Context_with_invalid_token {
 
-        @DisplayName("예외를 발생시킨다.")
+        @DisplayName("예외를 던진다.")
         @Test
         void It_throws_exception() {
             assertThrows(InvalidTokenException.class,

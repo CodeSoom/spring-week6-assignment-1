@@ -94,7 +94,7 @@ class AuthenticationServiceTest {
                 password = GIVEN_USER_PASSWORD;
             }
 
-            @DisplayName("예외를 발생시킨다.")
+            @DisplayName("예외를 던진다.")
             @Test
             void It_throws_exception() {
                 assertThrows(UserEmailNotFoundException.class,
@@ -117,7 +117,7 @@ class AuthenticationServiceTest {
                         .willReturn(Optional.of(user));
             }
 
-            @DisplayName("예외를 발생시킨다.")
+            @DisplayName("예외를 던진다.")
             @Test
             void It_throws_exception() {
                 assertThrows(IllegalArgumentException.class,

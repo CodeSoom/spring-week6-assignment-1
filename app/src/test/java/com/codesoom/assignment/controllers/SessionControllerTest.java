@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.errors.WrongUserException;
 import com.codesoom.assignment.utils.JWT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -82,6 +83,30 @@ class SessionControllerTest {
                         .andExpect(content().string(containsString(".")));
 
                 verify(authService).signIn(givenEmail, givenPassword);
+            }
+        }
+
+        @Nested
+        @DisplayName("주어진 데이터와 일치하는 저장된 유저가 존재하지 않을 때")
+        class Context_without_exists_user_correspond_given_data {
+            private final String wrongEmail = "juunini@wrong.com";
+            private final String wrongPassword = "opened";
+
+            @BeforeEach
+            void setup() {
+                given(authService.signIn(wrongEmail, wrongPassword))
+                        .willThrow(WrongUserException.class);
+            }
+
+            @Test
+            @DisplayName("status bad request 를 응답한다.")
+            void It_respond_status_ok_and_token() throws Exception {
+                mockMvc.perform(
+                        post("/session")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(generateSignInJSON(wrongEmail, wrongPassword))
+                )
+                        .andExpect(status().isBadRequest());
             }
         }
     }

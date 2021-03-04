@@ -41,11 +41,12 @@ public class AuthenticationService {
     }
 
     /**
-     * 주어진 유저 email, password로 유저 인증 후 인증 토큰을 반환합니다.
+     * 주어진 유저 정보로 유저 인증 후 인증 토큰을 반환합니다.
      *
      * @param email    유저 email
      * @param password 유저 password
      * @return 인증 토큰
+     * @throws UserAuthenticationFailedException 인증에 실패한 경우
      */
     public String createSession(String email, String password) {
         User user = findUserByEmail(email);
@@ -57,7 +58,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 주어진 유저 email와 일치하는 유저를 저장소에서 찾아 반환합니다.
+     * 주어진 유저 email와 일치하는 유저를 반환합니다.
      *
      * @param email 유저 email
      * @return 주어진 email을 가지고 있는 유저

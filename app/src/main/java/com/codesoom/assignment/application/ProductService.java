@@ -30,7 +30,7 @@ public class ProductService {
     }
 
     /**
-     * 저장소에 저장된 모든 상품의 집합을 반환합니다.
+     * 저장된 모든 상품의 집합을 반환합니다.
      *
      * @return 저장된 모든 상품 집합
      */
@@ -39,7 +39,7 @@ public class ProductService {
     }
 
     /**
-     * 주어진 id와 일치하는 상품을 저장소에서 찾아 반환합니다.
+     * 주어진 id와 일치하는 상품을 반환합니다.
      *
      * @param id 상품 식별자
      * @return 주어진 id와 일치하는 상품
@@ -49,10 +49,10 @@ public class ProductService {
     }
 
     /**
-     * 주어진 상품를 저장소에 저장합니다.
+     * 주어진 상품를 저장하고 반환합니다.
      *
-     * @param productData 저장하고자 하는 상품
-     * @return 저장된 상
+     * @param productData 상품 데이터
+     * @return 저장된 상품
      */
     public Product createProduct(ProductData productData) {
         Product product = mapper.map(productData, Product.class);
@@ -60,10 +60,10 @@ public class ProductService {
     }
 
     /**
-     * 주어진 id와 일치하는 상품을 저장소에서 찾아 수정한 뒤 반환합니다.
+     * 주어진 id와 일치하는 상품을 수정하고 반환합니다.
      *
      * @param id          상품 식별자
-     * @param productData 수정하고자 하는 상품
+     * @param productData 상품 데이터
      * @return 수정된 상품
      */
     public Product updateProduct(Long id, ProductData productData) {
@@ -75,10 +75,10 @@ public class ProductService {
     }
 
     /**
-     * 주어진 id와 일치하는 상품을 저장소에서 삭제합니다.
+     * 주어진 id와 일치하는 상품을 삭제합니다.
      *
      * @param id 상품 식별자
-     * @return 삭제된 상
+     * @return 삭제된 상품
      */
     public Product deleteProduct(Long id) {
         Product product = findProduct(id);
@@ -89,7 +89,7 @@ public class ProductService {
     }
 
     /**
-     * 주어진 id와 일치하는 상품을 저장소에서 찾아 반환합니다.
+     * 주어진 id와 일치하는 상품을 반환합니다.
      *
      * @param id 상품 식별자
      * @return 주어진 id와 일치하는 상품

@@ -28,9 +28,9 @@ public class UserService {
     }
 
     /**
-     * 주어진 유저를 저장소에 저장한 뒤 반환합니다.
+     * 주어진 유저를 저장한 뒤 반환합니다.
      *
-     * @param registrationData 저장하고자 하는 유저 정보
+     * @param registrationData 유저 데이터
      * @return 저장된 유저
      */
     public User registerUser(UserRegistrationData registrationData) {
@@ -44,11 +44,11 @@ public class UserService {
     }
 
     /**
-     * 주어진 id와 일치하는 유저를 저장소에서 찾아 수정한 뒤 반환합니다.
+     * 주어진 id와 일치하는 유저를 수정하고 반환합니다.
      *
      * @param id               유저 식별자
-     * @param modificationData 수정하고자 하는 유저 정보
-     * @return 수정된 user
+     * @param modificationData 유저 데이터
+     * @return 수정된 유저
      */
     public User updateUser(Long id, UserModificationData modificationData) {
         User user = findUser(id);
@@ -60,10 +60,10 @@ public class UserService {
     }
 
     /**
-     * 주어진 id와 일치하는 유저를 저장소에서 삭제합니다.
+     * 주어진 id와 일치하는 유저를 삭제합니다.
      *
      * @param id 유저 식별자
-     * @return 삭제된 유
+     * @return 삭제된 유저
      */
     public User deleteUser(Long id) {
         User user = findUser(id);
@@ -72,7 +72,7 @@ public class UserService {
     }
 
     /**
-     * 주어진 id와 일치하는 유저를 저장소에서 찾아 반환합니다.
+     * 주어진 id와 일치하는 유저를 반환합니다.
      *
      * @param id 유저 식별자
      * @return 주어진 id와 일치하는 유저

@@ -26,8 +26,8 @@ class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789010";
     private static final String GIVEN_USER_EMAIL = "test@test.com";
     private static final String GIVEN_USER_PASSWORD = "password";
-    private static final String NOT_EXIST_EMAIL = "not_exist@test.com";
-    private static final String WRONG_PASSWORD = "wrong_password";
+    private static final String NOT_EXIST_EMAIL = GIVEN_USER_EMAIL + "_NOT_EXIST";
+    private static final String WRONG_PASSWORD = GIVEN_USER_PASSWORD + "_WRONG";
     private static final Long GIVEN_ID = 1L;
     private static final long EXPIRED_TIME = 300000;
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MDk2MjgwMCwiZXh" +

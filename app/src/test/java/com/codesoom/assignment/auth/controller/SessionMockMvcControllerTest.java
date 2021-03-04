@@ -20,11 +20,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("SessionController 클래스")
 @WebMvcTest(SessionController.class)
-class AuthenticationControllerTest {
+class SessionMockMvcControllerTest {
     private static final String GIVEN_USER_EMAIL = "test@test.com";
-    private static final String GIVEN_PASSWORD = "password";
-    private static final String NOT_EXIST_EMAIL = "not_exist@test.com";
-    private static final String WRONG_PASSWORD = "wrong_password";
+    private static final String GIVEN_USER_PASSWORD = "password";
+    private static final String NOT_EXIST_EMAIL = GIVEN_USER_EMAIL + "_NOT_EXIST";
+    private static final String WRONG_PASSWORD = GIVEN_USER_PASSWORD + "_WRONG";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTYxNDY2ODE2NiwiZXhwIjox" +
             "NjE0NjY4MTY2fQ.0DARRfpDRIQLjkJyX5K4UvJNO-0x9fAw3-6YPCA3tdA";
 
@@ -53,8 +53,8 @@ class AuthenticationControllerTest {
 
             @BeforeEach
             void setUp() {
-                requestDto = new AuthenticationRequestDto(GIVEN_USER_EMAIL, GIVEN_PASSWORD);
-                given(authenticationService.authenticate(GIVEN_USER_EMAIL, GIVEN_PASSWORD))
+                requestDto = new AuthenticationRequestDto(GIVEN_USER_EMAIL, GIVEN_USER_PASSWORD);
+                given(authenticationService.authenticate(GIVEN_USER_EMAIL, GIVEN_USER_PASSWORD))
                         .willReturn(VALID_TOKEN);
             }
 
@@ -74,8 +74,8 @@ class AuthenticationControllerTest {
 
             @BeforeEach
             void setUp() {
-                requestDto = new AuthenticationRequestDto(NOT_EXIST_EMAIL, GIVEN_PASSWORD);
-                given(authenticationService.authenticate(NOT_EXIST_EMAIL, GIVEN_PASSWORD))
+                requestDto = new AuthenticationRequestDto(NOT_EXIST_EMAIL, GIVEN_USER_PASSWORD);
+                given(authenticationService.authenticate(NOT_EXIST_EMAIL, GIVEN_USER_PASSWORD))
                         .willThrow(new IllegalArgumentException(NOT_EXIST_EMAIL));
             }
 

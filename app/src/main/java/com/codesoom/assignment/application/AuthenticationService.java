@@ -8,7 +8,9 @@ import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 인증을 담당합니다.
@@ -16,12 +18,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
     private JwtUtil jwtUtil;
+    private UserRepository userRepository;
 
     public AuthenticationService(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
-    private UserRepository userRepository;
+    public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+    }
 
     /**
      * 주어진 회원을 로그인 처리하고, 액세스 토큰을 리턴합니다.
@@ -30,8 +36,14 @@ public class AuthenticationService {
      * @return 생성된 액세스 토큰
      * @throws AuthenticationFailException 주어진 회원 로그인 정보가 유효하지 않을 경우
      */
+    @Transactional
     public String login(UserLoginData userLoginData) {
         User user = findUserByEmail(userLoginData.getEmail());
+
+        boolean wrongPassword = false;
+        if (user.authenticate(userLoginData.getPassword()) == wrongPassword) {
+            throw new AuthenticationFailException("비밀번호가 일치하지 않습니다.");
+        }
 
         return jwtUtil.encode(user.getId());
     }

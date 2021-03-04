@@ -24,14 +24,11 @@ public class JwtTokenProvider {
 
     private LocalDateTime time;
 
-    private TimeUtil timeUtil;
-
     public JwtTokenProvider(@Value("${jwt.secret}") String secret,
                             @Value("${jwt.expire-length}") long validityInMilliseconds) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.validityInMilliseconds = validityInMilliseconds;
         this.time = LocalDateTime.now();
-        this.timeUtil = new TimeUtil();
     }
 
     /**
@@ -41,7 +38,7 @@ public class JwtTokenProvider {
      * @return 사용자 JWT 토큰
      */
     public String createToken(Long userId) {
-        Date now = timeUtil.convertLocalDateTime(time);
+        Date now = TimeUtil.convertLocalDateTime(time);
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()

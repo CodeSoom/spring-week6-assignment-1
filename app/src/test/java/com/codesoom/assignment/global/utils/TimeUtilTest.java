@@ -14,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TimeUtilTest {
     private Date dateTime;
-    private TimeUtil timeUtil;
 
     @BeforeEach
     void setUp() {
@@ -22,8 +21,6 @@ class TimeUtilTest {
         cal.set(2022, Calendar.JANUARY, 1, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         dateTime = cal.getTime();
-
-        timeUtil = new TimeUtil();
     }
 
     @DisplayName("LocalDatetime을 Date로 변경한 값이 같은지 비교합니다")
@@ -31,6 +28,6 @@ class TimeUtilTest {
     void convertLocalDatetime() {
         LocalDateTime localDateTime = LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0);
 
-        assertThat(timeUtil.convertLocalDateTime(localDateTime)).hasSameTimeAs(dateTime);
+        assertThat(TimeUtil.convertLocalDateTime(localDateTime)).hasSameTimeAs(dateTime);
     }
 }

@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
+import com.codesoom.assignment.dto.AuthenticationResultData;
 import com.codesoom.assignment.dto.ProductCreateData;
 import com.codesoom.assignment.dto.ProductResultData;
 import com.codesoom.assignment.dto.ProductUpdateData;
@@ -71,7 +72,7 @@ public class ProductController {
             ,@RequestBody @Valid ProductCreateData productCreateData
     ) {
         String accessToken = authorization.substring("Bearer ".length());
-        Long userId = authenticationService.parseToken(accessToken);
+        AuthenticationResultData authenticationResultData = authenticationService.parseToken(accessToken);
         
         return productService.createProduct(productCreateData);
     }

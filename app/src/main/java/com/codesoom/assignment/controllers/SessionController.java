@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
-import com.codesoom.assignment.dto.SessionCreateData;
+import com.codesoom.assignment.dto.AuthenticationCreateData;
 import com.codesoom.assignment.dto.SessionResultData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +23,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResultData login(@RequestBody @Valid SessionCreateData sessionCreateData) {
-        return authenticationService.login(sessionCreateData);
+    public SessionResultData login(@RequestBody @Valid AuthenticationCreateData authenticationCreateData) {
+        return authenticationService.login(authenticationCreateData);
     }
 }

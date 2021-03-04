@@ -6,7 +6,6 @@ import com.codesoom.assignment.errors.ProductBadRequestException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserBadRequestException;
 import com.codesoom.assignment.errors.UserEmailDuplicatedException;
-import com.codesoom.assignment.errors.UserEmailNotExistedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -75,13 +74,6 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
     public ErrorResponse handleInvalidTokenException(InvalidTokenException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    /** 사용자 이메일이 존재하지 않다는 메세지를 리턴한다. */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserEmailNotExistedException.class)
-    public ErrorResponse handleUserEmailNotExistedException(UserEmailNotExistedException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

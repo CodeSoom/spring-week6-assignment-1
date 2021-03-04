@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class SessionCreateData {
+public class AuthenticationCreateData {
     @NotBlank(message = "email 값은 필수입니다")
     @Size(min=3)
     private String email;
@@ -22,7 +22,7 @@ public class SessionCreateData {
     private String password;
 
     @Builder
-    public SessionCreateData(String email, String password) {
+    public AuthenticationCreateData(String email, String password) {
         this.email = email;
         this.password = password;
     }

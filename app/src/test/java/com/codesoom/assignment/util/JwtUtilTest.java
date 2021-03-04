@@ -1,7 +1,9 @@
 package com.codesoom.assignment.util;
 
+import com.codesoom.assignment.domain.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +12,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 class JwtUtilTest {
     private JwtUtil jwtUtil;
+    private UserRepository userRepository;
 
     private static final String SECRET = "12345678901234567890123456789010";
     private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImV4aXN0ZWRFbWFpbCIsInBhc3N3b3JkIjoiZXhpc3RlZFBhc3N3b3JkIn0." +
@@ -30,11 +34,12 @@ class JwtUtilTest {
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil(SECRET);
+        userRepository = mock(UserRepository.class);
+        jwtUtil = new JwtUtil(SECRET, userRepository);
         setUpToken = Jwts.builder()
                 .claim("email", EXISTED_EMAIL)
                 .claim("password", EXISTED_PASSWORD)
-                .signWith(jwtUtil.getKey())
+                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
                 .compact();
     }
 

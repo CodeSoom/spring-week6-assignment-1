@@ -25,7 +25,7 @@ public class AuthenticationService {
      * @param password 입력받은 비밀번호
      * @return 인증 토큰
      */
-    public String authenticate(String email, String password) {
+    public String authenticate(String email, String password) throws UserEmailNotFoundException{
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserEmailNotFoundException(email));
 

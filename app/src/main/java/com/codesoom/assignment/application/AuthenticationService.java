@@ -14,12 +14,12 @@ import java.security.Key;
 public class AuthenticationService {
 
     /**
-     * 유저가 존재하는지 확인합니다. 만약 유저가 존재하지 않는다면,
-     * InvalidUserInformationException 에러가 발생합니다.
+     * 유저가 존재하는지 확인합니다. 만약 유저를 찾지 못한다면 예외를 던집니다.
      *
      * @param email 유저의 이메일
      * @param password 유저의 비밀번호
      * @return 인증된 유저
+     * @throws InvalidUserInformationException 유저를 찾을 수 없는 경우
      */
     public User authenticate(String email, String password) {
         if (email.equals("aaa@bbb.ccc")) {

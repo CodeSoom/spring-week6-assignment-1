@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 
+/**
+ * 인증과 관련된 작업을 수행 한다.
+ */
 @Service
 public class AuthenticationService {
 
@@ -16,10 +19,19 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * 평문을 암호화 시킨다.
+     * @return 암호화된 내용
+     */
     public String login() {
         return jwtUtil.encode(1L);
     }
 
+    /**
+     * 암호화된 내용을 평문으로 반환한다.
+     * @param accessToken
+     * @return 평문
+     */
     public Long parseToken(String accessToken) {
         if (accessToken == null || accessToken.isBlank()) {
             throw new InvalidAccessTokenException(accessToken);

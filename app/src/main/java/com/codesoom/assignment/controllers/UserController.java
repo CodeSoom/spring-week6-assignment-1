@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ * 유저에 관련된 작업을 서비스에 요청한다.
+ */
 @RestController
 @RequestMapping("/users")
 @CrossOrigin
@@ -20,6 +23,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * 유저를 생성하여 반환한다.
+     * @param registrationData
+     * @return 생성된 유저
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
@@ -27,6 +35,12 @@ public class UserController {
         return getUserResultData(user);
     }
 
+    /**
+     * 유저를 수정하여 반환합니다.
+     * @param id
+     * @param modificationData
+     * @return 수정된 유저
+     */
     @PatchMapping("{id}")
     UserResultData update(
             @PathVariable Long id,
@@ -36,12 +50,21 @@ public class UserController {
         return getUserResultData(user);
     }
 
+    /**
+     * 유저를 삭제합니다.
+     * @param id
+     */
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void destroy(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
+    /**
+     * 유저 정보를 반환한다.
+      * @param user
+     * @return 유저 정보
+     */
     private UserResultData getUserResultData(User user) {
         return UserResultData.builder()
                 .id(user.getId())

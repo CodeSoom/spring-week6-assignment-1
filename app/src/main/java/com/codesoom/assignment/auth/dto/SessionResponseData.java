@@ -3,7 +3,7 @@ package com.codesoom.assignment.auth.dto;
 import lombok.Getter;
 
 /**
- * 사용자인증 응답 객체.
+ * 사용자 인증 응답.
  */
 @Getter
 public class SessionResponseData {

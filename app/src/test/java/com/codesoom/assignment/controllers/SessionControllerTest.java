@@ -1,8 +1,10 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.AuthenticationFailException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,13 +37,24 @@ class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
-    private UserLoginData userLoginData;
+    private static final String VALID_TOKEN
+            = "eyJhbGciOiJIUzI1NiJ9."
+            + "eyJ1c2VySWQiOjF9."
+            + "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+
+    private UserLoginData validLoginData;
+    private UserLoginData invalidLoginData;
 
     @BeforeEach
     void setUp() {
-        userLoginData = UserLoginData.builder()
+        validLoginData = UserLoginData.builder()
                 .email("olive@gmail.com")
                 .password("password1234")
+                .build();
+
+        invalidLoginData = UserLoginData.builder()
+                .email("invalid@gmail.com")
+                .password("invalidPassword")
                 .build();
     }
 
@@ -54,7 +67,7 @@ class SessionControllerTest {
             @BeforeEach
             void setUp() {
                 given(authenticationService.login(any(UserLoginData.class)))
-                        .willReturn("a.b.c");
+                        .willReturn(VALID_TOKEN);
             }
 
             @DisplayName("201코드와 토큰을 응답한다.")
@@ -62,10 +75,28 @@ class SessionControllerTest {
             void it_responds_201_and_token() throws Exception {
                 mockMvc.perform(post("/session")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userLoginData)))
+                        .content(objectMapper.writeValueAsString(validLoginData)))
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("accessToken").exists())
-                        .andExpect(content().string(containsString(".")));
+                        .andExpect(content().string(containsString(VALID_TOKEN)));
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 정보가 주어지면")
+        class Context_with_invalid_data {
+            void setUp() {
+                given(authenticationService.login(invalidLoginData))
+                        .willThrow(new AuthenticationFailException());
+            }
+
+            @Test
+            @DisplayName("400 코드를 응답한다.")
+            void it_responds_400() throws Exception {
+                mockMvc.perform(post("/session")
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("accessToken").doesNotExist());
             }
         }
     }

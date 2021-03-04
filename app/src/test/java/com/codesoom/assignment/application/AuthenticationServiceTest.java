@@ -27,7 +27,7 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(jwtUtil);
     }
 
-    @DisplayName("k서비스에 로그인을 요청했을 때, 유효한 토큰을 반환한다.")
+    @DisplayName("서비스에 로그인을 요청했을 때, 유효한 토큰을 반환한다.")
     @Test
     void login() {
         String accessToken = authenticationService.login();

@@ -32,7 +32,7 @@ public class AuthenticationService {
         User user = findUserByEmail(userLoginData.getEmail());
 
         if (!user.matchPassword(userLoginData.getPassword())) {
-            throw new UserAuthenticationFailException("비밀번호가 일치하지 않습니다.");
+            throw new UserAuthenticationFailException("잘못된 비밀번호 입니다.");
         }
 
         if (user.isDeleted()) {
@@ -55,7 +55,7 @@ public class AuthenticationService {
 
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserAuthenticationFailException("주어진 이메일에 해당하는 회원이 없습니다."));
+                .orElseThrow(() -> new UserAuthenticationFailException("잘못된 이메일 주소입니다."));
     }
 
 }

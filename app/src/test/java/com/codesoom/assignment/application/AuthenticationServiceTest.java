@@ -99,9 +99,9 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("주어진 로그인 정보에 해당하는 회원이 없다면")
+        @DisplayName("주어진 로그인 정보의 이메일에 해당하는 회원이 없다면")
         class Context_when_the_user_does_not_exist {
-            private final String errorKeyword = "이메일";
+            private final String errorKeyword = "잘못된 이메일 주소";
 
             @BeforeEach
             void setUp() {
@@ -120,9 +120,9 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("주어진 로그인 정보의 비밀번호가 다르다면")
+        @DisplayName("주어진 로그인 정보의 비밀번호가 잘못되었다면")
         class Context_when_the_password_is_wrong {
-            private final String errorKeyword = "비밀번호";
+            private final String errorKeyword = "잘못된 비밀번호";
 
             @BeforeEach
             void setUp() {
@@ -143,7 +143,7 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("주어진 로그인 정보에 해당하는 회원이 이미 삭제된 회원 이라면")
         class Context_when_the_user_is_already_deleted {
-            private final String errorKeyword = "삭제된";
+            private final String errorKeyword = "삭제된 회원";
 
             @BeforeEach
             void setUp() {

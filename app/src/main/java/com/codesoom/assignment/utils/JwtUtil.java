@@ -2,20 +2,26 @@ package com.codesoom.assignment.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Component
 public class JwtUtil {
-    public String encode(Long userId){
-        String secret="12345678901234567890123456789012";
 
-        Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    private final Key key;
+
+    public JwtUtil(@Value("${jwt.secret}") String secret){
+        key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
+    public String encode(Long userId){
+
         return Jwts.builder()
                 .claim("userId", 1L)
                 .signWith(key)
                 .compact();
     }
+
 }

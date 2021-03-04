@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Session 관련 HTTP 요청을 처리합니다.
+ */
+
 @RestController
 @RequestMapping("/session")
 public class SessionController {

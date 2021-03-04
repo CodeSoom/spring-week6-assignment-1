@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Product 관련 HTTP 요청을 처리합니다.
+ */
+
 @RestController
 @RequestMapping("/products")
 @CrossOrigin

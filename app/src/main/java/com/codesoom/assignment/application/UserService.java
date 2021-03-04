@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+/**
+ * User에 관한 비즈니스 로직을 담당합니다.
+ */
+
 @Service
 @Transactional
 public class UserService {

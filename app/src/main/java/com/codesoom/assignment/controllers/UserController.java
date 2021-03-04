@@ -52,7 +52,7 @@ public class UserController {
     }
 
     /**
-     * 주어진 사용자 저장하고 해당 객체를 리턴한다.
+     * 주어진 사용자를 저장하고 해당 객체를 리턴한다.
      *
      * @param userCreateData - 새로 저장하고자 하는 사용자
      * @return 저장 된 사용자

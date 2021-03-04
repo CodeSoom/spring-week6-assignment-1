@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+/** 사용자 인증에 대해 요청한다. */
 @RestController
 @RequestMapping("/session")
 public class SessionController {
@@ -21,9 +22,15 @@ public class SessionController {
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * 주어진 사용자를 인증하고 문자열 토큰을 생성하여 로그인한다.
+     *
+     * @param authenticationCreateData - 토큰 문자열을 만들고자 하는 사용자
+     * @return - 주어진 사용자를 이용하여 생성된 토큰 문자열
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResultData login(@RequestBody @Valid AuthenticationCreateData authenticationCreateData) {
-        return authenticationService.login(authenticationCreateData);
+        return authenticationService.createToken(authenticationCreateData);
     }
 }

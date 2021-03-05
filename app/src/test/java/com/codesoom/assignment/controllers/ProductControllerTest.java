@@ -79,6 +79,9 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
 
+        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
+
     }
 
     @Test
@@ -115,6 +118,8 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
+
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -159,16 +164,8 @@ class ProductControllerTest {
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
         )
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().string(containsString("쥐돌이")));
-
-        verify(productService).createProduct(any(ProductData.class));
+                .andExpect(status().isUnauthorized());
     }
-
-
-
-
-
 
     @Test
     void updateWithExistedProduct() throws Exception {

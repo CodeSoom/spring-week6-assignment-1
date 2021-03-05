@@ -5,10 +5,8 @@ import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class JwtUtilTest {
 
@@ -39,9 +37,5 @@ class JwtUtilTest {
     void decodeWithInvalidToken(){
         assertThatThrownBy(()-> jwtUtil.decode(INVALID_TOKEN))
                 .isInstanceOf(SignatureException.class);
-
-//        Claims claims = jwtUtil.decode(INVALID_TOKEN);
-//        assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
-
 }

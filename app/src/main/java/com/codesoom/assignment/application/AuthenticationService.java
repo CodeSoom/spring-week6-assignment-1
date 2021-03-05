@@ -7,7 +7,6 @@ import com.codesoom.assignment.errors.AuthenticationFailException;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthenticationService {
     private JwtUtil jwtUtil;
     private UserRepository userRepository;
-
-    public AuthenticationService(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
 
     @Autowired
     public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
@@ -62,15 +57,12 @@ public class AuthenticationService {
      * @throws InvalidAccessTokenException 주어진 토큰이 null이거나 비어있는 경우
      */
     public Long parseToken(String accessToken) {
-        if (accessToken == null || accessToken.isBlank()) {
+        if (accessToken == null) {
             throw new InvalidAccessTokenException(accessToken);
         }
 
-        try {
             Claims claims = jwtUtil.decode(accessToken);
+
             return claims.get("userId", Long.class);
-        } catch (SignatureException e) {
-            throw new InvalidAccessTokenException(accessToken);
-        }
     }
 }

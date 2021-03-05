@@ -25,8 +25,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+
 @Entity
 @Getter
+@lombok.Generated
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

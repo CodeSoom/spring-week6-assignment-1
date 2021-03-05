@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@lombok.Generated
 @Builder
 @AllArgsConstructor
 public class UserResultData {

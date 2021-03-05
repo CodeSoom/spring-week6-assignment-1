@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.AuthenticationFailException;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+@lombok.Generated
 @ResponseBody
 @ControllerAdvice
 public class ControllerErrorAdvice {
@@ -24,6 +26,12 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserNotFoundException.class)
     public ErrorResponse handleUserNotFound() {
         return new ErrorResponse("User not found");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AuthenticationFailException.class)
+    public ErrorResponse handleAuthFail() {
+        return new ErrorResponse("인증에 실패했습니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

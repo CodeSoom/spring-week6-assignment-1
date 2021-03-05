@@ -19,6 +19,7 @@ public class UserLoginData {
     @Mapping("password")
     private String password;
 
+    @lombok.Generated
     @Builder
     private UserLoginData(String email, String password) {
         this.email = email;

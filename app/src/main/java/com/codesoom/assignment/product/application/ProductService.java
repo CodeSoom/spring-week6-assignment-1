@@ -34,9 +34,9 @@ public class ProductService {
     }
 
     /**
-     * 등록된 상품 id를 가진 상품을 리턴한다.
+     * 등록된 id를 가진 상품을 리턴한다.
      *
-     * @param id 등록된 상품 id
+     * @param id 등록된 상품 식별자
      * @return 등록된 상품
      */
     public Product getProduct(Long id) {
@@ -57,7 +57,7 @@ public class ProductService {
     /**
      * 등록된 상품의 정보를 갱신하고, 갱신된 정보를 리턴한다.
      *
-     * @param id  등록된 상품 id
+     * @param id  등록된 상품 식별자
      * @param productData 갱신할 상품 정보
      * @return 갱신된 상품 정보
      */
@@ -72,7 +72,7 @@ public class ProductService {
     /**
      * 등록된 상품을 삭제한다.
      *
-     * @param id 등록된 상품 id
+     * @param id 등록된 상품 식별자
      * @return 삭제된 상품 정보
      */
     public Product deleteProduct(Long id) {

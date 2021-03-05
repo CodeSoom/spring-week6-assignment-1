@@ -1,9 +1,9 @@
 package com.codesoom.assignment.utils;
 
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,13 +42,16 @@ public class JwtUtil {
         if (token == null || token.isBlank()) {
             throw new InvalidAccessTokenException(token);
         }
-
-        Claims body = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return body.get("userId", Long.class);
+        
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("userId", Long.class);
+        } catch (SignatureException e) {
+            throw new InvalidAccessTokenException(token);
+        }
     }
 }

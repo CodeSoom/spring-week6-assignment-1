@@ -104,8 +104,10 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") String accessToken,
             @PathVariable Long id
     ) {
+        validateAccessToken(accessToken);
         productService.deleteProduct(id);
     }
 

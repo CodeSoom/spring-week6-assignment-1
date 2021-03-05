@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.verify;
 class AuthenticationServiceTest {
 
     private static final String VALID_EMAIL = "rhfpdk92@naver.com";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -46,6 +49,7 @@ class AuthenticationServiceTest {
                 .password("password")
                 .name("양승인")
                 .build();
+
     }
 
     @Nested
@@ -155,5 +159,11 @@ class AuthenticationServiceTest {
                 verify(userRepository).findByEmail(deletedUserLoginDto.getEmail());
             }
         }
+    }
+
+    @Test
+    void parseToken(){
+        Long userId = authenticationService.parseToken(VALID_TOKEN);
+        assertThat(userId).isEqualTo(validUser.getId());
     }
 }

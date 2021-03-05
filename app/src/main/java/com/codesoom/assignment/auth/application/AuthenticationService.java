@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private static final String WRONG_PASSWORD = "잘못된 비밀번호를 입력하였습니다.";
+    private static final String WRONG_DATA = "잘못된 정보를 입력하였습니다.";
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
@@ -32,14 +32,14 @@ public class AuthenticationService {
         final User user = findUserByEmail(requestDto);
 
         if (!user.authenticate(requestDto.getPassword())) {
-            throw new IllegalArgumentException(WRONG_PASSWORD);
+            throw new IllegalArgumentException(WRONG_DATA);
         }
         return createToken(user.getId());
     }
 
     private User findUserByEmail(EmailSupplier emailSupplier) {
         return userRepository.findByEmail(emailSupplier.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new IllegalArgumentException(WRONG_DATA));
     }
 
     /**

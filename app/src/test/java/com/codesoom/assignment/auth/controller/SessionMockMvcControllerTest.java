@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("SessionController 클래스")
 @WebMvcTest(SessionController.class)
 class SessionMockMvcControllerTest {
+    private static final String WRONG_DATA = "잘못된 정보를 입력하였습니다.";
     private static final String GIVEN_USER_EMAIL = "test@test.com";
     private static final String GIVEN_USER_PASSWORD = "password";
     private static final String NOT_EXIST_EMAIL = GIVEN_USER_EMAIL + "_NOT_EXIST";
@@ -71,7 +72,7 @@ class SessionMockMvcControllerTest {
             @BeforeEach
             void setUp() {
                 given(authenticationService.authenticate(any(LoginRequest.class)))
-                        .willThrow(new IllegalArgumentException(NOT_EXIST_EMAIL));
+                        .willThrow(new IllegalArgumentException(WRONG_DATA));
             }
 
             @DisplayName("400 BadRequest 상태를 응답한다")
@@ -92,7 +93,7 @@ class SessionMockMvcControllerTest {
             @BeforeEach
             void setUp() {
                 given(authenticationService.authenticate(any(LoginRequest.class)))
-                        .willThrow(new IllegalArgumentException("잘못된 비밀번호 입니다."));
+                        .willThrow(new IllegalArgumentException(WRONG_DATA));
             }
 
             @DisplayName("400 BadRequest 상태를 응답한다")

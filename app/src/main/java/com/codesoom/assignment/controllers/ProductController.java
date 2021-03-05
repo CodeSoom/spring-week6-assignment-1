@@ -45,8 +45,7 @@ public class ProductController {
      * @return 저장된 모든 상품 집합
      */
     @GetMapping
-    public List<Product> list(@RequestHeader("Authorization") String accessToken) {
-        validateAccessToken(accessToken);
+    public List<Product> list() {
         return productService.getProducts();
     }
 
@@ -57,9 +56,7 @@ public class ProductController {
      * @return 주어진 id와 일치하는 상품
      */
     @GetMapping("{id}")
-    public Product detail(@RequestHeader("Authorization") String accessToken,
-                          @PathVariable Long id) {
-        validateAccessToken(accessToken);
+    public Product detail(@PathVariable Long id) {
         return productService.getProduct(id);
     }
 

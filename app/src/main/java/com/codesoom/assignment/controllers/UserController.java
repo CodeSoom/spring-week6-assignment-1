@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ *  user에 대한 http 요청을 관리합니다.
+ */
 @RestController
 @RequestMapping("/users")
 @CrossOrigin

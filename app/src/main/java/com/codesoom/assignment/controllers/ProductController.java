@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ *  상품의 생성, 업데이트, 삭제 등의 http 요청을 관리합니다.
+ *
+ */
 @RestController
 @RequestMapping("/products")
 @CrossOrigin

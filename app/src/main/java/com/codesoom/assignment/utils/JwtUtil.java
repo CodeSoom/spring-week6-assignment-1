@@ -11,6 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 
+/**
+ *
+ *  jwt 토큰을 관리합니다.
+ *  
+ */
 @Component
 public class JwtUtil {
     private final Key key;

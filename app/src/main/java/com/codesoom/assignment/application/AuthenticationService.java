@@ -1,13 +1,14 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.dto.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 
-import io.jsonwebtoken.security.SignatureException;
+
 import org.springframework.stereotype.Service;
 
-
+/**
+ *  인증에 관한 처리를 담당합니다.
+ */
 @Service
 public class AuthenticationService {
     private JwtUtil jwtUtil;

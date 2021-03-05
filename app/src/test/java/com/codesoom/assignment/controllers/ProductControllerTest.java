@@ -305,7 +305,7 @@ class ProductControllerTest {
 
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + NOT_EXISTED_TOKEN)
+                        .header("Authorization", "Bearer " + givenNotExistedToken)
                         .content("{\"name\":\"createdName\" , \"maker\":\"createdMaker\", \"price\":200, \"image\":\"createdImage\"}"))
                         .andDo(print())
                         .andExpect(status().isUnauthorized())
@@ -456,7 +456,7 @@ class ProductControllerTest {
 
                 mockMvc.perform(patch("/products/" + givenExistedId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + NOT_EXISTED_TOKEN)
+                        .header("Authorization", "Bearer " + givenNotExistedToken)
                         .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\":300, \"image\":\"updatedImage\"}"))
                         .andDo(print())
                         .andExpect(content().string(containsString("Invalid token")))
@@ -478,7 +478,9 @@ class ProductControllerTest {
             void itDeleteProductAndReturnsNO_CONTENTHttpStatus() throws Exception {
                 given(productService.deleteProduct(givenExistedId)).willReturn(resultProductOne);
 
-                mockMvc.perform(delete("/products/" + givenExistedId))
+                mockMvc.perform(delete("/products/" + givenExistedId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + EXISTED_TOKEN))
                         .andDo(print())
                         .andExpect(jsonPath("id").value(givenExistedId))
                         .andExpect(status().isNoContent());
@@ -498,7 +500,8 @@ class ProductControllerTest {
                 given(productService.deleteProduct(givenNotExistedId))
                         .willThrow(new ProductNotFoundException(givenNotExistedId));
 
-                mockMvc.perform(delete("/products/" + givenNotExistedId))
+                mockMvc.perform(delete("/products/" + givenNotExistedId)
+                        .header("Authorization", "Bearer " + EXISTED_TOKEN))
                         .andDo(print())
                         .andExpect(status().isNotFound())
                         .andExpect(content().string(containsString("Product not found")));
@@ -520,7 +523,7 @@ class ProductControllerTest {
                         .willThrow(new InvalidTokenException(givenNotExistedToken));
 
                 mockMvc.perform((delete("/products/" + givenExistedId))
-                        .header("Authorization", "Bearer " + NOT_EXISTED_TOKEN))
+                        .header("Authorization", "Bearer " + givenNotExistedToken))
                         .andDo(print())
                         .andExpect(content().string(containsString("Invalid token")))
                         .andExpect(status().isUnauthorized());

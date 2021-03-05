@@ -43,9 +43,6 @@ public class AuthenticationService {
     public AuthenticationResultData parseToken(String accessToken) {
         Claims claims = jwtUtil.decode(accessToken);
 
-        return AuthenticationResultData.builder()
-                .email(claims.get("email", String.class))
-                .password((claims.get("password", String.class)))
-                .build();
+        return AuthenticationResultData.of(claims);
     }
 }

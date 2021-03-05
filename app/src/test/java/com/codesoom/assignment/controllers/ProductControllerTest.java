@@ -82,16 +82,23 @@ class ProductControllerTest {
     @DisplayName("GET /products")
     @Nested
     class Describe_GET_Products {
-        @DisplayName("존재하는 모든 product 집합을 응답한다")
-        @Test
-        void it_returns_products_lists() throws Exception {
-            mockMvc.perform(
-                    get("/products")
-                            .accept(MediaType.APPLICATION_JSON_UTF8)
-            )
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(containsString("쥐돌이")));
+        @Nested
+        @DisplayName("유효한 access token이 주어진다면")
+        class Context_with_valid_accessToken {
+            @DisplayName("존재하는 모든 product 집합을 응답한다")
+            @Test
+            void it_returns_products_lists() throws Exception {
+                mockMvc.perform(
+                        get("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer", VALID_TOKEN)
+                )
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString("쥐돌이")));
+            }
         }
+
+        
     }
 
     @DisplayName("GET /products/{id}")

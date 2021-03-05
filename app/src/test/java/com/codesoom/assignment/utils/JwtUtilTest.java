@@ -66,5 +66,17 @@ class JwtUtilTest {
                 assertThrows(InvalidAccessTokenException.class, () -> jwtUtil.decode(givenToken));
             }
         }
+
+        @Nested
+        @DisplayName("null인 token이 주어졌을 때")
+        class Context_null_token {
+            String givenToken = null;
+
+            @DisplayName("유효하지 않은 토큰이 주어졌다는 예외를 던진다")
+            @Test
+            void it_throws_invalid_token_exception() {
+                assertThrows(InvalidAccessTokenException.class, () -> jwtUtil.decode(givenToken));
+            }
+        }
     }
 }

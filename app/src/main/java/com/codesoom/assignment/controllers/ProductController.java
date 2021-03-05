@@ -72,8 +72,10 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
+            @RequestHeader("Authorization") String accessToken,
             @RequestBody @Valid ProductData productData
     ) {
+        validateAccessToken(accessToken);
         return productService.createProduct(productData);
     }
 

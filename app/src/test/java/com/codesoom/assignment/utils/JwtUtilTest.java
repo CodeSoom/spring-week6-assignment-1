@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class JwtUtilTest {
     final Long USER_ID = 1L;
     final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5VoLz2Ug0E6jQK_anP6RND1YHpzlBdxsR2ORgYef_aQ";
+    final String MODULATED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5VoLz2Ug0E6jQK_anP6RND1YHpzlBdxsR2ORgYef_aQss";
     final String secretKey = "qwertyuiopqwertyuiopqwertyuiopqw";
 
     JwtUtil jwtUtil;
@@ -71,6 +72,18 @@ class JwtUtilTest {
         @DisplayName("null인 token이 주어졌을 때")
         class Context_null_token {
             String givenToken = null;
+
+            @DisplayName("유효하지 않은 토큰이 주어졌다는 예외를 던진다")
+            @Test
+            void it_throws_invalid_token_exception() {
+                assertThrows(InvalidAccessTokenException.class, () -> jwtUtil.decode(givenToken));
+            }
+        }
+
+        @Nested
+        @DisplayName("변조된 token이 주어졌을 때")
+        class Context_modulated_token {
+            String givenToken = MODULATED_TOKEN;
 
             @DisplayName("유효하지 않은 토큰이 주어졌다는 예외를 던진다")
             @Test

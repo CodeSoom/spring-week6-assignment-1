@@ -1,20 +1,20 @@
 package com.codesoom.assignment.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@ToString(exclude = "id")
 public class User {
     @Id
     @GeneratedValue
@@ -29,17 +29,16 @@ public class User {
     @Setter
     private String password;
 
-    @Builder
-    public User(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
+    private boolean deleted;
 
     public User updateWith(User user) {
         this.email = user.getEmail();
         this.password = user.getPassword();
 
         return this;
+    }
+
+    public void destroy() {
+        deleted = true;
     }
 }

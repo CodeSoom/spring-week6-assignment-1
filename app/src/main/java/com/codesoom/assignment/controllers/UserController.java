@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,7 +49,13 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody @Valid UserCreateRequestDto createRequest) {
-        return userService.createUser(createRequest);
+        User user = userService.createUser(createRequest);
+
+        return User.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 
     /**
@@ -59,12 +65,18 @@ public class UserController {
      * @param updateRequest
      * @return 수정된 사용자 정보
      */
-    @PatchMapping("{id}")
-    public User update(
+    @RequestMapping(value = "{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    User update(
             @PathVariable Long id,
             @RequestBody @Valid UserUpdateRequestDto updateRequest
     ) {
-        return userService.updateUser(id, updateRequest);
+        User user = userService.updateUser(id, updateRequest);
+
+        return User.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 
     /**

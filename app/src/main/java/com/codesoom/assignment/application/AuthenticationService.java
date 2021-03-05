@@ -8,7 +8,7 @@ import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +24,7 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
+    @Autowired
     public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;

@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.TokenResponse;
 import com.codesoom.assignment.dto.UserLoginData;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/session")
+@CrossOrigin
 public class AuthenticationController {
     private final AuthenticationService authService;
 
@@ -35,7 +37,7 @@ public class AuthenticationController {
     TokenResponse login(@RequestBody @Valid UserLoginData loginData) {
         String token = authService.createSession(loginData.getEmail(), loginData.getPassword());
         return TokenResponse.builder()
-                .token(token)
+                .accessToken(token)
                 .build();
     }
 }

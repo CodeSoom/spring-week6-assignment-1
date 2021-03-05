@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class TokenResponse {
-    private String token;
+    private String accessToken;
 }

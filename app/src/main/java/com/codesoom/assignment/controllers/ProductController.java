@@ -66,10 +66,7 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        Long userID = authenticationService.parseToken(accessToken);
-        System.out.println("생성***" + userID);
-
+        authenticationService.parseToken(getSubstring(authorization));
         return productService.createProduct(productData);
     }
 
@@ -87,9 +84,7 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        Long userID = authenticationService.parseToken(accessToken);
-        System.out.println("수정***" + userID);
+        authenticationService.parseToken(getSubstring(authorization));
         return productService.updateProduct(id, productData);
     }
 
@@ -105,9 +100,11 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        Long userID = authenticationService.parseToken(accessToken);
-        System.out.println("삭제***" + userID);
+        authenticationService.parseToken(getSubstring(authorization));
         productService.deleteProduct(id);
+    }
+
+    private String getSubstring(@RequestHeader("Authorization") String authorization) {
+        return authorization.substring("Bearer ".length());
     }
 }

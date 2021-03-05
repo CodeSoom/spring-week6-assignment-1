@@ -212,7 +212,7 @@ class ProductControllerTest {
         class Context_without_access_token {
 
             @Test
-            @DisplayName("응답코드 401을 응답한다")
+            @DisplayName("401 unauthorized로 응답한다")
             void it_response_unauthorized() throws Exception {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -227,7 +227,7 @@ class ProductControllerTest {
         class Context_without_invalid_access_token {
 
             @Test
-            @DisplayName("응답코드 401을 응답한다")
+            @DisplayName("401 unauthorized로 응답한다")
             void it_response_unauthorized() throws Exception {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -316,7 +316,7 @@ class ProductControllerTest {
             }
 
             @Test
-            @DisplayName("응답코드는 400을 응답한다.")
+            @DisplayName("400 bad request로 응답한다")
             void it_throw_bad_request() throws Exception {
                 mockMvc.perform(patch("/products/{id}", ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -332,7 +332,7 @@ class ProductControllerTest {
         class Context_without_access_token {
 
             @Test
-            @DisplayName("응답코드 401을 응답한다.")
+            @DisplayName("401 unauthorized로 응답한다")
             void it_response_unauthorized() throws Exception {
                 mockMvc.perform(patch("/products/{id}", ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -347,7 +347,7 @@ class ProductControllerTest {
         class Context_with_invalid_access_token {
 
             @Test
-            @DisplayName("응답코드 401을 응답한다.")
+            @DisplayName("401 unauthorized로 응답한다")
             void it_response_unauthorized() throws Exception {
                 mockMvc.perform(patch("/products/{id}", ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -366,7 +366,7 @@ class ProductControllerTest {
         @DisplayName("id가 존재하는 상품이면")
         class Context_exist_id {
             @Test
-            @DisplayName("응답코드 204를 응답한다.")
+            @DisplayName("204 no content로 응답한다.")
             void it_return_no_content() throws Exception {
                 mockMvc.perform(delete("/products/{id}", ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -401,7 +401,7 @@ class ProductControllerTest {
         class Context_without_access_token {
 
             @Test
-            @DisplayName("응답코드 401을 응답한다.")
+            @DisplayName("401 unauthorized로 응답한다")
             void it_response_unauthorized() throws Exception {
                 mockMvc.perform(delete("/products/{id}", ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -415,7 +415,7 @@ class ProductControllerTest {
         class Context_with_invalid_access_token {
 
             @Test
-            @DisplayName("응답코드 401을 응답한다.")
+            @DisplayName("401 unauthorized로 응답한다")
             void it_response_unauthorized() throws Exception {
                 mockMvc.perform(delete("/products/{id}", ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)

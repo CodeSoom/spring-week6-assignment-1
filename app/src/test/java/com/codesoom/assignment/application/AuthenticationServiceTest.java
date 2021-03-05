@@ -99,7 +99,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("주어진 로그인 정보의 이메일에 해당하는 회원이 없다면")
+        @DisplayName("주어진 이메일에 해당하는 회원이 없다면")
         class Context_when_the_user_does_not_exist {
             private final String errorKeyword = "잘못된 이메일 주소";
 

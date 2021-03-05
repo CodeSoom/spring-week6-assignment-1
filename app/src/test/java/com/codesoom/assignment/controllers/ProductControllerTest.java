@@ -98,7 +98,20 @@ class ProductControllerTest {
             }
         }
 
-        
+        @Nested
+        @DisplayName("유효하지 않은 access token이 주어진다면")
+        class Context_with_invalid_accessToken {
+            @DisplayName("401 코드를 응답한다")
+            @Test
+            void it_returns_401_code() throws Exception {
+                mockMvc.perform(
+                        get("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer", INVALID_TOKEN)
+                )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
     }
 
     @DisplayName("GET /products/{id}")

@@ -21,7 +21,7 @@ public class JwtUtil {
 
     private final long validTime;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.validTime") long validTime) {
+    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.valid-time}") long validTime) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.validTime = validTime;
     }

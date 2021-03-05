@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,7 @@ public class ProductController {
      * @return 저장된 모든 상품 집합
      */
     @GetMapping
-    public List<Product> list() {
+    public List<Product> list(@RequestHeader("Authorization") String accessToken) {
         return productService.getProducts();
     }
 

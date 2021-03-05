@@ -349,16 +349,18 @@ class ProductControllerTest {
     @DisplayName("DELETE /products/id")
     @Nested
     class Describe_DELETE_products_id {
-        @DisplayName("존재하는 product id가 주어진다면")
+        @DisplayName("유효한 access token과 존재하는 product id가 주어진다면")
         @Nested
-        class Context_with_exist_product_id {
+        class Context_with_valid_access_token_and_exist_product_id {
             Long givenId = EXIST_ID;
+            String givenToken = "Bearer " + VALID_TOKEN;
 
             @DisplayName("204 코드를 응답한다")
             @Test
             void it_returns_200_code_with_product() throws Exception {
                 mockMvc.perform(
                         delete("/products/{id}", givenId)
+                                .header("Authorization", givenToken)
                 )
                         .andExpect(status().isNoContent());
 
@@ -366,20 +368,39 @@ class ProductControllerTest {
             }
         }
 
-        @DisplayName("존재하지 않는 product id가 주어진다면")
+        @DisplayName("유효한 access token과 존재하지 않는 product id가 주어진다면")
         @Nested
-        class Context_with_not_exist_product_id {
+        class Context_with_valid_access_token_and_not_exist_product_id {
             Long givenId = NOT_EXIST_ID;
+            String givenToken = "Bearer " + VALID_TOKEN;
 
             @DisplayName("404코드를 응답한다")
             @Test
             void it_returns_404_code() throws Exception {
                 mockMvc.perform(
                         delete("/products/{id}", givenId)
+                                .header("Authorization", givenToken)
                 )
                         .andExpect(status().isNotFound());
 
                 verify(productService).deleteProduct(givenId);
+            }
+        }
+
+        @DisplayName("유효하지 않은 access token과 존재하는 product id가 주어진다면")
+        @Nested
+        class Context_with_invalid_access_token_and_exist_product_id {
+            Long givenId = EXIST_ID;
+            String givenToken = "Bearer " + INVALID_TOKEN;
+
+            @DisplayName("401 코드를 응답한다")
+            @Test
+            void it_returns_401_code() throws Exception {
+                mockMvc.perform(
+                        delete("/products/{id}", givenId)
+                                .header("Authorization", givenToken)
+                )
+                        .andExpect(status().isUnauthorized());
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
@@ -32,8 +31,6 @@ public class ProductController {
 
     private final ProductService productService;
 
-    private final AuthenticationService authenticationService;
-
     /**
      * 모든 상품을 응답합니다.
      */
@@ -64,12 +61,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
             @RequestHeader("Authorization") String authorization,
-            @RequestBody @Valid ProductData productData
-    ) {
-        String accessToken = authorization.substring("Bearer ".length());
-
-        authenticationService.parseToken(accessToken);
-
+            @RequestBody @Valid ProductData productData) {
         return productService.createProduct(productData);
     }
 
@@ -87,10 +79,6 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-
-        authenticationService.parseToken(accessToken);
-
         return productService.updateProduct(id, productData);
     }
 
@@ -106,10 +94,6 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-
-        authenticationService.parseToken(accessToken);
-
         productService.deleteProduct(id);
     }
 

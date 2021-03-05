@@ -121,11 +121,11 @@ class ProductControllerTest {
     void createWithAccessToken() throws Exception {
         mockMvc.perform(
                 post("/products")
-                                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                            "\"price\":5000}")
-                .header("Authorization", "Bearer " + VALID_TOKEN)
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
 
         )
                 .andExpect(status().isCreated())

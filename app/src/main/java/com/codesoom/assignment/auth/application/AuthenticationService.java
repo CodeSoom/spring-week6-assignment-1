@@ -2,6 +2,7 @@ package com.codesoom.assignment.auth.application;
 
 import com.codesoom.assignment.auth.dto.LoginRequest;
 import com.codesoom.assignment.auth.infra.JwtTokenProvider;
+import com.codesoom.assignment.user.domain.EmailSupplier;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.domain.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -28,13 +29,17 @@ public class AuthenticationService {
      * @throws IllegalArgumentException 유효하지 않은 인자가 들어왔을 경우
      */
     public String authenticate(LoginRequest requestDto) throws IllegalArgumentException {
-        final User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException(requestDto.getEmail()));
+        final User user = findUserByEmail(requestDto);
 
         if (!user.authenticate(requestDto.getPassword())) {
             throw new IllegalArgumentException(WRONG_PASSWORD);
         }
         return createToken(user.getId());
+    }
+
+    private User findUserByEmail(EmailSupplier emailSupplier) {
+        return userRepository.findByEmail(emailSupplier.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException());
     }
 
     /**

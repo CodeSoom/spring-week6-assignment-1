@@ -13,9 +13,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-/**
- * AuthenticationService 클래스
- */
+
+@DisplayName("AuthenticationService 클래스")
 class AuthenticationServiceTest {
 
     private final String SECRET = "12345678901234567890123456789012";
@@ -54,7 +53,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    @DisplayName("login()는 유효한 사용자 로그인 정보가 주어지면 생성된 토큰을 리턴한다")
+    @DisplayName("login은 유효한 사용자 로그인 정보가 주어지면 토큰을 생성해 리턴한다")
     void login() {
 
         given(userService.findUserByEmail(any()))

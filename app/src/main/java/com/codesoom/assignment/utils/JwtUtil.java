@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 
 /**
- * Jwt token 관리 유틸
+ * Jwt token 관리 도구를 제공합니다.
  */
 @Component
 public class JwtUtil {

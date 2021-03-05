@@ -1,7 +1,10 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -30,5 +33,27 @@ public class JwtUtil {
                 .claim("userId", userId)
                 .signWith(key)
                 .compact();
+    }
+
+    /**
+     * 토큰을 복호화하고 복호화된 정보를 반환합니다.
+     *
+     * @param token 토큰
+     * @return 복호화된 정보
+     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
+     */
+    public Claims decode(String token) {
+        if (token == null || token.isBlank()) {
+            throw new InvalidTokenException(token);
+        }
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (SignatureException e) {
+            throw new InvalidTokenException(token);
+        }
     }
 }

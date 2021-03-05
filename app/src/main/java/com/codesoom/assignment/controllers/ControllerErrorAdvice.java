@@ -8,6 +8,7 @@ import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,7 +49,16 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
-    public ErrorResponse handleInvalidToken(InvalidUserException exception) {
-        return new ErrorResponse(exception.getMessage());
+    public ErrorResponse handleInvalidToken() {
+        return new ErrorResponse("token is not valid");
     }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ErrorResponse handleMissingRequestHeader() {
+        return new ErrorResponse("request header does not exist");
+    }
+
+
+
 }

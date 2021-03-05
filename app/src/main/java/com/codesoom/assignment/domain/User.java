@@ -52,15 +52,11 @@ public class User {
         return !deleted && password.equals(this.password);
     }
 
-//    public void changeWith(User source) {
-//        name = source.name;
-//        password = source.password;
-//    }
 
-    /** 사용자 정보를 업데이트한다. */
-//    public void update(String name, String email, String password) {
+//사용자 수정은 dozerMapper가 대신합니다.
+//    /** 사용자 정보를 수정한다. */
+//    public void update(User user) {
 //        this.name = name;
-//        this.email = email;
 //        this.password = password;
 //    }
 }

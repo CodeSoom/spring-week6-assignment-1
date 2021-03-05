@@ -34,12 +34,4 @@ public class UserCreateData {
         this.email = email;
         this.password = password;
     }
-
-//    public User toEntity() {
-//        return User.builder()
-//                .name(this.name)
-//                .email(this.email)
-//                .password(this.password)
-//                .build();
-//    }
 }

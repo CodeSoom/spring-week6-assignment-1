@@ -47,14 +47,12 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    /** 상품 정보를 업데이트한다. */
-//    public void change(String name,
-//                       String maker,
-//                       Integer price,
-//                       String imageUrl) {
-//        this.name = name;
-//        this.maker = maker;
-//        this.price = price;
-//        this.imageUrl = imageUrl;
+    //상품수정은 dozerMapper가 대신합니다.
+//    /** 상품 정보를 업데이트한다. */
+//    public void change(Product product) {
+//        this.name = product.getName();
+//        this.maker = product.getMaker();
+//        this.price = product.getPrice();
+//        this.imageUrl = product.getImageUrl();
 //    }
 }

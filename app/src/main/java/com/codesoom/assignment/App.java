@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@lombok.Generated
 public class App {
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);

@@ -87,7 +87,7 @@ class SessionControllerTest {
         class Context_with_invalid_data {
             void setUp() {
                 given(authenticationService.login(invalidLoginData))
-                        .willThrow(new AuthenticationFailException("입력하신 로그인 정보가 맞지 않습니다."));
+                        .willThrow(new AuthenticationFailException());
             }
 
             @Test

@@ -62,7 +62,6 @@ public class ProductController {
 
     @PatchMapping("{id}")
     public Product update(
-            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
@@ -72,7 +71,6 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
         productService.deleteProduct(id);

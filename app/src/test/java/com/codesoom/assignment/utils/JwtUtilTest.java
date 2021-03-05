@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,7 +52,6 @@ class JwtUtilTest {
     @DisplayName("decode에 유요하지 않은 토큰이 주어지면 예외를 던진다.")
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {"", "  "})
     @CsvSource(INVALID_TOKEN)
     void decodeWithInValidToken(String token) {
         assertThrows(InvalidAccessTokenException.class, () -> jwtUtil.decode(token));

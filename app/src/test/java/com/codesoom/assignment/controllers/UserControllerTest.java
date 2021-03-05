@@ -1,10 +1,10 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.UserNotFoundException;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserCreateRequestDto;
 import com.codesoom.assignment.dto.UserUpdateRequestDto;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,6 +48,11 @@ class UserControllerTest {
     private static final String UPDATE_PASSWORD = "123!";
 
     private User user;
+    private User updatedUser;
+    private UserCreateRequestDto createRequest;
+    private UserUpdateRequestDto updateRequest;
+    private Long givenValidId;
+    private Long givenInvalidId;
 
     @BeforeEach
     void setUp() {
@@ -56,12 +61,30 @@ class UserControllerTest {
                 .email(EMAIL)
                 .password(PASSWORD)
                 .build();
+
+        updatedUser = User.builder()
+                .name(NAME)
+                .email(UPDATE_EMAIL)
+                .password(UPDATE_PASSWORD)
+                .build();
+
+        given(userService.createUser(any(UserCreateRequestDto.class)))
+                .willReturn(user);
+
+        given(userService.updateUser(eq(EXIST_ID), any(UserUpdateRequestDto.class)))
+                .willReturn(updatedUser);
+
+        given(userService.updateUser(eq(NOT_EXIST_ID), any(UserUpdateRequestDto.class)))
+                .willThrow(new UserNotFoundException(NOT_EXIST_ID));
+
+        given(userService.deleteUser(NOT_EXIST_ID))
+                .willThrow(new UserNotFoundException(NOT_EXIST_ID));
     }
 
     @Nested
     @DisplayName("create 메소드는")
     class Describe_create {
-        User invalidAttributes;
+        UserCreateRequestDto invalidAttributes;
 
         @Nested
         @DisplayName("사용자 정보가 주어진다면")
@@ -69,8 +92,11 @@ class UserControllerTest {
 
             @BeforeEach
             void setUp() {
-                given(userService.createUser(any(UserCreateRequestDto.class)))
-                        .willReturn(user);
+                createRequest = UserCreateRequestDto.builder()
+                        .name(NAME)
+                        .email(EMAIL)
+                        .password(PASSWORD)
+                        .build();
             }
 
             @Test
@@ -80,7 +106,7 @@ class UserControllerTest {
                         post("/users")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .content(objectMapper.writeValueAsString(user))
+                                .content(objectMapper.writeValueAsString(createRequest))
                 )
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("name").value(NAME))
@@ -97,7 +123,7 @@ class UserControllerTest {
 
             @BeforeEach
             void setUp() {
-                invalidAttributes = User.builder()
+                invalidAttributes = UserCreateRequestDto.builder()
                         .name("")
                         .email("")
                         .password("")
@@ -121,9 +147,7 @@ class UserControllerTest {
     @Nested
     @DisplayName("update 메소드는")
     class Describe_update {
-        UserUpdateRequestDto updateRequest;
         UserUpdateRequestDto invalidAttributes;
-        User updatedUser;
 
         @Nested
         @DisplayName("등록된 사용자 ID와 수정할 정보가 주어진다면")
@@ -136,29 +160,26 @@ class UserControllerTest {
                         .password(UPDATE_PASSWORD)
                         .build();
 
-                updatedUser = userService.updateUser(EXIST_ID, updateRequest);
-
-                given(userService.updateUser(eq(EXIST_ID), any(UserUpdateRequestDto.class)))
-                        .willReturn(updatedUser);
-
+                givenValidId = EXIST_ID;
             }
 
             @Test
             @DisplayName("해당 ID를 갖는 사용자의 정보를 수정하고 사용자와 응답코드 200을 반환한다")
             void it_returns_user_and_ok() throws Exception {
                 mockMvc.perform(
-                        patch("/products/1")
+                        patch("/users/1")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(updatedUser))
+                                .content(objectMapper.writeValueAsString(updateRequest))
                 )
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("email").value(UPDATE_EMAIL))
                         .andExpect(jsonPath("password").value(UPDATE_PASSWORD));
 
-                verify(userService).updateUser(eq(EXIST_ID), any(UserUpdateRequestDto.class));
+                verify(userService).updateUser(eq(givenValidId), any(UserUpdateRequestDto.class));
             }
         }
+
 
         @Nested
         @DisplayName("등록되지 않은 사용자 ID와 수정할 정보가 주어진다면")
@@ -171,8 +192,7 @@ class UserControllerTest {
                         .password(UPDATE_PASSWORD)
                         .build();
 
-                given(userService.updateUser(eq(NOT_EXIST_ID), any(UserUpdateRequestDto.class)))
-                        .willThrow(new UserNotFoundException(NOT_EXIST_ID));
+                givenInvalidId = NOT_EXIST_ID;
             }
 
             @Test
@@ -185,7 +205,7 @@ class UserControllerTest {
                 )
                         .andExpect(status().isNotFound());
 
-                verify(userService).updateUser(eq(NOT_EXIST_ID), any(UserUpdateRequestDto.class));
+                verify(userService).updateUser(eq(givenInvalidId), any(UserUpdateRequestDto.class));
             }
         }
 
@@ -223,13 +243,18 @@ class UserControllerTest {
         @DisplayName("등록된 사용자 ID가 주어진다면")
         class Context_with_existed_id {
 
+            @BeforeEach
+            void setUp() {
+                givenValidId = EXIST_ID;
+            }
+
             @Test
             @DisplayName("해당 ID를 갖는 사용자를 삭제하고 응답코드 200을 반환한다")
             void it_returns_ok() throws Exception {
                 mockMvc.perform(delete("/users/1"))
                         .andExpect(status().isOk());
 
-                verify(userService).deleteUser(EXIST_ID);
+                verify(userService).deleteUser(givenValidId);
             }
         }
 
@@ -239,8 +264,7 @@ class UserControllerTest {
 
             @BeforeEach
             void setUp() {
-                given(userService.deleteUser(NOT_EXIST_ID))
-                        .willThrow(new UserNotFoundException(NOT_EXIST_ID));
+                givenInvalidId = NOT_EXIST_ID;
             }
 
             @Test
@@ -249,9 +273,8 @@ class UserControllerTest {
                 mockMvc.perform(delete("/users/100"))
                         .andExpect(status().isNotFound());
 
-                verify(userService).deleteUser(NOT_EXIST_ID);
+                verify(userService).deleteUser(givenInvalidId);
             }
         }
     }
-
 }

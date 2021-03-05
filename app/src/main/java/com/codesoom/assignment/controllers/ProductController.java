@@ -4,8 +4,6 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.utils.JwtUtil;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -51,7 +49,7 @@ public class ProductController {
      * 상품 조회 요청을 처리하고, 해당 상품 정보를 반환합니다.
      *
      * @param id
-     * @return 해당 상품 정보
+     * @return 해당 상품
      */
     @GetMapping("{id}")
     public Product detail(@PathVariable Long id) {
@@ -61,8 +59,9 @@ public class ProductController {
     /**
      * 상품 등록 요청을 처리하고, 등록된 상품 정보를 반환합니다.
      *
+     * @param authorization
      * @param productData
-     * @return 등록된 상품 정보
+     * @return 등록된 상품
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -72,7 +71,7 @@ public class ProductController {
     ) {
         String accessToken = authorization.substring("Bearer ".length());
 
-        Long userId = authenticationService.parseToken(accessToken);
+        authenticationService.parseToken(accessToken);
 
         return productService.createProduct(productData);
     }
@@ -80,13 +79,22 @@ public class ProductController {
     /**
      * 상품 정보 수정 요청을 처리하고, 수정된 상품 정보를 반환합니다.
      *
+     * @param authorization
      * @param id
      * @param productData
-     * @return
+     * @return 수정된 상품
      */
     @RequestMapping(value = "{id}", method = {RequestMethod.PUT, RequestMethod.PATCH})
-    public Product update(@PathVariable Long id, @RequestBody @Valid ProductData productData) {
-        return productService.updateProduct(id, productData);
+    public Product update(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id,
+            @RequestBody @Valid ProductData productData
+    ) {
+        String accessToken = authorization.substring("Bearer ".length());
+
+        Long userId = authenticationService.parseToken(accessToken);
+
+        return productService.updateProduct(userId, productData);
     }
 
     /**
@@ -103,8 +111,9 @@ public class ProductController {
     /**
      * Authorization 헤더에 대한 예외를 처리합니다.
      */
-    @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
     public void handleMissingRequestHeaderException() {
+        //
     }
 }

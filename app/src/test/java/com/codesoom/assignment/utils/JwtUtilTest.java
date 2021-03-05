@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JwtUtilTest {
 
+    private final long validTime = 604800000; // an hour
     private final String secret = "12345678901234567890123456789012";
 
     private final String validToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
@@ -29,7 +30,7 @@ class JwtUtilTest {
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil(secret);
+        jwtUtil = new JwtUtil(secret, validTime);
     }
 
     @DisplayName("encode 메소드에 회원 id가 주어진다면 생성된 토큰을 리턴한다.")

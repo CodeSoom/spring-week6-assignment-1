@@ -28,6 +28,8 @@ class AuthenticationServiceTest {
     private final Long parsedUserId = 1L;
 
     private final String secret = "12345678901234567890123456789012";
+    private final long validTime = 604800000; // an hour
+
     private final String validToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
             ".ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     private final String inValidToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
@@ -46,7 +48,7 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        JwtUtil jwtUtil = new JwtUtil(secret);
+        JwtUtil jwtUtil = new JwtUtil(secret, validTime);
 
         authenticationService = new AuthenticationService(jwtUtil, userRepository);
 

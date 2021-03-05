@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Date;
 
 /**
  * Jwt 토큰을 관리합니다.
@@ -18,8 +19,11 @@ public class JwtUtil {
 
     private final Key key;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
-        key = Keys.hmacShaKeyFor(secret.getBytes());
+    private final long validTime;
+
+    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.validTime") long validTime) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.validTime = validTime;
     }
 
     /**
@@ -29,8 +33,13 @@ public class JwtUtil {
      * @return 생성된 토큰
      */
     public String encode(Long userId) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() - validTime);
+
         return Jwts.builder()
                 .claim("userId", userId)
+                .setIssuedAt(now)
+                .setExpiration(expiration)
                 .signWith(key)
                 .compact();
     }

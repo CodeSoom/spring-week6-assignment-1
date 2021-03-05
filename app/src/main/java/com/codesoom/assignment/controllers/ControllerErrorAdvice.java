@@ -58,7 +58,4 @@ public class ControllerErrorAdvice {
     public ErrorResponse handleMissingRequestHeader() {
         return new ErrorResponse("request header does not exist");
     }
-
-
-
 }

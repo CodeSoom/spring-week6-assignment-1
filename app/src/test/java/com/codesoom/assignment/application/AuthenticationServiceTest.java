@@ -116,7 +116,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("InvalidUserException을 던다.")
+            @DisplayName("InvalidUserException을 던진다.")
             void it_return_invalid_user_exception() {
                 assertThrows(InvalidUserException.class, () -> authenticationService.login(userLoginDtoWithWrongPassword));
                 verify(userRepository).findByEmail(userLoginDtoWithWrongPassword.getEmail());

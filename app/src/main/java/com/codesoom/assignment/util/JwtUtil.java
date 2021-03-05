@@ -20,7 +20,8 @@ public class JwtUtil {
     private final Key key;
     private final UserRepository userRepository;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret
+    public JwtUtil(
+            @Value("${jwt.secret}") String secret
             ,UserRepository userRepository
     ) {
         key = Keys.hmacShaKeyFor(secret.getBytes());

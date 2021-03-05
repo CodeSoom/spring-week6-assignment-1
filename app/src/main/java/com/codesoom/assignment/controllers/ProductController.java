@@ -56,7 +56,7 @@ public class ProductController {
     /**
      * 상품을 저장하고 저장된 상품을 반환합니다.
      *
-     * @param authorization 권환
+     * @param authorization 인가 정보
      * @param productData   저장할 상품의 정보
      * @return 저장된 상품
      */
@@ -73,7 +73,7 @@ public class ProductController {
     /**
      * id에 해당하는 상품을 수정하고 수정된 상품을 반환합니다.
      *
-     * @param authorization 권환
+     * @param authorization 인가 정보
      * @param id            수정할 상품의 id
      * @param productData   수정할 상품의 정보
      * @return 수정된 상품
@@ -91,7 +91,7 @@ public class ProductController {
     /**
      * id에 해당하는 상품을 삭제합니다.
      *
-     * @param authorization 권한
+     * @param authorization 인가 정보
      * @param id            삭제할 상품의 id
      */
     @DeleteMapping("{id}")

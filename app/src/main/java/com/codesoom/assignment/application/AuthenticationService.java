@@ -20,7 +20,9 @@ public class AuthenticationService {
     }
 
     public Long parseToken(String accessToken) {
-
+        if(accessToken.isBlank()){
+            throw new InvalidAccessTokenException(accessToken);
+        }
         try{
             Claims claims = jwtUtil.decode(accessToken);
             return claims.get("userId", Long.class);

@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+@DisplayName("JwtUtil 테스트")
 class JwtUtilTest {
     private JwtUtil jwtUtil;
     private UserRepository userRepository;
@@ -100,7 +101,7 @@ class JwtUtilTest {
             private final String givenExistedPassword = EXISTED_PASSWORD;
 
             @Test
-            @DisplayName("이메일이 저장되어 있지 않다는 메세지를 리턴한다")
+            @DisplayName("요청이 잘못되었다는 메세지를 리턴한다")
             void itReturnsEmailNotExistedMessage() {
                 given(userRepository.findByEmail(givenNotExistedEmail))
                         .willReturn(Optional.empty());
@@ -153,27 +154,41 @@ class JwtUtilTest {
         @Nested
         @DisplayName("만약 내용이 비어 있는 토큰이 주어진다면")
         class Context_WithEmptyToken {
-            private final String token = "";
+            private final String givenEmptyToken = "";
 
             @Test
             @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
             void itReturnsInValidTokenMessage() {
-                assertThatThrownBy(() -> jwtUtil.decode(token))
+                assertThatThrownBy(() -> jwtUtil.decode(givenEmptyToken))
                         .isInstanceOf(InvalidTokenException.class)
                         .hasMessageContaining("Invalid token");
             }
        }
 
+        @Nested
+        @DisplayName("만약 유효하지 않은 토큰이 주어진다면")
+        class Context_WithNotExistedToken {
+            private final String givenNotExistedToken = NOT_EXISTED_TOKEN;
+
+            @Test
+            @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
+            void itReturnsInValidTokenMessage() {
+                assertThatThrownBy(() -> jwtUtil.decode(givenNotExistedToken))
+                        .isInstanceOf(InvalidTokenException.class)
+                        .hasMessageContaining("Invalid token");
+            }
+        }
+
        @Nested
-       @DisplayName("만약 아무런 값이 없는 null 이 주어진다면")
+       @DisplayName("만약 null 이 주어진다면")
        class Context_WithNull {
-           @Test
-           @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
-           void itReturnsInvalidTokenMessage() {
-               assertThatThrownBy(() -> jwtUtil.decode(null))
-                       .isInstanceOf(InvalidTokenException.class)
-                       .hasMessageContaining("Invalid token");
-           }
+            @Test
+            @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
+            void itReturnsInvalidTokenMessage() {
+                assertThatThrownBy(() -> jwtUtil.decode(null))
+                        .isInstanceOf(InvalidTokenException.class)
+                        .hasMessageContaining("Invalid token");
+            }
        }
     }
 }

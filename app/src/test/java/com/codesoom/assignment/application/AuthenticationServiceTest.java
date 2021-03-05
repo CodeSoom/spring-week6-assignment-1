@@ -21,7 +21,7 @@
 //    @BeforeEach
 //    void setUp() {
 //        JwtUtil jwtUtil = new JwtUtil(SECRET);
-//        authenticationService = new AuthenticationService(jwtUtil);
+//        authentaicationService = new AuthenticationService(jwtUtil);
 //    }
 //
 //    @Test

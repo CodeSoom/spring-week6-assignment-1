@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-
 /** 사용자 인증에 대해 요청한다. */
 @RestController
 @RequestMapping("/session")
@@ -30,7 +28,7 @@ public class SessionController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResultData login(@RequestBody @Valid AuthenticationCreateData authenticationCreateData) {
+    public SessionResultData login(@RequestBody AuthenticationCreateData authenticationCreateData) {
         return authenticationService.createToken(authenticationCreateData);
     }
 }

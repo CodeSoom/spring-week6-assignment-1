@@ -37,10 +37,10 @@ public class AuthenticationService {
     }
 
     /**
-     * 엑세스 토큰을 파싱한 값을 반환합니다.
+     * 엑세스 토큰에서 회원의 id를 반환합니다.
      *
      * @param accessToken 액세스 토큰
-     * @return 파싱된 값
+     * @return 회원의 id
      */
     public Long parseToken(String accessToken) {
         return jwtUtil.decode(accessToken)

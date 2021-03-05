@@ -40,7 +40,7 @@ public class User {
     private String password;
 
     /**
-     * 사용자 삭제 여부
+     * 사용자 삭제 여부.
      */
     private boolean deleted;
 
@@ -51,6 +51,22 @@ public class User {
         this.name = name;
         this.password = password;
         this.deleted = deleted;
+    }
+
+    /**
+     * 사용자 정보를 생성합니다.
+     * @param email 사용자 이메일
+     * @param name 사용자 이름
+     * @param password 사용자 비밀번호
+     * @return 생성된 사용자 정보
+     */
+    public static User create(String email, String name, String password) {
+        return User.builder()
+                .email(email)
+                .name(name)
+                .password(password)
+                .deleted(false)
+                .build();
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.codesoom.assignment.user.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,5 +49,18 @@ class UserTest {
 
         assertThat(user.authenticate("test")).isFalse();
         assertThat(user.authenticate("xxx")).isFalse();
+    }
+
+    @DisplayName("사용자를 생성하고 입력한 값을 리턴한다.")
+    @Test
+    void createUser() {
+        String email = "test@email.com";
+        String name = "test";
+        String password = "password";
+        User user =  User.create(email, name, password);
+
+        assertThat(user.getName()).isEqualTo(name);
+        assertThat(user.getPassword()).isEqualTo(password);
+        assertThat(user.getEmail()).isEqualTo(email);
     }
 }

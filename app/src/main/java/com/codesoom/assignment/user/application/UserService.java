@@ -25,12 +25,10 @@ public class UserService {
         if (userRepository.existsByEmail(email)) {
             throw new UserEmailDuplicationException(email);
         }
-        final User user = User.builder()
-                .name(registrationData.getName())
-                .email(registrationData.getEmail())
-                .password(registrationData.getPassword())
-                .deleted(false)
-                .build();
+        final User user = User.create(
+                email,
+                registrationData.getName(),
+                registrationData.getPassword());
 
         return userRepository.save(user);
     }

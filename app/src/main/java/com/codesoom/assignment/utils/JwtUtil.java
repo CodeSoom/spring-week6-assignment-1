@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -38,6 +39,10 @@ public class JwtUtil {
      * @return 유저 id
      */
     public Long decode(String token) {
+        if (token.isBlank()) {
+            throw new InvalidAccessTokenException(token);
+        }
+
         Claims body = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.InvalidUserException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
@@ -42,6 +43,12 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidUserException.class)
     public ErrorResponse handleInvalidUser(InvalidUserException exception) {
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidTokenException.class)
+    public ErrorResponse handleInvalidToken(InvalidUserException exception) {
         return new ErrorResponse(exception.getMessage());
     }
 }

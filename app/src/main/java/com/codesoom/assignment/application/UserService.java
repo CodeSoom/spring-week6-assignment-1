@@ -28,16 +28,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserResultData getUserResultData(User user) {
-        return UserResultData.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .deleted(user.isDeleted())
-                .build();
-    }
-
     /**
      * 전체 사용자 목록을 리턴한다.
      *
@@ -45,8 +35,9 @@ public class UserService {
      */
     public List<UserResultData> getUsers() {
         List<User> users =  userRepository.findAll();
+
         return users.stream()
-                .map(this::getUserResultData)
+                .map(UserResultData::of)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +52,8 @@ public class UserService {
     public UserResultData getUser(Long id) {
         User user = userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        return getUserResultData(user);
+
+        return UserResultData.of(user);
     }
 
     /**
@@ -79,7 +71,7 @@ public class UserService {
         User user = mapper.map(userCreateData, User.class);
         User savedUser = userRepository.save(user);
 
-       return getUserResultData(savedUser);
+       return UserResultData.of(user);
     }
 
     /**
@@ -114,6 +106,6 @@ public class UserService {
 
         deleteUser.delete();
 
-        return getUserResultData(deleteUser);
+        return UserResultData.of(deleteUser);
     }
 }

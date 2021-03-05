@@ -81,8 +81,8 @@ class ProductServiceTest {
 
         products = Arrays.asList(setupProductOne, setupProductTwo);
 
-        resultProductOne = productService.getProductResultData(setupProductOne);
-        resultProductTwo = productService.getProductResultData(setupProductTwo);
+        resultProductOne = ProductResultData.of(setupProductOne);
+        resultProductTwo = ProductResultData.of(setupProductTwo);
         resultProducts = Arrays.asList(resultProductOne, resultProductTwo);
     }
 

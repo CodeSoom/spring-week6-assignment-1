@@ -18,4 +18,10 @@ public class SessionResultData {
     public SessionResultData(String accessToken) {
         this.accessToken = accessToken;
     }
+
+    public static SessionResultData from(String accessToken) {
+        return SessionResultData.builder()
+                .accessToken(accessToken)
+                .build();
+    }
 }

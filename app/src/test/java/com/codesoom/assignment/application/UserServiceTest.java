@@ -77,8 +77,8 @@ class UserServiceTest {
 
         users = Arrays.asList(setUpUser, createUser);
 
-        setUpUserResultData = userService.getUserResultData(setUpUser);
-        createUserResultData = userService.getUserResultData(createUser);
+        setUpUserResultData = UserResultData.of(setUpUser);
+        createUserResultData = UserResultData.of(createUser);
         resultUsers = Arrays.asList(setUpUserResultData, createUserResultData);
     }
 

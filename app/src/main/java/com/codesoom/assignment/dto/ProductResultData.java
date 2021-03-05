@@ -41,4 +41,14 @@ public class ProductResultData {
                 .imageUrl(this.imageUrl)
                 .build();
     }
+
+    public static ProductResultData of(Product product) {
+        return ProductResultData.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .maker(product.getMaker())
+                .price(product.getPrice())
+                .imageUrl(product.getImageUrl())
+                .build();
+    }
 }

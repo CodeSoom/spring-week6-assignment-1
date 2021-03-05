@@ -29,16 +29,6 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductResultData getProductResultData(Product product) {
-        return ProductResultData.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .maker(product.getMaker())
-                .price(product.getPrice())
-                .imageUrl(product.getImageUrl())
-                .build();
-    }
-
     /**
      * 전체 상품 목록을 리턴한다.
      *
@@ -46,8 +36,9 @@ public class ProductService {
      */
     public List<ProductResultData> getProducts() {
         List<Product> products = productRepository.findAll();
+
         return products.stream()
-                .map(this::getProductResultData)
+                .map(ProductResultData::of)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +54,7 @@ public class ProductService {
         Product product =  productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
-        return getProductResultData(product);
+        return ProductResultData.of(product);
     }
 
     /**
@@ -78,7 +69,7 @@ public class ProductService {
         Product product = mapper.map(productCreateData, Product.class);
         Product savedProduct =  productRepository.save(product);
 
-        return getProductResultData(savedProduct);
+        return ProductResultData.of(product);
     }
 
     /**

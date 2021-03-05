@@ -41,4 +41,14 @@ public class UserResultData {
             .deleted(this.deleted)
             .build();
     }
+
+    public static UserResultData of(User user) {
+        return UserResultData.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .deleted(user.isDeleted())
+                .build();
+    }
 }

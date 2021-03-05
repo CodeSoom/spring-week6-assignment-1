@@ -29,11 +29,9 @@ public class AuthenticationService {
         String accessToken = jwtUtil.encode(
                 authenticationCreateData.getEmail()
                 ,authenticationCreateData.getPassword()
-        );
+                );
 
-        return SessionResultData.builder()
-                .accessToken(accessToken)
-                .build();
+        return SessionResultData.from(accessToken);
     }
 
     /**

@@ -7,4 +7,8 @@
 
 ## THU
 1. JWT 만들기 학습 - 완료
-2. JWT 활용하기 학습
+2. JWT 활용하기 학습 - 미완
+
+## FRI
+1. JWT 활용하기 학습
+2. isBlank() vs isEmpty() 정리하기

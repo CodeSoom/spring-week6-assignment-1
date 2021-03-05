@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
@@ -22,19 +24,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
-    private static final String SECRET = "12345678901234567890123456789010";
     private static final String GIVEN_USER_EMAIL = "test@test.com";
     private static final String GIVEN_USER_PASSWORD = "password";
     private static final String NOT_EXIST_EMAIL = GIVEN_USER_EMAIL + "_NOT_EXIST";
     private static final String WRONG_PASSWORD = GIVEN_USER_PASSWORD + "_WRONG";
     private static final Long GIVEN_ID = 1L;
     private static final long EXPIRED_TIME = 300000;
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MDk2MjgwMCwiZXh" +
-            "wIjoxNjQwOTYzMTAwfQ.2siRnBJmRU2JXjZY0CkQMgnCHRJN4Dld4_wG6R7T-HQ";
-
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY0MDk2MjgwMCwiZXhwIjoxNj" +
+            "QwOTYzMTAwfQ.DCmfit5LOuqhFHZoytRKluR9R-YVtxXLPgC-6PB3myAsjRAzlAgouWTA-GPkP_AudMK0CcySqhWpbR1BBCJCVw";
     private AuthenticationService authenticationService;
+
+    @Value("${jwt.secret}")
+    private String secret;
 
     @Mock
     private UserRepository userRepository;
@@ -43,7 +47,7 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(SECRET, EXPIRED_TIME);
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(secret, EXPIRED_TIME);
         ReflectionTestUtils.setField(jwtTokenProvider,
                 "time", LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0));
         authenticationService = new AuthenticationService(jwtTokenProvider, userRepository);

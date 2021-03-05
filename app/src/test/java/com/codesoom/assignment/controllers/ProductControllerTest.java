@@ -49,6 +49,7 @@ class ProductControllerTest {
     @BeforeEach
     void setUp() {
         Mockito.reset(productService);
+        Mockito.reset(authenticationService);
         Product product = Product.builder()
                 .id(1L)
                 .name("쥐돌이")

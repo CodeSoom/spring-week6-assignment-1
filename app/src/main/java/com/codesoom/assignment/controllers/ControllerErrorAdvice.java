@@ -8,6 +8,7 @@ import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserEmailNotExistException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,6 +48,12 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserAuthenticationFailedException.class)
     public ErrorResponse handleUserAuthenticationIsFailed() {
         return new ErrorResponse("User's authentication failed");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ErrorResponse handleMissingRequestHeaderException() {
+        return new ErrorResponse("Request header is missing");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

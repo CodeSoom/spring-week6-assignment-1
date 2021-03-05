@@ -129,78 +129,70 @@ class ProductControllerTest {
     @DisplayName("GET /products/{id}")
     @Nested
     class Describe_GET_Products_id {
+        @DisplayName("유효한 access token과 존재하는 product id가 주어진다면")
         @Nested
-        @DisplayName("유효한 access token이 주어진다면")
-        class Context_with_valid_accessToken {
+        class Context_with_valid_token_and_exist_product_id {
             String givenToken = "Bearer " + VALID_TOKEN;
+            Long givenId = EXIST_ID;
 
-            @DisplayName("존재하는 product id가 주어진다면")
-            @Nested
-            class Context_with_exist_product_id {
-                Long givenId = EXIST_ID;
-
-                @DisplayName("200 코드와 주어진 id와 일치하는 product를 응답한다")
-                @Test
-                void it_returns_200_code_with_product() throws Exception {
-                    mockMvc.perform(
-                            get("/products/{id}", givenId)
-                                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                                    .header("Authorization", givenToken)
-                    )
-                            .andExpect(status().isOk())
-                            .andExpect(content().string(containsString("쥐돌이")));
-                }
-            }
-
-            @DisplayName("존재하지 않는 product id가 주어진다면")
-            @Nested
-            class Context_with_not_exist_product_id {
-                Long givenId = NOT_EXIST_ID;
-
-                @DisplayName("404코드를 응답한다")
-                @Test
-                void it_returns_404_code() throws Exception {
-                    mockMvc.perform(
-                            get("/products/{id}", givenId)
-                                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                                    .header("Authorization", givenToken)
-                    )
-                            .andExpect(status().isNotFound());
-                }
+            @DisplayName("200 코드와 주어진 id와 일치하는 product를 응답한다")
+            @Test
+            void it_returns_200_code_with_product() throws Exception {
+                mockMvc.perform(
+                        get("/products/{id}", givenId)
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
+                )
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString("쥐돌이")));
             }
         }
 
+        @DisplayName("유효한 access token과 존재하지 않는 product id가 주어진다면")
         @Nested
-        @DisplayName("유효하지 않은 access token이 주어진다면")
-        class Context_with_invalid_accessToken {
+        class Context_with_valid_token_and_not_exist_product_id {
+            String givenToken = "Bearer " + VALID_TOKEN;
+            Long givenId = NOT_EXIST_ID;
+
+            @DisplayName("404코드를 응답한다")
+            @Test
+            void it_returns_404_code() throws Exception {
+                mockMvc.perform(
+                        get("/products/{id}", givenId)
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
+                )
+                        .andExpect(status().isNotFound());
+            }
+        }
+
+        @DisplayName("유효하지 않은 access token과 존재하는 product id가 주어진다면")
+        @Nested
+        class Context_with_invalid_token_and_exist_product_id {
             String givenToken = "Bearer " + INVALID_TOKEN;
+            Long givenId = EXIST_ID;
 
-            @DisplayName("존재하는 product id가 주어진다면")
-            @Nested
-            class Context_with_exist_product_id {
-                Long givenId = EXIST_ID;
-
-                @DisplayName("401 코드를 응답한다")
-                @Test
-                void it_returns_401_code() throws Exception {
-                    mockMvc.perform(
-                            get("/products/{id}", givenId)
-                                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                                    .header("Authorization", givenToken)
-                    )
-                            .andExpect(status().isUnauthorized());
-                }
+            @DisplayName("401 코드를 응답한다")
+            @Test
+            void it_returns_401_code() throws Exception {
+                mockMvc.perform(
+                        get("/products/{id}", givenId)
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
+                )
+                        .andExpect(status().isUnauthorized());
             }
         }
     }
 
-
     @DisplayName("POST /products")
     @Nested
     class Describe_POST_products {
-        @DisplayName("유효한 product 정보들이 주어졌을 때")
+        @DisplayName("유효한 access token과 유효한 product 정보들이 주어졌을 때")
         @Nested
         class Context_with_valid_product {
+            String givenToken = "Bearer " + VALID_TOKEN;
+
             @DisplayName("201 코드와 생성된 product를 응답한다")
             @Test
             void it_returns_201_code_with_product() throws Exception {
@@ -208,6 +200,7 @@ class ProductControllerTest {
                         post("/products")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
                 )
@@ -218,9 +211,11 @@ class ProductControllerTest {
             }
         }
 
-        @DisplayName("유효하지 않은 product 정보들이 주어졌을 때")
+        @DisplayName("유효한 access token과 유효하지 않은 product 정보들이 주어졌을 때")
         @Nested
         class Context_with_invalid_product {
+            String givenToken = "Bearer " + VALID_TOKEN;
+
             @DisplayName("400 코드를 응답한다")
             @Test
             void it_returns_400_code() throws Exception {
@@ -228,6 +223,7 @@ class ProductControllerTest {
                         post("/products")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
                 )

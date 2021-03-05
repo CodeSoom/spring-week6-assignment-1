@@ -255,9 +255,10 @@ class ProductControllerTest {
     @DisplayName("PATCH /products/{id}")
     @Nested
     class Describe_PATCH_prodcuts_id {
-        @DisplayName("존재하는 product id가 주어진다면")
+        @DisplayName("유효한 access token과 존재하는 product id가 주어진다면")
         @Nested
-        class Context_with_exist_product_id {
+        class Context_with_valid_token_and_exist_product_id {
+            String givenToken = "Bearer " + VALID_TOKEN;
             Long givenId = EXIST_ID;
 
             @DisplayName("200 코드와 주어진 수정된 product를 응답한다")
@@ -267,6 +268,7 @@ class ProductControllerTest {
                         patch("/products/{id}", givenId)
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
                 )
@@ -277,9 +279,10 @@ class ProductControllerTest {
             }
         }
 
-        @DisplayName("존재하지 않는 product id가 주어진다면")
+        @DisplayName("유효한 access token과 존재하지 않는 product id가 주어진다면")
         @Nested
-        class Context_with_not_exist_product_id {
+        class Context_with_valid_token_and_not_exist_product_id {
+            String givenToken = "Bearer " + VALID_TOKEN;
             Long givenId = NOT_EXIST_ID;
 
             @DisplayName("404코드를 응답한다")
@@ -288,6 +291,7 @@ class ProductControllerTest {
                 mockMvc.perform(
                         patch("/products/{id}", givenId)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
                 )
@@ -297,9 +301,10 @@ class ProductControllerTest {
             }
         }
 
-        @DisplayName("유효하지 않은 product 정보들이 주어졌을 때")
+        @DisplayName("유효한 access token과 유효하지 않은 product 정보들이 주어졌을 때")
         @Nested
-        class Context_with_invalid_product {
+        class Context_with_valid_token_exist_product_id {
+            String givenToken = "Bearer " + VALID_TOKEN;
             Long givenId = EXIST_ID;
 
             @DisplayName("400 코드를 응답한다")
@@ -309,10 +314,32 @@ class ProductControllerTest {
                         patch("/products/{id}", givenId)
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
                 )
                         .andExpect(status().isBadRequest());
+            }
+        }
+
+        @DisplayName("유효하지 않은 access token과 존재하는 product id가 주어진다면")
+        @Nested
+        class Context_with_invalid_token_and_valid_product {
+            String givenToken = "Bearer " + INVALID_TOKEN;
+            Long givenId = EXIST_ID;
+
+            @DisplayName("401 코드를 응답한다")
+            @Test
+            void it_returns_401_code() throws Exception {
+                mockMvc.perform(
+                        patch("/products/{id}", givenId)
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", givenToken)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                        .andExpect(status().isUnauthorized());
             }
         }
     }

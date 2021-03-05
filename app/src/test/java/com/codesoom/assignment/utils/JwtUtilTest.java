@@ -1,6 +1,7 @@
 package com.codesoom.assignment.utils;
 
 
+import com.codesoom.assignment.dto.InvalidAccessTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ class JwtUtilTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
             ".ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
-            ".ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDp";
+            ".ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
 
 
     JwtUtil jwtUtil;
@@ -27,6 +28,7 @@ class JwtUtilTest {
         jwtUtil = new JwtUtil(SECRET);
 
     }
+
     @Test
     void encode() {
         String token = jwtUtil.encode(1L);
@@ -44,7 +46,17 @@ class JwtUtilTest {
 
     @Test
     void decodeWithInvalidToken() {
-        assertThatThrownBy(()-> jwtUtil.decode(INVALID_TOKEN))
-                .isInstanceOf(SignatureException.class);
+        assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
+                .isInstanceOf(InvalidAccessTokenException.class);
+    }
+
+    @Test
+    void decodeWithEmptyToken() {
+        assertThatThrownBy(() -> jwtUtil.decode(null))
+                .isInstanceOf(InvalidAccessTokenException.class);
+        assertThatThrownBy(() -> jwtUtil.decode(""))
+                .isInstanceOf(InvalidAccessTokenException.class);
+        assertThatThrownBy(() -> jwtUtil.decode("   "))
+                .isInstanceOf(InvalidAccessTokenException.class);
     }
 }

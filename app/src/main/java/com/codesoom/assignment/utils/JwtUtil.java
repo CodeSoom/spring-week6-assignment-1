@@ -39,7 +39,7 @@ public class JwtUtil {
      * @return 유저 id
      */
     public Long decode(String token) {
-        if (token.isBlank()) {
+        if (token == null || token.isBlank()) {
             throw new InvalidAccessTokenException(token);
         }
 

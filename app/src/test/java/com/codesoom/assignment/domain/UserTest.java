@@ -1,6 +1,5 @@
 package com.codesoom.assignment.domain;
 
-import com.codesoom.assignment.dto.UserUpdateRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("사용자 정보가 정상적으로 등록되었는지 확인합니다")
+    @DisplayName("새로운 사용자를 등록한다")
     void creationWithBuilder() {
         assertThat(user.getName()).isEqualTo(NAME);
         assertThat(user.getEmail()).isEqualTo(EMAIL);
@@ -35,7 +34,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("사용자 정보가 정상적으로 변경되었는지 확인합니다")
+    @DisplayName("사용자 정보를 수정하고 반환한다")
     void updateWith() {
         user.updateWith(User.builder()
                 .email(UPDATE_EMAIL)

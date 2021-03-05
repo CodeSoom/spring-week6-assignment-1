@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
+@lombok.Generated
 @Getter
 @NoArgsConstructor
 public class UserLoginData {

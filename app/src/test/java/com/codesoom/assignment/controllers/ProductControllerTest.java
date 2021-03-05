@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -196,6 +197,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐순이")));
@@ -210,6 +212,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
 
@@ -224,6 +227,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }
@@ -232,6 +236,7 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNoContent());
 
@@ -242,8 +247,10 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1000")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
+
 
         verify(productService).deleteProduct(1000L);
     }

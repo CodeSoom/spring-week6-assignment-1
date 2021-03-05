@@ -41,6 +41,7 @@ class AuthenticationServiceTest {
             = "eyJhbGciOiJIUzI1NiJ9."
             + "eyJ1c2VySWQiOjF9."
             + "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGG3";
+    private static final String NULL_TOKEN = null;
 
     private final String USER_EMAIL = "olive@gamil.com";
     private final String USER_PASSWORD = "password1234";
@@ -157,13 +158,22 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효하지 않은 토큰이 주어지면")
         class Context_with_invalid_token {
-
             @DisplayName("예외를 던진다.")
             @Test
             void it_throws_exception() {
                 assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
                         .isInstanceOf(InvalidAccessTokenException.class);
 
+            }
+        }
+
+        @Nested
+        @DisplayName("값이 null이거나 비어있는 토큰이 주어지면")
+        class Context_with_null_token {
+            @DisplayName("예외를 던진다.")
+            @Test
+            void it_throws_exception() {
+                assertThatThrownBy(() -> authenticationService.parseToken(NULL_TOKEN));
             }
         }
     }

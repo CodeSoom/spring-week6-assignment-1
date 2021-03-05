@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@lombok.Generated
 @Getter
 @Builder
 @NoArgsConstructor

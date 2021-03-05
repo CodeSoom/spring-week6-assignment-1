@@ -1,11 +1,13 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("JwtUtilTest 클래스")
 class JwtUtilTest {
@@ -41,7 +43,7 @@ class JwtUtilTest {
     @DisplayName("decode()")
     class Describe_decode {
         @Nested
-        @DisplayName("token이 주어졌을 때")
+        @DisplayName("유효한 token이 주어졌을 때")
         class Context_with_token {
             String givenToken = VALID_TOKEN;
 
@@ -50,6 +52,18 @@ class JwtUtilTest {
             void it_returns_user_id() {
                 Long userId = jwtUtil.decode(givenToken);
                 assertThat(userId).isEqualTo(USER_ID);
+            }
+        }
+
+        @Nested
+        @DisplayName("비어 있는 token이 주어졌을 때")
+        class Context_blank_token {
+            String givenToken = "";
+
+            @DisplayName("유효하지 않은 토큰이 주어졌다는 예외를 던진다")
+            @Test
+            void it_throws_invalid_token_exception() {
+                assertThrows(InvalidAccessTokenException.class, () -> jwtUtil.decode(givenToken));
             }
         }
     }

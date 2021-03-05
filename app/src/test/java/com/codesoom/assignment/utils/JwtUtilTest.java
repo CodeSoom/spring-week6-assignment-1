@@ -24,4 +24,11 @@ class JwtUtilTest {
 
         assertThat(token).isEqualTo(TOKEN);
     }
+
+    @Test
+    void decode() {
+        jwtUtil.decode(TOKEN);
+
+        // TODO -> userId, verification
+    }
 }

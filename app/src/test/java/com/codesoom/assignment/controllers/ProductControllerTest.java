@@ -218,17 +218,29 @@ class ProductControllerTest {
             @Test
             @DisplayName("상품을 저장하고 저장된 상품과 CREATED를 리턴한다")
             void itSaveProductAndReturnsSavedProductAndCreatedHttpStatus() throws Exception {
-                given(productService.createProduct(any(ProductCreateData.class))).willReturn(productResultData);
+                given(productService.createProduct(any(ProductCreateData.class)))
+                        .will(invocation -> {
+                            ProductCreateData productCreateData = invocation.getArgument(0);
+                            return ProductResultData.builder()
+                                    .id(CREATED_ID)
+                                    .name(productCreateData.getName())
+                                    .maker(productCreateData.getMaker())
+                                    .price(productCreateData.getPrice())
+                                    .imageUrl(productCreateData.getImageUrl())
+                                    .build();
+                        });
 
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"createdName\" , \"maker\":\"createdMaker\", \"price\":200, \"image\":\"createdImage\"}"))
+                        .content("{\"name\":\"createdName\" , \"maker\":\"createdMaker\", \"price\":200, \"imageUrl\":\"createdImage\"}")
+                )
                         .andDo(print())
-                        .andExpect(jsonPath("name").value(productResultData.getName()))
-                        .andExpect(jsonPath("maker").value(productResultData.getMaker()))
-                        .andExpect(jsonPath("price").value(productResultData.getPrice()))
-                        .andExpect(jsonPath("imageUrl").value(productResultData.getImageUrl()))
+                        .andExpect(content().string(containsString("\"id\":2")))
+                        .andExpect(content().string(containsString("\"name\":\"createdName\"")))
+                        .andExpect(content().string(containsString("\"maker\":\"createdMaker\"")))
+                        .andExpect(content().string(containsString("\"price\":200")))
+                        .andExpect(content().string(containsString("\"imageUrl\":\"createdImage\"")))
                         .andExpect(status().isCreated());
 
                 verify(productService).createProduct(any(ProductCreateData.class));
@@ -247,7 +259,7 @@ class ProductControllerTest {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"\" , \"maker\":\"createdMaker\", \"price\":200, \"image\":\"createdImage\"}"))
+                        .content("{\"name\":\"\" , \"maker\":\"createdMaker\", \"price\":200, \"imageUrl\":\"createdImage\"}"))
                         .andDo(print())
                         .andExpect(status().isBadRequest())
                         .andExpect(content().string(containsString("name 값은 필수입니다")));
@@ -266,7 +278,7 @@ class ProductControllerTest {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"createdName\" , \"maker\":\"\", \"price\":200, \"image\":\"createdImage\"}"))
+                        .content("{\"name\":\"createdName\" , \"maker\":\"\", \"price\":200, \"imageUrl\":\"createdImage\"}"))
                         .andDo(print())
                         .andExpect(status().isBadRequest())
                         .andExpect(content().string(containsString("maker 값은 필수입니다")));
@@ -285,7 +297,7 @@ class ProductControllerTest {
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"createdName\" , \"maker\":\"createdMaker\", \"price\": null, \"image\":\"createdImage\"}"))
+                        .content("{\"name\":\"createdName\" , \"maker\":\"createdMaker\", \"price\": null, \"imageUrl\":\"createdImage\"}"))
                         .andDo(print())
                         .andExpect(status().isBadRequest())
                         .andExpect(content().string(containsString("price 값은 필수입니다")));
@@ -300,13 +312,13 @@ class ProductControllerTest {
             @Test
             @DisplayName("토큰이 유효하지 않다는 메세지와 UNAUTHORIZED를 리턴한다")
             void itReturnsInvalidTokenMessageAndUNAUTHORIZEDHttpStatus() throws Exception {
-                given(authenticationService.parseToken(givenNotExistedToken))
+                given(authenticationService.parseToken(eq(givenNotExistedToken)))
                         .willThrow(new InvalidTokenException(givenNotExistedToken));
 
                 mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + givenNotExistedToken)
-                        .content("{\"name\":\"createdName\" , \"maker\":\"createdMaker\", \"price\":200, \"image\":\"createdImage\"}"))
+                        .content("{\"name\":\"createdName\" , \"maker\":\"createdMaker\", \"price\":200, \"imageUrl\":\"createdImage\"}"))
                         .andDo(print())
                         .andExpect(status().isUnauthorized())
                         .andExpect(content().string(containsString("Invalid token")));
@@ -326,7 +338,7 @@ class ProductControllerTest {
 
             @BeforeEach
             void setUp() {
-                productUpdateData = productUpdateData.builder()
+                productUpdateData = ProductUpdateData.builder()
                         .name(UPDATED_PRODUCT_NAME)
                         .maker(UPDATED_PRODUCT_MAKER)
                         .price(UPDATED_PRODUCT_PRICE)
@@ -339,17 +351,28 @@ class ProductControllerTest {
             @Test
             @DisplayName("주어진 아이디에 해당하는 상품을 수정하고 수정된 상품과 OK를 리턴한다")
             void itUpdatesProductAndReturnsUpdatedProductAndOKHttpStatus() throws Exception {
-                given(productService.updateProduct(eq(givenExistedId), any(ProductUpdateData.class))).willReturn(productResultData);
+                given(productService.updateProduct(eq(givenExistedId), any(ProductUpdateData.class)))
+                        .will(invocation -> {
+                            Long givenExistedId = invocation.getArgument(0);
+                            ProductUpdateData productUpdateData = invocation.getArgument(1);
+                            return ProductResultData.builder()
+                                    .id(givenExistedId)
+                                    .name(productUpdateData.getName())
+                                    .maker(productUpdateData.getMaker())
+                                    .price(productUpdateData.getPrice())
+                                    .imageUrl(resultProductOne.getImageUrl())
+                                    .build();
+                        });
 
                 mockMvc.perform(patch("/products/" + givenExistedId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\":300, \"image\":\"updatedImage\"}"))
+                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\":300, \"imageUrl\":\"updatedImage\"}"))
                         .andDo(print())
                         .andExpect(jsonPath("name").value(productResultData.getName()))
                         .andExpect(jsonPath("maker").value(productResultData.getMaker()))
                         .andExpect(jsonPath("price").value(productResultData.getPrice()))
-                        .andExpect(jsonPath("imageUrl").value(productResultData.getImageUrl()))
+                        .andExpect(jsonPath("imageUrl").value(resultProductOne.getImageUrl()))
                         .andExpect(status().isOk());
 
                 verify(productService).updateProduct(eq(givenExistedId), any(ProductUpdateData.class));
@@ -370,7 +393,7 @@ class ProductControllerTest {
                 mockMvc.perform(patch("/products/" + givenNotExisted)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\":300, \"image\":\"updatedImage\"}"))
+                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\":300, \"imageUrl\":\"updatedImage\"}"))
                         .andDo(print())
                         .andExpect(status().isNotFound())
                         .andExpect(content().string(containsString("Product not found")));
@@ -393,7 +416,7 @@ class ProductControllerTest {
                 mockMvc.perform(patch("/products/" + givenExistedId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"\" , \"maker\":\"updatedMaker\", \"price\":300, \"image\":\"updatedImage\"}"))
+                        .content("{\"name\":\"\" , \"maker\":\"updatedMaker\", \"price\":300, \"imageUrl\":\"updatedImage\"}"))
                         .andDo(print())
                         .andExpect(status().isBadRequest())
                         .andExpect(content().string(containsString("name 값은 필수입니다")));
@@ -414,7 +437,7 @@ class ProductControllerTest {
                 mockMvc.perform(patch("/products/" + givenExistedId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"updatedName\" , \"maker\":\"\", \"price\":300, \"image\":\"updatedImage\"}"))
+                        .content("{\"name\":\"updatedName\" , \"maker\":\"\", \"price\":300, \"imageUrl\":\"updatedImage\"}"))
                         .andDo(print())
                         .andExpect(status().isBadRequest())
                         .andExpect(content().string(containsString("maker 값은 필수입니다")));
@@ -435,7 +458,7 @@ class ProductControllerTest {
                 mockMvc.perform(patch("/products/" + givenExistedId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + EXISTED_TOKEN)
-                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\": null, \"image\":\"updatedImage\"}"))
+                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\": null, \"imageUrl\":\"updatedImage\"}"))
                         .andDo(print())
                         .andExpect(status().isBadRequest())
                         .andExpect(content().string(containsString("price 값은 필수입니다")));
@@ -451,13 +474,13 @@ class ProductControllerTest {
             @Test
             @DisplayName("토큰이 유효하지 않다는 메세지와 UNAHTORHIZED를 리턴한다")
             void itReturnsInvalidTokenMessageAndUNAUTHORIZEDHttpStatus() throws Exception {
-                given(authenticationService.parseToken(givenNotExistedToken))
+                given(authenticationService.parseToken(eq(givenNotExistedToken)))
                         .willThrow(new InvalidTokenException(givenNotExistedToken));
 
                 mockMvc.perform(patch("/products/" + givenExistedId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + givenNotExistedToken)
-                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\":300, \"image\":\"updatedImage\"}"))
+                        .content("{\"name\":\"updatedName\" , \"maker\":\"updatedMaker\", \"price\":300, \"imageUrl\":\"updatedImage\"}"))
                         .andDo(print())
                         .andExpect(content().string(containsString("Invalid token")))
                         .andExpect(status().isUnauthorized());
@@ -519,7 +542,7 @@ class ProductControllerTest {
             @Test
             @DisplayName("토큰이 유효하지 않다는 메세지와 UNAUTHORIZED를 리턴한다")
             void itReturnsInvalidTokenMessageAndUNAUTHROIZEDHttpStatus() throws Exception {
-                given(authenticationService.parseToken(givenNotExistedToken))
+                given(authenticationService.parseToken(eq(givenNotExistedToken)))
                         .willThrow(new InvalidTokenException(givenNotExistedToken));
 
                 mockMvc.perform((delete("/products/" + givenExistedId))

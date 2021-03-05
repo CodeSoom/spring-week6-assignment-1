@@ -28,10 +28,14 @@ public class UserCreateData {
     @Size(min = 4, max = 1024)
     private String password;
 
+    @Mapping("imageUrl")
+    private String imageUrl;
+
     @Builder
-    public UserCreateData(String name, String email, String password) {
+    public UserCreateData(String name, String email, String password, String imageUrl) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.imageUrl = imageUrl;
     }
 }

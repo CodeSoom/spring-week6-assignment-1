@@ -1,8 +1,10 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +43,9 @@ class ProductControllerTest {
     @MockBean
     private ProductService productService;
 
+    @MockBean
+    private AuthenticationService authenticationService;
+
     @BeforeEach
     void setUp() {
         Mockito.reset(productService);
@@ -77,6 +82,9 @@ class ProductControllerTest {
 
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
+
+        given(authenticationService.decode(INVALID_TOKEN))
+                .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
     }
 
     @DisplayName("GET /products")
@@ -91,7 +99,7 @@ class ProductControllerTest {
                 mockMvc.perform(
                         get("/products")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
-                                .header("Authorization", "Bearer", VALID_TOKEN)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                         .andExpect(status().isOk())
                         .andExpect(content().string(containsString("쥐돌이")));

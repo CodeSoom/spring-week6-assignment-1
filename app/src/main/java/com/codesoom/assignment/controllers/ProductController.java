@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
@@ -30,9 +31,12 @@ import javax.validation.Valid;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
+    private final AuthenticationService authenticationService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService,
+                             AuthenticationService authenticationService) {
         this.productService = productService;
+        this.authenticationService = authenticationService;
     }
 
     /**
@@ -42,6 +46,7 @@ public class ProductController {
      */
     @GetMapping
     public List<Product> list(@RequestHeader("Authorization") String accessToken) {
+        validateAccessToken(accessToken);
         return productService.getProducts();
     }
 
@@ -96,5 +101,10 @@ public class ProductController {
             @PathVariable Long id
     ) {
         productService.deleteProduct(id);
+    }
+
+    private void validateAccessToken(String bearerToken) {
+        String accessToken = bearerToken.substring("Bearer ".length());
+        authenticationService.decode(accessToken);
     }
 }

@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserAuthenticationFailedException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
@@ -46,5 +47,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserAuthenticationFailedException.class)
     public ErrorResponse handleUserAuthenticationIsFailed() {
         return new ErrorResponse("User's authentication failed");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidAccessTokenException.class)
+    public ErrorResponse handleInvalidAccessToken() {
+        return new ErrorResponse("Access Token is invalid");
     }
 }

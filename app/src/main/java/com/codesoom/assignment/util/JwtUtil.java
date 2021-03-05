@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.function.Predicate;
 
 /** 토큰에 대해 처리한다 */
 @Component
@@ -28,16 +29,6 @@ public class JwtUtil {
         this.userRepository = userRepository;
     }
 
-    public UserResultData getUserResultData(User user) {
-        return UserResultData.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .deleted(user.isDeleted())
-                .build();
-    }
-
     /**
      * 주어진 이메일에 해당하는 사용자를 리턴한다.
      *
@@ -50,7 +41,7 @@ public class JwtUtil {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserBadRequestException::new);
 
-        return getUserResultData(user);
+        return UserResultData.of(user);
     }
 
     /**
@@ -60,20 +51,20 @@ public class JwtUtil {
      * @param password - 토큰 문자열 생성을 위한 비밀번호
      * @return - 주어진 {@code email}과 {@code password}를 이용하여 생성된 토큰 문자열
      * @throws UserBadRequestException 만약
+     *         {@code email}에 해당하는 사용자가 저장되어 있지 않은 경우
      *         {@code password}에 해당하는 사용자가 저장되어 있지 않은 경우
      *         ,이미 삭제되어 있는 경우
      */
     public String encode(String email, String password) {
-        UserResultData userResultData = getUser(email);
-        User user = userResultData.toEntity();
-
-        if(!user.authenticate(password)) {
-            throw new UserBadRequestException();
-        }
+        UserResultData userResultData = userRepository.findByEmail(email)
+                .filter(Predicate.not(User::isDeleted)
+                        .and(u -> u.authenticate(password)))
+                .map(UserResultData::of)
+                .orElseThrow(UserBadRequestException::new);
 
         return Jwts.builder()
-                .claim("email", email)
-                .claim("password", password)
+                .claim("email", userResultData.getEmail())
+                .claim("password", userResultData.getPassword())
                 .signWith(key)
                 .compact();
     }

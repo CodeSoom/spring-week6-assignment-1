@@ -57,7 +57,9 @@ public class ProductController {
      * @return 주어진 id와 일치하는 상품
      */
     @GetMapping("{id}")
-    public Product detail(@PathVariable Long id) {
+    public Product detail(@RequestHeader("Authorization") String accessToken,
+                          @PathVariable Long id) {
+        validateAccessToken(accessToken);
         return productService.getProduct(id);
     }
 

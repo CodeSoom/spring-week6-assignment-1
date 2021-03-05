@@ -40,4 +40,10 @@ class AuthenticationServiceTest {
                 .isInstanceOf(InvalidAccessTokenException.class);
     }
 
+    @Test
+    void parseTokenWithBlank(){
+        assertThatThrownBy(() -> authenticationService.parseToken(""))
+                .isInstanceOf(InvalidAccessTokenException.class);
+    }
+
 }

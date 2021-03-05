@@ -1,7 +1,7 @@
 package com.codesoom.assignment.auth.controller;
 
 import com.codesoom.assignment.auth.application.AuthenticationService;
-import com.codesoom.assignment.auth.dto.AuthenticationRequestDto;
+import com.codesoom.assignment.auth.dto.LoginRequest;
 import com.codesoom.assignment.auth.dto.SessionResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,13 +27,13 @@ public class SessionController {
     /**
      * 로그인 처리를 합니다.
      *
-     * @param requestDto 사용자 인증정보
+     * @param requestDto 로그인 요청 정보
      * @return 로그인 응답 정보
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login(@Valid @RequestBody AuthenticationRequestDto requestDto) {
-        String token = authenticationService.authenticate(requestDto.getEmail(), requestDto.getPassword());
+    public SessionResponseData login(@Valid @RequestBody LoginRequest requestDto) {
+        String token = authenticationService.authenticate(requestDto);
         return new SessionResponseData(token);
     }
 }

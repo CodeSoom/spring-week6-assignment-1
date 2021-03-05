@@ -1,19 +1,19 @@
 package com.codesoom.assignment.auth.controller;
 
 import com.codesoom.assignment.auth.application.AuthenticationService;
-import com.codesoom.assignment.auth.dto.AuthenticationRequestDto;
+import com.codesoom.assignment.auth.dto.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,24 +37,19 @@ class SessionMockMvcControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
-    @BeforeEach
-    void setUp() {
-        Mockito.reset(authenticationService);
-    }
-
     @Nested
     @DisplayName("Post /session 는")
     class Describe_session {
-        AuthenticationRequestDto requestDto;
 
         @Nested
         @DisplayName("이메일과 암호가 주어지면")
         class Context_with_email_and_password {
+            final LoginRequest requestDto =
+                    new LoginRequest(GIVEN_USER_EMAIL, GIVEN_USER_PASSWORD);
 
             @BeforeEach
             void setUp() {
-                requestDto = new AuthenticationRequestDto(GIVEN_USER_EMAIL, GIVEN_USER_PASSWORD);
-                given(authenticationService.authenticate(GIVEN_USER_EMAIL, GIVEN_USER_PASSWORD))
+                given(authenticationService.authenticate(any(LoginRequest.class)))
                         .willReturn(VALID_TOKEN);
             }
 
@@ -71,11 +66,11 @@ class SessionMockMvcControllerTest {
         @Nested
         @DisplayName("등록되지 않는 이메일이 주어지면")
         class Context_with_not_exist_email {
+            final LoginRequest request = new LoginRequest(NOT_EXIST_EMAIL, GIVEN_USER_PASSWORD);
 
             @BeforeEach
             void setUp() {
-                requestDto = new AuthenticationRequestDto(NOT_EXIST_EMAIL, GIVEN_USER_PASSWORD);
-                given(authenticationService.authenticate(NOT_EXIST_EMAIL, GIVEN_USER_PASSWORD))
+                given(authenticationService.authenticate(any(LoginRequest.class)))
                         .willThrow(new IllegalArgumentException(NOT_EXIST_EMAIL));
             }
 
@@ -84,7 +79,7 @@ class SessionMockMvcControllerTest {
             void It_responds_bad_request() throws Exception {
                 mockMvc.perform(post("/session")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isBadRequest());
             }
         }
@@ -92,11 +87,11 @@ class SessionMockMvcControllerTest {
         @Nested
         @DisplayName("잘못된 비밀번호가 주어지면")
         class Context_with_wrong_password {
+            final LoginRequest request = new LoginRequest(GIVEN_USER_EMAIL, WRONG_PASSWORD);
 
             @BeforeEach
             void setUp() {
-                requestDto = new AuthenticationRequestDto(GIVEN_USER_EMAIL, WRONG_PASSWORD);
-                given(authenticationService.authenticate(GIVEN_USER_EMAIL, WRONG_PASSWORD))
+                given(authenticationService.authenticate(any(LoginRequest.class)))
                         .willThrow(new IllegalArgumentException("잘못된 비밀번호 입니다."));
             }
 
@@ -105,7 +100,7 @@ class SessionMockMvcControllerTest {
             void It_responds_bad_request() throws Exception {
                 mockMvc.perform(post("/session")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isBadRequest());
             }
         }

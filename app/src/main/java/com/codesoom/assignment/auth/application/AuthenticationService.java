@@ -1,5 +1,6 @@
 package com.codesoom.assignment.auth.application;
 
+import com.codesoom.assignment.auth.dto.LoginRequest;
 import com.codesoom.assignment.auth.infra.JwtTokenProvider;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.domain.UserRepository;
@@ -22,16 +23,15 @@ public class AuthenticationService {
     /**
      * 올바른 사용자 정보라면 토큰 문자열을 리턴하고, 그렇지 않다면 예외를 던집니다.
      *
-     * @param email 사용자 이메일
-     * @param password 사용자 비밀번호
+     * @param requestDto 로그인 인증 요청
      * @return 인증 토큰
      * @throws IllegalArgumentException 유효하지 않은 인자가 들어왔을 경우
      */
-    public String authenticate(String email, String password) throws IllegalArgumentException {
-        final User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException(email));
+    public String authenticate(LoginRequest requestDto) throws IllegalArgumentException {
+        final User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException(requestDto.getEmail()));
 
-        if (!user.authenticate(password)) {
+        if (!user.authenticate(requestDto.getPassword())) {
             throw new IllegalArgumentException(WRONG_PASSWORD);
         }
         return createToken(user.getId());

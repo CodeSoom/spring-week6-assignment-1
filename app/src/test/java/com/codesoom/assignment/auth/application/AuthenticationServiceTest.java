@@ -1,5 +1,6 @@
 package com.codesoom.assignment.auth.application;
 
+import com.codesoom.assignment.auth.dto.LoginRequest;
 import com.codesoom.assignment.auth.infra.JwtTokenProvider;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.domain.UserRepository;
@@ -63,6 +64,7 @@ class AuthenticationServiceTest {
         class Context_with_exist_email_password {
             final String email = GIVEN_USER_EMAIL;
             final String password = GIVEN_USER_PASSWORD;
+            final LoginRequest requestDto = new LoginRequest(email, password);
 
             @BeforeEach
             void setUp() {
@@ -73,7 +75,7 @@ class AuthenticationServiceTest {
             @DisplayName("인증 토큰을 리턴한다.")
             @Test
             void it_returns_token() {
-                String token = authenticationService.authenticate(email, password);
+                String token = authenticationService.authenticate(requestDto);
                 assertThat(token).isEqualTo(VALID_TOKEN);
             }
         }
@@ -83,12 +85,13 @@ class AuthenticationServiceTest {
         class Context_with_not_exist_email {
             final String email = NOT_EXIST_EMAIL;
             final String password = GIVEN_USER_PASSWORD;
+            final LoginRequest requestDto = new LoginRequest(email, password);
 
             @DisplayName("예외를 던진다.")
             @Test
             void It_throws_exception() {
                 assertThrows(IllegalArgumentException.class,
-                        () -> authenticationService.authenticate(email, password));
+                        () -> authenticationService.authenticate(requestDto));
             }
         }
 
@@ -97,6 +100,7 @@ class AuthenticationServiceTest {
         class Context_with_wrong_password {
             final String email = GIVEN_USER_EMAIL;
             final String password = WRONG_PASSWORD;
+            final LoginRequest requestDto = new LoginRequest(email, password);
 
             @BeforeEach
             void setUp() {
@@ -108,7 +112,7 @@ class AuthenticationServiceTest {
             @Test
             void It_throws_exception() {
                 assertThrows(IllegalArgumentException.class,
-                        () -> authenticationService.authenticate(email, password));
+                        () -> authenticationService.authenticate(requestDto));
             }
         }
     }

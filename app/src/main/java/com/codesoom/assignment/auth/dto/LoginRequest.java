@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
  */
 @Getter
 @NoArgsConstructor
-public class AuthenticationRequestDto {
+public class LoginRequest {
     /**
      * 이메일.
      */
@@ -25,7 +25,7 @@ public class AuthenticationRequestDto {
     @Size(min = 4, max = 1024)
     private String password;
 
-    public AuthenticationRequestDto(String email, String password) {
+    public LoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }

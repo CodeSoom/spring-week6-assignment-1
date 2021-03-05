@@ -32,4 +32,10 @@ class AuthenticationServiceTest {
         assertThat(userId).isEqualTo(1L);
     }
     
+    @Test
+    void parseTokenWithInvalid(){
+        Long userId = authenticationService.parseToken(INVALID_TOKEN);
+        assertThat(userId).isEqualTo(1L);
+    }
+
 }

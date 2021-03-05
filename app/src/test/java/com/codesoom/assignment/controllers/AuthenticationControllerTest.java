@@ -80,7 +80,7 @@ class AuthenticationControllerTest {
 
                 subject(loginData)
                         .andExpect(status().isCreated())
-                        .andExpect(jsonPath("$.token").value(AuthenticationTestFixture.VALID_TOKEN));
+                        .andExpect(jsonPath("$.accessToken").value(AuthenticationTestFixture.VALID_TOKEN));
             }
         }
 

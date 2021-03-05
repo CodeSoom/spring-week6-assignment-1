@@ -16,7 +16,7 @@
 
 package com.codesoom.assignment.product.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,9 +30,7 @@ import javax.persistence.Id;
  */
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product {
 
     /** 상품 식별자. */
@@ -51,6 +49,15 @@ public class Product {
 
     /** 상품이미지. */
     private String imageUrl;
+
+    @Builder
+    public Product(Long id, String name, String maker, Integer price, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.maker = maker;
+        this.price = price;
+        this.imageUrl = imageUrl;
+    }
 
     /**
      * 상품의 정보를 갱신합니다.

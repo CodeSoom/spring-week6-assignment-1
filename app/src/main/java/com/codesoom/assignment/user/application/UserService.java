@@ -21,12 +21,17 @@ public class UserService {
     }
 
     public User registerUser(UserRegistrationData registrationData) {
-        String email = registrationData.getEmail();
+        final String email = registrationData.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new UserEmailDuplicationException(email);
         }
+        final User user = User.builder()
+                .name(registrationData.getName())
+                .email(registrationData.getEmail())
+                .password(registrationData.getPassword())
+                .deleted(false)
+                .build();
 
-        User user = mapper.map(registrationData, User.class);
         return userRepository.save(user);
     }
 

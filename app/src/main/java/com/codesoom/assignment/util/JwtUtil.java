@@ -30,18 +30,22 @@ public class JwtUtil {
     }
 
     /**
-     * 주어진 이메일에 해당하는 사용자를 리턴한다.
+     * 주어진 이메일과 비밀번호에 해당하는 사용자를 리턴한다.
      *
      * @param email - 조회하고자 하는 사용자 이메일
+     * @param password - 조회하고자 하는 사용자 비밀번호
      * @return 주어진 {@code email}에 해당하는 사용자
      * @throws UserBadRequestException 만약
      *         {@code email}에 해당되는 사용자가 저장되어 있지 않은 경우
+     *         {@code email}에 해당하는 사용자가 저장되어 있지만 {@code password}이 다른 경우
+     *         {@code email}에 해당하는 사용자가 저장되어 있지만  이미 삭제된 경우
      */
-    public UserResultData getUser(String email) {
-        User user = userRepository.findByEmail(email)
+    public UserResultData getUser(String email, String password) {
+        return userRepository.findByEmail(email)
+                .filter(Predicate.not(User::isDeleted)
+                        .and(u -> u.authenticate(password)))
+                .map(UserResultData::of)
                 .orElseThrow(UserBadRequestException::new);
-
-        return UserResultData.of(user);
     }
 
     /**
@@ -55,16 +59,9 @@ public class JwtUtil {
      *         {@code password}에 해당하는 사용자가 저장되어 있지 않은 경우
      *         ,이미 삭제되어 있는 경우
      */
-    public String encode(String email, String password) {
-        UserResultData userResultData = userRepository.findByEmail(email)
-                .filter(Predicate.not(User::isDeleted)
-                        .and(u -> u.authenticate(password)))
-                .map(UserResultData::of)
-                .orElseThrow(UserBadRequestException::new);
-
+    public String encode(String email) {
         return Jwts.builder()
-                .claim("email", userResultData.getEmail())
-                .claim("password", userResultData.getPassword())
+                .setSubject(email)
                 .signWith(key)
                 .compact();
     }

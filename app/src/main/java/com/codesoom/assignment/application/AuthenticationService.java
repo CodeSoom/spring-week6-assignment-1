@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.dto.AuthenticationCreateData;
 import com.codesoom.assignment.dto.AuthenticationResultData;
 import com.codesoom.assignment.dto.SessionResultData;
+import com.codesoom.assignment.dto.UserResultData;
 import com.codesoom.assignment.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
@@ -20,22 +21,23 @@ public class AuthenticationService {
     }
 
     /**
-     * 주어진 사용자를 검증하고 토큰 문자열을 생성하여 리턴한다.
+     * 주어진 사용자를 인증하고 사용자의 이메일을 이용해 토큰을 생성하여 리턴한다.
      *
-     * @param authenticationCreateData - 검증하고자 하는 사용자
-     * @return 주어진 사용자를 이용하여 생성된 토큰 문자열
+     * @param authenticationCreateData - 인증하고자 하는 사용자
+     * @return 생성된 토큰
      */
     public SessionResultData createToken(AuthenticationCreateData authenticationCreateData) {
-        String accessToken = jwtUtil.encode(
+        UserResultData userResultData = jwtUtil.getUser(
                 authenticationCreateData.getEmail(),
-                authenticationCreateData.getPassword()
-                );
+                authenticationCreateData.getPassword());
+
+        String accessToken = jwtUtil.encode(userResultData.getEmail());
 
         return SessionResultData.from(accessToken);
     }
 
     /**
-     * 주어진 토큰 문자열을 파싱하여 사용자 정보를 리넌한다.
+     * 주어진 토큰을 해석하여 사용자 정보를 리넌한다.
      *
      * @param accessToken - 파싱하고자 하는 토큰 문자열
      * @return 주어진 {@code accessToken}의 사용자 정보

@@ -40,9 +40,9 @@ public class ProductController {
     }
 
     /**
-     * 저장된 모든 상품의 집합을 응답합니다.
+     * 저장된 모든 상품의 목록을 응답합니다.
      *
-     * @return 저장된 모든 상품 집합
+     * @return 저장된 모든 상품 목록
      */
     @GetMapping
     public List<Product> list() {

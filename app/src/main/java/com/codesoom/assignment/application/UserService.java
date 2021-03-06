@@ -60,7 +60,7 @@ public class UserService {
     }
 
     /**
-     * 주어진 id와 일치하는 유저를 삭제합니다.
+     * 주어진 id와 일치하는 유저를 삭제하고 반환합니다.
      *
      * @param id 유저 식별자
      * @return 삭제된 유저
@@ -82,3 +82,4 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 }
+

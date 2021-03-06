@@ -21,17 +21,17 @@ public class AuthenticationService {
     }
 
     /**
-     * 주어진 유저 id를 부호화하여 토큰을 반환합니다.
+     * 주어진 유저 id를 부호화한 인증 토큰을 반환합니다.
      *
      * @param userId 유저 id
-     * @return 토큰
+     * @return 인증 토큰
      */
     public String encode(Long userId) {
         return jwtUtil.encode(userId);
     }
 
     /**
-     * 주어진 토큰을 해독하여 유저 id를 반환합니다.
+     * 주어진 토큰을 해독한 유저 id를 반환합니다.
      *
      * @param token 토큰
      * @return 유저 id
@@ -41,7 +41,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 주어진 유저 정보로 유저 인증 후 인증 토큰을 반환합니다.
+     * 주어진 유저 정보로 생성한 인증 토큰을 반환합니다.
      *
      * @param email    유저 email
      * @param password 유저 password
@@ -61,7 +61,7 @@ public class AuthenticationService {
      * 주어진 유저 email와 일치하는 유저를 반환합니다.
      *
      * @param email 유저 email
-     * @return 주어진 email을 가지고 있는 유저
+     * @return 유저
      */
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 /**
- * 유저에  대한 HTTP 요청 핸들러.
+ * 유저에 대한 HTTP 요청 핸들러.
  *
  * @see UserService
  * @see User

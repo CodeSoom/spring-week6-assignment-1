@@ -30,9 +30,9 @@ public class ProductService {
     }
 
     /**
-     * 저장된 모든 상품의 집합을 반환합니다.
+     * 저장된 모든 상품의 목록을 반환합니다.
      *
-     * @return 저장된 모든 상품 집합
+     * @return 저장된 모든 상품 목록
      */
     public List<Product> getProducts() {
         return productRepository.findAll();
@@ -49,7 +49,7 @@ public class ProductService {
     }
 
     /**
-     * 주어진 상품를 저장하고 반환합니다.
+     * 주어진 상품을 저장하고 반환합니다.
      *
      * @param productData 상품 데이터
      * @return 저장된 상품
@@ -75,7 +75,7 @@ public class ProductService {
     }
 
     /**
-     * 주어진 id와 일치하는 상품을 삭제합니다.
+     * 주어진 id와 일치하는 상품을 삭제하고 반환합니다.
      *
      * @param id 상품 식별자
      * @return 삭제된 상품

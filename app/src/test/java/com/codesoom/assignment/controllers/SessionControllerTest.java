@@ -2,6 +2,8 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.AccountData;
+import com.codesoom.assignment.errors.InvalidPasswordException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SessionControllerTest {
     final String validToken
             = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    final String invalidToken
+            = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,14 +32,11 @@ class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
-    @BeforeEach
-    void setUp() {
+    @Test
+    void loginWithValidAccountData() throws Exception {
         given(authenticationService.login(any(AccountData.class)))
                 .willReturn(validToken);
-    }
 
-    @Test
-    void login() throws Exception {
         mockMvc.perform(
                 post("/session")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -43,5 +44,18 @@ class SessionControllerTest {
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(validToken)));
+    }
+
+    @Test
+    void loginWithUnsavedEmail() throws Exception {
+        given(authenticationService.login(any(AccountData.class)))
+                .willThrow(UserNotFoundException.class);
+
+        mockMvc.perform(
+                post("/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"law@codesoom.com\",\"password\":\"1234567890\"}")
+        )
+                .andExpect(status().isNotFound());
     }
 }

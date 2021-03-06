@@ -24,6 +24,10 @@ public class AuthenticationService {
     }
 
     public String login(AccountData accountData) {
+        System.out.println("login");
+        System.out.println(accountData.getEmail());
+        System.out.println(accountData.getPassword());
+
         final User user = findUserByEmail(accountData.getEmail());
 
         if (user.getPassword().equals(accountData.getPassword())) {

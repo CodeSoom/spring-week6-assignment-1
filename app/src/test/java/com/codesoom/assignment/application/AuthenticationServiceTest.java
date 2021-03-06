@@ -47,24 +47,14 @@ class AuthenticationServiceTest {
                                 .password(givenValidPassword)
                                 .build())
                 );
-
-        given(userRepository.findByEmail(givenSavedEmail))
-                .willReturn(
-                        Optional.of(User.builder()
-                                .id(1L)
-                                .email(givenSavedEmail)
-                                .name("Tester")
-                                .password(givenValidPassword)
-                                .build())
-                );
     }
 
     @Test
     void loginWithValidAccountData() {
         AccountData accountData = AccountData.builder()
-                                            .email(givenSavedEmail)
-                                            .password(givenValidPassword)
-                                            .build();
+                .email(givenSavedEmail)
+                .password(givenValidPassword)
+                .build();
         String accessToken = authenticationService.login(accountData);
 
         assertThat(accessToken).isEqualTo(validToken);
@@ -74,9 +64,9 @@ class AuthenticationServiceTest {
     void loginWithInvalidAccountData() {
         // With unsaved email
         AccountData accountDataWithUnsavedEmail = AccountData.builder()
-                                                            .email(givenUnsavedEmail)
-                                                            .password(givenValidPassword)
-                                                            .build();
+                .email(givenUnsavedEmail)
+                .password(givenValidPassword)
+                .build();
         assertThatThrownBy(
                 () -> authenticationService.login(accountDataWithUnsavedEmail)
         ).isInstanceOf(UserNotFoundException.class);

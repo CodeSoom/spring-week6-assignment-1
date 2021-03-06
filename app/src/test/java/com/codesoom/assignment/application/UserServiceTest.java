@@ -82,7 +82,6 @@ class UserServiceTest {
         resultUsers = Arrays.asList(setUpUserResultData, createUserResultData);
     }
 
-
     @Nested
     @DisplayName("getUsers 메서드는")
     class Describe_getUsers {

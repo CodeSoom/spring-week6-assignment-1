@@ -31,8 +31,8 @@ public class ProductController {
     private final ProductService productService;
 
     public ProductController(
-            AuthenticationService authenticationService
-            ,ProductService productService
+            AuthenticationService authenticationService,
+            ProductService productService
     ) {
         this.authenticationService = authenticationService;
         this.productService = productService;
@@ -69,8 +69,8 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResultData create(
-            @RequestHeader("Authorization") String authorization
-            ,@RequestBody @Valid ProductCreateData productCreateData
+            @RequestHeader("Authorization") String authorization,
+            @RequestBody @Valid ProductCreateData productCreateData
     ) {
         String accessToken = authorization.substring("Bearer ".length());
         AuthenticationResultData authenticationResultData = authenticationService.parseToken(accessToken);

@@ -71,7 +71,7 @@ public class UserService {
         User user = mapper.map(userCreateData, User.class);
         User savedUser = userRepository.save(user);
 
-       return UserResultData.of(user);
+       return UserResultData.of(savedUser);
     }
 
     /**

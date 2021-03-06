@@ -27,8 +27,8 @@ public class AuthenticationService {
      */
     public SessionResultData createToken(AuthenticationCreateData authenticationCreateData) {
         String accessToken = jwtUtil.encode(
-                authenticationCreateData.getEmail()
-                ,authenticationCreateData.getPassword()
+                authenticationCreateData.getEmail(),
+                authenticationCreateData.getPassword()
                 );
 
         return SessionResultData.from(accessToken);

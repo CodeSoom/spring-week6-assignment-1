@@ -88,9 +88,9 @@ public class ProductController {
      */
     @PatchMapping("{id}")
     public ProductResultData update(
-            @RequestHeader("Authorization") String authorization
-            ,@PathVariable Long id
-            ,@RequestBody @Valid ProductUpdateData productUpdateData
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id,
+            @RequestBody @Valid ProductUpdateData productUpdateData
     ) {
         String accessToken = authorization.substring("Bearer ".length());
         AuthenticationResultData authenticationResultData = authenticationService.parseToken(accessToken);
@@ -108,8 +108,8 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ProductResultData delete(
-            @RequestHeader("Authorization") String authorization
-            ,@PathVariable Long id
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id
     ) {
         String accessToken = authorization.substring("Bearer ".length());
         AuthenticationResultData authenticationResultData = authenticationService.parseToken(accessToken);

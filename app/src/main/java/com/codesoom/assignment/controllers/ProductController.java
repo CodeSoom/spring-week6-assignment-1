@@ -23,16 +23,30 @@ public class ProductController {
         this.productService = productService;
     }
 
+    /**
+     * 모든 제품 리스트를 응답합니다.
+     * @return 제품리스트
+     */
     @GetMapping
     public List<Product> list() {
         return productService.getProducts();
     }
 
+    /**
+     * 특정 제품을 찾아 응답합니다.
+     * @param id 찾을 제품의 식별자
+     * @return 찾은 제품
+     */
     @GetMapping("{id}")
     public Product detail(@PathVariable Long id) {
         return productService.getProduct(id);
     }
 
+    /**
+     * 주어진 제품 정보대로 제품을 생성합니다.
+     * @param productData 제품 정보
+     * @return 생성된 제품
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
@@ -41,6 +55,12 @@ public class ProductController {
         return productService.createProduct(productData);
     }
 
+    /**
+     * 특정 제품을 찾아 수정된 제품 정보로 갱신합니다.
+     * @param id 찾을 제품의 식별자
+     * @param productData 수정된 제품 정보
+     * @return 갱신된 제품
+     */
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
@@ -49,6 +69,10 @@ public class ProductController {
         return productService.updateProduct(id, productData);
     }
 
+    /**
+     * 특정 제품을 찾아 삭제합니다.
+     * @param id 찾을 제품의 식별자
+     */
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(

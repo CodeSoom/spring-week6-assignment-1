@@ -100,7 +100,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("유효하지않는 비밀번호가 주어지면")
+        @DisplayName("유효하지 않은 비밀번호가 주어지면")
         class Context_with_wrong_password {
             final String email = GIVEN_USER_EMAIL;
             final String password = WRONG_PASSWORD;
@@ -129,14 +129,14 @@ class AuthenticationServiceTest {
         class Context_with_token {
             final String token = VALID_TOKEN;
 
-            @DisplayName("토큰에 담긴 정보를 리턴한다.")
+            @DisplayName("토큰에 담긴 정보를 가진 Claims를 리턴한다.")
             @Test
-            void it_returns_user_id() {
-                final Claims actual = authenticationService.parseToken(token);
+            void it_returns_cliams() {
+                final Claims claims = authenticationService.parseToken(token);
 
-                assertThat(actual.get("userId", Long.class)).isEqualTo(GIVEN_ID);
-                assertThat(actual.getIssuedAt()).isNotNull();
-                assertThat(actual.getExpiration()).isNotNull();
+                assertThat(claims.get("userId", Long.class)).isEqualTo(GIVEN_ID);
+                assertThat(claims.getIssuedAt()).isNotNull();
+                assertThat(claims.getExpiration()).isNotNull();
             }
         }
     }

@@ -43,7 +43,7 @@ public class ProductData {
     private String imageUrl;
 
     /**
-     * 상품 명세서
+     * 상품 명세서를 생성합니다.
      *
      * @param id 상품식별자
      * @param name 상품명

@@ -40,7 +40,7 @@ public class User {
     private String password;
 
     /**
-     * 사용자 삭제 여부.
+     * 삭제된 사용자라면 true, 아니면 false.
      */
     private boolean deleted;
 

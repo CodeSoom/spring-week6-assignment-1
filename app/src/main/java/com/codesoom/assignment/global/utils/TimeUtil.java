@@ -14,7 +14,7 @@ public class TimeUtil {
     }
 
     /**
-     * LocalDatetime 포맷을 Date로 변경합니다.
+     * LocalDatetime 값을 Date로 변환해 리턴합니다.
      *
      * @param localDateTime 입력받은 시간
      * @return 변경된 시간 포맷

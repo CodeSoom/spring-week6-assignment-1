@@ -58,4 +58,17 @@ class SessionControllerTest {
         )
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void loginWithInvalidPassword() throws Exception {
+        given(authenticationService.login(any(AccountData.class)))
+                .willThrow(InvalidPasswordException.class);
+
+        mockMvc.perform(
+                post("/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"newoo4297@codesoom.com\",\"password\":\"1234567891\"}")
+        )
+                .andExpect(status().isBadRequest());
+    }
 }

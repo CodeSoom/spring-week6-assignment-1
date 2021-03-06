@@ -84,7 +84,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithExsitedProduct() throws Exception {
+    void detailWithExistingProduct() throws Exception {
         mockMvc.perform(
                 get("/products/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -94,7 +94,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithNotExsitedProduct() throws Exception {
+    void detailWithNotExistingProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
                 .andExpect(status().isNotFound());
     }
@@ -127,7 +127,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void updateWithExistedProduct() throws Exception {
+    void updateWithExistingProduct() throws Exception {
         mockMvc.perform(
                 patch("/products/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -142,7 +142,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void updateWithNotExistedProduct() throws Exception {
+    void updateWithNotExistingProduct() throws Exception {
         mockMvc.perform(
                 patch("/products/1000")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -167,7 +167,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void destroyWithExistedProduct() throws Exception {
+    void destroyWithExistingProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1")
         )
@@ -177,7 +177,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void destroyWithNotExistedProduct() throws Exception {
+    void destroyWithNotExistingProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1000")
         )

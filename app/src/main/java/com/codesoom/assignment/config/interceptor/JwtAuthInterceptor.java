@@ -24,14 +24,14 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
 
     private static final String TOKEN_KEY = "Authorization";
     private static final String PREFIX = "Bearer ";
-    
+
     /**
-     * HTTP 요청 헤더의 인증 토큰이 유효한지 확인 합니다.
+     * HTTP 요청의 인증 토큰이 유효한지 확인 합니다.
      *
      * @param request HTTP 요청
      * @param response HTTP 응답
      * @param handler 실행할 핸들러
-     * @return
+     * @return {@code true} 다음 실행 체인을 진행하려면
      * @throws InvalidTokenException 토큰이 유효하지 않을 경우
      * @throws IOException 입력 또는 출력에 문제가 있을 경우
      */

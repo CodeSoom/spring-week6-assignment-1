@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +29,6 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
-    private final AuthenticationService authenticationService;
 
     /**
      * 모든 상품을 반환합니다.
@@ -56,55 +54,43 @@ public class ProductController {
     /**
      * 상품을 저장하고 저장된 상품을 반환합니다.
      *
-     * @param authorization 인가 정보
      * @param productData   저장할 상품의 정보
      * @return 저장된 상품
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        authenticationService.parseToken(getSubstring(authorization));
         return productService.createProduct(productData);
     }
 
     /**
      * id에 해당하는 상품을 수정하고 수정된 상품을 반환합니다.
      *
-     * @param authorization 인가 정보
      * @param id            수정할 상품의 id
      * @param productData   수정할 상품의 정보
      * @return 수정된 상품
      */
     @PatchMapping("{id}")
     public Product update(
-            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        authenticationService.parseToken(getSubstring(authorization));
         return productService.updateProduct(id, productData);
     }
 
     /**
      * id에 해당하는 상품을 삭제합니다.
      *
-     * @param authorization 인가 정보
      * @param id            삭제할 상품의 id
      */
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        authenticationService.parseToken(getSubstring(authorization));
         productService.deleteProduct(id);
     }
 
-    private String getSubstring(@RequestHeader("Authorization") String authorization) {
-        return authorization.substring("Bearer ".length());
-    }
 }

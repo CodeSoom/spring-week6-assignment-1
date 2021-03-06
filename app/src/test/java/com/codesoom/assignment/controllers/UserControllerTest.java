@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
@@ -32,6 +33,9 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {

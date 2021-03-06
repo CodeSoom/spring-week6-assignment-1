@@ -39,7 +39,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws InvalidTokenException, IOException {
-        if (filterWithMethods(request, HttpMethod.GET)) {
+        if (filterWithMethods(request, HttpMethod.GET, HttpMethod.OPTIONS)) {
             return true;
         }
 

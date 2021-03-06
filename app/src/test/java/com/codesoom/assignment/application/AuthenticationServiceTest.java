@@ -4,7 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AccountData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
-import com.codesoom.assignment.errors.InvalidPasswordException;
+import com.codesoom.assignment.errors.FailedAuthenticationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,7 +78,7 @@ class AuthenticationServiceTest {
                                                                 .build();
         assertThatThrownBy(
                 () -> authenticationService.login(accountDataWithInvalidPassword)
-        ).isInstanceOf(InvalidPasswordException.class);
+        ).isInstanceOf(FailedAuthenticationException.class);
     }
 
     @Test

@@ -2,9 +2,8 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.AccountData;
-import com.codesoom.assignment.errors.InvalidPasswordException;
+import com.codesoom.assignment.errors.FailedAuthenticationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -56,13 +55,13 @@ class SessionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"law@codesoom.com\",\"password\":\"1234567890\"}")
         )
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void loginWithInvalidPassword() throws Exception {
         given(authenticationService.login(any(AccountData.class)))
-                .willThrow(InvalidPasswordException.class);
+                .willThrow(FailedAuthenticationException.class);
 
         mockMvc.perform(
                 post("/session")

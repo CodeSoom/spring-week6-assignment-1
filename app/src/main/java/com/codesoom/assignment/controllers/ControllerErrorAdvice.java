@@ -30,9 +30,9 @@ public class ControllerErrorAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ErrorResponse handleInvalidPassword() {
-        return new ErrorResponse("Password is wrong");
+    @ExceptionHandler(FailedAuthenticationException.class)
+    public ErrorResponse handleFailedAuthentication() {
+        return new ErrorResponse("Failed Authentication");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

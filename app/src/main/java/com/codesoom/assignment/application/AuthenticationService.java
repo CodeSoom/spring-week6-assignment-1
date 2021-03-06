@@ -3,7 +3,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AccountData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
-import com.codesoom.assignment.errors.InvalidPasswordException;
+import com.codesoom.assignment.errors.FailedAuthenticationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -24,13 +24,19 @@ public class AuthenticationService {
     }
 
     public String login(AccountData accountData) {
-        final User user = findUserByEmail(accountData.getEmail());
+        User user;
+
+        try {
+            user = findUserByEmail(accountData.getEmail());
+        } catch (UserNotFoundException e){
+            throw new FailedAuthenticationException();
+        }
 
         if (user.getPassword().equals(accountData.getPassword())) {
             return jwtUtil.encode(user.getId());
         }
 
-        throw new InvalidPasswordException();
+        throw new FailedAuthenticationException();
     }
 
     public Long parseToken(String accessToken) {

@@ -3,6 +3,7 @@ package com.codesoom.assignment.config.interceptor;
 import com.codesoom.assignment.application.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -31,6 +32,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
 
         String authorization = request.getHeader(TOKEN_KEY);
         if (authorization == null) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value());
             return true;
         }
 

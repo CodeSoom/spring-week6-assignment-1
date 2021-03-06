@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.AuthenticationBadRequestException;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductBadRequestException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
@@ -73,7 +74,14 @@ public class ControllerErrorAdvice {
     /** 토큰이 유효하지 않다는 메세지를 리턴한다. */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
-    public ErrorResponse handleInvalidTokenException(InvalidTokenException e) {
+    public ErrorResponse handleInvalidToken(InvalidTokenException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    /** 사용자 인증에 대한 요청이 잘못되었다는 메세지를 리턴한다. */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AuthenticationBadRequestException.class)
+    public ErrorResponse handleAuthenticationBadRequest(AuthenticationBadRequestException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

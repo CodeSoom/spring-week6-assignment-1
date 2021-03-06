@@ -1,51 +1,21 @@
 package com.codesoom.assignment.util;
 
-import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.UserResultData;
 import com.codesoom.assignment.errors.InvalidTokenException;
-import com.codesoom.assignment.errors.UserBadRequestException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.function.Predicate;
 
 /** 토큰에 대해 처리한다 */
 @Component
 public class JwtUtil {
     private final Key key;
-    private final UserRepository userRepository;
 
-    public JwtUtil(
-            @Value("${jwt.secret}") String secret
-            ,UserRepository userRepository
-    ) {
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
         key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.userRepository = userRepository;
-    }
-
-    /**
-     * 주어진 이메일과 비밀번호에 해당하는 사용자를 리턴한다.
-     *
-     * @param email - 조회하고자 하는 사용자 이메일
-     * @param password - 조회하고자 하는 사용자 비밀번호
-     * @return 주어진 {@code email}에 해당하는 사용자
-     * @throws UserBadRequestException 만약
-     *         {@code email}에 해당되는 사용자가 저장되어 있지 않은 경우
-     *         {@code email}에 해당하는 사용자가 저장되어 있지만 {@code password}이 다른 경우
-     *         {@code email}에 해당하는 사용자가 저장되어 있지만  이미 삭제된 경우
-     */
-    public UserResultData authenticateUser(String email, String password) {
-        return userRepository.findByEmail(email)
-                .filter(Predicate.not(User::isDeleted)
-                        .and(u -> u.authenticate(password)))
-                .map(UserResultData::of)
-                .orElseThrow(UserBadRequestException::new);
     }
 
     /**
@@ -70,18 +40,10 @@ public class JwtUtil {
      *         {@code token}이 비어있는 경우, 공백인 경우, 서명이 실패한 경우
      */
     public Claims decode(String token) {
-        if(token == null || token.isBlank()) {
-            throw new InvalidTokenException(token);
-        }
-
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch(SignatureException e) {
-            throw new InvalidTokenException(token);
-        }
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

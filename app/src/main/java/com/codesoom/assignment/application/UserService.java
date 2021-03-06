@@ -96,8 +96,8 @@ public class UserService {
      *
      * @param id - 삭제하고자 하는 사용자의 식별자
      * @return 삭제 된 사용자
-     * @throws UserNotFoundException 만약 주어진
-     *         {@code id}에 해당되는 사용자가 저장되어 있지 않은 경우
+     * @throws UserNotFoundException 만약
+     *          주어진 {@code id}에 해당되는 사용자가 저장되어 있지 않은 경우
      */
     public UserResultData deleteUser(Long id) {
         UserResultData userResultData = getUser(id);

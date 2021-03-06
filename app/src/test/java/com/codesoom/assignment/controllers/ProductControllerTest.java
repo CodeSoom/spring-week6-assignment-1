@@ -59,10 +59,10 @@ class ProductControllerTest {
 
     private Mapper mapper;
 
-    private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImV4aXN0ZWRFbWFpbCIsInBhc3N3b3JkIjoiZXhpc3RlZFBhc3N3b3JkIn0." +
-            "iqS2XKpt7blLuhlACfLFdomPsjXzC9RGW67mJGB0NaA";
-    private static final String NOT_EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImV4aXN0ZWRFbWFpbCIsInBhc3N3b3JkIjoiZXhpc3RlZFBhc3N3b3JkIn0." +
-            "iqS2XKpt7blLuhlACfLFdomPsjXzC9RGW67mJGB0Naa";
+    private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
+            "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXY";
+    private static final String NOT_EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
+            "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXy";
 
     private final String SETUP_PRODUCT_NAME = "setupName";
     private final String SETUP_PRODUCT_MAKER = "setupMaker";
@@ -91,16 +91,6 @@ class ProductControllerTest {
     private ProductResultData resultProductOne;
     private ProductResultData resultProductTwo;
 
-    public ProductResultData getProductResultData(Product product) {
-        return ProductResultData.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .maker(product.getMaker())
-                .price(product.getPrice())
-                .imageUrl(product.getImageUrl())
-                .build();
-    }
-
     @BeforeEach
     void setUp() {
         mockMvc = webAppContextSetup(wac).addFilter(((request, response, chain) -> {
@@ -128,9 +118,8 @@ class ProductControllerTest {
 
         products = Arrays.asList(setupProductOne, setupProductTwo);
 
-        resultProductOne = getProductResultData(setupProductOne);
-
-        resultProductTwo = getProductResultData(setupProductTwo);
+        resultProductOne = ProductResultData.of(setupProductOne);
+        resultProductTwo = ProductResultData.of(setupProductTwo);
         resultProducts = Arrays.asList(resultProductOne, resultProductTwo);
     }
 

@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.errors.WrongUserException;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +23,12 @@ public class AuthService {
             throw new WrongUserException();
         }
         return user;
+    }
+
+    public Boolean valid(Long id, String email, String name) {
+        final User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        return user.getEmail().equals(email) && user.getName().equals(name);
     }
 }

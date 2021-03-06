@@ -28,7 +28,10 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(Long id) {
-        return Optional.empty();
+        if (id > users.size()) {
+            return Optional.empty();
+        }
+        return Optional.of(users.get(id.intValue() - 1));
     }
 
     @Override

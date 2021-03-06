@@ -4,7 +4,7 @@ import com.codesoom.assignment.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 
 /**
- * 인증에 관한 비즈니스 로직을 담당합니다.
+ * 인증 처리를 담당합니다.
  */
 @Service
 public class AuthenticationService {

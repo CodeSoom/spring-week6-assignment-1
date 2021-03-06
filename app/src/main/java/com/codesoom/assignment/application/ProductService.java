@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- * Product에 관한 비즈니스 로직을 담당합니다.
+ * Product 처리를 담당합니다.
  */
 
 @Service

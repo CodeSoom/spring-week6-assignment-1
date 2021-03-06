@@ -85,7 +85,7 @@ class AuthenticationServiceTest {
     class Describe_login {
 
         @Nested
-        @DisplayName("유효한 로그인 정보가 주어면")
+        @DisplayName("유효한 로그인 정보가 주어지면")
         class Context_with_valid_login_data {
             @BeforeEach
             void setUp() {

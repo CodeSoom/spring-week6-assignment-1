@@ -19,7 +19,6 @@ public class AuthenticationService {
     private JwtUtil jwtUtil;
     private UserRepository userRepository;
 
-    @Autowired
     public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
@@ -36,8 +35,7 @@ public class AuthenticationService {
     public String login(UserLoginData userLoginData) {
         User user = findUserByEmail(userLoginData.getEmail());
 
-        boolean wrongPassword = false;
-        if (user.authenticate(userLoginData.getPassword()) == wrongPassword) {
+        if (!user.authenticate(userLoginData.getPassword())) {
             throw new AuthenticationFailException("비밀번호가 일치하지 않습니다.");
         }
 

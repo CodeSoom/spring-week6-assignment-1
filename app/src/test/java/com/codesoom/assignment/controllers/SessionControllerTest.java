@@ -53,7 +53,7 @@ class SessionControllerTest {
                 .build();
 
         invalidLoginData = UserLoginData.builder()
-                .email("invalid@gmail.com")
+                .email("invalid@invalid.commm")
                 .password("invalidPassword")
                 .build();
     }
@@ -62,8 +62,8 @@ class SessionControllerTest {
     @DisplayName("POST 요청은")
     class Describe_POST {
         @Nested
-        @DisplayName("유효한 정보가 주어지면")
-        class Context_with_valid_data {
+        @DisplayName("로그인 인증에 성공하면")
+        class Context_with_success_authentication {
             @BeforeEach
             void setUp() {
                 given(authenticationService.login(any(UserLoginData.class)))
@@ -83,8 +83,8 @@ class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("유효하지 않은 정보가 주어지면")
-        class Context_with_invalid_data {
+        @DisplayName("로그인 인증에 실패하면")
+        class Context_with_fail_authentication {
             void setUp() {
                 given(authenticationService.login(invalidLoginData))
                         .willThrow(new AuthenticationFailException("입력하신 로그인 정보가 맞지 않습니다."));

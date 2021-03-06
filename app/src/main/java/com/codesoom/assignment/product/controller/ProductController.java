@@ -1,9 +1,9 @@
 package com.codesoom.assignment.product.controller;
 
-import com.codesoom.assignment.auth.application.AuthenticationService;
 import com.codesoom.assignment.product.application.ProductService;
 import com.codesoom.assignment.product.domain.Product;
 import com.codesoom.assignment.product.dto.ProductData;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,15 +25,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/products")
+@RequiredArgsConstructor
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
-    private final AuthenticationService authenticationService;
-
-    public ProductController(ProductService productService, AuthenticationService authenticationService) {
-        this.productService = productService;
-        this.authenticationService = authenticationService;
-    }
 
     @GetMapping
     public List<Product> list() {
@@ -50,10 +45,6 @@ public class ProductController {
     public Product create(
             @RequestHeader(value = "Authorization") String authorization,
             @RequestBody @Valid ProductData productData) {
-        String accessToken = authorization.substring("Bearer ".length());
-
-        authenticationService.parseToken(accessToken);
-
         return productService.createProduct(productData);
     }
 
@@ -63,10 +54,6 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-
-        authenticationService.parseToken(accessToken);
-
         return productService.updateProduct(id, productData);
     }
 
@@ -76,10 +63,6 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-
-        authenticationService.parseToken(accessToken);
-
         productService.deleteProduct(id);
     }
 }

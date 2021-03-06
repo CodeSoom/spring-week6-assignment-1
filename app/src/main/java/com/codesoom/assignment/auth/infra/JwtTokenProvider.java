@@ -70,4 +70,17 @@ public class JwtTokenProvider {
             throw new InvalidTokenException(token, e);
         }
     }
+
+    /**
+     * 유효한 인증 토큰인지 검증합니다.
+     * @param token 인증 토큰
+     * @return 인증 성공 여부
+     */
+    public boolean validateToken(String token) {
+        Claims claims = this.decode(token);
+        if (claims.getExpiration().before(new Date())) {
+            return false;
+        }
+        return true;
+    }
 }

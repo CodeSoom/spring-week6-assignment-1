@@ -1,7 +1,6 @@
 package com.codesoom.assignment.product.controller;
 
-import com.codesoom.assignment.auth.application.AuthenticationService;
-import com.codesoom.assignment.auth.application.InvalidTokenException;
+import com.codesoom.assignment.auth.infra.JwtTokenProvider;
 import com.codesoom.assignment.product.application.ProductNotFoundException;
 import com.codesoom.assignment.product.application.ProductService;
 import com.codesoom.assignment.product.domain.Product;
@@ -45,9 +44,8 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService productService;
-
     @MockBean
-    private AuthenticationService authenticationService;
+    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setUp() {
@@ -90,8 +88,8 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
 
-        given(authenticationService.parseToken(INVALID_TOKEN))
-                .willThrow(new InvalidTokenException(INVALID_TOKEN));
+        given(jwtTokenProvider.validateToken(eq(VALID_TOKEN)))
+                .willReturn(true);
     }
 
     @Test
@@ -173,8 +171,7 @@ class ProductControllerTest {
                                 "\"price\":5000}")
                         .header("Authorization", "Bearer " + VALID_TOKEN)
         )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
+                .andExpect(status().isOk());
 
         verify(productService).updateProduct(eq(1L), any(ProductData.class));
     }

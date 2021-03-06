@@ -27,7 +27,7 @@ public class AuthenticationService {
      * @return 생성된 토큰
      */
     public SessionResultData createToken(AuthenticationCreateData authenticationCreateData) {
-        UserResultData userResultData = jwtUtil.getUser(
+        UserResultData userResultData = jwtUtil.authenticateUser(
                 authenticationCreateData.getEmail(),
                 authenticationCreateData.getPassword());
 

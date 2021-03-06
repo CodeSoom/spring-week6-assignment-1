@@ -40,7 +40,7 @@ public class JwtUtil {
      *         {@code email}에 해당하는 사용자가 저장되어 있지만 {@code password}이 다른 경우
      *         {@code email}에 해당하는 사용자가 저장되어 있지만  이미 삭제된 경우
      */
-    public UserResultData getUser(String email, String password) {
+    public UserResultData authenticateUser(String email, String password) {
         return userRepository.findByEmail(email)
                 .filter(Predicate.not(User::isDeleted)
                         .and(u -> u.authenticate(password)))
@@ -52,12 +52,7 @@ public class JwtUtil {
      * 주어진 이메일과 비밀번호로 토큰 문자열을 생성하고 리턴한다.
      *
      * @param email - 토큰 문자열 생성을 위한 이메일
-     * @param password - 토큰 문자열 생성을 위한 비밀번호
-     * @return - 주어진 {@code email}과 {@code password}를 이용하여 생성된 토큰 문자열
-     * @throws UserBadRequestException 만약
-     *         {@code email}에 해당하는 사용자가 저장되어 있지 않은 경우
-     *         {@code password}에 해당하는 사용자가 저장되어 있지 않은 경우
-     *         ,이미 삭제되어 있는 경우
+     * @return - 주어진 {@code email}를 이용하여 생성된 토큰 문자열
      */
     public String encode(String email) {
         return Jwts.builder()

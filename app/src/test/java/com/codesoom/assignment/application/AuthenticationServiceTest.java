@@ -1,10 +1,11 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AuthenticationCreateData;
 import com.codesoom.assignment.dto.AuthenticationResultData;
 import com.codesoom.assignment.dto.SessionResultData;
+import com.codesoom.assignment.errors.AuthenticationBadRequestException;
 import com.codesoom.assignment.errors.InvalidTokenException;
-import com.codesoom.assignment.errors.UserBadRequestException;
 import com.codesoom.assignment.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -23,6 +26,7 @@ import static org.mockito.Mockito.mock;
 class AuthenticationServiceTest {
     private JwtUtil jwtUtil;
     private AuthenticationService authenticationService;
+    private UserRepository userRepository;
 
     private static final String SECRET = "12345678901234567890123456789010";
     private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImV4aXN0ZWRFbWFpbCIsInBhc3N3b3JkIjoiZXhpc3RlZFBhc3N3b3JkIn0." +
@@ -39,12 +43,13 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         jwtUtil = mock(JwtUtil.class);
-        authenticationService = new AuthenticationService(jwtUtil);
+        userRepository = mock(UserRepository.class);
+        authenticationService = new AuthenticationService(jwtUtil, userRepository);
     }
 
     @Nested
-    @DisplayName("encode 메서드는")
-    class Describe_encode {
+    @DisplayName("createToken 메서드는")
+    class Describe_createToken {
         @Nested
         @DisplayName("만약 저장되어 있는 사용자가 주어진다면")
         class Context_WithExistedUser {
@@ -58,16 +63,13 @@ class AuthenticationServiceTest {
                         .password(EXISTED_PASSWORD)
                         .build();
 
-                sessionResultData = SessionResultData.builder()
-                        .accessToken(EXISTED_TOKEN)
-                        .build();
+                sessionResultData = SessionResultData.from(EXISTED_TOKEN);
             }
 
             @Test
             @DisplayName("주어진 사용자를 이용하여 토큰을 생성하고 해당 토큰을 리턴한다")
             void itCreatesTokenAndReturnsToken() {
-                given(jwtUtil.encode(givenUser.getEmail(), givenUser.getPassword()))
-                        .willReturn(EXISTED_TOKEN);
+                given(jwtUtil.encode(anyString())).willReturn(EXISTED_TOKEN);
 
                 SessionResultData token = authenticationService.createToken(givenUser);
 
@@ -89,14 +91,14 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("요청이 잘못 되었다는 메세지를 리턴한다")
+            @DisplayName("인증 요청이 잘못 되었다는 메세지를 리턴한다")
             void itReturnsUserNotFoundMessage() {
-                given(jwtUtil.encode(givenUser.getEmail(), givenUser.getPassword()))
-                        .willThrow(new UserBadRequestException());
+                given(userRepository.findByEmail(eq(givenUser.getEmail())))
+                        .willThrow(new AuthenticationBadRequestException());
 
                 assertThatThrownBy(() -> authenticationService.createToken(givenUser))
-                        .isInstanceOf(UserBadRequestException.class)
-                        .hasMessageContaining("User bad request");
+                        .isInstanceOf(AuthenticationBadRequestException.class)
+                        .hasMessageContaining("Authentication bad request");
             }
         }
 
@@ -114,14 +116,14 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("요청이 잘못 되었다는 메세지를 리턴한다")
+            @DisplayName("인증 요청이 잘못 되었다는 메세지를 리턴한다")
             void itReturnsUserNotFoundMessage() {
-                given(jwtUtil.encode(givenUser.getEmail(), givenUser.getPassword()))
-                        .willThrow(new UserBadRequestException());
+                given(userRepository.findByEmail(eq(givenUser.getEmail())))
+                        .willThrow(new AuthenticationBadRequestException());
 
                 assertThatThrownBy(() -> authenticationService.createToken(givenUser))
-                        .isInstanceOf(UserBadRequestException.class)
-                        .hasMessageContaining("User bad request");
+                        .isInstanceOf(AuthenticationBadRequestException.class)
+                        .hasMessageContaining("Authentication bad request");
             }
         }
     }
@@ -145,7 +147,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("주어진 토큰을 파싱하여 안에 담긴 사용자 정보를 리턴한다")
+            @DisplayName("주어진 토큰을 해석하여 안에 담긴 내용을 리턴한다")
             void itParsesTokenAndReturnsUser() {
                 given(jwtUtil.decode(givenValidToken)).willReturn(claims);
 

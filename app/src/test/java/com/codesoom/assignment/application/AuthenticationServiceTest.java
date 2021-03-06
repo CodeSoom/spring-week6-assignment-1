@@ -1,6 +1,8 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,27 +10,42 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "WRONG";
 
     private AuthenticationService authenticationService;
+
+    private UserRepository userRepository= mock(UserRepository.class);
 
     @BeforeEach
     void setUp() {
         JwtUtil jwtUtil = new JwtUtil(SECRET);
-        authenticationService = new AuthenticationService(jwtUtil);
+        authenticationService = new AuthenticationService(userRepository, jwtUtil);
     }
+
+
     @Test
-    void login(String email, String password) {
-        String accessToken = authenticationService.login("tester@example.com", "test");
+    void loginWithRightEmailAndPassword() {
+        String accessToken = authenticationService
+                .login("tester@example.com", "test");
 
-        assertThat(accessToken).contains(".");
+        assertThat(accessToken).isEqualTo(VALID_TOKEN);
 
+        verify(userRepository).findByEmail("tester@example.com");
+    }
+
+    @Test
+    void loginWithWrongEmail() {
+//        assertThatThrownBy(() -> authenticationService
+//                .login("badrequest@example.com", "test")
+//        )
+//                .isInstanceOf(LoginFailException.class);
     }
 
     @Test

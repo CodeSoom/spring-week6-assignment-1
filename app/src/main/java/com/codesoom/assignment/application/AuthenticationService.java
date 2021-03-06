@@ -28,15 +28,15 @@ public class AuthenticationService {
 
         try {
             user = findUserByEmail(accountData.getEmail());
-        } catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             throw new FailedAuthenticationException();
         }
 
-        if (user.getPassword().equals(accountData.getPassword())) {
-            return jwtUtil.encode(user.getId());
+        if (!user.getPassword().equals(accountData.getPassword())) {
+            throw new FailedAuthenticationException();
         }
 
-        throw new FailedAuthenticationException();
+        return jwtUtil.encode(user.getId());
     }
 
     public Long parseToken(String accessToken) {

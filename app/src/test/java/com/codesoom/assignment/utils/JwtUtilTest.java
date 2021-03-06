@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JwtUtilTest {
+    // HMAC-SHA256을 사용하기 위한 32자리의 key입니다.
     private static final String SECRET = "12345678901234567890123456789012";
 
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +

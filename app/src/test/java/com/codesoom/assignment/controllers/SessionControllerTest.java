@@ -48,7 +48,7 @@ class SessionControllerTest {
     @Test
     void loginWithUnsavedEmail() throws Exception {
         given(authenticationService.login(any(AccountData.class)))
-                .willThrow(UserNotFoundException.class);
+                .willThrow(FailedAuthenticationException.class);
 
         mockMvc.perform(
                 post("/session")

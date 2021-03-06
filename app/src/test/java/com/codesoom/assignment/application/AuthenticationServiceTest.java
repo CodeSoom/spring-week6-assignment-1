@@ -69,13 +69,13 @@ class AuthenticationServiceTest {
                 .build();
         assertThatThrownBy(
                 () -> authenticationService.login(accountDataWithUnsavedEmail)
-        ).isInstanceOf(UserNotFoundException.class);
+        ).isInstanceOf(FailedAuthenticationException.class);
 
         // With invalid password
         AccountData accountDataWithInvalidPassword = AccountData.builder()
-                                                                .email(givenSavedEmail)
-                                                                .password(givenInvalidPassword)
-                                                                .build();
+                .email(givenSavedEmail)
+                .password(givenInvalidPassword)
+                .build();
         assertThatThrownBy(
                 () -> authenticationService.login(accountDataWithInvalidPassword)
         ).isInstanceOf(FailedAuthenticationException.class);

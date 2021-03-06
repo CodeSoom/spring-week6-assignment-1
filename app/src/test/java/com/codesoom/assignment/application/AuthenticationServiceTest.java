@@ -24,8 +24,8 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(jwtUtil);
     }
     @Test
-    void login() {
-        String accessToken = authenticationService.login();
+    void login(String email, String password) {
+        String accessToken = authenticationService.login("tester@example.com", "test");
 
         assertThat(accessToken).contains(".");
 

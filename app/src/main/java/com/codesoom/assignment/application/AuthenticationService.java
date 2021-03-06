@@ -18,7 +18,7 @@ public class AuthenticationService {
     }
 
 
-    public String login() {
+    public String login(String email, String password) {
         return jwtUtil.encode(1L);
     }
 

@@ -279,6 +279,14 @@ class ProductControllerTest {
     }
 
     @Test
+    void destroyWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                delete("/products/1")
+        )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1")

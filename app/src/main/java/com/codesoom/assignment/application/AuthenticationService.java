@@ -1,11 +1,15 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 
 
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  *  인증에 관한 처리를 담당합니다.
@@ -22,7 +26,12 @@ public class AuthenticationService {
 
 
     public String login(String email, String password) {
-        userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if(user.isEmpty()) {
+            throw new LoginFailException(email);
+        }
+
         return jwtUtil.encode(1L);
     }
 

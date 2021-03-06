@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
@@ -8,8 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -27,6 +31,12 @@ class AuthenticationServiceTest {
     void setUp() {
         JwtUtil jwtUtil = new JwtUtil(SECRET);
         authenticationService = new AuthenticationService(userRepository, jwtUtil);
+
+
+        User user = User.builder().build();
+
+        given(userRepository.findByEmail("tester@example.com"))
+                .willReturn(Optional.of(user));
     }
 
 
@@ -42,10 +52,12 @@ class AuthenticationServiceTest {
 
     @Test
     void loginWithWrongEmail() {
-//        assertThatThrownBy(() -> authenticationService
-//                .login("badrequest@example.com", "test")
-//        )
-//                .isInstanceOf(LoginFailException.class);
+        assertThatThrownBy(() -> authenticationService
+                .login("badrequest@example.com", "test")
+        )
+                .isInstanceOf(LoginFailException.class);
+
+        verify(userRepository).findByEmail("badrequest@example.com");
     }
 
     @Test

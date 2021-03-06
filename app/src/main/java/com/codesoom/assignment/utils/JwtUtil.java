@@ -34,7 +34,7 @@ public class JwtUtil {
      */
     public String encode(Long userId) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() - validTime);
+        Date expiration = new Date(now.getTime() + validTime);
 
         return Jwts.builder()
                 .claim("userId", userId)

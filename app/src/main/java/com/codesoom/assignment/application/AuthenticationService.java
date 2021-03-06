@@ -16,8 +16,8 @@ public class AuthenticationService {
    }
 
     /**
-     * userId에 따른 엑세스토큰을 반환합니다.
-     * @return 엑세스 토큰
+     * 로그인 정보에 따른 엑세스토큰을 반환합니다.
+     * @return 엑세스토큰
      */
     public String login() {
         return jwtUtil.encode(1L);

@@ -61,7 +61,6 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-
     private UserResultData getUserResultData(User user) {
         return UserResultData.builder()
                 .id(user.getId())

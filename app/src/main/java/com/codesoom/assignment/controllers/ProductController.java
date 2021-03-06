@@ -66,7 +66,7 @@ public class ProductController {
     }
 
     /**
-     * 특정 제품을 찾아 수정된 제품 정보로 갱신합니다.
+     * 제품을 찾아 정보를 수정하고 리턴합니다.
      * @param id 찾을 제품의 식별자
      * @param productData 수정된 제품 정보
      * @return 갱신된 제품

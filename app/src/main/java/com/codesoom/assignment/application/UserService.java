@@ -27,7 +27,7 @@ public class UserService {
     }
 
     /**
-     * 가입정보에 따른 회원 정보를 반환합니다.
+     * 회원을 가입 처리하고 가입된 회원 정보를 반환합니다.
      * @param registrationData 가입정보
      * @return 회원 정보
      * @throws UserEmailDuplicationException 등록하고자 하는 이메일이 이미 존재할 경우

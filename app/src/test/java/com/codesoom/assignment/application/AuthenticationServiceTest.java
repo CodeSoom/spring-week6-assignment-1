@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -26,7 +25,7 @@ class AuthenticationServiceTest {
     final String givenSavedEmail = "newoo4297@codesoom.com";
     final String givenUnsavedEmail = "law@codesoom.com";
     final String givenValidPassword = "1234567890";
-    final String givenInvalidPassword = "12345";
+    final String givenInvalidPassword = "123457891";
 
     private AuthenticationService authenticationService;
 
@@ -48,11 +47,24 @@ class AuthenticationServiceTest {
                                 .password(givenValidPassword)
                                 .build())
                 );
+
+        given(userRepository.findByEmail(givenSavedEmail))
+                .willReturn(
+                        Optional.of(User.builder()
+                                .id(1L)
+                                .email(givenSavedEmail)
+                                .name("Tester")
+                                .password(givenValidPassword)
+                                .build())
+                );
     }
 
     @Test
     void loginWithValidAccountData() {
-        AccountData accountData = AccountData.builder().email(givenSavedEmail).password(givenValidPassword).build();
+        AccountData accountData = AccountData.builder()
+                                            .email(givenSavedEmail)
+                                            .password(givenValidPassword)
+                                            .build();
         String accessToken = authenticationService.login(accountData);
 
         assertThat(accessToken).isEqualTo(validToken);
@@ -61,18 +73,19 @@ class AuthenticationServiceTest {
     @Test
     void loginWithInvalidAccountData() {
         // With unsaved email
-        AccountData accountDataWithUnsavedEmail =
-                AccountData.builder()
-                .email(givenUnsavedEmail)
-                .password(givenValidPassword)
-                .build();
+        AccountData accountDataWithUnsavedEmail = AccountData.builder()
+                                                            .email(givenUnsavedEmail)
+                                                            .password(givenValidPassword)
+                                                            .build();
         assertThatThrownBy(
                 () -> authenticationService.login(accountDataWithUnsavedEmail)
         ).isInstanceOf(UserNotFoundException.class);
 
         // With invalid password
-        AccountData accountDataWithInvalidPassword =
-                AccountData.builder().email(givenSavedEmail).password(givenInvalidPassword).build();
+        AccountData accountDataWithInvalidPassword = AccountData.builder()
+                                                                .email(givenSavedEmail)
+                                                                .password(givenInvalidPassword)
+                                                                .build();
         assertThatThrownBy(
                 () -> authenticationService.login(accountDataWithInvalidPassword)
         ).isInstanceOf(InvalidPasswordException.class);

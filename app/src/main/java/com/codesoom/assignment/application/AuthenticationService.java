@@ -3,6 +3,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AccountData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidPasswordException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -29,7 +30,7 @@ public class AuthenticationService {
             return jwtUtil.encode(user.getId());
         }
 
-        throw new UserNotFoundException(accountData.getEmail());
+        throw new InvalidPasswordException();
     }
 
     public Long parseToken(String accessToken) {

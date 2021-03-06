@@ -122,66 +122,6 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    void updateWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
-
-        verify(productService).updateProduct(eq(1L), any(ProductData.class));
-    }
-
-    @Test
-    void updateWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isNotFound());
-
-        verify(productService).updateProduct(eq(1000L), any(ProductData.class));
-    }
-
-    @Test
-    void updateWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void destroyWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1")
-        )
-                .andExpect(status().isNoContent());
-
-        verify(productService).deleteProduct(1L);
-    }
-
-    @Test
-    void destroyWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1000")
-        )
-                .andExpect(status().isNotFound());
-
-        verify(productService).deleteProduct(1000L);
-    }
-
     @Nested
     @DisplayName("[POST] /products 요청은")
     class Describe_post_products_request {
@@ -227,6 +167,111 @@ class ProductControllerTest {
                                 .header("Authorization", "Bearer " + invalidSessionToken)
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+                )
+                        .andExpect(status().isBadRequest());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("[PATCH] /products/{id} 요청은")
+    class Describe_patch_products_request {
+        @Test
+        void updateWithExistedProduct() throws Exception {
+            mockMvc.perform(
+                    patch("/products/1")
+                            .accept(MediaType.APPLICATION_JSON_UTF8)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + sessionToken)
+                            .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                    "\"price\":5000}")
+            )
+                    .andExpect(status().isOk())
+                    .andExpect(content().string(containsString("쥐순이")));
+
+            verify(productService).updateProduct(eq(1L), any(ProductData.class));
+        }
+
+        @Test
+        void updateWithNotExistedProduct() throws Exception {
+            mockMvc.perform(
+                    patch("/products/1000")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + sessionToken)
+                            .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                    "\"price\":5000}")
+            )
+                    .andExpect(status().isNotFound());
+
+            verify(productService).updateProduct(eq(1000L), any(ProductData.class));
+        }
+
+        @Test
+        void updateWithInvalidAttributes() throws Exception {
+            mockMvc.perform(
+                    patch("/products/1")
+                            .accept(MediaType.APPLICATION_JSON_UTF8)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + sessionToken)
+                            .content("{\"name\":\"\",\"maker\":\"\"," +
+                                    "\"price\":0}")
+            )
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Nested
+        @DisplayName("올바른 세션이 아닐 때")
+        class Context_without_valid_session {
+            @Test
+            @DisplayName("bad request 를 응답한다.")
+            void It_respond_bad_request() throws Exception {
+                mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + invalidSessionToken)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                        .andExpect(status().isBadRequest());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("[DELETE] /products/{id} 요청은")
+    class Describe_delete_products_request {
+        @Test
+        void destroyWithExistedProduct() throws Exception {
+            mockMvc.perform(
+                    delete("/products/1")
+                            .header("Authorization", "Bearer " + sessionToken)
+            )
+                    .andExpect(status().isNoContent());
+
+            verify(productService).deleteProduct(1L);
+        }
+
+        @Test
+        void destroyWithNotExistedProduct() throws Exception {
+            mockMvc.perform(
+                    delete("/products/1000")
+                            .header("Authorization", "Bearer " + sessionToken)
+            )
+                    .andExpect(status().isNotFound());
+
+            verify(productService).deleteProduct(1000L);
+        }
+
+        @Nested
+        @DisplayName("올바른 세션이 아닐 때")
+        class Context_without_valid_session {
+            @Test
+            @DisplayName("bad request 를 응답한다.")
+            void It_respond_bad_request() throws Exception {
+                mockMvc.perform(
+                        delete("/products/1")
+                                .header("Authorization", "Bearer " + invalidSessionToken)
                 )
                         .andExpect(status().isBadRequest());
             }

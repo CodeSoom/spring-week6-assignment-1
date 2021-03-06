@@ -65,16 +65,42 @@ public class ProductController {
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
+            @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
+        final String accessToken = authorization.substring("Bearer ".length());
+        final Claims body = jwt.decode(accessToken).getBody();
+        final Boolean valid = authService.valid(
+                body.get("id", Long.class),
+                body.get("email", String.class),
+                body.get("name", String.class)
+        );
+
+        if (!valid) {
+            throw new WrongUserException();
+        }
+
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authorization
     ) {
+        final String accessToken = authorization.substring("Bearer ".length());
+        final Claims body = jwt.decode(accessToken).getBody();
+        final Boolean valid = authService.valid(
+                body.get("id", Long.class),
+                body.get("email", String.class),
+                body.get("name", String.class)
+        );
+
+        if (!valid) {
+            throw new WrongUserException();
+        }
+
         productService.deleteProduct(id);
     }
 }

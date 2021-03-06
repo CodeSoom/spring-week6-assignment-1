@@ -3,6 +3,7 @@ package com.codesoom.assignment.dto;
 import com.github.dozermapper.core.Mapping;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,8 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginData {
+@EqualsAndHashCode
+public class UserLoginData implements UserLoginDataGettable {
     @NotBlank
     @Size(min = 3)
     @Email

@@ -35,7 +35,7 @@ public class AuthenticationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     TokenResponse login(@RequestBody @Valid UserLoginData loginData) {
-        String token = authService.createSession(loginData.getEmail(), loginData.getPassword());
+        String token = authService.createSession(loginData);
         return TokenResponse.builder()
                 .accessToken(token)
                 .build();

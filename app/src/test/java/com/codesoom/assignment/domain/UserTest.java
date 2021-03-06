@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.dto.UserLoginData;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,8 +36,8 @@ class UserTest {
                 .password("test")
                 .build();
 
-        assertThat(user.authenticate("test")).isTrue();
-        assertThat(user.authenticate("xxx")).isFalse();
+        assertThat(user.authenticate(new UserLoginData("", "test"))).isTrue();
+        assertThat(user.authenticate(new UserLoginData("", "xxx"))).isFalse();
     }
 
     @Test
@@ -46,7 +47,7 @@ class UserTest {
                 .deleted(true)
                 .build();
 
-        assertThat(user.authenticate("test")).isFalse();
-        assertThat(user.authenticate("xxx")).isFalse();
+        assertThat(user.authenticate(new UserLoginData("", "test"))).isFalse();
+        assertThat(user.authenticate(new UserLoginData("", "xxx"))).isFalse();
     }
 }

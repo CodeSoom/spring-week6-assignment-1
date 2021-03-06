@@ -1,10 +1,12 @@
 package com.codesoom.assignment.errors;
 
+import com.codesoom.assignment.dto.UserLoginDataGettable;
+
 /**
- * 유저 로그인 실패 예외.
+ * 유저 인증 실패 예외
  */
 public class UserAuthenticationFailedException extends RuntimeException {
-    public UserAuthenticationFailedException(String email) {
-        super("User authentication failed: " + email);
+    public UserAuthenticationFailedException(UserLoginDataGettable loginData) {
+        super("User authentication failed: " + loginData.getEmail());
     }
 }

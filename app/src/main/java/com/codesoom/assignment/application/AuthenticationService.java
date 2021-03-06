@@ -2,8 +2,8 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserLoginDataGettable;
 import com.codesoom.assignment.errors.UserAuthenticationFailedException;
-import com.codesoom.assignment.errors.UserEmailNotExistException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 
@@ -41,30 +41,29 @@ public class AuthenticationService {
     }
 
     /**
-     * 주어진 유저 정보로 생성한 인증 토큰을 반환합니다.
+     * 주어진 로그인 정보로 생성한 인증 토큰을 반환합니다.
      *
-     * @param email    유저 email
-     * @param password 유저 password
+     * @param loginData 로그인 정보
      * @return 인증 토큰
      * @throws UserAuthenticationFailedException 인증에 실패한 경우
      */
-    public String createSession(String email, String password) {
-        User user = findUserByEmail(email);
-        if (!user.authenticate(password)) {
-            throw new UserAuthenticationFailedException(email);
+    public String createSession(UserLoginDataGettable loginData) {
+        User user = findUserByEmail(loginData);
+        if (!user.authenticate(loginData)) {
+            throw new UserAuthenticationFailedException(loginData);
         }
 
         return encode(user.getId());
     }
 
     /**
-     * 주어진 유저 email와 일치하는 유저를 반환합니다.
+     * 주어진 로그인 정보와 일치하는 유저를 반환합니다.
      *
-     * @param email 유저 email
+     * @param loginData 로그인 정보
      * @return 유저
      */
-    private User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserEmailNotExistException(email));
+    private User findUserByEmail(UserLoginDataGettable loginData) {
+        return userRepository.findByEmail(loginData.getEmail())
+                .orElseThrow(() -> new UserAuthenticationFailedException(loginData));
     }
 }

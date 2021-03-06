@@ -6,7 +6,6 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.UserAuthenticationFailedException;
-import com.codesoom.assignment.errors.UserEmailNotExistException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,16 +39,24 @@ class AuthenticationControllerTest {
     private final User GENERAL_USER = AuthenticationTestFixture.GENERAL_USER;
     private final User NON_EXISTENT_USER = AuthenticationTestFixture.NON_EXISTENT_USER;
 
+
     @BeforeEach
     void setUp() {
         Mockito.reset(authenticationService);
+        final UserLoginData VALID_LOGIN_DATA =
+                new UserLoginData(GENERAL_USER.getEmail(), GENERAL_USER.getPassword());
+        final UserLoginData NON_EXISTENT_LOGIN_DATA =
+                new UserLoginData(NON_EXISTENT_USER.getEmail(), GENERAL_USER.getPassword());
+        final UserLoginData UNAUTHORIZED_LOGIN_DATA =
+                new UserLoginData(GENERAL_USER.getEmail(), NON_EXISTENT_USER.getPassword());
 
-        given(authenticationService.createSession(GENERAL_USER.getEmail(), GENERAL_USER.getPassword()))
+
+        given(authenticationService.createSession(VALID_LOGIN_DATA))
                 .willReturn(AuthenticationTestFixture.VALID_TOKEN);
-        given(authenticationService.createSession(NON_EXISTENT_USER.getEmail(), GENERAL_USER.getPassword()))
-                .willThrow(new UserEmailNotExistException(NON_EXISTENT_USER.getEmail()));
-        given(authenticationService.createSession(GENERAL_USER.getEmail(), NON_EXISTENT_USER.getPassword()))
-                .willThrow(new UserAuthenticationFailedException(GENERAL_USER.getEmail()));
+        given(authenticationService.createSession(NON_EXISTENT_LOGIN_DATA))
+                .willThrow(new UserAuthenticationFailedException(NON_EXISTENT_LOGIN_DATA));
+        given(authenticationService.createSession(UNAUTHORIZED_LOGIN_DATA))
+                .willThrow(new UserAuthenticationFailedException(UNAUTHORIZED_LOGIN_DATA));
     }
 
     @Nested

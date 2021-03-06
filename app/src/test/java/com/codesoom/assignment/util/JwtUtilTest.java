@@ -13,8 +13,8 @@ class JwtUtilTest {
     private JwtUtil jwtUtil;
 
     private static final String SECRET = "12345678901234567890123456789010";
-    private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImV4aXN0ZWRFbWFpbCIsInBhc3N3b3JkIjoiZXhpc3RlZFBhc3N3b3JkIn0." +
-            "iqS2XKpt7blLuhlACfLFdomPsjXzC9RGW67mJGB0NaA";
+    private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
+            "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXY";
 
     private final String EXISTED_EMAIL = "existedEmail";
 

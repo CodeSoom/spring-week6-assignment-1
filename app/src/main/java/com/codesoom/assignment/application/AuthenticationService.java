@@ -67,7 +67,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 주어진 토큰을 해석하여 사용자 정보를 리넌한다.
+     * 주어진 토큰을 해석하여 사용자 정보를 리턴한다.
      *
      * @param token - 파싱하고자 하는 토큰 문자열
      * @return 주어진 {@code accessToken}의 사용자 정보

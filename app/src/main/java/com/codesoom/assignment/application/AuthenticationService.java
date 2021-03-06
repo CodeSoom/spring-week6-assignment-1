@@ -26,9 +26,10 @@ public class AuthenticationService {
 
 
     public String login(String email, String password) {
-        Optional<User> user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new LoginFailException(email));
 
-        if(user.isEmpty()) {
+        if(!user.authenticate(password)) {
             throw new LoginFailException(email);
         }
 

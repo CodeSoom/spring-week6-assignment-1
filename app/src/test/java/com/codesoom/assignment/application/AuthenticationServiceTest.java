@@ -33,7 +33,9 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(userRepository, jwtUtil);
 
 
-        User user = User.builder().build();
+        User user = User.builder()
+                .password("test")
+                .build();
 
         given(userRepository.findByEmail("tester@example.com"))
                 .willReturn(Optional.of(user));
@@ -58,6 +60,16 @@ class AuthenticationServiceTest {
                 .isInstanceOf(LoginFailException.class);
 
         verify(userRepository).findByEmail("badrequest@example.com");
+    }
+
+    @Test
+    void loginWithWrongPassword() {
+        assertThatThrownBy(() -> authenticationService
+                .login("tester@example.com", "xxx")
+        )
+                .isInstanceOf(LoginFailException.class);
+
+        verify(userRepository).findByEmail("tester@example.com");
     }
 
     @Test

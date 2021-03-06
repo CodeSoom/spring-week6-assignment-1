@@ -47,7 +47,6 @@ public class ProductController {
         String accessToken = authorization.substring("Bearer ".length());
         Long userId = authenticationService.parseToken(accessToken);
 
-
         return productService.createProduct(productData);
     }
 
@@ -70,8 +69,6 @@ public class ProductController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingRequestHeaderException.class)
     public void handleMissingRequestHeaderException(){
-        //
     }
-
 
 }

@@ -3,10 +3,12 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin
 @RestController
 public class SessionController {
 
@@ -19,7 +21,6 @@ public class SessionController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/session")
     public SessionResponseData login(){
-
         String accessToken = authenticationService.login();
 
         return SessionResponseData.builder()

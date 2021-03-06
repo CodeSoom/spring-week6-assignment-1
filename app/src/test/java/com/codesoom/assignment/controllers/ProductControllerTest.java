@@ -209,8 +209,6 @@ class ProductControllerTest {
                                 "\"price\":5000}")
         )
                 .andExpect(status().isUnauthorized());
-
-        verify(productService).updateProduct(eq(1L), any(ProductData.class));
     }
 
     @Test

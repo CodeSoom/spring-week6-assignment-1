@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -113,6 +114,20 @@ class ProductControllerTest {
             .andExpect(content().string(containsString("쥐돌이")));
 
         verify(productService).createProduct(any(ProductData.class));
+    }
+
+    @Test
+    @DisplayName("invalid token이 주어졌을 때 product를 생성하려는 경우 요청이 실패한다")
+    void createWithValidAttributesAndInvalidToken() throws Exception {
+        mockMvc.perform(
+            post("/products")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+                .header("Authorization", "LasToken " + INVALID_TOKEN)
+        )
+            .andExpect(status().isUnauthorized());
     }
 
     @Test

@@ -279,6 +279,15 @@ class ProductControllerTest {
     }
 
     @Test
+    void destroyWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+                delete("/products/1")
+                        .header("Authorization", "Bearer " + INVALID_TOKEN)
+        )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void destroyWithoutAccessToken() throws Exception {
         mockMvc.perform(
                 delete("/products/1")

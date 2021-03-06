@@ -68,7 +68,7 @@ public class ProductController {
     ) {
         String accessToken = authorization.substring("Bearer ".length());
         Long userId = authenticationService.parseToken(accessToken);
-        
+
         productService.deleteProduct(id);
     }
 

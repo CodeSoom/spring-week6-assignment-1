@@ -17,10 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class SessionController {
     private AuthenticationService authenticationService;
 
+
     public SessionController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * 회원 로그인 정보에 따른 액세스토큰을 응답합니다.
+     * @return 액세스토큰
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login() {

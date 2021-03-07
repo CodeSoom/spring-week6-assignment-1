@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
@@ -31,6 +32,9 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
+    @MockBean
+    private AuthenticationService authenticationService;
+
     @BeforeEach
     void setUp() {
         given(userService.registerUser(any(UserRegistrationData.class)))
@@ -42,7 +46,6 @@ class UserControllerTest {
                             .name(registrationData.getName())
                             .build();
                 });
-
 
         given(userService.updateUser(eq(1L), any(UserModificationData.class)))
                 .will(invocation -> {

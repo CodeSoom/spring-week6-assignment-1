@@ -172,6 +172,8 @@ class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
+                .header("Authorization", "Bearer" + VALID_TOKEN)
+
         )
             .andExpect(status().isCreated())
             .andExpect(content().string(containsString("쥐돌이")));
@@ -198,11 +200,12 @@ class ProductControllerTest {
     @Test
     void updateWithExistedProduct() throws Exception {
         mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
+            patch("/products/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+                .header("Authorization", "Bearer" + VALID_TOKEN)
         )
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("쥐순이")));
@@ -214,25 +217,54 @@ class ProductControllerTest {
     @Test
     void updateWithNotExistedProduct() throws Exception {
         mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
+            patch("/products/1000")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+                .header("Authorization", "Bearer" + VALID_TOKEN)
         )
             .andExpect(status().isNotFound());
 
         verify(productService).updateProduct(eq(1000L), any(ProductData.class));
     }
 
+    @DisplayName("상품에 대해서 토큰이 없는 상태로 수정을 요청하면, 상태코드 400을 반환합니다.")
+    @Test
+    void updateWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+            patch("/products/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+        )
+            .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("상품에 대해서 유효하지 않은 토큰으로 수정을 요청하면, 상태코드 400을 반환합니다.")
+    @Test
+    void updateWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+            patch("/products/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+                .header("Authorization", "Bearer" + INVALID_TOKEN)
+        )
+            .andExpect(status().isUnauthorized());
+    }
+
     @DisplayName("상품에 대해서 수정을 유효하지 않은 형식으로 요청하면, 상태코드 400을 반환합니다.")
     @Test
     void updateWithInvalidAttributes() throws Exception {
         mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
+            patch("/products/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"maker\":\"\"," +
+                    "\"price\":0}")
+                .header("Authorization", "Bearer" + VALID_TOKEN)
         )
             .andExpect(status().isBadRequest());
     }
@@ -241,7 +273,8 @@ class ProductControllerTest {
     @Test
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
-                delete("/products/1")
+            delete("/products/1")
+                .header("Authorization", "Bearer" + VALID_TOKEN)
         )
             .andExpect(status().isNoContent());
 
@@ -252,7 +285,8 @@ class ProductControllerTest {
     @Test
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
-                delete("/products/1000")
+            delete("/products/1000")
+                .header("Authorization", "Bearer" + VALID_TOKEN)
         )
             .andExpect(status().isNotFound());
 

@@ -97,4 +97,17 @@ public class AuthenticationServiceTest {
     public void givenNotIssuedToken() {
         token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2UifQ.1KP0SsvENi7Uz1oQc07aXTL7kpQG5jBNIybqr60AlD4";
     }
+
+    @When("잘못된 password로 인증을 하게된다면")
+    public void authenticateUsingWrongPassword() {
+        String invalidPassword = userPassword + "INVALID";
+        try {
+            authenticUser = authenticationService.authenticate(
+                userEmail,
+                invalidPassword
+            );
+        } catch (InvalidUserInformationException invalidUserInformationException) {
+            exception = invalidUserInformationException;
+        }
+    }
 }

@@ -89,7 +89,7 @@ class ProductControllerTest {
 
     }
 
-    @DisplayName("상품 리스트 조회를 요청했을 때, 상태코드 200과 함께 상품 리스트를 반환합니다.")
+    @DisplayName("상품 리스트 조회를 요청 하면, 상태코드 200과 함께 상품 리스트를 반환합니다.")
     @Test
     void list() throws Exception {
         mockMvc.perform(
@@ -100,7 +100,7 @@ class ProductControllerTest {
                 .andExpect(content().string(containsString("쥐돌이")));
     }
 
-    @DisplayName("상품 상세 조회를 요청했을 때, 상태코드 200과 함께 생성된 상품을 반환합니다.")
+    @DisplayName("상품 상세 조회를 요청 하면, 상태코드 200과 함께 생성된 상품을 반환합니다.")
     @Test
     void deatilWithExsitedProduct() throws Exception {
         mockMvc.perform(
@@ -111,7 +111,7 @@ class ProductControllerTest {
                 .andExpect(content().string(containsString("쥐돌이")));
     }
 
-    @DisplayName("상품 상세 조회를 요청했을 때 상품이 존재하지 않는다면, 상태코드 201을 반환합니다.")
+    @DisplayName("상품 상세 조회를 요청 및 상품이 존재하지 않는다면, 상태코드 201을 반환합니다.")
     @Test
     void deatilWithNotExsitedProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
@@ -248,7 +248,7 @@ class ProductControllerTest {
         verify(productService).deleteProduct(1L);
     }
 
-    @DisplayName("상품에 대해서 삭제를 요청할 때 상품이 존재하지 않으면, 상태코드 404를 반환합니다.")
+    @DisplayName("상품에 대해서 삭제를 요청하고 상품이 존재하지 않으면, 상태코드 404를 반환합니다.")
     @Test
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(

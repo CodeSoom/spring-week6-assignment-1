@@ -61,6 +61,9 @@ public class AuthenticationService {
     public void validateToken(String token) throws InvalidAccessesTokenException {
         try {
             Key key = Keys.hmacShaKeyFor(secret.getBytes());
+            if(token.startsWith("Bearer ")) {
+                token = token.replace("Bearer ", "");
+            }
             Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

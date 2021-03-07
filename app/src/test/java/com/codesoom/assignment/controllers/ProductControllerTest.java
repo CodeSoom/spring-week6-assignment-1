@@ -215,6 +215,7 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
             delete("/products/1")
+                .header("Authorization", "LasToken " + VALID_TOKEN)
         )
             .andExpect(status().isNoContent());
 
@@ -225,9 +226,20 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
             delete("/products/1000")
+                .header("Authorization", "LasToken " + VALID_TOKEN)
         )
             .andExpect(status().isNotFound());
 
         verify(productService).deleteProduct(1000L);
+    }
+
+    @Test
+    @DisplayName("invalid token이 주어졌을 때 product를 삭제하는 경우 요청이 실패한다")
+    void destroyWithExistedProductAndInvalidToken() throws Exception {
+        mockMvc.perform(
+            delete("/products/1")
+                .header("Authorization", "LasToken " + INVALID_TOKEN)
+        )
+            .andExpect(status().isUnauthorized());
     }
 }

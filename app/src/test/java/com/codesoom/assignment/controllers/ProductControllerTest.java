@@ -172,6 +172,22 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("invalid token이 주어졌을 때 product를 수정하려는 경우 요청이 실패한다")
+    void updateWithExistedProductWithInvalidToken() throws Exception {
+        mockMvc.perform(
+            patch("/products/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+                .header("Authorization", "LasToken " + VALID_TOKEN)
+        )
+            .andExpect(status().isUnauthorized());
+
+        verify(productService).updateProduct(eq(1L), any(ProductData.class));
+    }
+
+    @Test
     void updateWithNotExistedProduct() throws Exception {
         mockMvc.perform(
             patch("/products/1000")

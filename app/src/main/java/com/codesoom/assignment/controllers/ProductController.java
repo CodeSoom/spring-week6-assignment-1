@@ -61,20 +61,14 @@ public class ProductController {
 
     /**
      * 상품 생성을 요청하면, 생성된 상품을 반환한다.
-     * @param authorization
      * @param productData
      * @return 생성된 상품
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer".length());
-        Long userId = authenticationService.parseToken(accessToken);
-
-        System.out.println("******* userId: " + userId);
         return productService.createProduct(productData);
     }
 

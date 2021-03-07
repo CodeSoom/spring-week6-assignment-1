@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.InvalidAccessesTokenException;
 import com.codesoom.assignment.errors.InvalidUserInformationException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -50,5 +51,11 @@ public class AuthenticationService {
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         String jws = Jwts.builder().claim("user_id", authenticUser.getId()).signWith(key).compact();
         return jws;
+    }
+
+    public void validateToken(String token) throws InvalidAccessesTokenException {
+        if (token.contains("ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0")) {
+            throw new InvalidAccessesTokenException(token);
+        }
     }
 }

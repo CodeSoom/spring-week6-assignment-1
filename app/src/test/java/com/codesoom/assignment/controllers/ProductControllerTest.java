@@ -1,8 +1,10 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidAccessesTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +21,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +39,9 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService productService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
@@ -72,6 +78,13 @@ class ProductControllerTest {
 
         given(productService.deleteProduct(1000L))
             .willThrow(new ProductNotFoundException(1000L));
+
+        doThrow(new InvalidAccessesTokenException(INVALID_TOKEN))
+            .when(authenticationService)
+            .validateToken("LasToken " + INVALID_TOKEN);
+        doNothing()
+            .when(authenticationService)
+            .validateToken("LasToken " + VALID_TOKEN);
     }
 
     @Test
@@ -108,7 +121,7 @@ class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
-            .header("Authorization", "LasToken " + VALID_TOKEN)
+                .header("Authorization", "LasToken " + VALID_TOKEN)
         )
             .andExpect(status().isCreated())
             .andExpect(content().string(containsString("쥐돌이")));

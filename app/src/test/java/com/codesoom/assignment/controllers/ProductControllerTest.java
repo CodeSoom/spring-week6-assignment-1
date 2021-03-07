@@ -163,6 +163,7 @@ class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
+                .header("Authorization", "LasToken " + VALID_TOKEN)
         )
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("쥐순이")));
@@ -177,6 +178,7 @@ class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
+                .header("Authorization", "LasToken " + VALID_TOKEN)
         )
             .andExpect(status().isNotFound());
 

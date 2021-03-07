@@ -17,7 +17,7 @@ public class TimeUtil {
      * LocalDatetime 값을 Date로 변환해 리턴합니다.
      *
      * @param localDateTime 입력받은 시간
-     * @return 변경된 시간 포맷
+     * @return 포맷이 변경된 시간
      */
     public static Date convertLocalDateTime(LocalDateTime localDateTime) {
         ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.systemDefault());

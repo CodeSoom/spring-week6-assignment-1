@@ -70,7 +70,7 @@ public class ProductService {
     }
 
     /**
-     * 등록된 상품을 삭제한다.
+     * 등록된 상품을 삭제하고, 삭제된 상품 정보를 리턴한다.
      *
      * @param id 등록된 상품 식별자
      * @return 삭제된 상품 정보

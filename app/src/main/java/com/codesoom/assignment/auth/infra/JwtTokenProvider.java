@@ -72,7 +72,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 유효한 인증 토큰인지 검증합니다.
+     * 유효한 인증 토큰이면 true, 그렇지 않다면 false를 리턴합니다.
      * @param token 인증 토큰
      * @return 인증 성공 여부
      */

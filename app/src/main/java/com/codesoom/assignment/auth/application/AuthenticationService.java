@@ -42,12 +42,6 @@ public class AuthenticationService {
                 .orElseThrow(() -> new IllegalArgumentException(WRONG_DATA));
     }
 
-    /**
-     * 사용자 아이디에 해당하는 인증 토큰을 리턴합니다.
-     *
-     * @param userId 사용자 id
-     * @return 생성된 인증 토큰
-     */
     private String createToken(Long userId) {
         return jwtTokenProvider.createToken(userId);
     }

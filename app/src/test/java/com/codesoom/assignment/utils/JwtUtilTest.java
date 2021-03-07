@@ -10,6 +10,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -56,6 +60,20 @@ class JwtUtilTest {
     @CsvSource(inValidToken)
     void decodeWithInValidToken(String token) {
         assertThrows(InvalidTokenException.class, () -> jwtUtil.decode(token));
+    }
+
+    @DisplayName("calculateExpiration 메소드에 현재 시간과 유효 기간이 주어진다면 만료 시간을 계산해 리턴한다.")
+    @Test
+    void calculateExpiration() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method method = jwtUtil.getClass()
+                .getDeclaredMethod("calculateExpiration", Date.class, long.class);
+        method.setAccessible(true);
+
+        Date now = new Date();
+        Date expiration = (Date) method.invoke(jwtUtil, now, validTime);
+
+        assertThat(expiration).isAfter(now);
+        assertThat(expiration.getTime()).isEqualTo(now.getTime() + validTime);
     }
 
 }

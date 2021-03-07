@@ -34,7 +34,7 @@ public class JwtUtil {
      */
     public String encode(Long userId) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + validTime);
+        Date expiration = calculateExpiration(now, validTime);
 
         return Jwts.builder()
                 .claim("userId", userId)
@@ -42,6 +42,10 @@ public class JwtUtil {
                 .setExpiration(expiration)
                 .signWith(key)
                 .compact();
+    }
+
+    private Date calculateExpiration(Date now, long validTime) {
+        return new Date(now.getTime() + validTime);
     }
 
     /**

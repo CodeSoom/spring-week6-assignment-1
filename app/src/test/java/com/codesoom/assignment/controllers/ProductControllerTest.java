@@ -33,9 +33,9 @@ import io.jsonwebtoken.Jwt;
 class ProductControllerTest {
 
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+        "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+        "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,38 +49,38 @@ class ProductControllerTest {
     @BeforeEach
     void setUp() {
         Product product = Product.builder()
-                .id(1L)
-                .name("쥐돌이")
-                .maker("냥이월드")
-                .price(5000)
-                .build();
+            .id(1L)
+            .name("쥐돌이")
+            .maker("냥이월드")
+            .price(5000)
+            .build();
         given(productService.getProducts()).willReturn(List.of(product));
 
         given(productService.getProduct(1L)).willReturn(product);
 
         given(productService.getProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+            .willThrow(new ProductNotFoundException(1000L));
 
         given(productService.createProduct(any(ProductData.class)))
-                .willReturn(product);
+            .willReturn(product);
 
         given(productService.updateProduct(eq(1L), any(ProductData.class)))
-                .will(invocation -> {
-                    Long id = invocation.getArgument(0);
-                    ProductData productData = invocation.getArgument(1);
-                    return Product.builder()
-                            .id(id)
-                            .name(productData.getName())
-                            .maker(productData.getMaker())
-                            .price(productData.getPrice())
-                            .build();
-                });
+            .will(invocation -> {
+                Long id = invocation.getArgument(0);
+                ProductData productData = invocation.getArgument(1);
+                return Product.builder()
+                    .id(id)
+                    .name(productData.getName())
+                    .maker(productData.getMaker())
+                    .price(productData.getPrice())
+                    .build();
+            });
 
         given(productService.updateProduct(eq(1000L), any(ProductData.class)))
-                .willThrow(new ProductNotFoundException(1000L));
+            .willThrow(new ProductNotFoundException(1000L));
 
         given(productService.deleteProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+            .willThrow(new ProductNotFoundException(1000L));
 
         given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
 
@@ -93,62 +93,29 @@ class ProductControllerTest {
     @Test
     void list() throws Exception {
         mockMvc.perform(
-                get("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
+            get("/products")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
         )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("쥐돌이")));
     }
 
     @DisplayName("상품 상세 조회를 요청 하면, 상태코드 200과 함께 생성된 상품을 반환합니다.")
     @Test
     void deatilWithExsitedProduct() throws Exception {
         mockMvc.perform(
-                get("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
+            get("/products/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
         )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("쥐돌이")));
     }
 
     @DisplayName("상품 상세 조회를 요청 및 상품이 존재하지 않는다면, 상태코드 201을 반환합니다.")
     @Test
     void deatilWithNotExsitedProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
-                .andExpect(status().isNotFound());
-    }
-
-    @DisplayName("상품 생성을 유효한 형식으로 토큰과 같이 요청하면, 상태코드 201을 반환합니다.")
-    @Test
-    void createWithValidAttributes() throws Exception {
-        mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-                    .header("Authorization", "Bearer" + VALID_TOKEN)
-
-        )
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("쥐돌이")));
-
-        verify(productService).createProduct(any(ProductData.class));
-    }
-
-    @DisplayName("상품 생성을 유효하지 않은 형식으로 요청하면 상태코드 400을 반환합니다.")
-    @Test
-    void createWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-                    .header("Authorization", "Bearer" + VALID_TOKEN)
-
-        )
-                .andExpect(status().isBadRequest());
+            .andExpect(status().isNotFound());
     }
 
     @DisplayName("상품 생성을 토큰과 같이 요청하면, 상태코드 201을 반환합니다.")
@@ -168,6 +135,21 @@ class ProductControllerTest {
         verify(productService).createProduct(any(ProductData.class));
     }
 
+    @DisplayName("상품 생성을 유효하지 않은 토큰으로 요청하면, 상태코드 401을 반환합니다.")
+    @Test
+    void createWithWrongAccessToken() throws Exception {
+        mockMvc.perform(
+            post("/products")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+                .header("Authorization", "Bearer" + INVALID_TOKEN)
+
+        )
+            .andExpect(status().isUnauthorized());
+    }
+
     @DisplayName("상품 생성을 액세스 토큰없이 요청하면, 상태코드 401을 반환합니다.")
     @Test
     void createWithoutAccessToken() throws Exception {
@@ -181,9 +163,9 @@ class ProductControllerTest {
             .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("상품 생성을 유효하지 않은 토큰으로 요청하면, 상태코드 401을 반환합니다.")
+    @DisplayName("상품 생성을 유효한 형식으로 토큰과 같이 요청하면, 상태코드 201을 반환합니다.")
     @Test
-    void createWithWrongAccessToken() throws Exception {
+    void createWithValidAttributes() throws Exception {
         mockMvc.perform(
             post("/products")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -191,7 +173,25 @@ class ProductControllerTest {
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
         )
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isCreated())
+            .andExpect(content().string(containsString("쥐돌이")));
+
+        verify(productService).createProduct(any(ProductData.class));
+    }
+
+    @DisplayName("상품 생성을 유효하지 않은 형식으로 요청하면 상태코드 400을 반환합니다.")
+    @Test
+    void createWithInvalidAttributes() throws Exception {
+        mockMvc.perform(
+            post("/products")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"maker\":\"\"," +
+                    "\"price\":0}")
+                .header("Authorization", "Bearer" + VALID_TOKEN)
+
+        )
+            .andExpect(status().isBadRequest());
     }
 
     @DisplayName("상품에 대해서 수정을 요청하면, 상태코드 200을 반환합니다.")
@@ -204,13 +204,13 @@ class ProductControllerTest {
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
         )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("쥐순이")));
 
         verify(productService).updateProduct(eq(1L), any(ProductData.class));
     }
 
-    @DisplayName("상품에 대해서 수정을 존재하지 않는 상품에 대해서 요청하면, 상태코드 404을 반환합니다.")
+    @DisplayName("상품에 대해서 수정을 존재하지 않는 상품에 대해서 수정을 요청하면, 상태코드 404을 반환합니다.")
     @Test
     void updateWithNotExistedProduct() throws Exception {
         mockMvc.perform(
@@ -219,7 +219,7 @@ class ProductControllerTest {
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
         )
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
 
         verify(productService).updateProduct(eq(1000L), any(ProductData.class));
     }
@@ -234,7 +234,7 @@ class ProductControllerTest {
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
         )
-                .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest());
     }
 
     @DisplayName("상품에 대해서 삭제를 요청하면 상태코드 200을 반환합니다.")
@@ -243,7 +243,7 @@ class ProductControllerTest {
         mockMvc.perform(
                 delete("/products/1")
         )
-                .andExpect(status().isNoContent());
+            .andExpect(status().isNoContent());
 
         verify(productService).deleteProduct(1L);
     }
@@ -254,7 +254,7 @@ class ProductControllerTest {
         mockMvc.perform(
                 delete("/products/1000")
         )
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
 
         verify(productService).deleteProduct(1000L);
     }

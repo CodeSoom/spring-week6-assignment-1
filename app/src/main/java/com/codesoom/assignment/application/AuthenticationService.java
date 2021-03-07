@@ -5,8 +5,9 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.errors.InvalidAccessesTokenException;
 import com.codesoom.assignment.errors.InvalidUserInformationException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -17,6 +18,7 @@ import java.security.Key;
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
+    private String secret = "1234567890123456789012345678912345678901234567890123456789";
 
     public AuthenticationService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -48,13 +50,19 @@ public class AuthenticationService {
      * @return 유저를 식별할 수 있는 토큰
      */
     public String issueToken(User authenticUser) {
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        Key key = Keys.hmacShaKeyFor(secret.getBytes());
         String jws = Jwts.builder().claim("user_id", authenticUser.getId()).signWith(key).compact();
         return jws;
     }
 
     public void validateToken(String token) throws InvalidAccessesTokenException {
-        if (token.contains("ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0")) {
+        try {
+            Key key = Keys.hmacShaKeyFor(secret.getBytes());
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parsePlaintextJws(token);
+        } catch (SignatureException | MalformedJwtException e) {
             throw new InvalidAccessesTokenException(token);
         }
     }

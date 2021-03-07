@@ -12,8 +12,7 @@ class JwtUtilTest {
     final String secret = "12345678901234567890123456789012";
     final String validToken
             = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    final String invalidToken
-            = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    final String invalidToken = validToken + "WRONG";
 
     private JwtUtil jwtUtil;
 

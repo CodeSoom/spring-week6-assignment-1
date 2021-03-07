@@ -5,7 +5,6 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AccountData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.FailedAuthenticationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,7 @@ import static org.mockito.Mockito.mock;
 class AuthenticationServiceTest {
     final String validToken
             = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    final String invalidToken
-            = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    final String invalidToken = validToken + "WRONG";
     final String givenSavedEmail = "newoo4297@codesoom.com";
     final String givenUnsavedEmail = "law@codesoom.com";
     final String givenValidPassword = "1234567890";

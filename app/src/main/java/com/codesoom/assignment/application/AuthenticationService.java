@@ -20,7 +20,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 평문을 암호화 시킨다.
+     * 로그인을 올바른 정보로 요청하면 토큰 값이 반환되고, 아니면 예외가 던져진다.
      * @return 암호화된 내용
      */
     public String login() {

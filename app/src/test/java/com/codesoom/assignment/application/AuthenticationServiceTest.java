@@ -10,6 +10,7 @@ import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,24 +90,16 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void parseTokenWithInvalidToken() {
-        assertThatThrownBy(
-                () -> authenticationService.parseToken(invalidToken)
-        ).isInstanceOf(InvalidAccessTokenException.class);
-    }
-
-    @Test
-    void parseTokenWithBlankToken() {
-        assertThatThrownBy(
-                () -> authenticationService.parseToken(null)
-        ).isInstanceOf(InvalidAccessTokenException.class);
-
-        assertThatThrownBy(
-                () -> authenticationService.parseToken("")
-        ).isInstanceOf(InvalidAccessTokenException.class);
-
-        assertThatThrownBy(
-                () -> authenticationService.parseToken(" ")
-        ).isInstanceOf(InvalidAccessTokenException.class);
+    void parseTokenWithBlankOrInvalidToken() {
+        Arrays.asList(
+                invalidToken,
+                null,
+                "",
+                " "
+        ).stream().forEach(invalidToken -> {
+            assertThatThrownBy(
+                    () -> authenticationService.parseToken(invalidToken)
+            ).isInstanceOf(InvalidAccessTokenException.class);
+        });
     }
 }

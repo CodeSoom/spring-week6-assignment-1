@@ -1,5 +1,6 @@
 package com.codesoom.assignment.dto;
 
+import com.codesoom.assignment.EmailSupplier;
 import com.github.dozermapper.core.Mapping;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor
-public class UserLoginData {
+public class UserLoginData implements EmailSupplier {
 
     @NotBlank
     @Mapping("email")

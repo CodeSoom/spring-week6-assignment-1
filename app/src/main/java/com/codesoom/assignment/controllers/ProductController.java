@@ -7,6 +7,7 @@ import com.codesoom.assignment.dto.ProductData;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 @CrossOrigin
+@Slf4j
 public class ProductController {
     private final ProductService productService;
 
@@ -57,6 +59,8 @@ public class ProductController {
 
         String accessToken = authorization.substring("Bearer ".length());
         Long userId = authenticationService.parseToken(accessToken);
+
+        log.info("유저 아이디 : " + userId);
 
         return productService.createProduct(productData);
     }

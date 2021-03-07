@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.EmailSupplier;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
@@ -33,7 +34,7 @@ public class AuthenticationService {
      */
     @Transactional
     public String login(UserLoginData userLoginData) {
-        User user = findUserByEmail(userLoginData.getEmail());
+        User user = findUserByEmail(userLoginData);
 
         if (!user.authenticate(userLoginData.getPassword())) {
             throw new AuthenticationFailException("비밀번호가 일치하지 않습니다.");
@@ -42,13 +43,13 @@ public class AuthenticationService {
         return jwtUtil.encode(user.getId());
     }
 
-    private User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+    private User findUserByEmail(EmailSupplier emailSupplier) {
+        return userRepository.findByEmail(emailSupplier.getEmail())
                 .orElseThrow(() -> new AuthenticationFailException("입력하신 이메일에 해당하는 회원이 존재하지 않습니다."));
     }
 
     /**
-     * 주어진 토큰을 파싱한 뒤 파싱된 값을 리턴합니다.
+     * 주어진 엑세스 토큰에서 추출한 사용자 아이디를 리턴합니다.
      *
      * @param accessToken 액세스 토큰
      * @return 파싱된 값

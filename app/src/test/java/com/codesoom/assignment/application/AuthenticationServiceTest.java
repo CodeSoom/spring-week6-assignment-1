@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,11 +52,11 @@ class AuthenticationServiceTest {
     private UserLoginData userLoginData;
     private UserLoginData userLoginDataWithoutExistingEmail;
     private UserLoginData userLoginDataWithWrongPassword;
-
+    private JwtUtil jwtUtil;
 
     @BeforeEach
     void setUp() {
-        JwtUtil jwtUtil = new JwtUtil(SECRET);
+        jwtUtil = new JwtUtil(SECRET);
 
         authenticationService = new AuthenticationService(jwtUtil, userRepository);
 
@@ -172,10 +173,17 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("값이 null이거나 비어있는 토큰이 주어지면")
         class Context_with_null_token {
+            final String[] givenTokens = new String[]{"", " ", null};
+
             @DisplayName("예외를 던진다.")
             @Test
             void it_throws_exception() {
                 assertThatThrownBy(() -> authenticationService.parseToken(NULL_TOKEN));
+
+                for (String token : givenTokens) {
+                    assertThrows(InvalidAccessTokenException.class,() -> jwtUtil.decode(token));
+                }
+
             }
         }
     }

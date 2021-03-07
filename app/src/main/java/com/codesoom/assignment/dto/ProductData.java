@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Setter
-@Getter
 @lombok.Generated
 @Builder
 @NoArgsConstructor
@@ -15,18 +14,22 @@ import javax.validation.constraints.NotNull;
 public class ProductData {
     private Long id;
 
+    @Getter
     @NotBlank
     @Mapping("name")
     private String name;
 
+    @Getter
     @NotBlank
     @Mapping("maker")
     private String maker;
 
+    @Getter
     @NotNull
     @Mapping("price")
     private Integer price;
 
+    @Getter
     @Mapping("imageUrl")
     private String imageUrl;
 }

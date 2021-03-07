@@ -50,7 +50,7 @@ class JwtUtilTest {
         assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
 
-    @DisplayName("decode에 유요하지 않은 토큰이 주어지면 예외를 던진다.")
+    @DisplayName("decode에 유효하지 않은 토큰이 주어지면 예외를 던진다.")
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "  "})

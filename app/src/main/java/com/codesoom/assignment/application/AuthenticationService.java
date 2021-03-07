@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -36,6 +37,10 @@ public class AuthenticationService {
     }
 
     public Long parseToken(String accessToken) {
+        if(accessToken == null) {
+            throw new InvalidAccessTokenException(accessToken);
+        }
+
         Claims claims = jwtUtil.decode(accessToken);
         return claims.get("userId", Long.class);
     }

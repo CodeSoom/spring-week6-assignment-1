@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JwtUtilTest {
 
-    private final long validTime = 3600000; // an hour
+    private final long validTime = 60 * 60 * 1000; // an hour
     private final String secret = "12345678901234567890123456789012";
 
     private final String validToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +

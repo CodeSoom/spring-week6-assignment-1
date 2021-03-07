@@ -7,4 +7,4 @@ spring:
 
 jwt:
   secret: "12345678901234567890123456789010"
-  valid-time: 3600000 # 60 * 60 * 1000 (an hour)
+  valid-time: 60 * 60 * 1000 # an hour

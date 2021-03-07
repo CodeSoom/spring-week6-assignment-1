@@ -87,4 +87,14 @@ public class AuthenticationServiceTest {
     public void doseNotRaiseError() {
         assertThat(exception).isNull();
     }
+
+    @Given("올바르지 않은 형태의 토큰이 주어졌을 때")
+    public void givenWrongFormToken() {
+        token = "lastoekn";
+    }
+
+    @Given("발급되지 않은 토큰이 주어졌을 때")
+    public void givenNotIssuedToken() {
+        token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2UifQ.1KP0SsvENi7Uz1oQc07aXTL7kpQG5jBNIybqr60AlD4";
+    }
 }

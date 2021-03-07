@@ -147,8 +147,8 @@ class ProductServiceTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("상품을 찾을 수 없다는 메시지를 리턴한다")
-            void itReturnsProductNotFoundMessage() {
+            @DisplayName("상품을 찾을 수 없다는 예외를 던진다")
+            void itThrowsProductNotFoundException() {
                 assertThatThrownBy(() -> productService.getProduct(givenNotExistedId))
                         .isInstanceOf(ProductNotFoundException.class)
                         .hasMessageContaining("Product not found");
@@ -288,8 +288,8 @@ class ProductServiceTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("상품을 찾을 수 없다는 메세지를 리턴한다")
-            void itReturnsProductNotFoundMessage() {
+            @DisplayName("상품을 찾을 수 없다는 예외를 던진다")
+            void itThrowsProductNotFoundException() {
                 given(productRepository.findById(givenNotExistedId))
                         .willThrow(new ProductNotFoundException(givenNotExistedId));
 

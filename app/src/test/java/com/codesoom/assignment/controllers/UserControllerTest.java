@@ -160,8 +160,8 @@ class UserControllerTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지와 NOT_FOUND를 리턴한다")
-            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던지고 NOT_FOUND를 리턴한다")
+            void itThrowsNotFoundExceptionAndReturnsNOT_FOUNDHttpStatus() throws Exception {
                 given(userService.getUser(givenNotExistedId))
                         .willThrow(new UserNotFoundException(givenNotExistedId));
 
@@ -225,8 +225,8 @@ class UserControllerTest {
         @DisplayName("만약 비어있는 값이 주어진다면")
         class Context_WithEmpty {
             @Test
-            @DisplayName("BAD_REQUEST를 리턴한다")
-            void itReturnsBAD_REQUESTHttpStatus() throws Exception {
+            @DisplayName("사용자 요청이 잘못 되었다는 예외를 던지고 BAD_REQUEST를 리턴한다")
+            void itThrowsUserBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -287,8 +287,8 @@ class UserControllerTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지와 NOT_FOUND를 리턴한다")
-            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던지고 NOT_FOUND를 리턴한다")
+            void itThrowsUserNotFoundExceptionAndReturnsNOT_FOUNDHttpStatus() throws Exception {
                 given(userService.updateUser(eq(givenNotExistedId), any(UserUpdateData.class)))
                         .willThrow(new UserNotFoundException(givenNotExistedId));
 
@@ -309,8 +309,8 @@ class UserControllerTest {
             private final Long givenExistedId = EXISTED_ID;
 
             @Test
-            @DisplayName("BAD_REQUEST를 리턴한다")
-            void itReturnsBAD_REQUESTHttpStatus() throws Exception {
+            @DisplayName("사용자 요청이 잘못 되었다는 예외를 던지고 BAD_REQUEST를 리턴한다")
+            void itThrowsUserBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 mockMvc.perform(patch("/users/" + givenExistedId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -354,8 +354,8 @@ class UserControllerTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지와 NOT_FOUND를 리턴한다")
-            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던지고 NOT_FOUND를 리턴한다")
+            void itThrowsNotFoundExceptionAndReturnsNOT_FOUNDHttpStatus() throws Exception {
                 given(userService.deleteUser(givenNotExistedId))
                         .willThrow(new UserNotFoundException(givenNotExistedId));
 
@@ -379,8 +379,8 @@ class UserControllerTest {
             }
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지와 NOT_FOUND를 리턴한다")
-            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던지고 NOT_FOUND를 리턴한다")
+            void itThrowsNotFoundExceptionAndNOT_FOUNDHttpStatus() throws Exception {
                 given(userService.deleteUser(givenDeletedId))
                         .willThrow(new UserNotFoundException(givenDeletedId));
 

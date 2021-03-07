@@ -168,8 +168,8 @@ class ProductControllerTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("상품을 수 없다는 메세지와 NOT_FOUND를 응답한다")
-            void itReturnsProductNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+            @DisplayName("상품을 수 없다는 예외를 던지고 NOT_FOUND를 리턴한다")
+            void itThrowsProductNotFoundExceptionAndReturnsNOT_FOUNDHttpStatus() throws Exception {
                 given(productService.getProduct(givenNotExistedId))
                         .willThrow(new ProductNotFoundException(givenNotExistedId));
 
@@ -190,7 +190,6 @@ class ProductControllerTest {
         @DisplayName("만약 상품이 주어진다면")
         class Context_WithProduct {
             private ProductCreateData productCreateData;
-            private ProductResultData productResultData;
 
             @BeforeEach
             void setUp() {
@@ -200,8 +199,6 @@ class ProductControllerTest {
                         .price(CREATED_PRODUCT_PRICE)
                         .imageUrl(CREATED_PRODUCT_IMAGEURL)
                         .build();
-
-                productResultData = mapper.map(productCreateData, ProductResultData.class);
             }
 
             @Test
@@ -240,8 +237,8 @@ class ProductControllerTest {
         @DisplayName("만약 이름값이 비어있는 상품이 주어진다면")
         class Context_WithProductWithoutName {
             @Test
-            @DisplayName("요청이 잘못 되었다는 메세지와 BAD_REQUEST를 리턴한다")
-            void itReturnsBadRequestMessageAndBAD_REQUESTHttpStatus() throws Exception {
+            @DisplayName("요청이 잘못 되었다는 예외를 던지고 BAD_REQUEST를 리턴한다")
+            void itThrowsProductBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 given(productService.createProduct(any(ProductCreateData.class)))
                         .willThrow(new ProductBadRequestException("name"));
 
@@ -259,8 +256,8 @@ class ProductControllerTest {
         @DisplayName("만약 메이커값이 비어있는 상품이 주어진다면")
         class Context_WithProductWithoutMaker {
             @Test
-            @DisplayName("요청이 잘못 되었다는 메세지와 BAD_REQUEST를 리턴한다")
-            void itReturnsBadRequestMessageAndBAD_REQUESTHttpStatus() throws Exception {
+            @DisplayName("요청이 잘못 되었다는 예외를 던지고 BAD_REQUEST를 리턴한다")
+            void itThrowsProductBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 given(productService.createProduct(any(ProductCreateData.class)))
                         .willThrow(new ProductBadRequestException("maker"));
 
@@ -278,8 +275,8 @@ class ProductControllerTest {
         @DisplayName("만약 가격값이 비어있는 상품이 주어진다면")
         class Context_WithProductWithoutPrice {
             @Test
-            @DisplayName("요청이 잘못 되었다는 메세지와 BAD_REQUEST를 리턴한다")
-            void itReturnsBadRequestMessageAndBAD_REQUESTHttpStatus() throws Exception {
+            @DisplayName("요청이 잘못 되었다는 예외를 던지고 BAD_REQUEST를 리턴한다")
+            void itThrowsProductBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 given(productService.createProduct(any(ProductCreateData.class)))
                         .willThrow(new ProductBadRequestException("price"));
 
@@ -299,8 +296,8 @@ class ProductControllerTest {
             private final String givenNotExistedToken = NOT_EXISTED_TOKEN;
 
             @Test
-            @DisplayName("토큰이 유효하지 않다는 메세지와 UNAUTHORIZED를 리턴한다")
-            void itReturnsInvalidTokenMessageAndUNAUTHORIZEDHttpStatus() throws Exception {
+            @DisplayName("토큰이 유효하지 않다는 예외를 던지고 UNAUTHORIZED를 리턴한다")
+            void itThrowsInvalidTokenExceptionAndReturnsUNAUTHORIZEDHttpStatus() throws Exception {
                 given(authenticationService.parseToken(eq(givenNotExistedToken)))
                         .willThrow(new InvalidTokenException(givenNotExistedToken));
 
@@ -374,8 +371,8 @@ class ProductControllerTest {
             private final Long givenNotExisted = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("상품을 찾을 수 없다는 메세지와 NOT_FOUND를 응답한다")
-            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+            @DisplayName("상품을 찾을 수 없다는 예외를 던지고 NOT_FOUND를 응답한다")
+            void itThrowsProductNotFoundExceptionAndThrowsNOT_FOUNDHttpStatus() throws Exception {
                 given(productService.updateProduct(eq(givenNotExisted), any(ProductUpdateData.class)))
                         .willThrow(new ProductNotFoundException(givenNotExisted));
 
@@ -398,7 +395,7 @@ class ProductControllerTest {
 
             @Test
             @DisplayName("요청이 잘못 되었다는 메세지와 BAD_REQUEST를 응답한다")
-            void itReturnsNotFoundMessageAndBAD_REQUESTHttpStatus() throws Exception {
+            void itThrowsProductBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 given(productService.updateProduct(eq(givenExistedId), any(ProductUpdateData.class)))
                         .willThrow(new ProductBadRequestException("name"));
 
@@ -419,7 +416,7 @@ class ProductControllerTest {
 
             @Test
             @DisplayName("요청이 잘못 되었다는 메세지와 BAD_REQUEST를 응답한다")
-            void itThrowsProductNotFoundExceptionAndBAD_REQUESTHttpStatus() throws Exception {
+            void itThrowsProductBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 given(productService.updateProduct(eq(givenExistedId), any(ProductUpdateData.class)))
                         .willThrow(new ProductBadRequestException("maker"));
 
@@ -440,7 +437,7 @@ class ProductControllerTest {
 
             @Test
             @DisplayName("요청이 잘못 되었다는 메세지와 BAD_REQUEST를 응답한다")
-            void itReturnsNotFoundMessageAndBAD_REQUESTHttpStatus() throws Exception {
+            void itThrowsProductBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 given(productService.updateProduct(eq(givenExistedId), any(ProductUpdateData.class)))
                         .willThrow(new ProductBadRequestException("price"));
 
@@ -461,8 +458,8 @@ class ProductControllerTest {
             private final String givenNotExistedToken = NOT_EXISTED_TOKEN;
 
             @Test
-            @DisplayName("토큰이 유효하지 않다는 메세지와 UNAHTORHIZED를 리턴한다")
-            void itReturnsInvalidTokenMessageAndUNAUTHORIZEDHttpStatus() throws Exception {
+            @DisplayName("토큰이 유효하지 않다는 예외를 던지고 UNAHTORHIZED를 리턴한다")
+            void itThrowsInvalidTokenExceptionAndUNAUTHORIZEDHttpStatus() throws Exception {
                 given(authenticationService.parseToken(eq(givenNotExistedToken)))
                         .willThrow(new InvalidTokenException(givenNotExistedToken));
 
@@ -507,8 +504,8 @@ class ProductControllerTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("상품을 찾을 수 없다는 메세지와 NOT_FOUND를 리턴한다")
-            void itReturnsNotFoundMessageAndNOT_FOUNDHttpStatus() throws Exception {
+            @DisplayName("상품을 찾을 수 없다는 예외를 던지고 NOT_FOUND를 리턴한다")
+            void itThrowsProductNotFoundMessageAndReturnsNOT_FOUNDHttpStatus() throws Exception {
                 given(productService.deleteProduct(givenNotExistedId))
                         .willThrow(new ProductNotFoundException(givenNotExistedId));
 
@@ -529,8 +526,8 @@ class ProductControllerTest {
             private final String givenNotExistedToken = NOT_EXISTED_TOKEN;
 
             @Test
-            @DisplayName("토큰이 유효하지 않다는 메세지와 UNAUTHORIZED를 리턴한다")
-            void itReturnsInvalidTokenMessageAndUNAUTHROIZEDHttpStatus() throws Exception {
+            @DisplayName("토큰이 유효하지 않다는 예외를 던지고 UNAUTHORIZED를 리턴한다")
+            void itThrowsInvalidTokenExceptionAndReturnsUNAUTHROIZEDHttpStatus() throws Exception {
                 given(authenticationService.parseToken(eq(givenNotExistedToken)))
                         .willThrow(new InvalidTokenException(givenNotExistedToken));
 

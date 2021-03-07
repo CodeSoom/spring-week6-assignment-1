@@ -144,8 +144,8 @@ class UserServiceTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지를 리턴한다")
-            void itReturnsUserNotFoundMessage() {
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던진다")
+            void itThrowsUserNotFoundException() {
                 given(userRepository.findByIdAndDeletedIsFalse(givenNotExistedId)).willReturn(Optional.empty());
 
                 assertThatThrownBy(() -> userService.getUser(givenNotExistedId))
@@ -206,12 +206,13 @@ class UserServiceTest {
             }
 
             @Test
-            @DisplayName("이메일이 중복되었다는 메세지를 리턴한다")
-            void itReturnsEmailDuplicatedMessage() {
+            @DisplayName("이메일이 중복되었다는 예외를 던진다")
+            void itThrowsEmailDuplicatedException() {
                 given(userRepository.existsByEmail(givenExistedEmail)).willReturn(true);
 
                 assertThatThrownBy(() -> userService.createUser(userCreateData))
-                        .isInstanceOf(UserEmailDuplicatedException.class);
+                        .isInstanceOf(UserEmailDuplicatedException.class)
+                        .hasMessageContaining("User email is already existed");
 
                 verify(userRepository).existsByEmail(givenExistedEmail);
             }
@@ -266,8 +267,8 @@ class UserServiceTest {
             }
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지를 리턴한다")
-            void itReturnsNotFoundMessage() {
+            @DisplayName("사용자를 찾을 수 없다는 메세지를 예외를 던진다")
+            void itThrowsUserNotFoundException() {
                 given(userRepository.findByIdAndDeletedIsFalse(givenNotExistedId)).willReturn(Optional.empty());
 
                 assertThatThrownBy(() -> userService.updateUser(givenNotExistedId, userUpdateData))
@@ -295,8 +296,8 @@ class UserServiceTest {
             }
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지를 리턴한다")
-            void itReturnsNotFoundMessage() {
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던진다")
+            void itThrowsUserNotFoundException() {
                 given(userRepository.findByIdAndDeletedIsFalse(givenDeletedId)).willReturn(Optional.empty());
 
                 assertThatThrownBy(() -> userService.updateUser(givenDeletedId, userUpdateData))
@@ -336,8 +337,8 @@ class UserServiceTest {
             private final Long givenNotExistedId = NOT_EXISTED_ID;
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지를 리턴한다")
-            void itReturnsUserNotFoundMessage() {
+            @DisplayName("사용자를 찾을 수 없다는 메세지 예외를 던진다")
+            void itThrowsUserNotFoundException() {
                 given(userRepository.findByIdAndDeletedIsFalse(givenNotExistedId)).willReturn(Optional.empty());
 
                 assertThatThrownBy(() -> userService.deleteUser(givenNotExistedId))
@@ -359,8 +360,8 @@ class UserServiceTest {
             }
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 메세지를 리턴한다")
-            void itReturnsNotFoundMessage() {
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던진다")
+            void itThrowsUserNotFoundException() {
                 given(userRepository.findByIdAndDeletedIsFalse(givenDeletedId))
                         .willReturn(Optional.empty());
 

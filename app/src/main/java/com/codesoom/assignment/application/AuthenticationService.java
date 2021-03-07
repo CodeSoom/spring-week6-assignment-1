@@ -59,9 +59,12 @@ public class AuthenticationService {
     }
 
     public void validateToken(String token) throws InvalidAccessesTokenException {
+        if (token == null) {
+            throw new InvalidAccessesTokenException(token);
+        }
         try {
             Key key = Keys.hmacShaKeyFor(secret.getBytes());
-            if(token.startsWith("Bearer ")) {
+            if (token.startsWith("Bearer ")) {
                 token = token.replace("Bearer ", "");
             }
             Jwts.parserBuilder()

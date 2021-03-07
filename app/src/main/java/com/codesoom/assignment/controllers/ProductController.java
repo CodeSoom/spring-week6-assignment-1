@@ -4,7 +4,6 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.InvalidAccessesTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +35,8 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestBody @Valid ProductData productData,
-            @RequestHeader(value="Authorization") String token
+        @RequestBody @Valid ProductData productData,
+        @RequestHeader(value = "Authorization", required = false) String token
     ) {
         authenticationService.validateToken(token);
         return productService.createProduct(productData);
@@ -45,10 +44,12 @@ public class ProductController {
 
     @PatchMapping("{id}")
     public Product update(
-            @PathVariable Long id,
-            @RequestBody @Valid ProductData productData,
-            @RequestHeader(value="Authorization") String token
+        @PathVariable Long id,
+        @RequestBody @Valid ProductData productData,
+        @RequestHeader(value = "Authorization", required = false) String token
     ) {
+        System.out.println("update");
+        System.out.println("token: " + token);
         authenticationService.validateToken(token);
         return productService.updateProduct(id, productData);
     }
@@ -56,8 +57,8 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @PathVariable Long id,
-            @RequestHeader(value="Authorization") String token
+        @PathVariable Long id,
+        @RequestHeader(value = "Authorization", required = false) String token
     ) {
         authenticationService.validateToken(token);
         productService.deleteProduct(id);

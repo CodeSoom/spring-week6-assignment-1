@@ -71,7 +71,7 @@ public class AuthenticationServiceTest {
             .build();
         userRepository.save(createdUser);
 
-        token = authenticationService.issueToken(createdUser);
+        token = "Bearer " + authenticationService.issueToken(createdUser);
     }
 
     @When("토큰을 인증한다면")

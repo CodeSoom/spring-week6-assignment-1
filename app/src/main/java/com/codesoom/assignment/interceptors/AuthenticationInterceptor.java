@@ -1,7 +1,9 @@
 package com.codesoom.assignment.interceptors;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import java.io.IOException;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -23,18 +25,23 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
-        if (idNonAuthorizationTarget(request)) {
+        if (isNonAuthorizationTarget(request)) {
             return true;
         }
-        return validateAccessToken(request.getHeader(TOKEN_KEY));
+        return validateAccessToken(response, request.getHeader(TOKEN_KEY));
     }
 
-    boolean idNonAuthorizationTarget(HttpServletRequest request) {
+    boolean isNonAuthorizationTarget(HttpServletRequest request) {
         String method = request.getMethod();
-        return HttpMethod.GET.matches(method);
+        return HttpMethod.GET.matches(method) || HttpMethod.OPTIONS.matches(method);
     }
 
-    private boolean validateAccessToken(String bearerToken) {
+    private boolean validateAccessToken(HttpServletResponse response, String bearerToken) throws IOException {
+        if (bearerToken == null) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value());
+            return true;
+        }
+
         String accessToken = bearerToken.substring(BEARER_STRING.length());
         authenticationService.decode(accessToken);
         return true;

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -86,6 +87,19 @@ class ProductControllerTest {
 
         given(authenticationService.decode(INVALID_TOKEN))
                 .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
+    }
+
+    @DisplayName("OPTIONS /products")
+    @Nested
+    class Describe_OPTIONS_Products {
+        @DisplayName("OK(200 코드)를 응답한다")
+        @Test
+        void it_returns_OK_200_code() throws Exception {
+            mockMvc.perform(
+                options("/products")
+            )
+                .andExpect(status().isOk());
+        }
     }
 
     @DisplayName("GET /products")
@@ -210,6 +224,24 @@ class ProductControllerTest {
                     )
                             .andExpect(status().isUnauthorized());
                 }
+            }
+        }
+
+        @DisplayName("비어 있는 access token이 주어졌을 때")
+        @Nested
+        class Context_with_empty_access_token {
+
+            @DisplayName("Unauthorized(401코드)를 응답한다")
+            @Test
+            void it_returns_401_code() throws Exception {
+                mockMvc.perform(
+                    post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                            "\"price\":5000}")
+                )
+                    .andExpect(status().isUnauthorized());
             }
         }
     }

@@ -37,6 +37,7 @@ public class JwtUtil {
      *
      * @param token JTW Token
      * @return 유저 id
+     * @throws InvalidAccessTokenException 토큰이 유효하지 않은 경우
      */
     public Long decode(String token) {
         if (token == null || token.isBlank()) {

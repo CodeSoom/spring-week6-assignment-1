@@ -58,6 +58,11 @@ public class AuthenticationService {
         return jws;
     }
 
+    /**
+     * 토큰을 인증합니다.
+     *
+     * @throws InvalidAccessesTokenException 토큰 인증에 실패한 경우
+     */
     public void validateToken(String token) throws InvalidAccessesTokenException {
         if (token == null) {
             throw new InvalidAccessesTokenException(token);

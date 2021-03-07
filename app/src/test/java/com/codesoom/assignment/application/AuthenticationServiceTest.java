@@ -43,7 +43,7 @@ class AuthenticationServiceTest {
         assertThat(userId).isEqualTo(1L);
     }
 
-    @DisplayName("서비스에 값이 유효하지 않은 토큰을 분석 요청 하면, 예외가 호출된다.")
+    @DisplayName("서비스에 값이 유효하지 않은 토큰을 분석 요청 하면, 예외를 던진다.")
     @Test
     void parseTokenWithInValidToken() {
         assertThatThrownBy(
@@ -51,7 +51,7 @@ class AuthenticationServiceTest {
             .isInstanceOf(InvalidAccessTokenException.class);
     }
 
-    @DisplayName("서비스에 형식이 올바르지 않은 토큰을 분석 요청 하면, 예외가 호출된다.")
+    @DisplayName("서비스에 형식이 올바르지 않은 토큰을 분석 요청 하면, 예외를 던진다.")
     @Test
     void parseTokenWithEmptyToken() {
         assertThatThrownBy(

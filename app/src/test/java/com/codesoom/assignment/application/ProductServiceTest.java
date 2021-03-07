@@ -83,7 +83,7 @@ class ProductServiceTest {
         assertThat(product.getName()).isEqualTo("쥐돌이");
     }
 
-    @DisplayName("서비스에 존재하지 않는 상품을 조회하면 예외가 호출된다.")
+    @DisplayName("서비스에 존재하지 않는 상품을 조회하면 예외를 던진다.")
     @Test
     void getProductWithNotExsitedId() {
         assertThatThrownBy(() -> productService.getProduct(1000L))
@@ -123,7 +123,7 @@ class ProductServiceTest {
         assertThat(product.getName()).isEqualTo("쥐순이");
     }
 
-    @DisplayName("서비스에 존재하지 않는 상품에 대해서 수정을 요청하면 예외가 호출된다.")
+    @DisplayName("서비스에 존재하지 않는 상품에 대해서 수정을 요청하면 예외를 던진다.")
     @Test
     void updateProductWithNotExistedId() {
         ProductData productData = ProductData.builder()
@@ -144,7 +144,7 @@ class ProductServiceTest {
         verify(productRepository).delete(any(Product.class));
     }
 
-    @DisplayName("서비스에 존재하지 않는 상품에 대해서 삭제를 요청하면 예외가 호출된다.")
+    @DisplayName("서비스에 존재하지 않는 상품에 대해서 삭제를 요청하면 예외를 던진다.")
     @Test
     void deleteProductWithNotExistedId() {
         assertThatThrownBy(() -> productService.deleteProduct(1000L))

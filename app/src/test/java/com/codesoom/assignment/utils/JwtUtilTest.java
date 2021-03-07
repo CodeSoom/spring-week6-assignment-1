@@ -40,7 +40,7 @@ class JwtUtilTest {
        assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
 
-    @DisplayName("유효하지 않은 토큰을 복호화 하였을 때, 예외를 호출한다.")
+    @DisplayName("유효하지 않은 토큰을 복호화 하였을 때, 예외를 던진다.")
     @Test
     void decodeWithInValidToken() {
         assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))

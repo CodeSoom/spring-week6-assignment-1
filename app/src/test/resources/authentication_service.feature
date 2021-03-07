@@ -23,3 +23,7 @@ Feature: 유저 인증하기
     Given 발급되지 않은 토큰이 주어졌을 때
     When 토큰을 인증한다면
     Then 에러가 발생한다
+  Scenario: null인 토큰을 인증한다
+    Given null인 토큰이 주어졌을 때
+    When 토큰을 인증한다면
+    Then 에러가 발생한다

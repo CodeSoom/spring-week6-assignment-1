@@ -110,4 +110,9 @@ public class AuthenticationServiceTest {
             exception = invalidUserInformationException;
         }
     }
+
+    @Given("null인 토큰이 주어졌을 때")
+    public void givenNullToken() {
+        token = null;
+    }
 }

@@ -7,3 +7,7 @@ Feature: 유저 인증하기
     Given 올바르지 않은 email와 password가 주어졌을 때
     When 인증을 하게된다면
     Then 에러가 발생한다
+  Scenario: 토큰을 인증한다
+    Given 올바른 토큰이 주어졌을 때
+    When 토큰을 인증한다면
+    Then 에러가 발생하지 않는다

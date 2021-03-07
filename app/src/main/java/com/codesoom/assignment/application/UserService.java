@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+/**
+ * 유저와 관련된 요청을 처리한.
+ */
 @Service
 @Transactional
 public class UserService {
@@ -22,6 +25,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 새로운 유저를 생성한다.
+     * @param registrationData
+     * @return 생성된 유저
+     */
     public User registerUser(UserRegistrationData registrationData) {
         String email = registrationData.getEmail();
         if (userRepository.existsByEmail(email)) {
@@ -32,6 +40,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * 유저를 수정한다.
+     * @param id
+     * @param modificationData
+     * @return 수정된 유저
+     */
     public User updateUser(Long id, UserModificationData modificationData) {
         User user = findUser(id);
 
@@ -41,12 +55,22 @@ public class UserService {
         return user;
     }
 
+    /**
+     * 유저를 삭제한다.
+     * @param id
+     * @return 삭제된 유저
+     */
     public User deleteUser(Long id) {
         User user = findUser(id);
         user.destroy();
         return user;
     }
 
+    /**
+     * 유저를 조회한다.
+     * @param id
+     * @return 조회된 유저
+     */
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));

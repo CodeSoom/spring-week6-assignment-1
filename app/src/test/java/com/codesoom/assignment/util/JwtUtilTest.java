@@ -16,7 +16,7 @@ class JwtUtilTest {
     private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
             "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXY";
 
-    private final String EXISTED_EMAIL = "existedEmail";
+    private static final String EXISTED_EMAIL = "existedEmail";
 
     @BeforeEach
     void setUp() {

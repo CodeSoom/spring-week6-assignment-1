@@ -30,28 +30,28 @@ class ProductServiceTest {
     private ProductRepository productRepository;
     private ProductService productService;
 
-    private final String SETUP_PRODUCT_NAME = "setupName";
-    private final String SETUP_PRODUCT_MAKER = "setupMaker";
-    private final Integer SETUP_PRODUCT_PRICE = 100;
-    private final String SETUP_PRODUCT_IMAGEURL = "setupImage";
+    private static final String SETUP_PRODUCT_NAME = "setupName";
+    private static final String SETUP_PRODUCT_MAKER = "setupMaker";
+    private static final Integer SETUP_PRODUCT_PRICE = 100;
+    private static final String SETUP_PRODUCT_IMAGEURL = "setupImage";
 
-    private final String CREATED_PRODUCT_NAME = "createdName";
-    private final String CREATED_PRODUCT_MAKER = "createdMaker";
-    private final Integer CREATED_PRODUCT_PRICE = 200;
-    private final String CREATED_PRODUCT_IMAGEURL = "createdImage";
+    private static final String CREATED_PRODUCT_NAME = "createdName";
+    private static final String CREATED_PRODUCT_MAKER = "createdMaker";
+    private static final Integer CREATED_PRODUCT_PRICE = 200;
+    private static final String CREATED_PRODUCT_IMAGEURL = "createdImage";
 
-    private final String UPDATED_PRODUCT_NAME = "updatedName";
-    private final String UPDATED_PRODUCT_MAKER = "updatedMaker";
-    private final Integer UPDATED_PRODUCT_PRICE = 300;
-    private final String UPDATED_PRODUCT_IMAGEURL = "updatedImage";
+    private static final String UPDATED_PRODUCT_NAME = "updatedName";
+    private static final String UPDATED_PRODUCT_MAKER = "updatedMaker";
+    private static final Integer UPDATED_PRODUCT_PRICE = 300;
+    private static final String UPDATED_PRODUCT_IMAGEURL = "updatedImage";
 
-    private final Long EXISTED_ID = 1L;
-    private final Long CREATED_ID = 2L;
-    private final Long NOT_EXISTED_ID = 100L;
+    private static final Long EXISTED_ID = 1L;
+    private static final Long CREATED_ID = 2L;
+    private static final Long NOT_EXISTED_ID = 100L;
 
     private List<Product> products;
-    private Product setupProductOne;
-    private Product setupProductTwo;
+    private Product setupProduct;
+    private Product createProduct;
 
     private List<ProductResultData> resultProducts;
     private ProductResultData resultProductOne;
@@ -63,7 +63,7 @@ class ProductServiceTest {
         productRepository = mock(ProductRepository.class);
         productService = new ProductService(dozerMapper, productRepository);
 
-        setupProductOne = Product.builder()
+        setupProduct = Product.builder()
                 .id(EXISTED_ID)
                 .name(SETUP_PRODUCT_NAME)
                 .maker(SETUP_PRODUCT_MAKER)
@@ -71,7 +71,7 @@ class ProductServiceTest {
                 .imageUrl(SETUP_PRODUCT_IMAGEURL)
                 .build();
 
-        setupProductTwo = Product.builder()
+        createProduct = Product.builder()
                 .id(CREATED_ID)
                 .name(CREATED_PRODUCT_NAME)
                 .maker(CREATED_PRODUCT_MAKER)
@@ -79,10 +79,10 @@ class ProductServiceTest {
                 .imageUrl(CREATED_PRODUCT_IMAGEURL)
                 .build();
 
-        products = Arrays.asList(setupProductOne, setupProductTwo);
+        products = Arrays.asList(setupProduct, createProduct);
 
-        resultProductOne = ProductResultData.of(setupProductOne);
-        resultProductTwo = ProductResultData.of(setupProductTwo);
+        resultProductOne = ProductResultData.of(setupProduct);
+        resultProductTwo = ProductResultData.of(createProduct);
         resultProducts = Arrays.asList(resultProductOne, resultProductTwo);
     }
 
@@ -132,7 +132,7 @@ class ProductServiceTest {
             @Test
             @DisplayName("주어진 아이디에 해당하는 상품을 리턴한다")
             void itReturnsWithExistedProduct() {
-                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProductOne));
+                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProduct));
 
                 ProductResultData product = productService.getProduct(givenExistedId);
                 assertThat(product.getId()).isEqualTo(givenExistedId);
@@ -179,24 +179,15 @@ class ProductServiceTest {
             @Test
             @DisplayName("상품을 저장하고 저장된 상품를 리턴한다")
             void itSavesProductAndReturnsSavedProduct() {
-                given(productRepository.save(any(Product.class))).willReturn(setupProductTwo);
+                given(productRepository.save(any(Product.class))).willReturn(createProduct);
 
                 ProductResultData productResultData = productService.createProduct(productCreateData);
-                assertThat(productResultData.getName())
-                        .as("상품의 아이디는 null 이 아니어야 한다")
-                        .isNotNull();
-                assertThat(productResultData.getName())
-                        .as("상품의 이름은 %s 이어야 한다", productCreateData.getName())
-                        .isEqualTo(productCreateData.getName());
-                assertThat(productResultData.getMaker())
-                        .as("상품의 메이커는 %s 이어야 한다", productCreateData.getMaker())
-                        .isEqualTo(productCreateData.getMaker());
-                assertThat(productResultData.getPrice())
-                        .as("상품의 가격은 %d 이어야 한다", productCreateData.getPrice())
-                        .isEqualTo(productCreateData.getPrice());
-                assertThat(productResultData.getImageUrl())
-                        .as("상품의 이미지는 %s 이어야 한다", productCreateData.getImageUrl())
-                        .isEqualTo(productCreateData.getImageUrl());
+
+                assertThat(productResultData.getId()).isEqualTo(createProduct.getId());
+                assertThat(productResultData.getName()).isEqualTo(productCreateData.getName());
+                assertThat(productResultData.getMaker()).isEqualTo(productCreateData.getMaker());
+                assertThat(productResultData.getPrice()).isEqualTo(productCreateData.getPrice());
+                assertThat(productResultData.getImageUrl()).isEqualTo(productCreateData.getImageUrl());
 
                 verify(productRepository).save(any(Product.class));
             }
@@ -225,22 +216,14 @@ class ProductServiceTest {
             @Test
             @DisplayName("주어진 아이디에 해당하는 상품을 수정하고 수정된 상품을 리턴한다")
             void itUpdatesProductAndReturnsUpdatedProduct() {
-                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProductOne));
+                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProduct));
 
                 ProductResultData productResultData = productService.updateProduct(givenExistedId, productUpdateData);
 
-                assertThat(productResultData.getId())
-                        .as("상품의 아이디는 %f 이어야 한다", givenExistedId)
-                        .isEqualTo(givenExistedId);
-                assertThat(productResultData.getName())
-                        .as("상품의 이름은 %s 이어야 한다", productUpdateData.getName())
-                        .isEqualTo(productUpdateData.getName());
-                assertThat(productResultData.getMaker())
-                        .as("상품의 메이커는 %s 이어야 한다", productUpdateData.getMaker())
-                        .isEqualTo(productUpdateData.getMaker());
-                assertThat(productResultData.getPrice())
-                        .as("상품의 가격은 %d 이어야 한다", productUpdateData.getPrice())
-                        .isEqualTo(productUpdateData.getPrice());
+                assertThat(productResultData.getId()).isEqualTo(givenExistedId);
+                assertThat(productResultData.getName()).isEqualTo(productUpdateData.getName());
+                assertThat(productResultData.getMaker()).isEqualTo(productUpdateData.getMaker());
+                assertThat(productResultData.getPrice()).isEqualTo(productUpdateData.getPrice());
 
                 verify(productRepository).findById(givenExistedId);
             }
@@ -258,27 +241,17 @@ class ProductServiceTest {
             @Test
             @DisplayName("주어진 아이디에 해당하는 상품을 삭제하고 삭제된 상품을 리턴한다")
             void itDeletesProductAndReturnsDeletedProduct() {
-                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProductOne));
+                given(productRepository.findById(givenExistedId)).willReturn(Optional.of(setupProduct));
 
                 ProductResultData productResultData = productService.deleteProduct(givenExistedId);
 
-                assertThat(productResultData.getId())
-                        .as("상품의 아이디는 %d 이어야 한다", givenExistedId)
-                        .isEqualTo(givenExistedId);
-                assertThat(productResultData.getName())
-                        .as("상품의 이름은 %s 이어야 한다", setupProductOne.getName())
-                        .isEqualTo(setupProductOne.getName());
-                assertThat(productResultData.getMaker())
-                        .as("상품의 메이커는 %s 이어야 한다", setupProductOne.getMaker())
-                        .isEqualTo(setupProductOne.getMaker());
-                assertThat(productResultData.getPrice())
-                        .as("상품의 가격은 %d 이어야 한다", setupProductOne.getPrice())
-                        .isEqualTo(setupProductOne.getPrice());
-                assertThat(productResultData.getImageUrl())
-                        .as("상품의 이미지는 %s 이어야 한다", setupProductOne.getImageUrl())
-                        .isEqualTo(setupProductOne.getImageUrl());
+                assertThat(productResultData.getId()).isEqualTo(givenExistedId);
+                assertThat(productResultData.getName()).isEqualTo(setupProduct.getName());
+                assertThat(productResultData.getMaker()).isEqualTo(setupProduct.getMaker());
+                assertThat(productResultData.getPrice()).isEqualTo(setupProduct.getPrice());
+                assertThat(productResultData.getImageUrl()).isEqualTo(setupProduct.getImageUrl());
 
-                verify(productRepository).delete(setupProductOne);
+                verify(productRepository).delete(setupProduct);
             }
         }
 

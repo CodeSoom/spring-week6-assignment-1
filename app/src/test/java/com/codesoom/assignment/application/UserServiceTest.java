@@ -31,21 +31,21 @@ class UserServiceTest {
     private UserService userService;
     private UserRepository userRepository;
 
-    private final String SETUP_USER_NAME = "setUpName";
-    private final String EXISTED_USER_EMAIL = "setUpEmail";
-    private final String SETUP_USER_PASSWORD = "setUpPassword";
+    private static final String SETUP_USER_NAME = "setUpName";
+    private static final String EXISTED_USER_EMAIL = "setUpEmail";
+    private static final String SETUP_USER_PASSWORD = "setUpPassword";
 
-    private final String CREATE_USER_NAME = "createdName";
-    private final String CREATE_USER_EMAIL = "createdEmail";
-    private final String CREATE_USER_PASSWORD = "createdPassword";
+    private static final String CREATE_USER_NAME = "createdName";
+    private static final String CREATE_USER_EMAIL = "createdEmail";
+    private static final String CREATE_USER_PASSWORD = "createdPassword";
 
-    private final String UPDATE_USER_NAME = "updatedName";
-    private final String UPDATE_USER_PASSWORD = "updatedPassword";
+    private static final String UPDATE_USER_NAME = "updatedName";
+    private static final String UPDATE_USER_PASSWORD = "updatedPassword";
 
-    private final Long EXISTED_ID = 1L;
-    private final Long CREATE_ID = 2L;
-    private final Long DELETED_ID = 1L;
-    private final Long NOT_EXISTED_ID = 100L;
+    private static final Long EXISTED_ID = 1L;
+    private static final Long CREATE_ID = 2L;
+    private static final Long DELETED_ID = 1L;
+    private static final Long NOT_EXISTED_ID = 100L;
 
     private List<User> users;
     private User setUpUser;

@@ -33,17 +33,8 @@ class SessionControllerTest {
     @MockBean
     AuthenticationService authenticationService;
 
-    private static final String SECRET = "12345678901234567890123456789010";
     private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
             "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXY";
-    private static final String NOT_EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
-            "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXy";
-
-    private final String EXISTED_EMAIL = "existedEmail";
-    private final String EXISTED_PASSWORD = "existedPassword";
-
-    private final String NOT_EXISTED_EMAIL = "notExistedEmail";
-    private final String NOT_EXISTED_PASSWORD = "notExistedPassword";
 
     @Nested
     @DisplayName("login 메서드는")

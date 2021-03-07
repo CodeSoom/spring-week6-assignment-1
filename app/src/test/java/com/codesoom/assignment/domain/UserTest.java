@@ -9,12 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("User 클래스")
 class UserTest {
-    private final Long SETUP_ID = 1L;
-    private final String SETUP_NAME = "setupName";
-    private final String SETUP_EMAIL = "setupEmail";
-    private final String SETUP_PASSWORD = "setupPassword";
+    private static final Long SETUP_ID = 1L;
+    private static final String SETUP_NAME = "setupName";
+    private static final String SETUP_EMAIL = "setupEmail";
+    private static final String SETUP_PASSWORD = "setupPassword";
 
-    private final String NOT_EXISTED_PASSWORD = "notExistedPassword";
+    private static final String NOT_EXISTED_PASSWORD = "notExistedPassword";
 
     private User user;
 

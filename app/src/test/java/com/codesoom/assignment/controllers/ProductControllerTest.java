@@ -64,24 +64,24 @@ class ProductControllerTest {
     private static final String NOT_EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
             "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXy";
 
-    private final String SETUP_PRODUCT_NAME = "setupName";
-    private final String SETUP_PRODUCT_MAKER = "setupMaker";
-    private final Integer SETUP_PRODUCT_PRICE = 100;
-    private final String SETUP_PRODUCT_IMAGEURL = "setupImage";
+    private static final String SETUP_PRODUCT_NAME = "setupName";
+    private static final String SETUP_PRODUCT_MAKER = "setupMaker";
+    private static final Integer SETUP_PRODUCT_PRICE = 100;
+    private static final String SETUP_PRODUCT_IMAGEURL = "setupImage";
 
-    private final String CREATED_PRODUCT_NAME = "createdName";
-    private final String CREATED_PRODUCT_MAKER = "createdMaker";
-    private final Integer CREATED_PRODUCT_PRICE = 200;
-    private final String CREATED_PRODUCT_IMAGEURL = "createdImage";
+    private static final String CREATED_PRODUCT_NAME = "createdName";
+    private static final String CREATED_PRODUCT_MAKER = "createdMaker";
+    private static final Integer CREATED_PRODUCT_PRICE = 200;
+    private static final String CREATED_PRODUCT_IMAGEURL = "createdImage";
 
-    private final String UPDATED_PRODUCT_NAME = "updatedName";
-    private final String UPDATED_PRODUCT_MAKER = "updatedMaker";
-    private final Integer UPDATED_PRODUCT_PRICE = 300;
-    private final String UPDATED_PRODUCT_IMAGEURL = "updatedImage";
+    private static final String UPDATED_PRODUCT_NAME = "updatedName";
+    private static final String UPDATED_PRODUCT_MAKER = "updatedMaker";
+    private static final Integer UPDATED_PRODUCT_PRICE = 300;
+    private static final String UPDATED_PRODUCT_IMAGEURL = "updatedImage";
 
-    private final Long EXISTED_ID = 1L;
-    private final Long CREATED_ID = 2L;
-    private final Long NOT_EXISTED_ID = 100L;
+    private static final Long EXISTED_ID = 1L;
+    private static final Long CREATED_ID = 2L;
+    private static final Long NOT_EXISTED_ID = 100L;
 
     private List<Product> products;
     private Product setupProductOne;
@@ -189,18 +189,6 @@ class ProductControllerTest {
         @Nested
         @DisplayName("만약 상품이 주어진다면")
         class Context_WithProduct {
-            private ProductCreateData productCreateData;
-
-            @BeforeEach
-            void setUp() {
-                productCreateData = ProductCreateData.builder()
-                        .name(CREATED_PRODUCT_NAME)
-                        .maker(CREATED_PRODUCT_MAKER)
-                        .price(CREATED_PRODUCT_PRICE)
-                        .imageUrl(CREATED_PRODUCT_IMAGEURL)
-                        .build();
-            }
-
             @Test
             @DisplayName("상품을 저장하고 저장된 상품과 CREATED를 리턴한다")
             void itSaveProductAndReturnsSavedProductAndCreatedHttpStatus() throws Exception {

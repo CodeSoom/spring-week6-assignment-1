@@ -69,7 +69,7 @@ public class ProductService {
         Product product = mapper.map(productCreateData, Product.class);
         Product savedProduct =  productRepository.save(product);
 
-        return ProductResultData.of(product);
+        return ProductResultData.of(savedProduct);
     }
 
     /**

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,10 +16,12 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue
     private Long id;
 
+    @Column(unique = true)
     private String email;
 
     private String name;
@@ -37,7 +40,12 @@ public class User {
         deleted = true;
     }
 
-    public boolean authenticate(String password) {
-        return !deleted && password.equals(this.password);
+    public boolean matchPassword(String password) {
+        return password.equals(this.password);
     }
+
+    public boolean authenticate(String password) {
+        return !deleted && matchPassword(password);
+    }
+
 }

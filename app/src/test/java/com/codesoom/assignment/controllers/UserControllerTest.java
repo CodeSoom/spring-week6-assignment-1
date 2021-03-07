@@ -1,11 +1,14 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,7 +21,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +34,9 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
@@ -56,10 +64,10 @@ class UserControllerTest {
                 });
 
         given(userService.updateUser(eq(100L), any(UserModificationData.class)))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundException());
 
         given(userService.deleteUser(100L))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundException());
     }
 
     @Test
@@ -90,6 +98,21 @@ class UserControllerTest {
                 post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}")
+        )
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("이미 존재하는 이메일로 회원가입 한다면 상태코드로 400 Bad Request 를 응답한다.")
+    @Test
+    void registerUserWithAlreadyExistingEmail() throws Exception {
+        given(userService.registerUser(any(UserRegistrationData.class)))
+                .willThrow(new UserEmailDuplicationException("alreayExistingEmail@example.com"));
+
+        mockMvc.perform(
+                post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"tester@example.com\"," +
+                                "\"name\":\"Tester\",\"password\":\"test\"}")
         )
                 .andExpect(status().isBadRequest());
     }

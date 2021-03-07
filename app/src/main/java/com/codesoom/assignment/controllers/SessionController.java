@@ -21,10 +21,10 @@ public class SessionController {
     }
 
     /**
-     * 주어진 사용자를 인증하고 문자열 토큰을 생성하여 로그인한다.
+     * 주어진 사용자를 인증하고 토큰을 생성하여 로그인한다.
      *
-     * @param authenticationCreateData - 토큰 문자열을 만들고자 하는 사용자
-     * @return - 주어진 사용자를 이용하여 생성된 토큰 문자열
+     * @param authenticationCreateData - 토큰을 만들고자 하는 사용자
+     * @return - 생성된 토큰
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

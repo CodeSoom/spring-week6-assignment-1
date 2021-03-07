@@ -373,15 +373,3 @@ class UserServiceTest {
         }
     }
 }
-
-//    @Test
-//    void updateUserWithDeletedId() {
-//        UserModificationData modificationData = UserModificationData.builder()
-//                .name("TEST")
-//                .password("TEST")
-//                .build();
-//
-//        assertThatThrownBy(
-//                () -> userService.updateUser(DELETED_USER_ID, modificationData)
-//        )
-//                .isInstanceOf(UserNotFoundException.class);

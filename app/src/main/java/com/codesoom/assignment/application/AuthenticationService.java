@@ -71,6 +71,8 @@ public class AuthenticationService {
      *
      * @param token - 파싱하고자 하는 토큰 문자열
      * @return 주어진 {@code accessToken}의 사용자 정보
+     * @throws InvalidTokenException 만약
+     *         {@code token}이 비어있는 경우, 공백인 경우, 서명이 실패한 경우
      */
     public AuthenticationResultData parseToken(String token) {
         if(token == null || token.isBlank()) {

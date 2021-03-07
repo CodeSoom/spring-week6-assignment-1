@@ -19,7 +19,6 @@ public class JwtUtil {
     public String encode(Long userId) {
         return Jwts.builder()
                 .claim("userId", userId)
-                .claim("userId", 1L)
                 .signWith(key)
                 .compact();
     }

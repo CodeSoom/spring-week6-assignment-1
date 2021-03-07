@@ -41,7 +41,6 @@ class AuthenticationServiceTest {
                 .willReturn(Optional.of(user));
     }
 
-
     @Test
     void loginWithRightEmailAndPassword() {
         String accessToken = authenticationService

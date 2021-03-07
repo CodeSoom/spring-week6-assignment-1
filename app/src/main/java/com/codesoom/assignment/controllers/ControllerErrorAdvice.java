@@ -38,8 +38,7 @@ public class ControllerErrorAdvice {
     public ErrorResponse handleLoginFailException() {
         return new ErrorResponse("Login failed");
     }
-
-
+    
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidAccessTokenException.class)
     public ErrorResponse handleInvalidAccessTokenException() {

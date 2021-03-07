@@ -31,7 +31,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     boolean idNonAuthorizationTarget(HttpServletRequest request) {
         String method = request.getMethod();
-        return HttpMethod.GET.matches(method) || HttpMethod.OPTIONS.matches(method);
+        return HttpMethod.GET.matches(method);
     }
 
     private boolean validateAccessToken(String bearerToken) {

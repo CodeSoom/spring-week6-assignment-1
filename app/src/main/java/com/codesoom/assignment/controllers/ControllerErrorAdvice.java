@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -32,8 +33,15 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("User's email address is already existed");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LoginFailException.class)
+    public ErrorResponse handleLoginFailException() {
+       return new ErrorResponse("Login Failed!");
+    }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidAccessTokenException.class)
-    public void handleInvalidAccessTokenException() {
+    public ErrorResponse handleInvalidAccessTokenException() {
+        return new ErrorResponse("Invalid access Token!");
     }
 }

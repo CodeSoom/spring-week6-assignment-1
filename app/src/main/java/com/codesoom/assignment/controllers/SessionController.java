@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codesoom.assignment.dto.SessionResponseData;
 
 /**
- * 인증과 관련된 작업을 서비스에서 요청한다.
+ * 세션을 반환하는 컨트롤러 입니다.
  */
 @RestController
 @RequestMapping("/session")

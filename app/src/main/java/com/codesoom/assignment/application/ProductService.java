@@ -28,7 +28,7 @@ public class ProductService {
     }
 
     /**
-     * 상품 목록을 얻는다.
+     * 상품 목록을 리턴한다.
      * @return
      */
     public List<Product> getProducts() {
@@ -36,7 +36,7 @@ public class ProductService {
     }
 
     /**
-     * 상품을 얻는다.
+     * 상품을 리턴한다.
      * @param id
      * @return 상품
      */

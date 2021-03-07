@@ -8,7 +8,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 
 /**
- * 인증과 관련된 작업을 수행 한다.
+ * 인증과 관련된 작업을 제공 한다.
  */
 @Service
 public class AuthenticationService {

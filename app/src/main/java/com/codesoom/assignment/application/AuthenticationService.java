@@ -1,6 +1,5 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AuthenticationCreateData;
 import com.codesoom.assignment.dto.AuthenticationResultData;
@@ -14,7 +13,6 @@ import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.function.Predicate;
 
 /** 사용자 인증에 대한 요청을 수행한다. */
 @Service
@@ -44,8 +42,7 @@ public class AuthenticationService {
      */
     public UserResultData authenticateUser(String email, String password) {
         return userRepository.findByEmail(email)
-                .filter(Predicate.not(User::isDeleted)
-                        .and(u -> u.authenticate(password)))
+                .filter(u -> u.authenticate(password))
                 .map(UserResultData::of)
                 .orElseThrow(AuthenticationBadRequestException::new);
     }

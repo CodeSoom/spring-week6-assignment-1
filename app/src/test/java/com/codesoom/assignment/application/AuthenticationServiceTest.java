@@ -9,6 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuthenticationServiceTest {
     private static final String secret = "12345678901234567890123456789012";
 
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+
     private AuthenticationService authenticationService;
 
     @BeforeEach
@@ -21,7 +26,13 @@ class AuthenticationServiceTest {
     void login() {
         String accessToken = authenticationService.login();
 
-        assertThat(accessToken).contains(".");
+        assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }
 
+    @Test
+    void parseToken() {
+        Long userId = authenticationService.parseToken(VALID_TOKEN);
+
+        assertThat(userId).isEqualTo(1L);
+    }
 }

@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.dto.UserLoginDataGettable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+/**
+ * 유저 정보.
+ */
 @Entity
 @Getter
 @Builder
@@ -37,7 +41,7 @@ public class User {
         deleted = true;
     }
 
-    public boolean authenticate(String password) {
-        return !deleted && password.equals(this.password);
+    public boolean authenticate(UserLoginDataGettable loginData) {
+        return !deleted && loginData.getPassword().equals(this.password);
     }
 }

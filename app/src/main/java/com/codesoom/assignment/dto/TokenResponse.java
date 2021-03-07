@@ -6,16 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 유저 정보 응답.
+ * 토큰 정보 응답.
  */
-@Getter
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserResultData {
-    private Long id;
-
-    private String email;
-
-    private String name;
+@NoArgsConstructor
+@Builder
+@Getter
+public class TokenResponse {
+    private String accessToken;
 }

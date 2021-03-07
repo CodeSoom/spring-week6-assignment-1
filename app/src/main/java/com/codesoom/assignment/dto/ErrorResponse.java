@@ -1,7 +1,10 @@
 package com.codesoom.assignment.dto;
 
+/**
+ * 에러 정보 응답.
+ */
 public class ErrorResponse {
-    private String message;
+    private final String message;
 
     public ErrorResponse(String message) {
         this.message = message;

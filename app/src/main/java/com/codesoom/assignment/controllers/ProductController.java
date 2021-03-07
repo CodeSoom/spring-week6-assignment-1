@@ -56,8 +56,10 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestHeader(value="Authorization") String token
     ) {
+        authenticationService.validateToken(token);
         productService.deleteProduct(id);
     }
 }

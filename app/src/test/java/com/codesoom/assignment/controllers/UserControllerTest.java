@@ -1,9 +1,11 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +33,9 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
@@ -90,6 +97,21 @@ class UserControllerTest {
                 post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}")
+        )
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void registerUserWithAlreadyExistEmail() throws Exception {
+        String existEmail = "tester@example.com";
+        given(userService.registerUser(any(UserRegistrationData.class)))
+                .willThrow(new UserEmailDuplicationException(existEmail));
+
+        mockMvc.perform(
+                post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"" + existEmail + "\"," +
+                                "\"name\":\"Tester\",\"password\":\"test\"}")
         )
                 .andExpect(status().isBadRequest());
     }

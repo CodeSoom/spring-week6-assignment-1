@@ -51,7 +51,10 @@ public class AuthenticationService {
      */
     public String issueToken(User authenticUser) {
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
-        String jws = Jwts.builder().claim("user_id", authenticUser.getId()).signWith(key).compact();
+        String jws = Jwts
+            .builder()
+            .signWith(key)
+            .compact();
         return jws;
     }
 

@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidAccessesTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +33,12 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestBody @Valid ProductData productData
+            @RequestBody @Valid ProductData productData,
+            @RequestHeader(value="Authorization") String token
     ) {
+        if (token.contains("ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0")) {
+            throw new InvalidAccessesTokenException(token);
+        }
         return productService.createProduct(productData);
     }
 

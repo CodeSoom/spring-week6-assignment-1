@@ -77,8 +77,8 @@ class SessionControllerTest {
         @DisplayName("저장되어 있지 않은 사용자가 주어진다면")
         class Context_WithNotExistedUser {
             @Test
-            @DisplayName("요청이 잘못 되었다는 메세지와 BAD_REQUEST를 리턴한다")
-            void itReturnsBadRequestMessageAndBAD_REQUESTHttpStatus() throws Exception {
+            @DisplayName("요청이 잘못 되었다는 예외를 던지고 BAD_REQUEST를 리턴한다")
+            void itThrowsBadRequestExceptionAndReturnsBAD_REQUESTHttpStatus() throws Exception {
                 given(authenticationService.createToken(any(AuthenticationCreateData.class)))
                         .willThrow(new UserBadRequestException());
 
@@ -89,7 +89,6 @@ class SessionControllerTest {
                         .andExpect(content().string(containsString("User bad request")))
                         .andExpect(status().isBadRequest());
             }
-
         }
     }
 }

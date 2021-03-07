@@ -35,10 +35,6 @@ public class User {
     /** 사용자 삭제여부 */
     private boolean deleted = false;
 
-    public void delete() {
-        this.deleted = true;
-    }
-
     @Builder
     public User(Long id, String name, String email, String password, boolean deleted) {
         this.id = id;
@@ -48,10 +44,13 @@ public class User {
         this.deleted = deleted;
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);
     }
-
 
 //사용자 수정은 dozerMapper가 대신합니다.
 //    /** 사용자 정보를 수정한다. */

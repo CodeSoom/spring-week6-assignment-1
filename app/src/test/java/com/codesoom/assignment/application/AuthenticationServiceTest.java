@@ -87,8 +87,8 @@ class AuthenticationServiceTest {
             private final String givenExistedPassword = EXISTED_PASSWORD;
 
             @Test
-            @DisplayName("인증 요청이 잘못되었다는 메세지를 리턴한다")
-            void itReturnsAuthenticationBadRequestMessage() {
+            @DisplayName("인증 요청이 잘못되었다는 예외를 던진다")
+            void itThrowsAuthenticationBadRequestException() {
                 given(userRepository.findByEmail(givenNotExistedEmail)).willReturn(Optional.empty());
 
                 assertThatThrownBy(() -> authenticationService.authenticateUser(givenNotExistedEmail,givenExistedPassword))
@@ -107,15 +107,15 @@ class AuthenticationServiceTest {
             @BeforeEach
             void setUp() {
                 user = User.builder()
-                        .email(EXISTED_EMAIL)
-                        .email(EXISTED_PASSWORD)
+                        .email(givenExistedEmail)
+                        .email(givenNotExistedPassword)
                         .deleted(true)
                         .build();
             }
 
             @Test
-            @DisplayName("인증 요청이 잘못되었다는 메세지를 리턴한다")
-            void itReturnsAuthenticationBadRequestMessage() {
+            @DisplayName("인증 요청이 잘못되었다는 예외를 던진다")
+            void itThrowsAuthenticationBadRequestException() {
                 given(userRepository.findByEmail(givenExistedEmail)).willReturn(Optional.of(user));
 
                 assertThatThrownBy(() -> authenticationService.authenticateUser(user.getEmail(),user.getPassword()))
@@ -176,8 +176,8 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("인증 요청이 잘못 되었다는 메세지를 리턴한다")
-            void itReturnsUserNotFoundMessage() {
+            @DisplayName("인증 요청이 잘못 되었다는 예외를 던진다")
+            void itThrowsUserNotFoundException() {
                 given(userRepository.findByEmail(eq(givenUser.getEmail())))
                         .willThrow(new AuthenticationBadRequestException());
 
@@ -201,8 +201,8 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("인증 요청이 잘못 되었다는 메세지를 리턴한다")
-            void itReturnsUserNotFoundMessage() {
+            @DisplayName("인증 요청이 잘못 되었다는 예외를 던진다")
+            void itThrowsUserNotFoundExceotuib() {
                 given(userRepository.findByEmail(eq(givenUser.getEmail())))
                         .willThrow(new AuthenticationBadRequestException());
 
@@ -248,8 +248,8 @@ class AuthenticationServiceTest {
             private final String givenNotValidToken = NOT_EXISTED_TOKEN;
 
             @Test
-            @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
-            void itParsesTokenAndReturnsUser() {
+            @DisplayName("토큰이 유효하지 않다는 예외를 던진다")
+            void itThrowsInvalidTokenException() {
                 given(jwtUtil.decode(givenNotValidToken))
                         .willThrow(new InvalidTokenException(givenNotValidToken));
 
@@ -263,8 +263,8 @@ class AuthenticationServiceTest {
         @DisplayName("만약 null 이 주어진다면")
         class Context_WithNull {
             @Test
-            @DisplayName("토큰이 유효하지 않다는 메세지를 리턴한다")
-            void itParsesTokenAndReturnsUser() {
+            @DisplayName("토큰이 유효하지 않다는 예외를 던진다")
+            void itThrowsInvalidTokenException() {
                 given(jwtUtil.decode(null))
                         .willThrow(new InvalidTokenException(null));
 

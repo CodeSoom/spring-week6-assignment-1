@@ -43,8 +43,12 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
+            @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
+        String accessToken = authorization.substring("Bearer ".length());
+        authenticationService.parseToken(accessToken);
+        
         return productService.createProduct(productData);
     }
 

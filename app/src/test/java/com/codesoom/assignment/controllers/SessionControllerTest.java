@@ -28,10 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("SessionController 테스트")
 class SessionControllerTest {
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     private static final String EXISTED_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleGlzdGVkRW1haWwifQ." +
             "UQodS3elf3Cu4g0PDFHqVloFbcKHHmTTnk0jGmiwPXY";

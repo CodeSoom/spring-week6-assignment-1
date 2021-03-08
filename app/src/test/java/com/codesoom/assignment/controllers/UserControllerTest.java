@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserCreateData;
@@ -42,10 +43,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @DisplayName("UserController 테스트")
 class UserControllerTest {
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    UserService userService;
+    private UserService userService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     private Mapper mapper;
 

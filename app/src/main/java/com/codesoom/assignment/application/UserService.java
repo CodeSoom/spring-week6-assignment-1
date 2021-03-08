@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+/**
+ * User 처리를 담당합니다.
+ */
+
 @Service
 @Transactional
 public class UserService {
@@ -22,6 +26,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 회원을 가입 처리하고 가입된 회원 정보를 반환합니다.
+     * @param registrationData 가입정보
+     * @return 회원 정보
+     * @throws UserEmailDuplicationException 등록하고자 하는 이메일이 이미 존재할 경우
+     */
     public User registerUser(UserRegistrationData registrationData) {
         String email = registrationData.getEmail();
         if (userRepository.existsByEmail(email)) {
@@ -32,6 +42,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    /**
+     * 새로운 정보로 회원정보를 갱신하고, 갱신된 회원정보를 반환합니다.
+     * @param id 갱신할 회원정보의 식별자
+     * @param modificationData 새로운 정보
+     * @return 갱신된 회원정보
+     */
     public User updateUser(Long id, UserModificationData modificationData) {
         User user = findUser(id);
 
@@ -41,6 +57,11 @@ public class UserService {
         return user;
     }
 
+    /**
+     * 회원정보를 삭제합니다.
+     * @param id 삭제할 회원정보의 식별자
+     * @return 삭제된 회원정보
+     */
     public User deleteUser(Long id) {
         User user = findUser(id);
         user.destroy();

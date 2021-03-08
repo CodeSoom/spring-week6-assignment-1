@@ -25,6 +25,7 @@ public class UserService {
 
     /**
      * 주어진 id에 해당하는 사용자를 반환합니다.
+     *
      * @param id
      * @return 해당 id를 갖는 사용자
      */
@@ -43,8 +44,6 @@ public class UserService {
         if (userRepository.existsByEmail(email)) {
             throw new UserEmailDuplicationException(email);
         }
-
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
         User user = mapper.map(createRequest, User.class);
 

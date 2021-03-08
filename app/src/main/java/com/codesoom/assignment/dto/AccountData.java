@@ -7,24 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegistrationData {
+public class AccountData {
     @NotBlank
-    @Size(min = 3)
     @Mapping("email")
     private String email;
 
     @NotBlank
-    @Mapping("name")
-    private String name;
-
-    @NotBlank
-    @Size(min = 4, max = 1024)
     @Mapping("password")
     private String password;
 }

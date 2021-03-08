@@ -40,4 +40,19 @@ class ProductTest {
         assertThat(product.getMaker()).isEqualTo("코드숨");
         assertThat(product.getPrice()).isEqualTo(10000);
     }
+
+    @Test
+    void toStringTest() {
+        String product = Product.builder()
+                .id(1L)
+                .name("쥐돌이")
+                .maker("냥이월드")
+                .price(5000)
+                .imageUrl("https://cat.shop/rat.png")
+                .toString();
+
+        assertThat(product).contains("쥐돌이");
+        assertThat(product).contains("냥이월드");
+        assertThat(product).contains("https://cat.shop/rat.png");
+    }
 }

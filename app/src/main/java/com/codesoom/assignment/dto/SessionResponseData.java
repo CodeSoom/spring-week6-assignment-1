@@ -8,10 +8,6 @@ import lombok.Getter;
 @lombok.Generated
 @Builder
 @AllArgsConstructor
-public class UserResultData {
-    private Long id;
-
-    private String email;
-
-    private String name;
+public class SessionResponseData {
+    private String accessToken;
 }

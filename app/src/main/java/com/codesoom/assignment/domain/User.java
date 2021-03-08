@@ -10,8 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-@Getter
+@lombok.Generated
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

@@ -7,3 +7,12 @@ spring:
 
 jwt:
   secret: "12345678901234567890123456789010"
+
+logging:
+  file:
+    name: ${user.dir}/log/test.log  # 로깅 파일 위치이다.
+    max-history: 7 # 로그 파일 삭제 주기이다. 7일 이후 로그는 삭제한다.
+    max-size: 10MB  # 로그 파일 하나당 최대 파일 사이즈이다.
+  level:  # 각 package 별로 로깅 레벨을 지정할 수 있다.
+    com.project.study : error
+    com.project.study.controller : debug

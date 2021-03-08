@@ -1,26 +1,29 @@
 package com.codesoom.assignment.dto;
 
+import com.codesoom.assignment.EmailSupplier;
 import com.github.dozermapper.core.Mapping;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Getter
-@lombok.Generated
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class UserModificationData {
-    @NotBlank
-    @Mapping("name")
-    private String name;
+public class UserLoginData implements EmailSupplier {
 
     @NotBlank
-    @Size(min = 4, max = 1024)
+    @Mapping("email")
+    private String email;
+
+    @NotBlank
     @Mapping("password")
     private String password;
+
+    @lombok.Generated
+    @Builder
+    private UserLoginData(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

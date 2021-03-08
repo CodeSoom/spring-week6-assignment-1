@@ -1,4 +1,4 @@
-package com.codesoom.assignment.dto;
+package com.codesoom.assignment.errors;
 
 public class InvalidAccessTokenException extends RuntimeException{
     public InvalidAccessTokenException(String token) {

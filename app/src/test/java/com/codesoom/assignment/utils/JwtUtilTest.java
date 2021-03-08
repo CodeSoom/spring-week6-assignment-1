@@ -1,9 +1,8 @@
 package com.codesoom.assignment.utils;
 
 
-import com.codesoom.assignment.dto.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

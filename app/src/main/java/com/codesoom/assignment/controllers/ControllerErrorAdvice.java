@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
-import com.codesoom.assignment.dto.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;

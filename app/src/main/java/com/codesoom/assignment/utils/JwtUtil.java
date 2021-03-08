@@ -1,6 +1,6 @@
 package com.codesoom.assignment.utils;
 
-import com.codesoom.assignment.dto.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

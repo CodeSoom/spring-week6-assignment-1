@@ -59,7 +59,7 @@ public class ProductControllerTest {
     private static final String UPDATE_IMAGE = "https://bit.ly/2M4YXkw";
 
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIElEIjoxfQ.K7brB9EalPWQiDi8EF6XriOiJiKgksnJxIujpPVY";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "WRONG";
 
     private Product product;
     private Product updated;

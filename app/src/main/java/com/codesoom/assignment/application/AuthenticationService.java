@@ -10,7 +10,6 @@ import io.jsonwebtoken.Claims;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 /**
  *  인증에 관한 처리를 담당합니다.

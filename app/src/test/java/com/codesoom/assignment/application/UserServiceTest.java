@@ -81,7 +81,7 @@ class UserServiceTest {
     @Nested
     @DisplayName("createUser 메소드는")
     class Describe_createUser {
-        UserCreateRequestDto creationData;
+        UserCreateRequestDto createRequest;
         User createdUser;
 
         @Nested
@@ -90,7 +90,7 @@ class UserServiceTest {
 
             @BeforeEach
             void setUp() {
-                creationData = UserCreateRequestDto.builder()
+                createRequest = UserCreateRequestDto.builder()
                         .name(NAME)
                         .email(EMAIL)
                         .password(PASSWORD)
@@ -99,8 +99,8 @@ class UserServiceTest {
 
             @Test
             @DisplayName("새로운 사용자를 등록한다")
-            void it_returns_created_user() {
-                createdUser = userService.createUser(creationData);
+            void it_creates_user() {
+                createdUser = userService.createUser(createRequest);
 
                 verify(userRepository).save(any(User.class));
 
@@ -114,7 +114,7 @@ class UserServiceTest {
 
             @BeforeEach
             void setUp() {
-                creationData = UserCreateRequestDto.builder()
+                createRequest = UserCreateRequestDto.builder()
                         .name(NAME)
                         .email(DUPLICATED_EMAIL)
                         .password(PASSWORD)
@@ -123,8 +123,8 @@ class UserServiceTest {
 
             @Test
             @DisplayName("이미 존재하는 이메일이라는 예외를 던진다")
-            void it_returns_warning_message() {
-                assertThatThrownBy(() -> userService.createUser(creationData))
+            void it_throws_exception() {
+                assertThatThrownBy(() -> userService.createUser(createRequest))
                         .isInstanceOf(UserEmailDuplicationException.class);
 
                 verify(userRepository).existsByEmail(DUPLICATED_EMAIL);
@@ -154,7 +154,7 @@ class UserServiceTest {
 
             @Test
             @DisplayName("해당 ID를 갖는 사용자의 정보를 수정한다")
-            void it_returns_updated_user() {
+            void it_updates_user() {
                 updatedUser = userService.updateUser(givenValidId, updateRequest);
 
                 verify(userRepository).findById(givenValidId);
@@ -174,7 +174,7 @@ class UserServiceTest {
 
             @Test
             @DisplayName("수정할 사용자를 찾을 수 없다는 예외를 던진다")
-            void it_returns_warning_message() {
+            void it_throws_exception() {
                 assertThatThrownBy(() -> userService.updateUser(givenInvalidId, updateRequest))
                         .isInstanceOf(UserNotFoundException.class);
             }
@@ -196,7 +196,7 @@ class UserServiceTest {
 
             @Test
             @DisplayName("해당 ID를 갖는 사용자를 삭제한다")
-            void it_returns_deleted_user() {
+            void it_deletes_user() {
                 userService.deleteUser(givenValidId);
 
                 verify(userRepository).findById(givenValidId);
@@ -215,7 +215,7 @@ class UserServiceTest {
 
             @Test
             @DisplayName("삭제할 사용자를 찾을 수 없다는 예외를 던진다")
-            void it_returns_warning_message() {
+            void it_throws_exception() {
                 assertThatThrownBy(() -> userService.deleteUser(givenInvalidId))
                         .isInstanceOf(UserNotFoundException.class);
             }

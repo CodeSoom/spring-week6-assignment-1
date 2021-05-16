@@ -13,15 +13,11 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegistrationData {
-    @NotBlank
-    @Size(min = 3)
-    @Mapping("email")
-    private String email;
+public class UserLoginDetail {
 
     @NotBlank
     @Mapping("name")
-    private String name;
+    private String email;
 
     @NotBlank
     @Size(min = 4, max = 1024)

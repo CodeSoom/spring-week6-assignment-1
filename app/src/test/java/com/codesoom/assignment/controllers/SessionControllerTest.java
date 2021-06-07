@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.dto.SessionRequestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +33,12 @@ class SessionControllerTest {
 
         @BeforeEach
         void prepare_jwt() {
-            given(authenticationService.login())
+            SessionRequestData sessionRequestData =
+                    SessionRequestData.builder()
+                                      .email("markruler@codesoom.com")
+                                      .password("test")
+                                      .build();
+            given(authenticationService.login(sessionRequestData))
                     .willReturn("a.b.c");
         }
 
@@ -41,7 +47,7 @@ class SessionControllerTest {
         void It_returns_jwt() throws Exception {
             mockMvc.perform(post("/session"))
                    .andExpect(status().isCreated())
-                   .andExpect(jsonPath("$.accessToken",
+                   .andExpect(jsonPath("$.token",
                                        matchesRegex("(^[\\w-]*\\.[\\w-]*\\.[\\w-]*$)")));
         }
     }

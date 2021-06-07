@@ -12,23 +12,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,7 +43,7 @@ class ProductControllerTest {
                 .maker("냥이월드")
                 .price(5000)
                 .build();
-        given(productService.getProducts()).willReturn(List.of(product));
+        given(productService.getProducts()).willReturn(Arrays.asList(product));
 
         given(productService.getProduct(1L)).willReturn(product);
 
@@ -84,7 +83,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithExsitedProduct() throws Exception {
+    void detailWithExistedProduct() throws Exception {
         mockMvc.perform(
                 get("/products/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -94,7 +93,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithNotExsitedProduct() throws Exception {
+    void detailWithNotExistedProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
                 .andExpect(status().isNotFound());
     }

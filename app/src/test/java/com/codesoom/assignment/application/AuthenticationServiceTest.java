@@ -4,10 +4,14 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
+import org.javaunit.autoparams.AutoSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,8 +24,6 @@ class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
             ".eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
-            ".eyJ1c2VySWQiOjF9.invalid";
 
     private final UserService userService = mock(UserService.class);
 
@@ -55,10 +57,12 @@ class AuthenticationServiceTest {
         @DisplayName("만약 유효하지 않은 토큰이 주어진다면")
         class Context_with_invalid_token {
 
-            @Test
+            @ParameterizedTest
+            @AutoSource
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다")
-            void parseTokenWithInvalidToken() {
-                assertThatThrownBy(() -> authenticationService.parseToken("Bearer " + INVALID_TOKEN))
+            void parseTokenWithInvalidToken(String invalidPostfix) {
+                assertThatThrownBy(() -> authenticationService.parseToken(
+                        "Bearer " + VALID_TOKEN + invalidPostfix))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }
@@ -67,16 +71,12 @@ class AuthenticationServiceTest {
         @DisplayName("만약 빈 토큰이 주어진다면")
         class Context_with_blank_token {
 
-            @Test
+            @ParameterizedTest
+            @NullAndEmptySource // null, ""
+            @ValueSource(strings = {"   ", "\t", "\n"})
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다")
-            void parseTokenWithBlankToken() {
-                assertThatThrownBy(() -> authenticationService.parseToken(null))
-                        .isInstanceOf(InvalidTokenException.class);
-
-                assertThatThrownBy(() -> authenticationService.parseToken(""))
-                        .isInstanceOf(InvalidTokenException.class);
-
-                assertThatThrownBy(() -> authenticationService.parseToken("   "))
+            void parseTokenWithBlankToken(String input) {
+                assertThatThrownBy(() -> authenticationService.parseToken(input))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }
@@ -94,13 +94,14 @@ class AuthenticationServiceTest {
                                     .build());
         }
 
-        @Test
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("유효한 JWT를 리턴한다")
-        void It_returns_jwt() {
+        void It_returns_jwt(String email, String password) {
             final SessionRequestData sessionRequestData =
                     SessionRequestData.builder()
-                                      .email("markruler@codesoom.com")
-                                      .password("test")
+                                      .email(email)
+                                      .password(password)
                                       .build();
 
             String token = authenticationService.login(sessionRequestData);

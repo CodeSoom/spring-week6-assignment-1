@@ -3,10 +3,11 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionRequestData;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.javaunit.autoparams.AutoSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,13 +42,14 @@ class SessionControllerTest {
                     .willReturn("qwe.asd.zxc");
         }
 
-        @Test
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("유효한 JWT를 리턴한다")
-        void It_returns_jwt() throws Exception {
+        void It_returns_jwt(String email, String password) throws Exception {
             final SessionRequestData sessionRequestData =
                     SessionRequestData.builder()
-                                      .email("markruler@codesoom.com")
-                                      .password("test")
+                                      .email(email)
+                                      .password(password)
                                       .build();
 
             mockMvc.perform(post("/session")

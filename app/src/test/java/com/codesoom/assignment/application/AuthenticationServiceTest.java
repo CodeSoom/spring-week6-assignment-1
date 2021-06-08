@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -84,16 +85,10 @@ class AuthenticationServiceTest {
     @Nested
     @DisplayName("login 메서드는")
     class Describe_login {
-        private SessionRequestData sessionRequestData;
 
         @BeforeEach
         void prepare_request_data() {
-            sessionRequestData =
-                    SessionRequestData.builder()
-                                      .email("markruler@codesoom.com")
-                                      .password("test")
-                                      .build();
-            given(userService.findUserByEmailAndPassword(sessionRequestData))
+            given(userService.findUserByEmailAndPassword(anyString(), anyString()))
                     .willReturn(User.builder()
                                     .id(1L)
                                     .build());
@@ -102,6 +97,12 @@ class AuthenticationServiceTest {
         @Test
         @DisplayName("유효한 JWT를 리턴한다")
         void It_returns_jwt() {
+            final SessionRequestData sessionRequestData =
+                    SessionRequestData.builder()
+                                      .email("markruler@codesoom.com")
+                                      .password("test")
+                                      .build();
+
             String token = authenticationService.login(sessionRequestData);
 
             assertThat(token).contains(".");

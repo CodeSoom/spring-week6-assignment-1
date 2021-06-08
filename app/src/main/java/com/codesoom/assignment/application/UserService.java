@@ -2,10 +2,8 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.dto.UserResultData;
 import com.codesoom.assignment.errors.InvalidUserDataException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -52,12 +50,12 @@ public class UserService {
 
     private User findUserById(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+                             .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User findUserByEmailAndPassword(SessionRequestData requestData) {
-        return userRepository.findByEmailAndPassword(requestData.getEmail(),
-                                                     requestData.getPassword())
-                .orElseThrow(() -> new InvalidUserDataException(requestData.getEmail()));
+    public User findUserByEmailAndPassword(final String email,
+                                           final String password) {
+        return userRepository.findByEmailAndPassword(email, password)
+                             .orElseThrow(() -> new InvalidUserDataException(email));
     }
 }

@@ -25,7 +25,8 @@ public class AuthenticationService {
      */
     public String login(final SessionRequestData requestData) {
         User user =
-                userService.findUserByEmailAndPassword(requestData);
+                userService.findUserByEmailAndPassword(requestData.getEmail(),
+                                                       requestData.getPassword());
         return jwtUtil.encode(user.getId());
     }
 

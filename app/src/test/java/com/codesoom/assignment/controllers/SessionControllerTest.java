@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionRequestData;
+import com.codesoom.assignment.errors.InvalidUserDataException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javaunit.autoparams.AutoSource;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesRegex;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -36,28 +38,58 @@ class SessionControllerTest {
     @DisplayName("POST /session")
     class Describe_post_session {
 
-        @BeforeEach
-        void prepare_jwt() {
-            given(authenticationService.login(any(SessionRequestData.class)))
-                    .willReturn("qwe.asd.zxc");
+        @Nested
+        @DisplayName("요청한 정보의 사용자를 찾을 수 있다면")
+        class Context_with_existed_user_data {
+            @BeforeEach
+            void prepare_jwt() {
+                given(authenticationService.login(any(SessionRequestData.class)))
+                        .willReturn("qwe.asd.zxc");
+            }
+
+            @ParameterizedTest(name = "{displayName}: [{index}] {argumentsWithNames}")
+            @DisplayName("유효한 JWT를 응답한다")
+            @AutoSource
+            void It_returns_jwt(String email, String password) throws Exception {
+                final SessionRequestData sessionRequestData =
+                        SessionRequestData.builder()
+                                          .email(email)
+                                          .password(password)
+                                          .build();
+
+                mockMvc.perform(post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(sessionRequestData)))
+                       .andExpect(status().isCreated())
+                       .andExpect(jsonPath("$.accessToken",
+                                           matchesRegex("(^[\\w-]*\\.[\\w-]*\\.[\\w-]*$)")));
+            }
         }
 
-        @ParameterizedTest
-        @AutoSource
-        @DisplayName("유효한 JWT를 리턴한다")
-        void It_returns_jwt(String email, String password) throws Exception {
-            final SessionRequestData sessionRequestData =
-                    SessionRequestData.builder()
-                                      .email(email)
-                                      .password(password)
-                                      .build();
+        @Nested
+        @DisplayName("요청한 정보의 사용자를 찾을 수 없다면")
+        class Context_with_not_existed_user_data {
 
-            mockMvc.perform(post("/session")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(sessionRequestData)))
-                   .andExpect(status().isCreated())
-                   .andExpect(jsonPath("$.accessToken",
-                                       matchesRegex("(^[\\w-]*\\.[\\w-]*\\.[\\w-]*$)")));
+            @ParameterizedTest(name = "{displayName}: [{index}] {argumentsWithNames}")
+            @DisplayName("요청 데이터가 옳지 않다는 상태를 응답한다")
+            @AutoSource
+            void It_returns_jwt(String email, String password) throws Exception {
+                final SessionRequestData sessionRequestData =
+                        SessionRequestData.builder()
+                                          .email(email)
+                                          .password(password)
+                                          .build();
+
+                given(authenticationService.login(any(SessionRequestData.class)))
+                        .willThrow(new InvalidUserDataException(email));
+
+                mockMvc.perform(post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(sessionRequestData)))
+                       .andExpect(status().isBadRequest())
+                       .andExpect(jsonPath("$.message",
+                                           containsString("User data is invalid")));
+            }
         }
     }
 }

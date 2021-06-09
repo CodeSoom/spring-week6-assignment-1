@@ -29,7 +29,7 @@ public class SessionController {
     }
 
     /**
-     * 로그인 후 JWT를 발급해서 리턴합니다.
+     * 로그인 후 JWT를 발급해서 응답합니다.
      *
      * @return JWT
      */

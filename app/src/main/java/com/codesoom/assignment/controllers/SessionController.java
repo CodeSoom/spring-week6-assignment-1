@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("session")
 public class SessionController {
 
+    private final AuthenticationService authenticationService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(){
+        String accessToken = authenticationService.login();
+
         return SessionResponseData.builder().accessToken("a.b.c").build();
     }
 }

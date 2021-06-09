@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 class AuthenticationServiceTest {
 
     private static final String SECRET = "12345678901234567890123456789010";
+    private JwtUtil jwtUtil;
 
     private AuthenticationService authenticationService;
 
@@ -27,7 +28,7 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        JwtUtil jwtUtil = new JwtUtil(SECRET);
+        this.jwtUtil = new JwtUtil(SECRET);
         this.userService = mock(UserService.class);
         this.authenticationService = new AuthenticationService(jwtUtil, this.userService);
     }
@@ -60,7 +61,7 @@ class AuthenticationServiceTest {
             @DisplayName("토큰을 반환합니다")
             void ItReturnsToken() {
                 assertThat(authenticationService.login(user.getEmail(), user.getPassword()))
-                        .contains(".");
+                        .isEqualTo(jwtUtil.encode(user.getId()));
             }
         }
 

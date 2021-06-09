@@ -1,12 +1,12 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.SessionResponseData;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * 자원에 접근할 수 있는 권한에 대한 요청을 처리합니다.
@@ -28,8 +28,11 @@ public class SessionController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login() {
-        String accessToken = authenticationService.login();
+    public SessionResponseData login(
+            @RequestBody @Valid LoginData loginData
+    ) {
+        String accessToken = authenticationService.login(
+                loginData.getEmail(), loginData.getPassword());
         return SessionResponseData.builder()
                 .accessToken(accessToken)
                 .build();

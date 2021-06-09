@@ -39,7 +39,7 @@ public class ProductController {
 
     /**
      * 요청 식별자에 해당하는 제품을 반환합니다.
-     * @param id - 제품 식별자
+     * @param id 제품 식별자
      * @return 제품
      */
     @GetMapping("{id}")
@@ -49,8 +49,8 @@ public class ProductController {
 
     /**
      * 요청 제품을 등록하고, 등록한 제품을 반환합니다.
-     * @param authorization - Request Header, Authorization Bearer <TOKEN>
-     * @param productData - 신규 등록할 제품
+     * @param authorization Request Header, Authorization Bearer <TOKEN>
+     * @param productData 신규 등록할 제품
      * @return 등록한 제품
      */
     @PostMapping
@@ -68,8 +68,8 @@ public class ProductController {
 
     /**
      * 제품 정보를 갱신하고, 갱신한 제품을 반환합니다.
-     * @param id - 제품 식별자
-     * @param productData - 갱신할 제품
+     * @param id 제품 식별자
+     * @param productData 갱신할 제품
      * @return 갱신한 제품
      */
     @PatchMapping("{id}")
@@ -82,7 +82,7 @@ public class ProductController {
 
     /**
      * 제품을 삭제합니다.
-     * @param id - 제품 식별자
+     * @param id 제품 식별자
      */
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

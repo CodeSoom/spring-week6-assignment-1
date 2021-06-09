@@ -91,7 +91,7 @@ public class ProductController {
     }
 
     /**
-     * Request Header 없다면, UNAUTHORIZED 응답코드를 반환합니다.
+     * MissingRequestHeaderException 예외 발생시, UNAUTHORIZED 응답코드를 반환합니다.
      */
     @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

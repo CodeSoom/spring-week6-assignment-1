@@ -38,7 +38,8 @@ public class AuthenticationService {
     }
 
 
-    public SessionTokenData verify(String token) {
+    public SessionTokenData verify(String authorization) {
+        String token = authorization.substring("Bearer ".length());
         return this.jwtUtil.decode(token);
     }
 }

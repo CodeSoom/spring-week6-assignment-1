@@ -2,8 +2,10 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.dto.SessionTokenData;
 import com.codesoom.assignment.errors.WrongPasswordException;
 import com.codesoom.assignment.utils.JwtUtil;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,5 +35,10 @@ public class AuthenticationService {
             return this.jwtUtil.encode(user.getId());
         }
         throw new WrongPasswordException();
+    }
+
+
+    public SessionTokenData verify(String token) {
+        return this.jwtUtil.decode(token);
     }
 }

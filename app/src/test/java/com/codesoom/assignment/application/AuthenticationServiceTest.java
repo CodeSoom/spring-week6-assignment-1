@@ -1,11 +1,12 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.errors.WrongPasswordException;
 import com.codesoom.assignment.utils.JwtUtil;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -112,4 +113,53 @@ class AuthenticationServiceTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("verify 메소드는")
+    class DescribeVerify {
+
+        private final String VALID_TOKEN =
+                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+        private final String INVALID_HEADER_TOKEN =
+                "eyJhbGciOiJIUzI1Ni12.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+        private final String INVALID_SIGNATURE_TOKEN =
+                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGas";
+
+        @Nested
+        @DisplayName("올바른 JWT를 받으면")
+        class ContextWithValidToken {
+
+            @Test
+            @DisplayName("해독된 정보를 반환합니다")
+            void ItReturnsDecoded() {
+                assertThat(authenticationService.verify(VALID_TOKEN).getUserId())
+                        .isEqualTo(1L);
+            }
+        }
+
+        @Nested
+        @DisplayName("Header가 올바르지 않은 토큰을 받으면")
+        class ContextWithInvalidHeaderToken {
+
+            @Test
+            @DisplayName("올바르지 않은 형식의 JWT에 대한 예외를 던집니다")
+            void ItThrowsMalformedJwtException() {
+                assertThatThrownBy(() -> authenticationService.verify(INVALID_HEADER_TOKEN))
+                        .isInstanceOf(MalformedJwtException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("Signature가 올바르지 않은 토큰을 받으면")
+        class ContextWithInvalidSignatureToken {
+
+            @Test
+            @DisplayName("틀린 Signature에 대한 예외를 던집니다")
+            void ItThrowsSignatureException() {
+                assertThatThrownBy(() -> authenticationService.verify(INVALID_SIGNATURE_TOKEN))
+                        .isInstanceOf(SignatureException.class);
+            }
+        }
+    }
+
 }

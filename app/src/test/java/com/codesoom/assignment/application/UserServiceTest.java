@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
@@ -21,6 +22,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class UserServiceTest {
+    private static final String EMAIL = "sample@email.com";
+    private static final String UNKNOWN_EMAIL = "unknown@email.com";
+    private static final String PASSWORD = "sample_password";
+    private static final String NAME = "sample";
+
     private static final String EXISTED_EMAIL_ADDRESS = "existed@example.com";
     private static final Long DELETED_USER_ID = 200L;
 
@@ -59,6 +65,18 @@ class UserServiceTest {
                 .willReturn(Optional.empty());
 
         given(userRepository.findByIdAndDeletedIsFalse(DELETED_USER_ID))
+                .willReturn(Optional.empty());
+
+        given(userRepository.findUserByEmail(EMAIL))
+                .willReturn(Optional.of(
+                        User.builder()
+                                .id(1L)
+                                .email(EMAIL)
+                                .password(PASSWORD)
+                                .name(NAME)
+                                .build()));
+
+        given(userRepository.findUserByEmail(UNKNOWN_EMAIL))
                 .willReturn(Optional.empty());
     }
 
@@ -162,5 +180,32 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
+    }
+
+    @Test
+    void findUserByEmailWithValidEmail() {
+        User user = userService.findUserByEmailPassword(
+                LoginData.builder()
+                        .email(EMAIL)
+                        .password(PASSWORD)
+                        .build());
+
+        assertThat(user.getId()).isNotNull().isInstanceOf(Long.class);
+        assertThat(user.getEmail()).isEqualTo(EMAIL);
+        assertThat(user.getPassword()).isEqualTo(PASSWORD);
+
+        verify(userRepository).findUserByEmail(EMAIL);
+    }
+
+    @Test
+    void findUserByEmailWithUnknownEmail() {
+        assertThatThrownBy(() -> userService.findUserByEmailPassword(
+                LoginData.builder()
+                    .email(UNKNOWN_EMAIL)
+                    .password(PASSWORD)
+                    .build()))
+                .isInstanceOf(UserNotFoundException.class);
+
+        verify(userRepository).findUserByEmail(UNKNOWN_EMAIL);
     }
 }

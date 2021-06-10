@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.dto.LoginData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(SessionController.class)
 class SessionControllerTest {
+    private static final Long USER_ID = 1L;
+    private static final String EMAIL = "sample@google.com";
+    private static final String PASSWORD = "sample_password";
 
     @Autowired
     private MockMvc mockMvc;
@@ -25,7 +29,12 @@ class SessionControllerTest {
 
     @BeforeEach
     void setup() {
-        given(authenticationService.login()).willReturn("aaa.bbb.ccc");
+        LoginData loginData = LoginData.builder()
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        given(authenticationService.login(USER_ID)).willReturn("aaa.bbb.ccc");
     }
 
     @Test

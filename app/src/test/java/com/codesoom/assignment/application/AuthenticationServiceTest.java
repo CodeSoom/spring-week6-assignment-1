@@ -52,7 +52,7 @@ class AuthenticationServiceTest {
     @DisplayName("login메서드는")
     class Describe_Login {
         @Nested
-        @DisplayName("유저 아이디를 전달 받으면")
+        @DisplayName("유저 정보를 전달 받으면")
         class Context_Valid_Login {
             private Long id = 1L;
             private String email = "test@example.com";

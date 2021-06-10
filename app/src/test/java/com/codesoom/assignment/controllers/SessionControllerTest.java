@@ -76,7 +76,7 @@ public class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("존재하지 않는 유저의 정보를 받으면")
+        @DisplayName("올바르지 않은 로그인 정보를 받으면")
         class ContextWithNotExistedUser {
 
             @BeforeEach

@@ -13,4 +13,8 @@ public class AuthenticationService {
     public String login() {
         return jwtUtil.customEncode(1L);
     }
+
+    public Long parseToken(String access_token) {
+        return null;
+    }
 }

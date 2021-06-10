@@ -14,9 +14,11 @@ import java.security.Key;
 @Component
 public class JwtUtil {
     private final Key key;
+    private final Long expiredLength;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
-        key = Keys.hmacShaKeyFor(Base64.encodeBase64(secret.getBytes()));
+    public JwtUtil(@Value("${jwt.secret}")String secret, @Value("${jwt.expired}")Long expiredLength) {
+        this.key =  Keys.hmacShaKeyFor(Base64.encodeBase64(secret.getBytes()));
+        this.expiredLength = expiredLength;
     }
 
     /**
@@ -25,14 +27,12 @@ public class JwtUtil {
      * @return Token
      */
     public String encode(Long userId) {
-        if (userId == null) {
-            throw new InvalidTokenException(String.valueOf(userId));
-        }
         return Jwts.builder()
                 .claim("userId", userId)
                 .signWith(key)
                 .compact();
     }
+
 
     /**
      * JSON Web Token을 받아 Claims를 반환한다.
@@ -40,7 +40,7 @@ public class JwtUtil {
      * @return Claims
      */
     public Claims decode(String token) {
-        if(token == null || token.isBlank()){
+        if (token == null || token.isBlank()) {
             throw new InvalidTokenException(token);
         }
         try {

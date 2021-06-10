@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,6 +26,8 @@ public class User {
 
     private String password;
 
+    private LocalDateTime tokenExpiredDate;
+
     @Builder.Default
     private boolean deleted = false;
 
@@ -39,5 +42,9 @@ public class User {
 
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);
+    }
+
+    public void changeWithExpiredLength(LocalDateTime tokenExpiredDate) {
+        this.tokenExpiredDate = tokenExpiredDate;
     }
 }

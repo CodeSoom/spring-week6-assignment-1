@@ -6,24 +6,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("JwtUtil")
 class JwtUtilTest {
     private final static String SECRETE_KEY = "12345678901234567890123456789010";
-    private final static String VALID_TOKEN= "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
+    private final static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
             ".cjDHNEbvUC6G7AORn068kENYHYnOTIaMsgjD0Yyygn4";
-    private final static String INVALID_TOKEN= "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
-            ".cjDHNEbvUC6G7AORn068kENYHYnOTIaMsgjD0Yyyg11";
+    private final static String INVALID_TOKEN = VALID_TOKEN+"WRONG";
+    private final static Long EXPRIED_LENGTH = 300000L;
 
     private JwtUtil jwtUtil;
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil(SECRETE_KEY);
+        jwtUtil = new JwtUtil(SECRETE_KEY, EXPRIED_LENGTH);
     }
 
     @Nested
@@ -32,16 +37,10 @@ class JwtUtilTest {
         @Test
         @DisplayName("사용자 아이디로 토큰을 생성한다.")
         void createValidToken() {
+            System.out.println(LocalDateTime.now().plus(EXPRIED_LENGTH, ChronoUnit.MILLIS));
+            System.out.println(LocalDateTime.now());
             String accessToken = jwtUtil.encode(1L);
             assertThat(accessToken).isEqualTo(VALID_TOKEN);
-        }
-
-        @Test
-        @DisplayName("사용자 아이디가 Null이면 InvalidTokenException을 던진다. ")
-        void createInvalidToken() {
-            assertThatThrownBy(() -> {
-                jwtUtil.encode(null);
-            }).isInstanceOf(InvalidTokenException.class);
         }
     }
 
@@ -74,26 +73,13 @@ class JwtUtilTest {
         @Nested
         @DisplayName("빈 토큰 값을 입력 한다면")
         class Context_Empty_Token_Decode {
-            @Test
-            @DisplayName("InvalidTokenException을 던진다.")
-            void empty_token_decode() {
-                assertAll(
-                        () -> {
-                            assertThatThrownBy(() -> {
-                                jwtUtil.decode("");
-                            });
-                        },
-                        () -> {
-                            assertThatThrownBy(() -> {
-                                jwtUtil.decode(" ");
-                            });
-                        },
-                        () -> {
-                            assertThatThrownBy(() -> {
-                                jwtUtil.decode(null);
-                            });
-                        }
-                );
+            @ParameterizedTest(name = "{index} [{arguments}] InvalidException을 던진다. ")
+            @ValueSource(strings = {"  "})
+            @NullAndEmptySource
+            void empty_token_decode(String emptyToken) {
+                assertThatThrownBy(() -> {
+                    jwtUtil.decode(emptyToken);
+                }).isInstanceOf(InvalidTokenException.class);
             }
         }
     }

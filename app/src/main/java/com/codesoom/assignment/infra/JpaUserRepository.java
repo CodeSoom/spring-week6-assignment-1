@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JpaUserRepository
@@ -17,4 +18,6 @@ public interface JpaUserRepository
     Optional<User> findByIdAndDeletedIsFalse(Long id);
 
     Optional<User> findByEmail(String email);
+
+    List<User> findAll();
 }

@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.codesoom.assignment.dto.SessionRequestData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -41,7 +42,8 @@ class SessionControllerTest {
         class Context_Valid_Login {
             @BeforeEach
             void setUpValidLogin(){
-                given(authenticationService.login()).willReturn(VALID_TOKEN);
+                given(authenticationService.login(any(SessionRequestData.class)))
+                        .willReturn(VALID_TOKEN);
             }
 
             @Test

@@ -1,45 +1,83 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.AuthorizationHeader;
+import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 
 @DisplayName("AuthenticationService")
 class AuthenticationServiceTest {
 
-    private final static String  SECRETE_KEY = "12345678901234567890123456789010";
+    private final static String SECRETE_KEY = "12345678901234567890123456789010";
     private final static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
             ".cjDHNEbvUC6G7AORn068kENYHYnOTIaMsgjD0Yyygn4";
-    private final static String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
-            ".cjDHNEbvUC6G7AORn068kENYHYnOTIaMsgjD0Yyyg11";
+    private final static String INVALID_TOKEN = VALID_TOKEN + "WRONG";
+    private final static String VALID_ACCESS_TOKEN = AuthorizationHeader.Bearer.getAuthorizationValue() + VALID_TOKEN;
+    private final static String INVALID_ACCESS_TOKEN = AuthorizationHeader.Bearer.getAuthorizationValue() + INVALID_TOKEN;
+    private final Long expiredDate = 30000L;
+    private Mapper mapper;
 
     private JwtUtil jwtUtil;
     private AuthenticationService authenticationService;
+    private UserRepository userRepository = mock(UserRepository.class);
 
     @BeforeEach
-    void setUp(){
-        jwtUtil = new JwtUtil(SECRETE_KEY);
-        authenticationService = new AuthenticationService(jwtUtil);
+    void setUp() {
+        jwtUtil = new JwtUtil(SECRETE_KEY, expiredDate);
+        mapper = DozerBeanMapperBuilder.buildDefault();
+        authenticationService = new AuthenticationService(mapper, jwtUtil, userRepository);
     }
 
     @Nested
     @DisplayName("login메서드는")
-    class Describe_Login{
+    class Describe_Login {
         @Nested
         @DisplayName("유저 아이디를 전달 받으면")
-        class Context_Valid_Login{
+        class Context_Valid_Login {
+            private Long id = 1L;
+            private String email = "test@example.com";
+            private String password = "test";
+            private SessionRequestData sessionRequestData;
+
+            @BeforeEach
+            void setUpValidLogin() {
+                sessionRequestData = SessionRequestData.builder()
+                        .email(email)
+                        .password(password)
+                        .build();
+                User user = User.builder()
+                        .id(id)
+                        .email(email)
+                        .password(password)
+                        .build();
+                given(userRepository.findByEmail(email))
+                        .willReturn(Optional.of(user));
+            }
+
             @Test
             @DisplayName("토큰을 발급한다.")
-            void valid_login_create_token(){
-                String accessToken = authenticationService.login();
+            void valid_login_create_token() {
+                String accessToken = authenticationService.login(sessionRequestData);
                 assertThat(accessToken).isEqualTo(VALID_TOKEN);
             }
         }
@@ -47,49 +85,81 @@ class AuthenticationServiceTest {
 
     @Nested
     @DisplayName("parseToken 메서드는")
-    class Describe_ParseToken{
+    class Describe_ParseToken {
         @Nested
         @DisplayName("정상적인 토큰을 받으면")
-        class Context_Valid_ParseToken{
+        class Context_Valid_ParseToken {
             private Long userId = 1L;
+
             @Test
             @DisplayName("사용자 아이디를 반환한다.")
-            void valid_parseToken_return_userId(){
+            void valid_parseToken_return_userId() {
                 Long parsingUserId = authenticationService.parseToken(VALID_TOKEN);
                 assertThat(parsingUserId).isEqualTo(userId);
             }
         }
+
         @Nested
         @DisplayName("비정상적인 토큰을 받으면")
-        class Context_Invalid_ParseToken{
+        class Context_Invalid_ParseToken {
             @Test
             @DisplayName("InvalidTokenException을 던진다.")
-            void invalid_parsetToken_exception(){
+            void invalid_parsetToken_exception() {
                 assertThatThrownBy(() -> {
                     authenticationService.parseToken(INVALID_TOKEN);
                 }).isInstanceOf(InvalidTokenException.class);
             }
         }
+
         @Nested
         @DisplayName("비어있는 토큰을 받으면")
-        class Context_Empty_ParseToken{
+        class Context_Empty_ParseToken {
+            @ParameterizedTest(name = "{index} [{arguments}] InvalidException을 던진다. ")
+            @ValueSource(strings = {" "})
+            @NullAndEmptySource
+            void empty_parseToken_exeption(String emptyToken) {
+                assertThatThrownBy(() -> authenticationService.parseToken(emptyToken))
+                        .isInstanceOf(InvalidTokenException.class);
+
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("accessTokenCheck 메서드는")
+    class Describe_AccessTokenCheck {
+        @Nested
+        @DisplayName("정상적인 토큰 값을 보내면")
+        class Context_Valid_AccessTokenCheck {
+            @Test
+            @DisplayName("별도의 Exception을 던지지 않는다.")
+            void valid_accessTokenCheck() {
+                assertTrue(authenticationService.accessTokenCheck(VALID_ACCESS_TOKEN));
+            }
+        }
+
+        @Nested
+        @DisplayName("잘못된 토큰 값을 보내면")
+        class Context_Invalid_AccessTokenCheck {
             @Test
             @DisplayName("InvalidTokenException을 던진다.")
-            void empty_parseToken_exeption(){
-                assertAll(
-                        ()->{
-                            assertThatThrownBy(() -> authenticationService.parseToken(" "))
-                                    .isInstanceOf(InvalidTokenException.class);
-                        },
-                        ()->{
-                            assertThatThrownBy(() -> authenticationService.parseToken("  "))
-                                    .isInstanceOf(InvalidTokenException.class);
-                        },
-                        ()->{
-                            assertThatThrownBy(() -> authenticationService.parseToken(null))
-                                    .isInstanceOf(InvalidTokenException.class);
-                        }
-                );
+            void invalid_accessTokenCheck_exception() {
+                assertThatThrownBy(() -> {
+                    authenticationService.accessTokenCheck(INVALID_ACCESS_TOKEN);
+                }).isInstanceOf(InvalidTokenException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("비어있는 토큰 값을 보내면")
+        class Context_Empty_AccessTokenCheck{
+            @ParameterizedTest(name = "{index} [{arguments}] InvalidTokenException을 던진다.")
+            @NullAndEmptySource
+            @ValueSource(strings = {" "})
+            void invalid_accessTokenCheck_exception(String emptyToken) {
+                assertThatThrownBy(() -> {
+                    authenticationService.accessTokenCheck(emptyToken);
+                }).isInstanceOf(InvalidTokenException.class);
             }
         }
     }

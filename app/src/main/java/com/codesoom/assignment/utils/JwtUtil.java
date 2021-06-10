@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import java.security.Key;
 
 @Component
 public class JwtUtil {
+
 
     private final Key key;
 
@@ -20,5 +22,13 @@ public class JwtUtil {
 
 
         return Jwts.builder().signWith(key).claim("userId", 1L).compact();
+    }
+
+    public Claims customDecode(String accessToken) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody();
     }
 }

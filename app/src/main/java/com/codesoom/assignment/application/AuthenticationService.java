@@ -6,13 +6,15 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
     public String login() {
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        String secret = "sfldksdf";
+        Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
         return Jwts.builder().signWith(key).claim("userId", 1L).compact();
     }

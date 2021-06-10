@@ -86,7 +86,7 @@ public class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("UserNotFoundException을 던집니다")
+            @DisplayName("유저를 찾을 수 없다는 예외를 던집니다")
             void ItThrowsUserNotFoundException() {
                 assertThatThrownBy(() -> sessionController.login(loginData))
                         .isInstanceOf(UserNotFoundException.class);
@@ -104,7 +104,7 @@ public class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("WrongPassword를 던집니다")
+            @DisplayName("비밀번호가 틀렸다는 예외를 던집니다")
             void ItReturnsWrongPassword() {
                 assertThatThrownBy(() -> sessionController.login(loginData))
                         .isInstanceOf(WrongPasswordException.class);

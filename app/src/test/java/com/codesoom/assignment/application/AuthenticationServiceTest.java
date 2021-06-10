@@ -82,7 +82,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("UserNotFoundException을 던집니다")
+            @DisplayName("유저를 찾을 수 없다는 예외를 던집니다")
             void ItThrowsUserNotFoundException() {
                 assertThatThrownBy(() -> authenticationService.login(loginData))
                         .isInstanceOf(UserNotFoundException.class);
@@ -100,7 +100,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("WrongPasswordException을 던집니다")
+            @DisplayName("비밀번호가 틀렸다는 예외를 던집니다")
             void ItThrowsWrongPasswordException() {
                 LoginData invalidLoginData = LoginData.builder()
                         .email(loginData.getEmail())

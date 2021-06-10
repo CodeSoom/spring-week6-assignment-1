@@ -27,7 +27,7 @@ class AuthenticationServiceTest {
 
     @Test
     void login() {
-        String accessToken = authenticationService.login(REGISTERED_ID);
+        String accessToken = authenticationService.login("a");
 
         assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }

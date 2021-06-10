@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.uitls.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -14,8 +15,8 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String login(Long userId) {
-        return jwtUtil.encode(userId);
+    public String login(String email) {
+        return jwtUtil.encode(email);
     }
 
     public Long parseToken(String accessToken) {

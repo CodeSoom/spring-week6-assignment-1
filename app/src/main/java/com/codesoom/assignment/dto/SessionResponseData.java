@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * ACCESS TOKEN 요청처리 DTO
+ */
 @Getter
 @Builder
 @AllArgsConstructor

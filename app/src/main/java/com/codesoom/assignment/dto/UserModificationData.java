@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * 회원 수정 요청 DTO
+ */
 @Getter
 @Builder
 @NoArgsConstructor

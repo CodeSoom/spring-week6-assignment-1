@@ -37,7 +37,12 @@ public class AuthenticationService {
         throw new WrongPasswordException();
     }
 
-
+    /**
+     * Authorization 헤더를 검증하고 해독된 내용을 반환합니다.
+     *
+     * @param authorization Authrization 헤더
+     * @return 해독된 토큰의 내용
+     */
     public SessionTokenData verify(String authorization) {
         String token = authorization.substring("Bearer ".length());
         return this.jwtUtil.decode(token);

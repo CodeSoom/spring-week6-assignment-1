@@ -68,6 +68,7 @@ public class ProductController {
     /**
      * 상품 정보 수정에 대한 요청을 처리합니다.
      *
+     * @param authorization 권한을 확인할 수 있는 토큰
      * @param id 상품 식별자
      * @param productData 상품 정보
      * @return 수정된 상품
@@ -85,6 +86,7 @@ public class ProductController {
     /**
      * 상품 삭제에 대한 요청을 처리합니다.
      *
+     * @param authorization 권한을 확인할 수 있는 토큰
      * @param id 상품 식별자
      */
     @DeleteMapping("{id}")

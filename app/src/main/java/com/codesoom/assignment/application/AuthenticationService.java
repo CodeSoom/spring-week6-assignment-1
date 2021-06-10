@@ -21,7 +21,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 자원에 접근할 수 있는 권한을 발급하고 반환합니다.
+     * 자원에 접근할 수 있는 권한을 부여하는 토큰을 발급하고 반환합니다.
      *
      * @param email 인증을 요청한 이메일
      * @param password 인증을 요청한 비밀번호

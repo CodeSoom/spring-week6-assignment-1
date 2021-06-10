@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.errors.InvalidTokenException;
+import com.codesoom.assignment.errors.LoginFailedException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -36,5 +37,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(InvalidTokenException.class)
     public ErrorResponse handleInvalidAccessTokenException() {
         return new ErrorResponse("Token is invalid");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LoginFailedException.class)
+    public ErrorResponse handleLoginFailedException() {
+        return new ErrorResponse("Login failed, checking user's email or password");
     }
 }

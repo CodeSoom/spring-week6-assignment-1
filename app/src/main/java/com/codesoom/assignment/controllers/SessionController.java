@@ -24,6 +24,7 @@ public class SessionController {
     /**
      * 권한을 부여받기 위한 요청을 처리합니다.
      *
+     * @param loginData 인증을 위한 로그인 정보
      * @return 권한을 부여하는 토큰을 포함한 응답
      */
     @PostMapping
@@ -31,8 +32,7 @@ public class SessionController {
     public SessionResponseData login(
             @RequestBody @Valid LoginData loginData
     ) {
-        String accessToken = authenticationService.login(
-                loginData.getEmail(), loginData.getPassword());
+        String accessToken = authenticationService.login(loginData);
         return SessionResponseData.builder()
                 .accessToken(accessToken)
                 .build();

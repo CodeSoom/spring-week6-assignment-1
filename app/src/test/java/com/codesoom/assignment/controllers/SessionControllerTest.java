@@ -63,7 +63,7 @@ public class SessionControllerTest {
             @BeforeEach
             void setUp() {
                 token = jwtUtil.encode(user.getId());
-                given(authenticationService.login(user.getEmail(), user.getPassword()))
+                given(authenticationService.login(loginData))
                         .willReturn(token);
             }
 
@@ -81,7 +81,7 @@ public class SessionControllerTest {
 
             @BeforeEach
             void setUp() {
-                given(authenticationService.login(user.getEmail(), user.getPassword()))
+                given(authenticationService.login(loginData))
                         .willThrow(UserNotFoundException.class);
             }
 
@@ -99,7 +99,7 @@ public class SessionControllerTest {
 
             @BeforeEach
             void setUp() {
-                given(authenticationService.login(user.getEmail(), user.getPassword()))
+                given(authenticationService.login(loginData))
                         .willThrow(WrongPasswordException.class);
             }
 

@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.errors.WrongPasswordException;
 import com.codesoom.assignment.utils.JwtUtil;
@@ -38,6 +39,7 @@ class AuthenticationServiceTest {
     class DescribeLogin {
 
         private User user;
+        private LoginData loginData;
 
         @BeforeEach
         void userSetUp() {
@@ -45,6 +47,10 @@ class AuthenticationServiceTest {
                     .name("Jack")
                     .email("jack@email.com")
                     .password("qwer1234")
+                    .build();
+            loginData = LoginData.builder()
+                    .email(user.getEmail())
+                    .password(user.getPassword())
                     .build();
         }
 
@@ -60,7 +66,7 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("토큰을 반환합니다")
             void ItReturnsToken() {
-                assertThat(authenticationService.login(user.getEmail(), user.getPassword()))
+                assertThat(authenticationService.login(loginData))
                         .isEqualTo(jwtUtil.encode(user.getId()));
             }
         }
@@ -78,7 +84,7 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("UserNotFoundException을 던집니다")
             void ItThrowsUserNotFoundException() {
-                assertThatThrownBy(() -> authenticationService.login(user.getEmail(), user.getPassword()))
+                assertThatThrownBy(() -> authenticationService.login(loginData))
                         .isInstanceOf(UserNotFoundException.class);
             }
         }
@@ -96,7 +102,12 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("WrongPasswordException을 던집니다")
             void ItThrowsWrongPasswordException() {
-                assertThatThrownBy(() -> authenticationService.login(user.getEmail(), user.getPassword()+"as"))
+                LoginData invalidLoginData = LoginData.builder()
+                        .email(loginData.getEmail())
+                        .password(loginData.getPassword() + "as")
+                        .build();
+
+                assertThatThrownBy(() -> authenticationService.login(invalidLoginData))
                         .isInstanceOf(WrongPasswordException.class);
             }
         }

@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,7 +30,7 @@ class SessionControllerTest {
 
     @BeforeEach
     void setUp() {
-        given(authenticationService.login()).willReturn("a.b.c");
+        given(authenticationService.login(anyLong())).willReturn("a.b.c");
     }
 
     @Test

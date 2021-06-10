@@ -14,8 +14,8 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String login() {
-        return jwtUtil.encode(1L);
+    public String login(Long userId) {
+        return jwtUtil.encode(userId);
     }
 
     public Long parseToken(String accessToken) {

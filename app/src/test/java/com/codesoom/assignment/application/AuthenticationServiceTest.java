@@ -13,8 +13,10 @@ class AuthenticationServiceTest {
     private static final String SECRET = "gkskenfdutkeidktjeifnturldksiekt";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI5I";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI51";
+    private static final String INVALID_TOKEN = VALID_TOKEN.replace('5', '6');
+
+    private static final Long REGISTERED_ID = 1L;
+    private static final Long NOT_REGISTERED_ID = 100L;
 
     @BeforeEach
     void setUp() {
@@ -25,7 +27,7 @@ class AuthenticationServiceTest {
 
     @Test
     void login() {
-        String accessToken = authenticationService.login();
+        String accessToken = authenticationService.login(REGISTERED_ID);
 
         assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }

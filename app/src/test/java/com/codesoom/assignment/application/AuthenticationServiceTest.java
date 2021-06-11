@@ -4,6 +4,10 @@ import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,8 +18,7 @@ class AuthenticationServiceTest {
     private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
-    private final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpK0INVALID";
+    private final String INVALID_TOKEN = VALID_TOKEN + "INVALID";
 
     private AuthenticationService authenticationService;
 
@@ -46,15 +49,12 @@ class AuthenticationServiceTest {
                 .isInstanceOf(InvalidTokenException.class);
     }
 
-    @Test
-    void parseWithEmptyToken() {
-        assertThatThrownBy(() -> authenticationService.parseToken(null))
-                .isInstanceOf(InvalidTokenException.class);
-
-        assertThatThrownBy(() -> authenticationService.parseToken(""))
-                .isInstanceOf(InvalidTokenException.class);
-
-        assertThatThrownBy(() -> authenticationService.parseToken(" "))
+    @ParameterizedTest(name = "{index}: [{0}]")
+    @NullSource
+    @EmptySource
+    @ValueSource(strings = {" "})
+    void parseWithEmptyToken(String input) {
+        assertThatThrownBy(() -> authenticationService.parseToken(input))
                 .isInstanceOf(InvalidTokenException.class);
     }
 

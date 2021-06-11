@@ -28,7 +28,7 @@ public class ProductController {
     }
 
     /**
-     * 상품 전체 목록에 대한 요청을 처리합니다.
+     * 상품 전체 목록을 리턴합니다.
      *
      * @return 상품 목록
      */

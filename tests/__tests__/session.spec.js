@@ -48,7 +48,7 @@ describe('Session', () => {
           email: 'notexists@email.com',
           password: 'wrong password',
         })
-          .expect('status', 400);
+          .expect('status', 404);
       });
     });
   });

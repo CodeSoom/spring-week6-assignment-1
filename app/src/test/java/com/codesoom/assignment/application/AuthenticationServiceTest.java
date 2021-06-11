@@ -22,6 +22,8 @@ import static org.mockito.Mockito.mock;
 class AuthenticationServiceTest {
 
     private static final String SECRET = "12345678901234567890123456789010";
+    private static final String AUTH_SCHEME = "Bearer";
+
     private JwtUtil jwtUtil;
 
     private AuthenticationService authenticationService;
@@ -118,12 +120,20 @@ class AuthenticationServiceTest {
     @DisplayName("verify 메소드는")
     class DescribeVerify {
 
-        private final String VALID_TOKEN =
-                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-        private final String INVALID_HEADER_TOKEN =
-                "eyJhbGciOiJIUzI1Ni12.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-        private final String INVALID_SIGNATURE_TOKEN =
-                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGas";
+        private String validAuthorization;
+        private String invalidHeaderAuthorization;
+        private String invalidSignatueAuthorization;
+
+        @BeforeEach
+        void tokenSetUp() {
+            String validToken = jwtUtil.encode(1L);
+            String invalidHeaderToken = "invalidHeader" + validToken;
+            String invalidSignatueToken = validToken + "invalidSignature";
+
+            validAuthorization = AUTH_SCHEME + " " + validToken;
+            invalidHeaderAuthorization = AUTH_SCHEME + " " + invalidHeaderToken;
+            invalidSignatueAuthorization = AUTH_SCHEME + " " + invalidSignatueToken;
+        }
 
         @Nested
         @DisplayName("올바른 JWT를 받으면")
@@ -132,7 +142,7 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("해독된 정보를 반환합니다")
             void ItReturnsDecoded() {
-                assertThat(authenticationService.verify(VALID_TOKEN).getUserId())
+                assertThat(authenticationService.verify(validAuthorization).getUserId())
                         .isEqualTo(1L);
             }
         }
@@ -144,7 +154,7 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("올바르지 않은 형식의 JWT에 대한 예외를 던집니다")
             void ItThrowsMalformedJwtException() {
-                assertThatThrownBy(() -> authenticationService.verify(INVALID_HEADER_TOKEN))
+                assertThatThrownBy(() -> authenticationService.verify(invalidHeaderAuthorization))
                         .isInstanceOf(MalformedJwtException.class);
             }
         }
@@ -156,7 +166,7 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("틀린 Signature에 대한 예외를 던집니다")
             void ItThrowsSignatureException() {
-                assertThatThrownBy(() -> authenticationService.verify(INVALID_SIGNATURE_TOKEN))
+                assertThatThrownBy(() -> authenticationService.verify(invalidSignatueAuthorization))
                         .isInstanceOf(SignatureException.class);
             }
         }

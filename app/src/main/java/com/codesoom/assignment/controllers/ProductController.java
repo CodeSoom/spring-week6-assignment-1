@@ -49,7 +49,7 @@ public class ProductController {
     }
 
     /**
-     * 상품 생성에 대한 요청을 처리합니다.
+     * 새로운 상품을 생성하고, 생성된 상품 정보를 리턴합니다.
      *
      * @param authorization 권한을 확인할 수 있는 토큰
      * @param productData 상품 정보

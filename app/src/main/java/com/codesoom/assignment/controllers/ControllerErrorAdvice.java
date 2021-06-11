@@ -1,10 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
-import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
-import com.codesoom.assignment.errors.WrongPasswordException;
+import com.codesoom.assignment.errors.*;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.http.HttpStatus;
@@ -50,5 +47,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(MalformedJwtException.class)
     public ErrorResponse handlerMalformedJwt() {
         return new ErrorResponse("Invalid JWT header");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingAuthorizationHeaderException.class)
+    public ErrorResponse handlerMissingAuthorizationHeader() {
+        return new ErrorResponse("Authorization is missed");
     }
 }

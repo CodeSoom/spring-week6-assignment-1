@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -258,8 +259,8 @@ class ProductControllerApiTest {
             }
 
             @Test
-            @DisplayName("BadRequest status를 반환합니다")
-            void ItReturnsBadRequest() throws Exception {
+            @DisplayName("Unauthorized status를 반환합니다")
+            void ItReturnsUnauthorized() throws Exception {
                 String requestBody = objectMapper.writeValueAsString(productData);
                 mockMvc.perform(
                         post("/products")
@@ -267,7 +268,8 @@ class ProductControllerApiTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBody)
                 )
-                        .andExpect(status().isBadRequest());
+                        .andDo(print())
+                        .andExpect(status().isUnauthorized());
             }
         }
 

@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.MissingAuthorizationHeaderException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 상품에 대한 요청을 처리합니다.
@@ -58,10 +60,11 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) Optional<String> authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        this.authenticationService.verify(authorization);
+        this.authenticationService.verify(
+                authorization.orElseThrow(MissingAuthorizationHeaderException::new));
         return productService.createProduct(productData);
     }
 
@@ -75,11 +78,12 @@ public class ProductController {
      */
     @PatchMapping("{id}")
     public Product update(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) Optional<String> authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        this.authenticationService.verify(authorization);
+        this.authenticationService.verify(
+                authorization.orElseThrow(MissingAuthorizationHeaderException::new));
         return productService.updateProduct(id, productData);
     }
 
@@ -92,10 +96,11 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) Optional<String> authorization,
             @PathVariable Long id
     ) {
-        this.authenticationService.verify(authorization);
+        this.authenticationService.verify(
+                authorization.orElseThrow(MissingAuthorizationHeaderException::new));
         productService.deleteProduct(id);
     }
 }

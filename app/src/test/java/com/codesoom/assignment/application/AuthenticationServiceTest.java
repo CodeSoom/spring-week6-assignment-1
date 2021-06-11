@@ -73,8 +73,8 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("존재하지 않는 유저 정보를 받았을 때")
-        class ContextWithNotExistedUser {
+        @DisplayName("유저를 찾을 수 없을 때")
+        class ContextWithCannotFindUser {
 
             @BeforeEach
             void setUp() {

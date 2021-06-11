@@ -16,7 +16,8 @@ class JwtUtilTest {
 
     private static final String SECRET = "gkskenfdutkeidktjeifnturldksiekt";
     private static final String TEST_EMAIL = "test@test.com";
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20ifQ.4HbNGIW9PaXCVuALXZxuqF__XkQYD6BpXndE7Cll4yU";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20ifQ" +
+            ".4HbNGIW9PaXCVuALXZxuqF__XkQYD6BpXndE7Cll4yU";
     private static final String INVALID_TOKEN = VALID_TOKEN.replace("5", "6");
 
     @BeforeEach

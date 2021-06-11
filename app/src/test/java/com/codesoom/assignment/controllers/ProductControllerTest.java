@@ -7,6 +7,7 @@ import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,13 +43,15 @@ class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpK0INVALID";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "INVALID";
 
-    private static final Long PRODUCT_ID = 1L;
-    private static final String PRODUCT_NAME = "쥐냥이";
-    private static final String PRODUCT_MAKER = "쥐냥이";
-    private static final Integer PRODUCT_PRICE = 9900;
+    private static final Long ID = 1L;
+
+    private static final String NAME = "쥐돌이";
+
+    private static final String MAKER = "코드숨";
+
+    private static final Integer PRICE = 9900;
 
     @Autowired
     private MockMvc mockMvc;
@@ -69,7 +73,12 @@ class ProductControllerTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
 
-        product = productGenerator();
+        product = Product.builder()
+                .id(ID)
+                .name(NAME)
+                .maker(MAKER)
+                .price(PRICE)
+                .build();
 
         given(productService.getProducts()).willReturn(List.of(product));
 
@@ -98,52 +107,72 @@ class ProductControllerTest {
         reset(authenticationService);
     }
 
-    @Test
-    void list() throws Exception {
-        mockMvc.perform(
-                get("/products")
-                        .accept(MediaType.APPLICATION_JSON)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+    @Nested
+    @DisplayName("list 메서드")
+    class DescribeProductList {
+        @Test
+        @DisplayName("모든 제품 목록을 반환한다")
+        void list() throws Exception {
+            mockMvc.perform(
+                    get("/products")
+                            .accept(MediaType.APPLICATION_JSON)
+            )
+                    .andExpect(status().isOk())
+                    .andExpect(content().string(containsString("쥐돌이")));
+        }
     }
 
     @Nested
     @DisplayName("GET /products/:id 요청 시")
     class DescribeGetProduct {
+        Long VALID_ID;
+        Long INVALID_ID;
+
+        @BeforeEach
+        void setUp() throws Exception {
+            List<Product> products = productService.getProducts();
+            if (products.isEmpty()) {
+                throw new NotFoundException("Empty products");
+            }
+
+            Product validProduct = products.get(0);
+            VALID_ID = validProduct.getId();
+
+            given(productService.getProduct(VALID_ID)).willReturn(validProduct);
+
+            Product lastProduct = products.get(products.size() - 1);
+            Product invalidProduct = Product.builder()
+                    .id(lastProduct.getId() + 9999L)
+                    .build();
+
+            INVALID_ID = invalidProduct.getId();
+
+            given(productService.getProduct(INVALID_ID))
+                    .willThrow(new ProductNotFoundException(INVALID_ID));
+        }
+
         @Nested
         @DisplayName("만약 유효한 식별자라면")
         class ContextWithValidId {
-            @BeforeEach
-            void setUp() {
-                given(productService.getProduct(any())).willReturn(product);
-            }
-
             @Test
             @DisplayName("해당 식별자의 제품을 반환한다")
             void itReturnsProduct() throws Exception {
                 mockMvc.perform(
-                        get("/products/1")
+                        get("/products/" + ID)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
                         .andExpect(status().isOk())
-                        .andExpect(content().string(containsString("쥐돌이")));
+                        .andExpect(content().string(containsString(NAME)));
             }
         }
 
         @Nested
         @DisplayName("만약 잘못된 식별자라면")
         class ContextWithInvalidId {
-            @BeforeEach
-            void setUp() {
-                given(productService.getProduct(eq(1000L)))
-                        .willThrow(new ProductNotFoundException(1000L));
-            }
-
             @Test
             @DisplayName("NOT FOUND 응답 코드를 반환한다")
             void itReturnsNotFound() throws Exception {
-                mockMvc.perform(get("/products/1000"))
+                mockMvc.perform(get("/products/" + INVALID_ID))
                         .andExpect(status().isNotFound());
             }
         }
@@ -159,7 +188,7 @@ class ProductControllerTest {
         }
 
         @Nested
-        @DisplayName("만약 유효한 인증 토큰이라면")
+        @DisplayName("유효한 인증 토큰이라면")
         class ContextWithValidAccessToken {
             @BeforeEach
             void setUp() {
@@ -177,8 +206,7 @@ class ProductControllerTest {
                         post("/products")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                        "\"price\":5000}")
+                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\",\"price\":5000}")
                                 .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                         .andExpect(status().isCreated())
@@ -189,7 +217,7 @@ class ProductControllerTest {
         }
 
         @Nested
-        @DisplayName("만약 잘못된 인증 토큰이라면")
+        @DisplayName("잘못된 인증 토큰이라면")
         class ContextWithoutValidAccessToken {
             @BeforeEach
             void setUp() {
@@ -302,14 +330,5 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(productService).deleteProduct(1000L);
-    }
-
-    public Product productGenerator() {
-        return Product.builder()
-                .id(PRODUCT_ID)
-                .name(PRODUCT_NAME)
-                .maker(PRODUCT_MAKER)
-                .price(PRODUCT_PRICE)
-                .build();
     }
 }

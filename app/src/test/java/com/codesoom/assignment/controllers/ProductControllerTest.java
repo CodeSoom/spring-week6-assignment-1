@@ -81,24 +81,6 @@ class ProductControllerTest {
                 .build();
 
         given(productService.getProducts()).willReturn(List.of(product));
-
-        given(productService.updateProduct(eq(1L), any(ProductData.class)))
-                .will(invocation -> {
-                    Long id = invocation.getArgument(0);
-                    ProductData productData = invocation.getArgument(1);
-                    return Product.builder()
-                            .id(id)
-                            .name(productData.getName())
-                            .maker(productData.getMaker())
-                            .price(productData.getPrice())
-                            .build();
-                });
-
-        given(productService.updateProduct(eq(1000L), any(ProductData.class)))
-                .willThrow(new ProductNotFoundException(1000L));
-
-        given(productService.deleteProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
     }
 
     @AfterEach
@@ -109,7 +91,7 @@ class ProductControllerTest {
 
     @Nested
     @DisplayName("list 메서드")
-    class DescribeProductList {
+    class DescribeGetProductList {
         @Test
         @DisplayName("모든 제품 목록을 반환한다")
         void list() throws Exception {
@@ -195,7 +177,8 @@ class ProductControllerTest {
                 given(authenticationService.parseToken(VALID_TOKEN)).will(invocation -> {
                     String token = invocation.getArgument(0);
                     return new JwtUtil(JWT_KEY)
-                            .decode(token);
+                            .decode(token)
+                            .get("userId", Long.class);
                 });
             }
 
@@ -272,63 +255,149 @@ class ProductControllerTest {
         }
     }
 
-    @Test
-    void updateWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
+    @Nested
+    @DisplayName("PATCH /products/:id 요청 시")
+    class DescribePatchProduct {
+        Long VALID_ID;
+        Long INVALID_ID;
 
-        verify(productService).updateProduct(eq(1L), any(ProductData.class));
+        @BeforeEach
+        void setUp() throws Exception {
+            List<Product> products = productService.getProducts();
+            if (products.isEmpty()) {
+                throw new NotFoundException("Empty products");
+            }
+
+            Product validProduct = products.get(0);
+            VALID_ID = validProduct.getId();
+
+            given(productService.updateProduct(eq(VALID_ID), any(ProductData.class)))
+                    .will(invocation -> {
+                        Long id = invocation.getArgument(0);
+                        ProductData productData = invocation.getArgument(1);
+                        return Product.builder()
+                                .id(id)
+                                .name(productData.getName())
+                                .maker(productData.getMaker())
+                                .price(productData.getPrice())
+                                .build();
+                    });
+
+            Product lastProduct = products.get(products.size() - 1);
+            Product invalidProduct = Product.builder()
+                    .id(lastProduct.getId() + 9999L)
+                    .build();
+
+            INVALID_ID = invalidProduct.getId();
+
+            given(productService.updateProduct(eq(INVALID_ID), any(ProductData.class)))
+                    .willThrow(new ProductNotFoundException(1000L));
+        }
+
+        @Nested
+        @DisplayName("옳바른 요청 데이터")
+        class ContextWithValidAttributes {
+            @Test
+            @DisplayName("해당 제품이 존재한다면, 갱신한 제품을 반환한다")
+            void itReturnsUpdatedProductWithProduct() throws Exception {
+                mockMvc.perform(
+                        patch("/products/" + VALID_ID)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\",\"price\":5000}")
+                )
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString("쥐순이")));
+
+                verify(productService).updateProduct(eq(VALID_ID), any(ProductData.class));
+            }
+
+            @Test
+            @DisplayName("해당 제품이 없다면, NOT FOUND를 반환한다")
+            void itReturnsNotFoundWithoutProduct() throws Exception {
+                mockMvc.perform(
+                        patch("/products/" + INVALID_ID)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\",\"price\":5000}")
+                )
+                        .andExpect(status().isNotFound());
+
+                verify(productService).updateProduct(eq(INVALID_ID), any(ProductData.class));
+            }
+        }
+
+        @Nested
+        @DisplayName("잘못된 요청 데이터")
+        class ContextWithInvalidAttributes {
+            @Test
+            @DisplayName("BAD REQUEST를 반환한다")
+            void itReturnsBadRequest() throws Exception {
+                mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"\",\"maker\":\"\",\"price\":0}")
+                )
+                        .andExpect(status().isBadRequest());
+            }
+        }
     }
 
-    @Test
-    void updateWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isNotFound());
+    @Nested
+    @DisplayName("DELETE /products/:id 요청 시")
+    class DescribeDeleteProduct {
+        Long VALID_ID;
+        Long INVALID_ID;
 
-        verify(productService).updateProduct(eq(1000L), any(ProductData.class));
-    }
+        @BeforeEach
+        void setUp() throws Exception {
+            List<Product> products = productService.getProducts();
+            if (products.isEmpty()) {
+                throw new NotFoundException("Empty products");
+            }
 
-    @Test
-    void updateWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
-    }
+            Product validProduct = products.get(0);
+            VALID_ID = validProduct.getId();
 
-    @Test
-    void destroyWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1")
-        )
-                .andExpect(status().isNoContent());
+            Product lastProduct = products.get(products.size() - 1);
+            Product invalidProduct = Product.builder()
+                    .id(lastProduct.getId() + 9999L)
+                    .build();
 
-        verify(productService).deleteProduct(1L);
-    }
+            INVALID_ID = invalidProduct.getId();
 
-    @Test
-    void destroyWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1000")
-        )
-                .andExpect(status().isNotFound());
+            given(productService.deleteProduct(INVALID_ID))
+                    .willThrow(new ProductNotFoundException(INVALID_ID));
+        }
 
-        verify(productService).deleteProduct(1000L);
+        @Nested
+        @DisplayName("해당 제품이 존재한다면")
+        class ContextWithExistedProduct {
+            @Test
+            @DisplayName("제품을 삭제한다.")
+            void destroyProduct() throws Exception {
+                mockMvc.perform(
+                        delete("/products/" + VALID_ID)
+                )
+                        .andExpect(status().isNoContent());
+
+                verify(productService).deleteProduct(eq(VALID_ID));
+            }
+        }
+
+        @Nested
+        @DisplayName("해당 제품이 없다면")
+        class ContextWithNotExistedProduct {
+            @Test
+            @DisplayName("NOT FOUND를 반환한다")
+            void itReturnsNotFound() throws Exception {
+                mockMvc.perform(
+                        delete("/products/" + INVALID_ID)
+                )
+                        .andExpect(status().isNotFound());
+
+                verify(productService).deleteProduct(eq(INVALID_ID));
+            }
+        }
     }
 }

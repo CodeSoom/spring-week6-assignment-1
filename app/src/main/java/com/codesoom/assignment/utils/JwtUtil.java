@@ -18,6 +18,12 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * 유저 식별자를 암호화해서 토큰을 발급합니다.
+     *
+     * @param userId 유저 식별자
+     * @return 토큰
+     */
     public String encode(Long userId) {
         return Jwts.builder()
                 .claim("userId", userId)
@@ -25,6 +31,12 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * 토큰을 해독하고 그 데이터를 반환합니다.
+     *
+     * @param token 인가 토큰
+     * @return 해독된 토큰의 데이터
+     */
     public SessionTokenData decode(String token) {
         Claims claims =  Jwts.parserBuilder()
                 .setSigningKey(key)

@@ -38,7 +38,7 @@ public class ProductController {
     }
 
     /**
-     * 상품에 대한 정보 요청을 처리합니다.
+     * 상품 하나를 조회해 리턴합니다.
      *
      * @param id 상품 식별자
      * @return 상품

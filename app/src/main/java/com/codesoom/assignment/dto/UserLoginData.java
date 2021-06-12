@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 /**
- * 사용자 로그인 Dto
+ * 사용자 로그인 정보.
  */
 @Getter
 @Builder

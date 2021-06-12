@@ -18,10 +18,10 @@ import java.security.Key;
 public class JwtUtil {
 
     private final String USER_EMAIL = "userEmail";
-    private final Key key;
+    private final Key secretKey;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
+        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     /**
@@ -32,7 +32,7 @@ public class JwtUtil {
     public String encode(String userEmail) {
         return Jwts.builder()
                    .claim(USER_EMAIL, userEmail)
-                   .signWith(key)
+                   .signWith(secretKey)
                    .compact();
     }
 
@@ -47,7 +47,7 @@ public class JwtUtil {
         }
         try {
             return Jwts.parserBuilder()
-                       .setSigningKey(key)
+                       .setSigningKey(secretKey)
                        .build()
                        .parseClaimsJws(token)
                        .getBody();

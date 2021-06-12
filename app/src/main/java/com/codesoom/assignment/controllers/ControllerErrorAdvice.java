@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.PasswordNotCorrectException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ControllerErrorAdvice {
 
     /**
-     * 상품을 찾지 못 했을때 에러 메세지를 리턴합니다.
-     * @return 에러 메세지
+     * 상품을 찾지 못 했을때 에러 응답을 리턴합니다.
+     * @return 에러 응답
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ProductNotFoundException.class)
@@ -29,8 +30,8 @@ public class ControllerErrorAdvice {
     }
 
     /**
-     * 사용자를 찾지 못 했을때 에러 메세지를 리턴합니다.
-     * @return 에러 메세지
+     * 사용자를 찾지 못 했을때 에러 응답을 리턴합니다.
+     * @return 에러 응답
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
@@ -39,8 +40,8 @@ public class ControllerErrorAdvice {
     }
 
     /**
-     * 사용자 이메일이 중복일때 에러 메세지를 리턴합니다.
-     * @return 에러 메세지
+     * 사용자 이메일이 중복일때 에러 응답을 리턴합니다.
+     * @return 에러 응답
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserEmailDuplicationException.class)
@@ -49,12 +50,22 @@ public class ControllerErrorAdvice {
     }
 
     /**
-     * 사용자 비밀번호가 틀렸을때 에러 메세지를 리턴합니다.
-     * @return 에러 메세지
+     * 사용자 비밀번호가 틀렸을때 에러 응답을 리턴합니다.
+     * @return 에러 응답
      */
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PasswordNotCorrectException.class)
     public ErrorResponse handlePasswordNotCorrect() {
         return new ErrorResponse("Password Not Correct");
+    }
+
+    /**
+     * 토큰이 유효하지 않을때 에러 응답을 리턴합니다.
+     * @return 에러 응답
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidTokenException.class)
+    public ErrorResponse handleInvalidToken() {
+        return new ErrorResponse("Invalid token");
     }
 }

@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * 엑세스 토큰 응답객체 입니다.
+ * 엑세스 토큰 응답객체.
  */
 @Getter
 @Builder

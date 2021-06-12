@@ -2,10 +2,8 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserPasswordMismatchException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -185,11 +183,7 @@ class UserServiceTest {
 
     @Test
     void findUserByEmailWithValidEmail() {
-        User user = userService.findUserByEmailPassword(
-                LoginData.builder()
-                        .email(EMAIL)
-                        .password(PASSWORD)
-                        .build());
+        User user = userService.findUserByEmailPassword(EMAIL, PASSWORD);
 
         assertThat(user.getId()).isNotNull().isInstanceOf(Long.class);
         assertThat(user.getEmail()).isEqualTo(EMAIL);
@@ -200,11 +194,7 @@ class UserServiceTest {
 
     @Test
     void findUserByEmailWithUnknownEmail() {
-        assertThatThrownBy(() -> userService.findUserByEmailPassword(
-                LoginData.builder()
-                    .email(UNKNOWN_EMAIL)
-                    .password(PASSWORD)
-                    .build()))
+        assertThatThrownBy(() -> userService.findUserByEmailPassword(UNKNOWN_EMAIL, PASSWORD))
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findUserByEmail(UNKNOWN_EMAIL);

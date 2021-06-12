@@ -81,13 +81,11 @@ public class UserService {
 
     /**
      * 이메일과 패스워드 정보가 일치하는 회원을 찾습니다.
-     * @param loginData
+     * @param email 회원 이메일
+     * @param password 회원 비밀번호
      * @return user 회원
      */
-    public User findUserByEmailPassword(LoginData loginData) {
-        String email = loginData.getEmail();
-        String password = loginData.getPassword();
-
+    public User findUserByEmailPassword(String email, String password) {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 

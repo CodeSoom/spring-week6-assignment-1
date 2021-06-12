@@ -35,7 +35,9 @@ public class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid LoginData loginData) {
-        User user = userService.findUserByEmailPassword(loginData);
+        User user = userService.findUserByEmailPassword(
+                loginData.getEmail(), loginData.getPassword()
+        );
 
         String accessToken = authenticationService.login(user.getId());
 

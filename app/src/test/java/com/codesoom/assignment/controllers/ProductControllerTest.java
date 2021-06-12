@@ -23,7 +23,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -305,6 +304,7 @@ class ProductControllerTest {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\",\"price\":5000}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                         .andExpect(status().isOk())
                         .andExpect(content().string(containsString("쥐순이")));
@@ -319,6 +319,7 @@ class ProductControllerTest {
                         patch("/products/" + INVALID_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\",\"price\":5000}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                         .andExpect(status().isNotFound());
 
@@ -337,6 +338,7 @@ class ProductControllerTest {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\",\"price\":0}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                         .andExpect(status().isBadRequest());
             }
@@ -378,6 +380,7 @@ class ProductControllerTest {
             void destroyProduct() throws Exception {
                 mockMvc.perform(
                         delete("/products/" + VALID_ID)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                         .andExpect(status().isNoContent());
 
@@ -393,6 +396,7 @@ class ProductControllerTest {
             void itReturnsNotFound() throws Exception {
                 mockMvc.perform(
                         delete("/products/" + INVALID_ID)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                         .andExpect(status().isNotFound());
 

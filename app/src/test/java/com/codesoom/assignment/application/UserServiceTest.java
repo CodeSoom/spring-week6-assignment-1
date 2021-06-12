@@ -5,7 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.LoginFailedException;
+import com.codesoom.assignment.errors.UserPasswordMismatchException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -205,7 +205,7 @@ class UserServiceTest {
                     .email(UNKNOWN_EMAIL)
                     .password(PASSWORD)
                     .build()))
-                .isInstanceOf(LoginFailedException.class);
+                .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findUserByEmail(UNKNOWN_EMAIL);
     }

@@ -2,7 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.errors.InvalidTokenException;
-import com.codesoom.assignment.errors.LoginFailedException;
+import com.codesoom.assignment.errors.UserPasswordMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,8 +22,8 @@ public class ControllerSessionErrorAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(LoginFailedException.class)
-    public ErrorResponse handleLoginFailedException() {
-        return new ErrorResponse("Login failed, checking user's email or password");
+    @ExceptionHandler(UserPasswordMismatchException.class)
+    public ErrorResponse handleUserLoginFailedException() {
+        return new ErrorResponse("Login failed, checking your password");
     }
 }

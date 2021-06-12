@@ -5,7 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.LoginFailedException;
+import com.codesoom.assignment.errors.UserPasswordMismatchException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
@@ -88,8 +88,13 @@ public class UserService {
         String email = loginData.getEmail();
         String password = loginData.getPassword();
 
-        return userRepository.findUserByEmail(email)
-                .filter(u -> password.equals(u.getPassword()))
-                .orElseThrow(() -> new LoginFailedException(email));
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        if (!password.equals(user.getPassword())) {
+            throw new UserPasswordMismatchException();
+        }
+
+        return user;
     }
 }

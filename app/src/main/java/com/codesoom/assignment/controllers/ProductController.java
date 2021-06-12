@@ -45,24 +45,31 @@ public class ProductController {
     ) {
 //        System.out.println("auth++ " + authorization);
         String accessToken = authorization.substring("Bearer".length());
-        Long userId = authenticationService.parseToken(accessToken);
-        System.out.println("userId +++ " + userId);
+        authenticationService.parseToken(accessToken);
+//        System.out.println("userId +++ " + userId);
         return productService.createProduct(productData);
     }
 
     @PatchMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Product update(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
+        String accessToken = authorization.substring("Bearer".length());
+        authenticationService.parseToken(accessToken);
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
+        String accessToken = authorization.substring("Bearer".length());
+        authenticationService.parseToken(accessToken);
         productService.deleteProduct(id);
     }
 

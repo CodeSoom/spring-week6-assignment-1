@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SessionController.class)
-@DisplayName("Describe: SessionController 클래스")
+@DisplayName("Describe:")
 class SessionControllerTest {
 
     @Autowired

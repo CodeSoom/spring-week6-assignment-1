@@ -30,4 +30,10 @@ public class ControllerErrorAdvice {
     public ErrorResponse handleUserEmailIsAlreadyExisted() {
         return new ErrorResponse("User's email address is already existed");
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserEmailDuplicationException.class)
+    public ErrorResponse handleInvalidAccessTokenException() {
+        return new ErrorResponse("Invalid Access token");
+    }
 }

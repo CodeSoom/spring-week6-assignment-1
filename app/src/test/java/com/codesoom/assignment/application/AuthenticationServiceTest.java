@@ -1,8 +1,9 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.TokenManagerRepository;
+import com.codesoom.assignment.domain.TokenManager;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.AuthorizationHeader;
 import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
@@ -16,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,20 +34,22 @@ class AuthenticationServiceTest {
     private final static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
             ".cjDHNEbvUC6G7AORn068kENYHYnOTIaMsgjD0Yyygn4";
     private final static String INVALID_TOKEN = VALID_TOKEN + "WRONG";
-    private final static String VALID_ACCESS_TOKEN = AuthorizationHeader.Bearer.getAuthorizationValue() + VALID_TOKEN;
-    private final static String INVALID_ACCESS_TOKEN = AuthorizationHeader.Bearer.getAuthorizationValue() + INVALID_TOKEN;
+    private final static String BEARER = "BEARER ";
+    private final static String VALID_ACCESS_TOKEN = BEARER + VALID_TOKEN;
+    private final static String INVALID_ACCESS_TOKEN = BEARER + INVALID_TOKEN;
     private final Long expiredDate = 30000L;
     private Mapper mapper;
 
     private JwtUtil jwtUtil;
     private AuthenticationService authenticationService;
     private UserRepository userRepository = mock(UserRepository.class);
+    private TokenManagerRepository tokenManagerRepository = mock(TokenManagerRepository.class);
 
     @BeforeEach
     void setUp() {
         jwtUtil = new JwtUtil(SECRETE_KEY, expiredDate);
         mapper = DozerBeanMapperBuilder.buildDefault();
-        authenticationService = new AuthenticationService(mapper, jwtUtil, userRepository);
+        authenticationService = new AuthenticationService(mapper, jwtUtil, userRepository, tokenManagerRepository);
     }
 
     @Nested
@@ -152,7 +156,7 @@ class AuthenticationServiceTest {
 
         @Nested
         @DisplayName("비어있는 토큰 값을 보내면")
-        class Context_Empty_AccessTokenCheck{
+        class Context_Empty_AccessTokenCheck {
             @ParameterizedTest(name = "{index} [{arguments}] InvalidTokenException을 던진다.")
             @NullAndEmptySource
             @ValueSource(strings = {" "})
@@ -161,6 +165,30 @@ class AuthenticationServiceTest {
                     authenticationService.accessTokenCheck(emptyToken);
                 }).isInstanceOf(InvalidTokenException.class);
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("saveToken 메서드는")
+    class Describe_SaveToken {
+        private TokenManager tokenManager;
+
+        @BeforeEach
+        void setUpValidSaveToken() {
+            tokenManager = TokenManager.builder()
+                    .token(VALID_TOKEN)
+                    .createTokenDate(LocalDateTime.now())
+                    .build();
+            given(tokenManagerRepository.save(tokenManager))
+                    .willReturn(tokenManager);
+        }
+
+        @DisplayName("토큰 정보를 저장후 사용자 토큰 정보를 반환한다.")
+        @Test
+        void valid_save_token() {
+            TokenManager savedTokenManager = tokenManagerRepository.save(tokenManager);
+            assertThat(savedTokenManager.getToken())
+                    .isEqualTo(VALID_TOKEN);
         }
     }
 }

@@ -3,14 +3,12 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
-import com.codesoom.assignment.dto.AuthorizationHeader;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,7 +23,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUf0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZfsad0";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "WRONG";
+    private static final String BEARER = "Bearer ";
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,8 +86,9 @@ class ProductControllerTest {
                 .willThrow(new ProductNotFoundException(1000L));
 
 
-        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
-        given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
+        given(authenticationService.parseToken(BEARER+VALID_TOKEN)).willReturn(1L);
+        given(authenticationService.parseToken(BEARER+INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
+        given(authenticationService.accessTokenCheck(BEARER+INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
     }
 
     @Test
@@ -123,7 +125,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
-                        .header("Authorization", VALID_TOKEN)
+                        .header("Authorization", BEARER + VALID_TOKEN)
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -140,7 +142,7 @@ class ProductControllerTest {
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
                         .header("Authorization"
-                                , AuthorizationHeader.Bearer.getAuthorizationValue() + VALID_TOKEN)
+                                , BEARER + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }
@@ -165,9 +167,8 @@ class ProductControllerTest {
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                         "\"price\":5000}")
                 .header("Authorization"
-                        , AuthorizationHeader.Bearer.getAuthorizationValue() + VALID_TOKEN))
+                        , BEARER + VALID_TOKEN))
                 .andExpect(status().isCreated());
-        verify(authenticationService).parseToken(any());
     }
 
     @Test
@@ -179,7 +180,7 @@ class ProductControllerTest {
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                         "\"price\":5000}")
                 .header("Authorization"
-                        , AuthorizationHeader.Bearer.getAuthorizationValue() + INVALID_TOKEN))
+                        , BEARER + INVALID_TOKEN))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -192,7 +193,7 @@ class ProductControllerTest {
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
                         .header("Authorization"
-                                , AuthorizationHeader.Bearer.getAuthorizationValue() + VALID_TOKEN)
+                                , BEARER + VALID_TOKEN)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐순이")));
@@ -208,7 +209,7 @@ class ProductControllerTest {
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
                         .header("Authorization"
-                                , AuthorizationHeader.Bearer.getAuthorizationValue() + VALID_TOKEN)
+                                , BEARER + VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
 
@@ -224,7 +225,7 @@ class ProductControllerTest {
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
                         .header("Authorization"
-                        , AuthorizationHeader.Bearer.getAuthorizationValue() + VALID_TOKEN)
+                                , BEARER + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }

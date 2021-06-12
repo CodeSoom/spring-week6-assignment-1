@@ -2,8 +2,10 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.AuthorizationHeader;
+import com.codesoom.assignment.domain.TokenManagerRepository;
+import com.codesoom.assignment.domain.TokenManager;
 import com.codesoom.assignment.dto.SessionRequestData;
+import com.codesoom.assignment.dto.TokenData;
 import com.codesoom.assignment.errors.InvalidPasswordException;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -13,19 +15,21 @@ import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Service
 @Transactional
 public class AuthenticationService {
-    private Mapper mapper;
-    private JwtUtil jwtUtil;
-    private UserRepository userRepository;
+    private final Mapper mapper;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final TokenManagerRepository tokenManagerRepository;
 
-    public AuthenticationService(Mapper mapper, JwtUtil jwtUtil, UserRepository userRepository) {
+    private static final String BEARER = "BEARER ";
+
+    public AuthenticationService(Mapper mapper, JwtUtil jwtUtil, UserRepository userRepository, TokenManagerRepository tokenManagerRepository) {
         this.mapper = mapper;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.tokenManagerRepository = tokenManagerRepository;
     }
 
     /**
@@ -36,9 +40,8 @@ public class AuthenticationService {
      */
     public String login(SessionRequestData sessionRequestData) {
         User foundUser = findUser(sessionRequestData);
-        User source = mapper.map(sessionRequestData, User.class);
-        foundUser.changeWithExpiredLength(LocalDateTime.now());
-        return jwtUtil.encode(foundUser.getId());
+        String token=jwtUtil.encode(foundUser.getId());
+        return token;
     }
 
     /**
@@ -52,6 +55,12 @@ public class AuthenticationService {
         return claims.get("userId", Long.class);
     }
 
+    public TokenManager saveToken(TokenData tokenData){
+        TokenManager tokenManager = mapper.map(tokenData, TokenManager.class);
+        tokenManagerRepository.save(tokenManager);
+        return tokenManager;
+    }
+
     /**
      * 요청받은 Header을 전처리 이후 유효성을 검증한다.
      *
@@ -59,10 +68,10 @@ public class AuthenticationService {
      */
     public Boolean accessTokenCheck(String authorization) {
         if (authorization == null
-                || authorization.length() < AuthorizationHeader.Bearer.getAuthorizationLength()) {
+                || authorization.length() < BEARER.length()) {
             throw new InvalidTokenException(authorization);
         }
-        String accessToken = authorization.substring(AuthorizationHeader.Bearer.getAuthorizationLength());
+        String accessToken = authorization.substring(BEARER.length());
         parseToken(accessToken);
         return Boolean.TRUE;
     }

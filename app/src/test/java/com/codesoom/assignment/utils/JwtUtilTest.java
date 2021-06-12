@@ -51,7 +51,7 @@ class JwtUtilTest {
         @DisplayName("정확한 토큰이 입력된다면")
         class Context_Valid_Token_Decode {
             @Test
-            @DisplayName("사용자 아이디를 확인할 수 있다.")
+            @DisplayName("사용자 아이디를 포함한 객체를 반환한다.")
             void valid_decode_token_find_userId() {
                 Claims claims = jwtUtil.decode(VALID_TOKEN);
                 assertThat(claims.get("userId", Long.class))
@@ -68,11 +68,6 @@ class JwtUtilTest {
                 assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
                         .isInstanceOf(InvalidTokenException.class);
             }
-        }
-
-        @Nested
-        @DisplayName("빈 토큰 값을 입력 한다면")
-        class Context_Empty_Token_Decode {
             @ParameterizedTest(name = "{index} [{arguments}] InvalidException을 던진다. ")
             @ValueSource(strings = {"  "})
             @NullAndEmptySource

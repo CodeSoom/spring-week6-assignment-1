@@ -16,7 +16,7 @@ public class JwtUtil {
     private final Key key;
     private final Long expiredLength;
 
-    public JwtUtil(@Value("${jwt.secret}")String secret, @Value("${jwt.expired}")Long expiredLength) {
+    public JwtUtil(@Value("${jwt.secret}")String secret, @Value("${jwt.exp-length}")Long expiredLength) {
         this.key =  Keys.hmacShaKeyFor(Base64.encodeBase64(secret.getBytes()));
         this.expiredLength = expiredLength;
     }

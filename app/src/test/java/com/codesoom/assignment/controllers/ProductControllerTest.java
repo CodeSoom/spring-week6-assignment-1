@@ -57,6 +57,28 @@ class ProductControllerTest {
                 .build();
     }
 
+//        given(productService.updateProduct(eq(1L), any(ProductData.class)))
+//                .will(invocation -> {
+//                    Long id = invocation.getArgument(0);
+//                    ProductData productData = invocation.getArgument(1);
+//                    return Product.builder()
+//                            .id(id)
+//                            .name(productData.getName())
+//                            .maker(productData.getMaker())
+//                            .price(productData.getPrice())
+//                            .build();
+//                });
+//
+//        given(productService.updateProduct(eq(1000L), any(ProductData.class)))
+//                .willThrow(new ProductNotFoundException(1000L));
+//
+//        given(productService.deleteProduct(1000L))
+//                .willThrow(new ProductNotFoundException(1000L));
+//
+//        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+//
+//        given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
+//    }
 
     @Nested
     @DisplayName("Describe: 장난감을 요청할 때")
@@ -235,44 +257,103 @@ class ProductControllerTest {
         }
     }
 
-    @Test
-    void updateWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
 
-        verify(productService).updateProduct(eq(1L), any(ProductData.class));
-    }
+    @Nested
+    @DisplayName("장난감 정보를 수정할 때")
+    class TestUpdateProduct {
 
-    @Test
-    void updateWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isNotFound());
+        @BeforeEach
+        void setUp() {
+            given(productService.updateProduct(eq(1L), any(ProductData.class)))
+                    .will(invocation -> {
+                        Long id = invocation.getArgument(0);
+                        ProductData productData = invocation.getArgument(1);
+                        return Product.builder()
+                                .id(id)
+                                .name(productData.getName())
+                                .maker(productData.getMaker())
+                                .price(productData.getPrice())
+                                .build();
+                    });
 
-        verify(productService).updateProduct(eq(1000L), any(ProductData.class));
-    }
+            given(productService.updateProduct(eq(1000L), any(ProductData.class)))
+                    .willThrow(new ProductNotFoundException(1000L));
+        }
 
-    @Test
-    void updateWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
+        @Nested
+        @DisplayName("Describe: 인증된 사용자라면,")
+        class DescribeWithAuthorizedUser {
+
+            @BeforeEach
+            void setUp() {
+                given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+            }
+
+            @Nested
+            @DisplayName("Context: 등록된 장난감을 수정할 때")
+            class ContextWithExistedId {
+                @Test
+                @DisplayName("It: 정보를 수정할 수 있다.")
+                void updateProduct() throws Exception {
+                    mockMvc.perform(
+                            patch("/products/1")
+                                    .accept(MediaType.APPLICATION_JSON_UTF8)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                            "\"price\":5000}")
+                                    .header("Authorization", "Bearer" + VALID_TOKEN)
+
+                    )
+                            .andExpect(status().isOk())
+                            .andExpect(content().string(containsString("쥐순이")));
+                }
+            }
+
+
+            @Nested
+            @DisplayName("Context: 등록되지 않은 장난감을 수정할 때")
+            class ContextWithNotExistedId {
+                @Test
+                @DisplayName("It: 정보를 수정할 수 없다.")
+                void updateProduct() throws Exception {
+                    mockMvc.perform(
+                            patch("/products/1000")
+                                    .accept(MediaType.APPLICATION_JSON_UTF8)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                            "\"price\":5000}")
+                                    .header("Authorization", "Bearer" + VALID_TOKEN)
+
+                    )
+                            .andExpect(status().isNotFound());
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("Context: 인증되지 않은 사용자라면,")
+        class ContextWithUnauthorizedUser {
+
+            @BeforeEach
+            void setUp() {
+                given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
+            }
+
+            @Test
+            @DisplayName("It: 정보를 수정할 수 없다.")
+            void updateProduct() throws Exception {
+                mockMvc.perform(
+                        patch("/products/1000")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                                .header("Authorization", "Bearer" + INVALID_TOKEN)
+
+                )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
     }
 
     @Test

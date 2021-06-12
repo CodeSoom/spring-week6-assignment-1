@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseBody
 @ControllerAdvice
 public class ControllerProductErrorAdvice {
+    /**
+     * ProductNotFoundException 예외 발생시, NOT_FOUND 응답코드를 반환합니다.
+     */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ProductNotFoundException.class)
     public ErrorResponse handleProductNotFound() {

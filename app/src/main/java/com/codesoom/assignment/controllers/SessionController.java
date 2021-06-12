@@ -27,8 +27,8 @@ public class SessionController {
     }
 
     /**
-     * 로그인시 발급되는 JWT 로 accessToken 을 리턴 받습니다.
-     * @return accessToken
+     * 로그인시 발급되는 accessToken 으로 세션 응답 값을 리턴합니다.
+     * @return SessionResponseData
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

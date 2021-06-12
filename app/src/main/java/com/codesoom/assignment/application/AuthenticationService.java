@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 /**
- * 로그인 로직을 수행합니다.
+ * 사용자의 인증과 관련한 로직을 수행합니다.
  */
 @Service
 public class AuthenticationService {
@@ -25,8 +25,8 @@ public class AuthenticationService {
     }
 
     /**
-     * 발행된 JWT 를 복호화 합니다.
-     * @param accessToken 로그인하려는 사용자의 JWT
+     * 주어진 엑세스 토큰에서 사용자 아이디를 복호화해 리턴합니다.
+     * @param accessToken 로그인하려는 사용자의 엑세스 토큰
      * @return 사용자 ID
      */
     public Long parseToken(String accessToken) {

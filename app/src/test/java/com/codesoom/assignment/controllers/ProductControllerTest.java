@@ -57,29 +57,6 @@ class ProductControllerTest {
                 .build();
     }
 
-//        given(productService.updateProduct(eq(1L), any(ProductData.class)))
-//                .will(invocation -> {
-//                    Long id = invocation.getArgument(0);
-//                    ProductData productData = invocation.getArgument(1);
-//                    return Product.builder()
-//                            .id(id)
-//                            .name(productData.getName())
-//                            .maker(productData.getMaker())
-//                            .price(productData.getPrice())
-//                            .build();
-//                });
-//
-//        given(productService.updateProduct(eq(1000L), any(ProductData.class)))
-//                .willThrow(new ProductNotFoundException(1000L));
-//
-//        given(productService.deleteProduct(1000L))
-//                .willThrow(new ProductNotFoundException(1000L));
-//
-//        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
-//
-//        given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
-//    }
-
     @Nested
     @DisplayName("Describe: 장난감을 요청할 때")
     class DescribeGetProduct {
@@ -356,23 +333,77 @@ class ProductControllerTest {
         }
     }
 
-    @Test
-    void destroyWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1")
-        )
-                .andExpect(status().isNoContent());
+    @Nested
+    @DisplayName("장난감을 삭제할 때 ")
+    class DestroyToy {
 
-        verify(productService).deleteProduct(1L);
-    }
+        @Nested
+        @DisplayName("Describe: 인증된 사용자라면,")
+        class DescribeAuthorizedUser {
 
-    @Test
-    void destroyWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1000")
-        )
-                .andExpect(status().isNotFound());
+            @Nested
+            @DisplayName("Context: 삭제하고자 하는 장난감이 존재할 때")
+            class ContextWithExistedId {
 
-        verify(productService).deleteProduct(1000L);
+                @Test
+                @DisplayName("It: 해당 장난감을 삭제한다.")
+                void destroyWithExistedProduct() throws Exception {
+
+                    mockMvc.perform(
+                            delete("/products/1")
+                                    .header("Authorization", "Bearer" + VALID_TOKEN)
+                    ).andExpect(status().isNoContent());
+
+                    verify(productService).deleteProduct(1L);
+                }
+            }
+
+            @Nested
+            @DisplayName("Context: 삭제하고자 하는 장난감이 존재하지 않다면")
+            class ContextWithNotExistedId {
+
+                @BeforeEach
+                void setUp(){
+                    given(productService.deleteProduct(1000L))
+                            .willThrow(new ProductNotFoundException(1000L));
+                }
+
+                @Test
+                @DisplayName("It: 장난감을 삭제할 수 없다.")
+                void destroyWithExistedProduct() throws Exception {
+
+                    mockMvc.perform(
+                            delete("/products/1000")
+                                    .header("Authorization", "Bearer" + VALID_TOKEN)
+                    ).andExpect(status().isNotFound());
+                }
+            }
+        }
+
+
+        @Nested
+        @DisplayName("Describe: 인증되지 않은 사용자라면,")
+        class DescribeUnauthorizedUser {
+
+            @BeforeEach
+            void setUp(){
+                given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
+            }
+
+            @Nested
+            @DisplayName("Context: 삭제하고자 하는 장난감이 존재해도")
+            class ContextWithExistedId {
+
+                @Test
+                @DisplayName("It: 해당 장난감을 삭제할 수 없다.")
+                void destroyWithExistedProduct() throws Exception {
+
+                    mockMvc.perform(
+                            delete("/products/1")
+                                    .header("Authorization", "Bearer" + INVALID_TOKEN)
+                    ).andExpect(status().isUnauthorized());
+                }
+            }
+        }
     }
 }

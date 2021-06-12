@@ -11,10 +11,7 @@ import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import org.junit.jupiter.api.Nested;
-//import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
-
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -216,7 +213,9 @@ class UserServiceTest {
         @Nested
         @DisplayName("Context: 이미 삭제된 사용자라면, ")
         class ContextWithDeletedId{
+
             @Test
+            @DisplayName("It: UserNotFound 예외처리를 발생합니다.")
             void deleteUserWithDeletedId() {
                 assertThatThrownBy(() -> userService.deleteUser(DELETED_USER_ID))
                         .isInstanceOf(UserNotFoundException.class);

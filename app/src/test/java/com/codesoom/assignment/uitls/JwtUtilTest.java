@@ -15,10 +15,10 @@ class JwtUtilTest {
     private JwtUtil jwtUtil;
 
     private static final String SECRET = "gkskenfdutkeidktjeifnturldksiekt";
-    private static final String TEST_EMAIL = "test@test.com";
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20ifQ" +
-            ".4HbNGIW9PaXCVuALXZxuqF__XkQYD6BpXndE7Cll4yU";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
+            ".5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI5I";
     private static final String INVALID_TOKEN = VALID_TOKEN.replace("5", "6");
+    private static final Long REGISTERED_ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +36,7 @@ class JwtUtilTest {
             @Test
             @DisplayName("토큰을 생성합니다.")
             void it_encode_right_token() {
-                String token = jwtUtil.encode(TEST_EMAIL);
+                String token = jwtUtil.encode(REGISTERED_ID);
 
                 assertThat(token).isEqualTo(VALID_TOKEN);
             }
@@ -56,7 +56,7 @@ class JwtUtilTest {
             void it_return_decoded_data() {
                 Claims claims = jwtUtil.decode(VALID_TOKEN);
 
-                assertThat(claims.get("email")).isEqualTo(TEST_EMAIL);
+                assertThat(claims.get("userId", Long.class)).isEqualTo(REGISTERED_ID);
             }
         }
 

@@ -31,7 +31,7 @@ class ProductControllerTest {
             ".eyJ1c2VySWQiOjF9.5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI5I";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI51";
-    private static final String TEST_EMAIL = "test@test.com";
+    private static final Long REGISTERED_ID = 1L;
 
     @Autowired
     private MockMvc mockMvc;
@@ -78,7 +78,7 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
 
-        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(TEST_EMAIL);
+        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(REGISTERED_ID);
 
         given(authenticationService.parseToken(INVALID_TOKEN))
                 .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));

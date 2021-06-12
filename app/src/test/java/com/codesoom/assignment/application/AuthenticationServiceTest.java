@@ -14,10 +14,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
     private static final String SECRET = "gkskenfdutkeidktjeifnturldksiekt";
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20ifQ" +
-            ".4HbNGIW9PaXCVuALXZxuqF__XkQYD6BpXndE7Cll4yU";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
+            ".5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI5I";
     private static final String INVALID_TOKEN = VALID_TOKEN.replace('5', '6');
-    private static final String TEST_EMAIL = "test@test.com";
+    private static final Long REGISTERED_ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -37,9 +37,9 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("토큰을 생성, 리턴합니다.")
             void it_encode_email() {
-                String accessToken = authenticationService.login(TEST_EMAIL);
+                String accessToken = authenticationService.login(REGISTERED_ID);
 
-                assertThat(accessToken).isEqualTo(INVALID_TOKEN);
+                assertThat(accessToken).isEqualTo(VALID_TOKEN);
             }
         }
     }
@@ -53,11 +53,11 @@ class AuthenticationServiceTest {
         class Context_with_valid_token {
 
             @Test
-            @DisplayName("토큰 내의 userEmail을 리턴합니다.")
+            @DisplayName("토큰 내의 userId을 리턴합니다.")
             void it_return_user_email() {
-                String userEmail = authenticationService.parseToken(VALID_TOKEN);
+                Long userId = authenticationService.parseToken(VALID_TOKEN);
 
-                assertThat(userEmail).isEqualTo(TEST_EMAIL);
+                assertThat(userId).isEqualTo(REGISTERED_ID);
             }
         }
 

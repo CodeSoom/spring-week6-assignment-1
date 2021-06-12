@@ -90,3 +90,6 @@ void parseTokenWithBlankToken(){
 @MockBean
 AuthenticationService authenticationService; // ProductControllerTest :  Failed to load ApplicationContext 의 원인
 ```
+
+
+BDD, `@Nested` 구조 사용해서 테스트 코드 작성할 것. 

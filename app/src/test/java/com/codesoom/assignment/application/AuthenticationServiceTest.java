@@ -67,7 +67,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("Access Token을 리턴한다")
+            @DisplayName("이메일로 사용자를 찾고 Access Token을 리턴한다")
             void it_returns_access_token() {
                 String accessToken = authenticationService.login(userLoginData);
                 assertThat(accessToken).isEqualTo(ACCESS_TOKEN);

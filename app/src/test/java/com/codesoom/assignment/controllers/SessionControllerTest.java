@@ -50,7 +50,7 @@ class SessionControllerTest {
     class Describe_login {
 
         @Nested
-        @DisplayName("로그인 요청이 들어오면")
+        @DisplayName("주어진 사용자 정보를 사용해 로그인에 성공하면")
         class Context_with_valid_userLoginData {
 
             @BeforeEach
@@ -78,7 +78,7 @@ class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("만약 존재하지 않은 Email로 요청이 들어오면")
+        @DisplayName("이메일이 존재하지 않아 로그인에 실패하면")
         class Context_with_not_existed_email_in_userLoginData {
 
             @BeforeEach
@@ -105,7 +105,7 @@ class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("만약 틀린 Password로 요청이 들어오면")
+        @DisplayName("패스워드가 틀려 로그인에 실패하면")
         class Context_with_incorrect_password_in_userLoginData {
 
             @BeforeEach
@@ -119,13 +119,13 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("HttpStatus 401 Unauthorized 를 응답한다")
+            @DisplayName("HttpStatus 400 BadRequest 를 응답한다")
             void it_returns_httpStatus_unauthorized() throws Exception {
                 String content = objectMapper.writeValueAsString(userLoginData);
                 mockMvc.perform(post("/session")
                                .contentType(MediaType.APPLICATION_JSON)
                                .content(content))
-                       .andExpect(status().isUnauthorized());
+                       .andExpect(status().isBadRequest());
 
                 verify(authenticationService, atLeastOnce()).login(any(UserLoginData.class));
             }

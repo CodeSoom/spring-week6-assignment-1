@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,9 +38,9 @@ class SessionControllerTest {
     @DisplayName("login 메서드는")
     class Describe_Login {
         @Nested
-        @DisplayName("올바른 사용자 정보를 요청을 하면")
+        @DisplayName("올바른 사용자 인증정보로 요청을 하면")
         class Context_Valid_Login {
-            @BeforeEach
+           @BeforeEach
             void setUpValidLogin(){
                 given(authenticationService.login(any(SessionRequestData.class)))
                         .willReturn(VALID_TOKEN);

@@ -14,9 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @AutoConfigureMockMvc
-@Import({
-        EncodingConfig.Sample.class,
-})
+@Import({EncodingConfig.Sample.class})
 public @interface EncodingConfig {
 
     class Sample {

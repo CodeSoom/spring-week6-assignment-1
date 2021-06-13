@@ -97,7 +97,7 @@ class UserServiceTest {
         class WithDuplicatedEmail {
 
             @Test
-            @DisplayName("It: 이메일 중복 예외처리를 발생시킵니다.")
+            @DisplayName("It: 이메일 중복 예외를 던집니다.")
             void registerUserWithDuplicatedEmail() {
 
                 UserRegistrationData registrationData = UserRegistrationData.builder()
@@ -144,7 +144,7 @@ class UserServiceTest {
         class ContextWithNotRegisteredUser {
 
             @Test
-            @DisplayName("It: 예외처리를 발생시킵니다.")
+            @DisplayName("It: 예외를 던집니다.")
             void updateUserWithNotExistedId() {
                 UserModificationData modificationData = UserModificationData.builder()
                         .name("TEST")
@@ -162,7 +162,7 @@ class UserServiceTest {
         @DisplayName("Context: 삭제된 사용자라면,")
         class ContextWithDeletedUser {
             @Test
-            @DisplayName("It: UserNotFound 예외처리를 발생시킵니다.")
+            @DisplayName("It: UserNotFound 예외를 던집니다.")
             void updateUserWithDeletedId() {
                 UserModificationData modificationData = UserModificationData.builder()
                         .name("TEST")
@@ -201,7 +201,7 @@ class UserServiceTest {
         class ContextWithNotExistedId{
 
             @Test
-            @DisplayName("It: UserNotFound 예외처리를 발생합니다.")
+            @DisplayName("It: UserNotFound 예외를 던집니다.")
             void deleteUserWithNotExistedId() {
                 assertThatThrownBy(() -> userService.deleteUser(100L))
                         .isInstanceOf(UserNotFoundException.class);
@@ -215,7 +215,7 @@ class UserServiceTest {
         class ContextWithDeletedId{
 
             @Test
-            @DisplayName("It: UserNotFound 예외처리를 발생합니다.")
+            @DisplayName("It: UserNotFound 예외를 던집니다. ")
             void deleteUserWithDeletedId() {
                 assertThatThrownBy(() -> userService.deleteUser(DELETED_USER_ID))
                         .isInstanceOf(UserNotFoundException.class);

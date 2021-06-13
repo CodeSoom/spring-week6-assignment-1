@@ -47,17 +47,21 @@ public class ProductController {
 
     @PatchMapping("{id}")
     public Product update(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
+        authenticationService.parseToken(authorization);
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authorization
     ) {
+        authenticationService.parseToken(authorization);
         productService.deleteProduct(id);
     }
 }

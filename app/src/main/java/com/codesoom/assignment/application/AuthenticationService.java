@@ -1,6 +1,10 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.dto.SessionRequestData;
+import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
@@ -8,31 +12,34 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final JwtUtil jwtUtil;
+    private UserService userService;
+    private JwtUtil jwtUtil;
 
-    /**
-     * 사용자 식별자로 JWT를 발급해서 리턴합니다.
-     *
-     * @return Jwt String
-     */
-    public String login() {
-        return jwtUtil.customEncode(1L);
+    public AuthenticationService(JwtUtil jwtUtil, UserService userService) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
-    public Long parseToken(String access_token) {
-        if(access_token == null || access_token.isBlank()){
-            throw new InvalidAccessTokenException(access_token);
+    /**
+     * 로그인 처리 로
+     *
+     * @return JWT
+     */
+    public String login(final SessionRequestData requestData) {
+        User user = userService.findUserByEmailAndPassword(requestData.getEmail(),
+                                                           requestData.getPassword());
+        return jwtUtil.customEncode(user.getId());
+    }
+
+    public Long parseToken(String authorization) {
+        if (authorization == null || authorization.isBlank()) {
+            throw new InvalidTokenException(authorization);
         }
 
-        try {
-            Claims claims = jwtUtil.customDecode(access_token);
-            return claims.get("userId",Long.class);
-        }catch (SignatureException e){
-            throw new InvalidAccessTokenException(access_token);
-        }
-
+        String token = authorization.substring("Bearer ".length());
+        return jwtUtil.customDecode(token)
+                .get("userId", Long.class);
     }
 }

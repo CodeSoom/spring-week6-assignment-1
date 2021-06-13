@@ -78,7 +78,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    @DisplayName("Describe: 유효하지 않은 토큰일 때 예외처리를 발생시킵니다.")
+    @DisplayName("Describe: 유효하지 않은 토큰일 때 예외를 던집니다.")
     void parseTokenWithInvalidToken() {
         assertThatThrownBy(
                 () -> authenticationService.parseToken(INVALID_TOKEN)

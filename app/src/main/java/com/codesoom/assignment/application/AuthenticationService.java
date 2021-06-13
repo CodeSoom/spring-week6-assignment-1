@@ -1,5 +1,8 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
@@ -10,18 +13,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
 
-    JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+    private  final UserRepository userRepository;
 
-    public AuthenticationService(JwtUtil jwtUtil) {
+    public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     /**
      * 사용자 정보로 로그인하여 JWT 를 리턴합니다.
      * @return 생성된 JWT
+     * @param email 로그인 이메일
+     * @param password 로그인 비밀번호
      */
-    public String login() {
-        return jwtUtil.encode(1L);
+    public String login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new LoginFailException(email));
+
+        if (!user.authenticate(password)) {
+            throw new LoginFailException(email);
+        }
+        return jwtUtil.encode(user.getId());
     }
 
     /**

@@ -10,9 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -37,8 +34,6 @@ class JwtUtilTest {
         @Test
         @DisplayName("사용자 아이디로 토큰을 생성한다.")
         void createValidToken() {
-            System.out.println(LocalDateTime.now().plus(EXPRIED_LENGTH, ChronoUnit.MILLIS));
-            System.out.println(LocalDateTime.now());
             String accessToken = jwtUtil.encode(1L);
             assertThat(accessToken).isEqualTo(VALID_TOKEN);
         }

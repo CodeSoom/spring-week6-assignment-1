@@ -93,7 +93,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("틀린 비밀번호를 받았을 때")
+        @DisplayName("올바른 이메일과 틀린 비밀번호를 받았을 때")
         class ContextWithWrongPassword {
 
             private LoginData invalidLoginData;

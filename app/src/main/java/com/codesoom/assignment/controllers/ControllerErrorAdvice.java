@@ -5,6 +5,7 @@ import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.UserPasswordWrongException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -43,5 +44,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ErrorResponse handleMissingRequestHeaderException() {
         return new ErrorResponse("Missing Request Header");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserPasswordWrongException.class)
+    public ErrorResponse handlerUserPasswordWrongException() {
+        return new ErrorResponse("User's Password is wrong");
     }
 }

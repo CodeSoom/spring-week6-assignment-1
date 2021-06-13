@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.SessionResponseData;
+import com.codesoom.assignment.errors.UserPasswordWrongException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +38,11 @@ public class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody User user) {
-        Long id = userService.findUserByEmail(user.getEmail()).getId();
+        User checkUser = userService.findUserByEmail(user.getEmail());
+        if(!user.getPassword().equals(checkUser.getPassword())) {
+            throw new UserPasswordWrongException();
+        }
+        Long id = checkUser.getId();
 
         String accessToken = authenticationService.login(id);
         return SessionResponseData.builder()

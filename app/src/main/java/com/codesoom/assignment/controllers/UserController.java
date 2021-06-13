@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/***
+ * 사용자 세션 관련 컨트롤러
+ */
 @RestController
 @RequestMapping("/users")
 @CrossOrigin

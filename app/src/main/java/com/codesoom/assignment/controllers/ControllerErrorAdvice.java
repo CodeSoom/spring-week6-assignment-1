@@ -1,10 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
-import com.codesoom.assignment.errors.InvalidTokenException;
-import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +31,13 @@ public class ControllerErrorAdvice {
 
     @ExceptionHandler(InvalidTokenException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public void handleInvalidAccessTokenException() {
+    public ErrorResponse handleInvalidAccessTokenException() {
+        return new ErrorResponse("Invalid AccessToken");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(LoginFailException.class)
+    public ErrorResponse handleLoginFailException(){
+        return new ErrorResponse("Login Failed");
     }
 }

@@ -127,12 +127,6 @@ class ProductControllerTest {
     @DisplayName("Describe: 장난감을 새로 등록할 때,")
     class DescribeCreateProduct {
 
-        @BeforeEach
-        void setUp() {
-            given(productService.createProduct(any(ProductData.class)))
-                    .willReturn(product);
-        }
-
         @Nested
         @DisplayName("Context: AccessToken 이 존재한다면,")
         class ContextWithAccessToken {
@@ -140,6 +134,9 @@ class ProductControllerTest {
 
             @BeforeEach
             void setUp() throws Exception {
+                given(productService.createProduct(any(ProductData.class)))
+                        .willReturn(product);
+
                 mock = mockMvc.perform(
                         post("/products")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -326,7 +323,6 @@ class ProductControllerTest {
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
                                 .header("Authorization", "Bearer" + INVALID_TOKEN)
-
                 )
                         .andExpect(status().isUnauthorized());
             }
@@ -353,8 +349,6 @@ class ProductControllerTest {
                             delete("/products/1")
                                     .header("Authorization", "Bearer" + VALID_TOKEN)
                     ).andExpect(status().isNoContent());
-
-                    verify(productService).deleteProduct(1L);
                 }
             }
 

@@ -93,3 +93,19 @@ AuthenticationService authenticationService; // ProductControllerTest :  Failed 
 
 
 BDD, `@Nested` 구조 사용해서 테스트 코드 작성할 것. 
+
+
+Wanted but not invoked: => userRepository 에서 직접 생성할 때, 인보크를 안해주었다는 말. 
+
+// AuthenticationInterceptor.class
+// Client 입장
+// Authentication -> login -> token 인증
+// Authorization <- token (인가)_
+//
+// 서버 입장
+// Authentication = login(인증)
+// token -> authentication (인증)
+// user -> role -> authorization (인가)
+
+// authorization 이라는 헤더를 던져준다.
+

@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.domain.TokenManager;
 import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.dto.SessionResponseData;
 import com.codesoom.assignment.dto.TokenData;
@@ -34,16 +35,15 @@ public class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody SessionRequestData sessionRequestData){
-        System.out.println(sessionRequestData);
         String accessToken = authenticationService.login(sessionRequestData);
 
         TokenData tokenData = TokenData.builder()
                 .token(accessToken)
                 .createTokenDate(LocalDateTime.now()).build();
-        authenticationService.saveToken(tokenData);
+       TokenManager tokenManager = authenticationService.saveToken(tokenData);
 
         return SessionResponseData.builder()
-                .accessToken(accessToken)
+                .accessToken(tokenManager.getToken())
                 .build();
     }
 }

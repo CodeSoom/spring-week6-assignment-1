@@ -4,8 +4,6 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.utils.JwtUtil;
-import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
@@ -40,36 +38,31 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-//        System.out.println("auth++ " + authorization);
-        String accessToken = authorization.substring("Bearer".length());
-        authenticationService.parseToken(accessToken);
-//        System.out.println("userId +++ " + userId);
         return productService.createProduct(productData);
     }
 
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public Product update(
-            @RequestHeader("Authorization") String authorization,
+//            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer".length());
-        authenticationService.parseToken(accessToken);
+//        String accessToken = authorization.substring("Bearer".length());
+//        authenticationService.parseToken(accessToken);
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @RequestHeader("Authorization") String authorization,
+//            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        String accessToken = authorization.substring("Bearer".length());
-        authenticationService.parseToken(accessToken);
+//        String accessToken = authorization.substring("Bearer".length());
+//        authenticationService.parseToken(accessToken);
         productService.deleteProduct(id);
     }
 

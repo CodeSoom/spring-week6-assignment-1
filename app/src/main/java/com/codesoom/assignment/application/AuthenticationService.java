@@ -11,6 +11,9 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/***
+ * 사용자 인증 관련 서비스 로직
+ */
 @Service
 public class AuthenticationService {
 
@@ -23,7 +26,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 로그인 처리 로
+     * 로그인 처리 로직
      *
      * @return JWT
      */

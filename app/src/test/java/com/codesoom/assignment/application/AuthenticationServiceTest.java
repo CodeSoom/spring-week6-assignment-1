@@ -59,7 +59,6 @@ class AuthenticationServiceTest {
 
             @ParameterizedTest(name = "{displayName}: [{index}] {argumentsWithNames}")
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다")
-            @AutoSource
             void parseTokenWithInvalidToken(String invalidPostfix) {
                 assertThatThrownBy(() -> authenticationService.parseToken(
                         "Bearer " + VALID_TOKEN + "wrongtext"))
@@ -100,7 +99,6 @@ class AuthenticationServiceTest {
 
             @ParameterizedTest(name = "{displayName}: [{index}] {argumentsWithNames}")
             @DisplayName("유효한 JWT를 리턴한다")
-            @AutoSource
             void It_returns_jwt(String email, String password) {
                 final SessionRequestData sessionRequestData =
                         SessionRequestData.builder()
@@ -126,7 +124,6 @@ class AuthenticationServiceTest {
 
             @ParameterizedTest(name = "{displayName}: [{index}] {argumentsWithNames}")
             @DisplayName("사용자 정보가 옳지 않다는 예외를 던진다")
-            @AutoSource
             void It_throws_invalid_user_data_exception(String email,
                                                        String password) {
                 final SessionRequestData sessionRequestData =

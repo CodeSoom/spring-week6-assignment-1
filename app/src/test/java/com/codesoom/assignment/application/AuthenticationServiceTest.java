@@ -96,8 +96,15 @@ class AuthenticationServiceTest {
         @DisplayName("틀린 비밀번호를 받았을 때")
         class ContextWithWrongPassword {
 
+            private LoginData invalidLoginData;
+
             @BeforeEach
             void setUp() {
+                invalidLoginData = LoginData.builder()
+                        .email(loginData.getEmail())
+                        .password(loginData.getPassword() + "as")
+                        .build();
+
                 given(userService.getUser(user.getEmail()))
                         .willReturn(user);
             }
@@ -105,11 +112,6 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("비밀번호가 틀렸다는 예외를 던집니다")
             void ItThrowsWrongPasswordException() {
-                LoginData invalidLoginData = LoginData.builder()
-                        .email(loginData.getEmail())
-                        .password(loginData.getPassword() + "as")
-                        .build();
-
                 assertThatThrownBy(() -> authenticationService.login(invalidLoginData))
                         .isInstanceOf(WrongPasswordException.class);
             }

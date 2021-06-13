@@ -22,10 +22,10 @@ public class AuthenticationService {
     }
 
     /**
-     * 사용자 정보로 로그인하여 JWT 를 리턴합니다.
-     * @return 생성된 JWT
+     * 사용자 정보로 로그인하여 인증 토큰을 리턴합니다.
      * @param email 로그인 이메일
      * @param password 로그인 비밀번호
+     * @return 인증 토큰
      */
     public String login(String email, String password) {
         User user = userRepository.findByEmail(email)

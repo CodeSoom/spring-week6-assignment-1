@@ -1,8 +1,10 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,16 +27,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJ1c2VySWQiOjF9.5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI5I";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+            "eyJ1c2VySWQiOjF9.5vWKIu_dVvDx0_K39RSWmrfkyNNsae0lJE3HauIMI51";
+    private static final Long REGISTERED_ID = 1L;
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private ProductService productService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
@@ -71,6 +77,11 @@ class ProductControllerTest {
 
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
+
+        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(REGISTERED_ID);
+
+        given(authenticationService.parseToken(INVALID_TOKEN))
+                .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
     }
 
     @Test
@@ -107,6 +118,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer" + VALID_TOKEN)
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -122,8 +134,50 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
+                        .header("Authorization", "Bearer" + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createWithAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+                        .header("Authorization", "Bearer" + VALID_TOKEN)
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("쥐돌이")));
+
+        verify(productService).createProduct(any(ProductData.class));
+    }
+
+    @Test
+    void createWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+        )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+                        .header("Authorization", "Bearer" + INVALID_TOKEN)
+        )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

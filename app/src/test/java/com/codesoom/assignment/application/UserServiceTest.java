@@ -4,12 +4,15 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.InvalidUserDataException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
+import org.javaunit.autoparams.AutoSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import java.util.Optional;
 
@@ -23,10 +26,8 @@ import static org.mockito.Mockito.verify;
 class UserServiceTest {
     private static final String EXISTED_EMAIL_ADDRESS = "existed@example.com";
     private static final Long DELETED_USER_ID = 200L;
-
-    private UserService userService;
-
     private final UserRepository userRepository = mock(UserRepository.class);
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
@@ -162,5 +163,34 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
+    }
+
+    @ParameterizedTest(name = "findUserWithNotExistedEmailAndPassword(): " +
+            "{argumentsWithNames}")
+    @AutoSource
+    void findUserWithExistedEmailAndPassword(String email, String password) {
+        given(userRepository.findByEmailAndPassword(email, password))
+                .willReturn(Optional.ofNullable(User.builder()
+                                                    .email(email)
+                                                    .password(password)
+                                                    .build()));
+
+        User user = userService.findUserByEmailAndPassword(email, password);
+
+        assertThat(user.getEmail()).isEqualTo(email);
+        assertThat(user.getPassword()).isEqualTo(password);
+
+        verify(userRepository).findByEmailAndPassword(email, password);
+    }
+
+    @ParameterizedTest(name = "findUserWithNotExistedEmailAndPassword(): " +
+            "{argumentsWithNames}")
+    @AutoSource
+    void findUserWithNotExistedEmailAndPassword(String email, String password) {
+        assertThatThrownBy(() -> userService.findUserByEmailAndPassword(
+                email, password))
+                .isInstanceOf(InvalidUserDataException.class);
+
+        verify(userRepository).findByEmailAndPassword(email, password);
     }
 }

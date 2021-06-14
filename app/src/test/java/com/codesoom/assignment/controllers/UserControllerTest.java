@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,6 +63,26 @@ class UserControllerTest {
 
         given(userService.deleteUser(100L))
                 .willThrow(new UserNotFoundException(100L));
+    }
+
+    @Test
+    void registerUserWithExistedEmail() throws Exception {
+        // setUp()에 있으면 동일한 given 메서드 때문에 FAIL
+        given(userService.registerUser(any(UserRegistrationData.class)))
+                .will(invocation -> {
+                    UserRegistrationData registrationData = invocation.getArgument(0);
+                    throw new UserEmailDuplicationException(registrationData.getEmail());
+                });
+
+        mockMvc.perform(
+                post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"tester@example.com\"," +
+                                         "\"name\":\"Tester\",\"password\":\"test\"}")
+                       )
+               .andExpect(status().isBadRequest());
+
+        verify(userService).registerUser(any(UserRegistrationData.class));
     }
 
     @Test

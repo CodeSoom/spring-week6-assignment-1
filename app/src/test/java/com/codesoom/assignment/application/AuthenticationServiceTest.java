@@ -58,7 +58,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("올바른 유저 인증 정보를 받았을 때")
+        @DisplayName("찾을 수 있는 유저 정보가 주어지면")
         class ContextWithValidUserInfo {
 
             @BeforeEach

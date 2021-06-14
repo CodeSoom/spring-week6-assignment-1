@@ -75,7 +75,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("유저를 찾을 수 없을 때")
+        @DisplayName("찾을 수 없는 유저의 로그인 정보가 주어지면")
         class ContextWithCannotFindUser {
 
             @BeforeEach

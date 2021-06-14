@@ -1,5 +1,12 @@
 package com.codesoom.assignment;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 class AppTest {
-    // TODO: 언젠가 필요하면 다시 돌아온다. - I'll be back!
+    @Test
+    @DisplayName("Application context load 정상 작동을 확인한다")
+    void runApplication() {
+        App.main(new String[] {});
+    }
 }

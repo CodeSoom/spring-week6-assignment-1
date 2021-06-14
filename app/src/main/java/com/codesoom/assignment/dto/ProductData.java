@@ -6,6 +6,9 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * 제품 요청처리 DTO
+ */
 @Setter
 @Getter
 @Builder

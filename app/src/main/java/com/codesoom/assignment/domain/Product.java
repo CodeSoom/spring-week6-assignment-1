@@ -25,6 +25,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+/**
+ * 제품 도메인
+ */
 @Entity
 @Getter
 @Builder

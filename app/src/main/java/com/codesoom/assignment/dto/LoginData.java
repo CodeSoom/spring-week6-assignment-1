@@ -10,21 +10,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 /**
- * 회원 신규 가입 요청 DTO
+ * 로그인 데이터 DTO
  */
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegistrationData {
-    @NotBlank
-    @Size(min = 3)
-    @Mapping("email")
-    private String email;
-
+public class LoginData {
     @NotBlank
     @Mapping("name")
-    private String name;
+    private String email;
 
     @NotBlank
     @Size(min = 4, max = 1024)

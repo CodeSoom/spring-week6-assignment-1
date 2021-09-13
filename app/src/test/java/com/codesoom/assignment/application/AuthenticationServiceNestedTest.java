@@ -31,8 +31,6 @@ class AuthenticationServiceNestedTest {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private User user;
-
     @BeforeEach
     void setUp() {
         authenticationService = new AuthenticationService(userRepository, jwtUtil);
@@ -42,7 +40,7 @@ class AuthenticationServiceNestedTest {
 
     private void setupFixture() {
         userRepository.deleteAll();
-        user = User.builder()
+        User user = User.builder()
                 .name(NAME)
                 .email(EMAIL)
                 .password(PASSWORD)

@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.ProductService;
+import com.codesoom.assignment.domain.AuthenticationPrincipal;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
+            @AuthenticationPrincipal Long userId,
             @RequestBody @Valid ProductData productData
     ) {
         return productService.createProduct(productData);
@@ -48,6 +50,7 @@ public class ProductController {
 
     @PatchMapping("{id}")
     public Product update(
+            @AuthenticationPrincipal Long userId,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
@@ -57,6 +60,7 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @AuthenticationPrincipal Long userId,
             @PathVariable Long id
     ) {
         productService.deleteProduct(id);

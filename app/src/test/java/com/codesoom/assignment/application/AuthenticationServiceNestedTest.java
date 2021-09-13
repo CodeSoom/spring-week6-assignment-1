@@ -1,17 +1,49 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.LoginForm;
+import com.codesoom.assignment.errors.LoginDataNotMatchedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+import static com.codesoom.assignment.Constant.EMAIL;
+import static com.codesoom.assignment.Constant.NAME;
+import static com.codesoom.assignment.Constant.PASSWORD;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("AuthenticationService 클래스")
+@WebMvcTest(AuthenticationService.class)
 class AuthenticationServiceNestedTest {
     private AuthenticationService authenticationService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user;
+
     @BeforeEach
     void setUp() {
-        authenticationService = new AuthenticationService();
+        authenticationService = new AuthenticationService(userRepository);
+
+        setupFixture();
+    }
+
+    private void setupFixture() {
+        user = User.builder()
+                .name(NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
+        userRepository.save(user);
     }
 
     @Nested
@@ -23,7 +55,9 @@ class AuthenticationServiceNestedTest {
             @DisplayName("정상적으로 로그인되어 토큰이 발급된다.")
             @Test
             void login() {
+                final String token = authenticationService.login(LoginForm.of(EMAIL, PASSWORD));
 
+                assertThat(token).contains(".");
             }
         }
 
@@ -31,9 +65,12 @@ class AuthenticationServiceNestedTest {
         @DisplayName("회원의 아이디와 비밀번호가 불일치한다면")
         class Context_with_invalid_data {
             @DisplayName("예외가 발생하며 토큰이 발급되지 않는다.")
-            @Test
-            void login() {
-
+            @ParameterizedTest
+            @CsvSource(value = {"catsbi@codesoom.co.kr:1234", "test@codesoom.co.kr:q1w2e3", "test:test"}, delimiter = ':')
+            void login(String email, String password) {
+                assertThatThrownBy(()-> authenticationService.login(LoginForm.of(email, password)))
+                        .isInstanceOf(LoginDataNotMatchedException.class)
+                        .hasMessage(LoginDataNotMatchedException.DEFAULT_MESSAGE);
             }
         }
     }

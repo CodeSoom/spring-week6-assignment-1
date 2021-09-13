@@ -1,11 +1,14 @@
 package com.codesoom.assignment.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
+@AllArgsConstructor
 public class LoginForm {
 
     @NotBlank
@@ -15,4 +18,8 @@ public class LoginForm {
     @NotBlank
     @Size(min = 4, max = 1024)
     private String password;
+
+    public static LoginForm of(String email, String password) {
+        return new LoginForm(email, password);
+    }
 }

@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginForm;
 import com.codesoom.assignment.errors.LoginDataNotMatchedException;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.codesoom.assignment.Constant.EMAIL;
 import static com.codesoom.assignment.Constant.NAME;
@@ -20,23 +21,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("AuthenticationService 클래스")
-@WebMvcTest(AuthenticationService.class)
+@SpringBootTest
 class AuthenticationServiceNestedTest {
     private AuthenticationService authenticationService;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private User user;
 
     @BeforeEach
     void setUp() {
-        authenticationService = new AuthenticationService(userRepository);
+        authenticationService = new AuthenticationService(userRepository, jwtUtil);
 
         setupFixture();
     }
 
     private void setupFixture() {
+        userRepository.deleteAll();
         user = User.builder()
                 .name(NAME)
                 .email(EMAIL)

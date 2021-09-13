@@ -1,7 +1,5 @@
 package com.codesoom.assignment.controllers;
 
-import javax.websocket.Session;
-
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
 

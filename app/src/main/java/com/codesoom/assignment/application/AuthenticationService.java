@@ -1,7 +1,5 @@
 package com.codesoom.assignment.application;
 
-import java.security.Key;
-
 import com.codesoom.assignment.utils.JwtUtil;
 
 import org.springframework.stereotype.Service;
@@ -13,8 +11,8 @@ public class AuthenticationService {
     public AuthenticationService(final JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
     public String login() {
         return jwtUtil.encode(1L);
     }
-
 }

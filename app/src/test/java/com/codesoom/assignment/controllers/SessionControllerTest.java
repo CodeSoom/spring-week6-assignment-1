@@ -1,4 +1,8 @@
-import static org.junit.jupiter.api.Assertions.*;
+package com.codesoom.assignment.controllers;
+
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+@WebMvcTest
 class SessionControllerTest {
-  
+
 }

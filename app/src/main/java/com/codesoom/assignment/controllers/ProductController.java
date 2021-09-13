@@ -1,14 +1,13 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.utils.JwtUtil;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
-
-import io.jsonwebtoken.Claims;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,14 +17,14 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
-    private final JwtUtil jwtUtil;
+    private final AuthenticationService authenticationService;
 
     public ProductController(
         final ProductService productService,
-        final JwtUtil jwtUtil
+        final AuthenticationService authenticationService
     ) {
         this.productService = productService;
-        this.jwtUtil = jwtUtil;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping
@@ -44,8 +43,8 @@ public class ProductController {
         @RequestHeader("Authorization") final String authorization,
         @RequestBody @Valid ProductData productData
     ) {
-        final String accessToken = authorization.substring("Bearer".length());
-        final Claims claims = jwtUtil.decode(accessToken);
+        final String accessToken = authorization.substring("Bearer ".length());
+        final Long userId = authenticationService.parseToken(accessToken);
         return productService.createProduct(productData);
     }
 
@@ -63,5 +62,11 @@ public class ProductController {
         @PathVariable Long id
     ) {
         productService.deleteProduct(id);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public void handleMissingRequestHeader() {
+        //
     }
 }

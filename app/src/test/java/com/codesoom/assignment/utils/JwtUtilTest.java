@@ -11,8 +11,8 @@ import io.jsonwebtoken.security.SignatureException;
 
 public class JwtUtilTest {
     private static final String SECRET = "01234567890123456789012345678912";
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.Vid3sIDrCUySUo7pLyfNpqGaAO3kI3FgGMWyRX11sRE";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.Vid3sIDrCUySUo7pLyfNpqGaAO3kI3FgGMWyRX1";
+    public static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.Vid3sIDrCUySUo7pLyfNpqGaAO3kI3FgGMWyRX11sRE";
+    public static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.Vid3sIDrCUySUo7pLyfNpqGaAO3kI3FgGMWyRX1";
 
     private JwtUtil jwtUtil;
 
@@ -43,4 +43,10 @@ public class JwtUtilTest {
         Claims claims = jwtUtil.decode(VALID_TOKEN);
         assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
+
+    // @Test
+    // void decodeWithBlankToken() {
+    //     Claims claims = jwtUtil.decode("");
+    //     assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
+    // }
 }

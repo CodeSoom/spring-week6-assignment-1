@@ -4,15 +4,15 @@ import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/products")
-@CrossOrigin
 public class ProductController {
+
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
@@ -20,36 +20,40 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> list() {
-        return productService.getProducts();
-    }
+    public List<Product> getProducts() {
 
-    @GetMapping("{id}")
-    public Product detail(@PathVariable Long id) {
-        return productService.getProduct(id);
+        return productService.getProducts();
+
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Product create(
-            @RequestBody @Valid ProductData productData
-    ) {
-        return productService.createProduct(productData);
+    public Product createProduct(@RequestBody ProductData source) {
+
+        return productService.createProduct(source);
+
     }
 
-    @PatchMapping("{id}")
-    public Product update(
-            @PathVariable Long id,
-            @RequestBody @Valid ProductData productData
-    ) {
-        return productService.updateProduct(id, productData);
+    @GetMapping("{id}")
+    public Product getProduct(@PathVariable Long id) {
+
+        return productService.getProduct(id);
+
+    }
+
+    @RequestMapping(value = "{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
+    public Product updateProduct(@PathVariable Long id, @RequestBody ProductData source) {
+
+        return productService.updateProduct(id, source);
+
     }
 
     @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(
-            @PathVariable Long id
-    ) {
+    public void deleteProduct(@PathVariable Long id) {
+
         productService.deleteProduct(id);
+
     }
+
 }
+

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -28,7 +29,9 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Product createProduct(@RequestBody ProductData source) {
+    public Product createProduct(@RequestHeader("Authorization") String authorization, @RequestBody @Valid ProductData source) {
+
+        System.out.println("authorization = " + authorization);
 
         return productService.createProduct(source);
 

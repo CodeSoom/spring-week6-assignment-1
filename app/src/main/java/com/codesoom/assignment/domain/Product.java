@@ -8,18 +8,27 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
 @Getter
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
 public class Product {
 
     @Id
     @GeneratedValue
     private Long id;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String maker;
+
+    @NotBlank
     private Long price;
+
+    @NotBlank
     private String imgUrl;
 
     @Builder

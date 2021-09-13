@@ -23,7 +23,7 @@ public class AuthenticationServiceTest {
     void login() {
         String accessToken = authenticationService.login();
 
-        assertThat(accessToken).contains(".xxx");
+        assertThat(accessToken).contains(".");
     }
 
 }

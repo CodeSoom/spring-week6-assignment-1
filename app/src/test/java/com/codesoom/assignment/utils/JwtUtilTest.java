@@ -1,12 +1,19 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
+import com.codesoom.assignment.errors.NotSupportedUserIdException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.codesoom.assignment.Constant.SECRET;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("JwtUtil 클래스")
 class JwtUtilTest {
@@ -25,9 +32,12 @@ class JwtUtilTest {
         @DisplayName("인자값이 유효한 경우")
         class Context_with_valid_id {
             @DisplayName("토큰이 정상적으로 발급되어 반환된다.")
-            @Test
-            void encode() {
+            @ParameterizedTest
+            @ValueSource(longs = {1, 3, 15, 500})
+            void encode(Long userId) {
+                final String token = jwtUtil.encode(userId);
 
+                assertThat(token).contains(".");
             }
         }
 
@@ -35,9 +45,12 @@ class JwtUtilTest {
         @DisplayName("인자값이 유효하지 않을 경우")
         class Context_with_invalid_id {
             @DisplayName("예외가 발생하며 토큰이 발급되지 않는다.")
-            @Test
-            void encode() {
-
+            @ParameterizedTest
+            @NullSource
+            @ValueSource(longs = {-10, -1, 0})
+            void encode(Long userId) {
+                assertThatThrownBy(() -> jwtUtil.encode(userId))
+                        .isInstanceOf(NotSupportedUserIdException.class);
             }
         }
     }
@@ -47,21 +60,37 @@ class JwtUtilTest {
     class Describe_decode {
         @Nested
         @DisplayName("인자값이 유효한 경우")
-        class Context_with_valid_token{
+        class Context_with_valid_token {
+            private String validToken;
+            private Long userId;
+
+            @BeforeEach
+            void setUp() {
+                userId = 1L;
+                validToken = jwtUtil.encode(userId);
+            }
+
             @DisplayName("사용자 정보가 반환된다.")
             @Test
             void decode() {
+                final Long decodedUserId = jwtUtil.decode(validToken);
 
+                assertThat(decodedUserId).isEqualTo(userId);
             }
         }
 
         @Nested
         @DisplayName("인자값이 유효하지 않을 경우")
         class Context_with_invalid_token {
-            @DisplayName("예외가 발생한다.")
-            @Test
-            void decode() {
 
+            @DisplayName("예외가 발생한다.")
+            @ParameterizedTest
+            @NullAndEmptySource
+            @ValueSource(strings = {"a.b.c", "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGaa"})
+            void decode(String invalidToken) {
+
+                assertThatThrownBy(() -> jwtUtil.decode(invalidToken))
+                        .isInstanceOf(InvalidTokenException.class);
             }
         }
     }

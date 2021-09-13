@@ -15,7 +15,6 @@ import javax.validation.Valid;
 
 /**
  * token 에 대한 HTTP 요청을 처리한다.
- * TODO 다음 내용을 구현해야 한다.
  * 1. 로그인 POST /session UserRegistrationData
  */
 @RestController

@@ -16,8 +16,8 @@ class AuthenticationServiceTest {
     @Test
     void login() {
         String accessToken = authenticationService.login();
-        System.out.println("accessToken: " + accessToken);
-        assertThat(accessToken).contains(".");
+        // 테스트코드의 fail 을 활용한 꼼수 쓰기
+        assertThat(accessToken).contains(".blakblajk");
     }
 
 

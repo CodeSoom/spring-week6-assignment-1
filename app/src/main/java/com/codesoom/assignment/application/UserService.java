@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 /**
- * 유저 비즈니스 로직 담당
+ * 유저 비즈니스 로직 담당.
  */
 @Service
 @Transactional
@@ -26,7 +26,7 @@ public class UserService {
     }
 
     /**
-     * 유저데이터 저장후 return
+     * 유저데이터 저장후 return.
      * @param registrationData 유저데이터
      * @return 저장된 유저
      */
@@ -41,7 +41,7 @@ public class UserService {
     }
 
     /**
-     * id에 해당하는 유저를 수정하고 return
+     * id에 해당하는 유저를 수정하고 return.
      * @param id 식별자
      * @param modificationData 유저데이터
      * @return 수정된 유저
@@ -56,7 +56,7 @@ public class UserService {
     }
 
     /**
-     * id에 해당하는 유저를 삭제하고 return
+     * id에 해당하는 유저를 삭제하고 return.
      * @param id 식별자
      * @return 삭제된 유저
      */
@@ -67,7 +67,7 @@ public class UserService {
     }
 
     /**
-     * id에 해당하는 유저를 return
+     * id에 해당하는 유저를 return.
      * @param id 식별자
      * @return 해당 id 유저
      */

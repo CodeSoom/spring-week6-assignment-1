@@ -20,7 +20,7 @@ public class AuthenticationService {
 
 
     /**
-     * 유저 id로 인코딩한 토큰 return
+     * 유저 id로 인코딩한 토큰 return.
      * @param userId
      * @return 인증 토큰
      */

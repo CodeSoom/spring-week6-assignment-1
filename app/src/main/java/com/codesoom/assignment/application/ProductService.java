@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- * 상품 비즈니스 로직 담당
+ * 상품 비즈니스 로직 담당.
  */
 @Service
 @Transactional
@@ -28,7 +28,7 @@ public class ProductService {
     }
 
     /**
-     * 저장된 모든 상품 목록 return
+     * 저장된 모든 상품 목록 return.
      * @return 저장된 모든 상품 목록
      */
     public List<Product> getProducts() {
@@ -36,7 +36,7 @@ public class ProductService {
     }
 
     /**
-     * 주어진 id에 해당하는 상품 return
+     * 주어진 id에 해당하는 상품 return.
      * @param id 식별자
      * @return 주어진 id 해당 상품
      */
@@ -45,7 +45,7 @@ public class ProductService {
     }
 
     /**
-     * 주어진 상품을 저장하고 return
+     * 주어진 상품을 저장하고 return.
      * @param productData 상품 데이터
      * @return 저장된 상품
      */
@@ -55,7 +55,7 @@ public class ProductService {
     }
 
     /**
-     * id에 해당하는 상품을 수정하고 return
+     * id에 해당하는 상품을 수정하고 return.
      * @param id 식별자
      * @param productData 상품데이터
      * @return 수정한 상품
@@ -67,7 +67,7 @@ public class ProductService {
     }
 
     /**
-     * id에 해당하는 상품 삭제후 return
+     * id에 해당하는 상품 삭제후 return.
      * @param id 식별자
      * @return 삭제한 상품
      */
@@ -78,7 +78,7 @@ public class ProductService {
     }
 
     /**
-     * id에 해당하는 상품 return
+     * id에 해당하는 상품 return.
      * @param id 식별자
      * @return 해당 id 상품
      */

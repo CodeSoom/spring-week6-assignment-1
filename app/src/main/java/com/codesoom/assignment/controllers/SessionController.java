@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/session")
 public class SessionController {
-    private AuthenticationService authenticationService;
-    private String accessToken;
+    private final AuthenticationService authenticationService;
 
     public SessionController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;

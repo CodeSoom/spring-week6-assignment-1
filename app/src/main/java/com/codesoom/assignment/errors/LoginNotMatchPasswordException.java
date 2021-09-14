@@ -1,7 +1,7 @@
 package com.codesoom.assignment.errors;
 
-public class LoginFailureException extends RuntimeException{
-    public LoginFailureException() {
-        super("로그인에 실패했습니다.");
+public class LoginNotMatchPasswordException extends RuntimeException{
+    public LoginNotMatchPasswordException() {
+        super("Does not match password");
     }
 }

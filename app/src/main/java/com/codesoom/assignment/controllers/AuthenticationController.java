@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/session")
-public class SessionController {
+@RequestMapping("/authentication")
+public class AuthenticationController {
 
     private AuthenticationService authenticationService;
 
-    public SessionController(
+    public AuthenticationController(
             AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }

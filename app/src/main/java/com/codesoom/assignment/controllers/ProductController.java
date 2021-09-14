@@ -1,3 +1,8 @@
+// REST
+// /producs -> Create, Read
+// /producsts/{id} -> Read, Update, Delete
+
+
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.ProductService;

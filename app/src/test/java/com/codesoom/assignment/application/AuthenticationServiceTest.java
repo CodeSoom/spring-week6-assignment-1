@@ -16,8 +16,11 @@ class AuthenticationServiceTest {
     @Test
     void login() {
         String accessToken = authenticationService.login();
+        System.out.println("accessToken: " + accessToken);
         assertThat(accessToken).contains(".");
     }
+
+
 
 
 }

@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;

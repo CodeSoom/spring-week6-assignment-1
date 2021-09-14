@@ -6,29 +6,34 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
+/**
+ * 유저 인증 로직 담당.
+ */
 @Service
 public class AuthenticationService {
 
-  private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-  public AuthenticationService(JwtUtil jwtUtil) {
-    this.jwtUtil = jwtUtil;
-  }
-
-  public String login() {
-    return jwtUtil.encode(1L);
-  }
-
-
-  public Long parsetoken(String accessToken) {
-    if (accessToken == null || accessToken.isBlank()) {
-      throw new UnauthorizedException(accessToken);
+    public AuthenticationService(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
-    try {
-      Claims claims = jwtUtil.decode(accessToken);
-      return claims.get("userId", Long.class);
-    } catch (SignatureException e) {
-      throw new UnauthorizedException(accessToken);
+
+
+
+    public String login(Long userId) {
+        return jwtUtil.encode(userId);
     }
-  }
+
+
+    public Long parsetoken(String accessToken) {
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new UnauthorizedException(accessToken);
+        }
+        try {
+            Claims claims = jwtUtil.decode(accessToken);
+            return claims.get("userId", Long.class);
+        } catch (SignatureException e) {
+            throw new UnauthorizedException(accessToken);
+        }
+    }
 }

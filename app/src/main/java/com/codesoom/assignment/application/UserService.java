@@ -6,10 +6,12 @@ import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.WrongPasswordException;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -50,5 +52,20 @@ public class UserService {
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    public User validateUser(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        if(user.isDeleted()) {
+            throw new UserNotFoundException(email);
+        }
+
+        if(!user.authenticate(password)) {
+            throw new WrongPasswordException();
+        }
+
+        return user;
     }
 }

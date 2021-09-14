@@ -9,6 +9,8 @@ import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -162,5 +164,106 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
+    }
+
+    @DisplayName("validateUser")
+    @Nested
+    class CheckUserTest {
+        @DisplayName("with a valid user")
+        @Nested
+        class WithValidUser {
+            User userFixture;
+
+            @BeforeEach
+            void setup() {
+                userFixture = User.builder()
+                        .id(1L)
+                        .email("email@email.com")
+                        .name("nan")
+                        .password("password")
+                        .build();
+
+                given(userRepository.findByEmail("email@email.com")).willReturn(Optional.of(userFixture));
+            }
+
+            @DisplayName("returns an user")
+            @Test
+            void returnsUser() {
+                User user = userService.validateUser("email@email.com", "password");
+
+                verify(userRepository).findByEmail("email@email.com");
+
+                assertThat(user.getEmail()).isEqualTo("email@email.com");
+            }
+        }
+
+        @DisplayName("with a deleted user")
+        @Nested
+        class WithDeletedUser {
+            User userFixture;
+
+            @BeforeEach
+            void setup() {
+                userFixture = User.builder()
+                        .id(1L)
+                        .email("email@email.com")
+                        .name("nan")
+                        .password("password")
+                        .deleted(true)
+                        .build();
+
+                given(userRepository.findByEmail("email@email.com")).willReturn(Optional.of(userFixture));
+            }
+
+            @DisplayName("throws UserNotFoundException")
+            @Test
+            void throwsUserNotFoundException() {
+                assertThatThrownBy(() -> userService.validateUser("email@email.com", "password"))
+                        .isInstanceOf(UserNotFoundException.class);
+            }
+        }
+
+        @DisplayName("with a not found user")
+        @Nested
+        class WithNonExistentUser {
+            @BeforeEach
+            void setup() {
+                given(userRepository.findByEmail("email@email.com")).willThrow(
+                        new UserNotFoundException("email@email.com"));
+            }
+
+            @DisplayName("throws UserNotFoundException")
+            @Test
+            void throwsUserNotFoundException() {
+                assertThatThrownBy(() -> userService.validateUser("email@email.com", "password"))
+                        .isInstanceOf(UserNotFoundException.class);
+            }
+        }
+
+        @DisplayName("with a wrong password")
+        @Nested
+        class WithWrongPassword {
+            User userFixture;
+
+            @BeforeEach
+            void setup() {
+                userFixture = User.builder()
+                        .id(1L)
+                        .email("email@email.com")
+                        .name("nan")
+                        .password("password")
+                        .deleted(true)
+                        .build();
+
+                given(userRepository.findByEmail("email@email.com")).willReturn(Optional.of(userFixture));
+            }
+
+            @DisplayName("throws UserNotFoundException")
+            @Test
+            void throwsUserNotFoundException() {
+                assertThatThrownBy(() -> userService.validateUser("email@email.com", "wrong-password"))
+                        .isInstanceOf(UserNotFoundException.class);
+            }
+        }
     }
 }

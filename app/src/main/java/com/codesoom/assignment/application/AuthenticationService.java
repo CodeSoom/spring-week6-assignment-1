@@ -6,12 +6,14 @@ import io.jsonwebtoken.security.Keys;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Service
 public class AuthenticationService {
     public String login() {
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        String secret = "12345678901234567890123456789012";
+        Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
         return Jwts.builder()
                 .claim("userId", 1L)

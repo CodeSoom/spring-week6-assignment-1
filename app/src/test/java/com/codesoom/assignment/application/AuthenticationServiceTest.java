@@ -10,14 +10,14 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        authenticationService = new AuthenticationService();
+        authenticationService = new AuthenticationService(jwtUtil);
     }
 
     @Test
     void login() {
         String accessToken = authenticationService.login();
         // 테스트코드의 fail 을 활용한 꼼수 쓰기
-        assertThat(accessToken).contains(".blakblajk");
+        assertThat(accessToken).contains(".");
     }
 
 

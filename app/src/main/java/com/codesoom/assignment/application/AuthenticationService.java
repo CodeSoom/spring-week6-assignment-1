@@ -12,7 +12,7 @@ public class AuthenticationService {
     public String login() {
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-        Jwts.builder().signWith(key).compact();
-        return "a.b.c";
+        return Jwts.builder().signWith(key).compact();
+
     }
 }

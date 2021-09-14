@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,8 @@ import java.security.Key;
 public class AuthenticationService {
     public String login() {
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+        Jwts.builder().signWith(key).compact();
         return "a.b.c";
     }
 }

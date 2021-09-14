@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     public Long decode(String token) {
-        if (token == null || token.isBlank()) {
+        if (isNotValidToken(token)) {
             throw new InvalidTokenException(token);
         }
 
@@ -54,6 +54,9 @@ public class JwtUtil {
             throw new InvalidTokenException(token);
         }
 
+    }
 
+    private boolean isNotValidToken(String token) {
+        return token == null || token.isBlank();
     }
 }

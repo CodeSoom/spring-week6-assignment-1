@@ -1,14 +1,16 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.dto.SessionResponseData;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 
+/**
+ * 인증관 http request handler.
+ */
 @RestController
 @RequestMapping("/authentication")
 public class AuthenticationController {
@@ -22,13 +24,12 @@ public class AuthenticationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData create() {
-        String accessToken = authenticationService.login();
+    public SessionResponseData create(@RequestBody @Valid UserLoginData loginData) {
+        String accessToken = authenticationService.createToken(loginData);
 
         return SessionResponseData.builder()
                 .accessToken(accessToken)
                 .build();
-
     }
 
 }

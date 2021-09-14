@@ -17,6 +17,11 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    /**
+     * 로그인 정보를 조회해서 토큰을 발급한다.
+     * @param form 이메일과 비밀번호가 포함된 로그인 정보
+     * @return 토큰
+     */
     public String login(LoginForm form) {
 
         final User foundUser = userRepository.findByEmailAndDeletedIsFalse(form.getEmail())

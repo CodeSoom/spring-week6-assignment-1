@@ -14,9 +14,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.codesoom.assignment.Constant.EMAIL;
-import static com.codesoom.assignment.Constant.NAME;
-import static com.codesoom.assignment.Constant.PASSWORD;
+import static com.codesoom.assignment.ConstantForAuthenticationTest.EMAIL;
+import static com.codesoom.assignment.ConstantForAuthenticationTest.NAME;
+import static com.codesoom.assignment.ConstantForAuthenticationTest.PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -31,6 +31,8 @@ class AuthenticationServiceNestedTest {
     @Autowired
     private JwtUtil jwtUtil;
 
+    private User user;
+
     @BeforeEach
     void setUp() {
         authenticationService = new AuthenticationService(userRepository, jwtUtil);
@@ -40,7 +42,7 @@ class AuthenticationServiceNestedTest {
 
     private void setupFixture() {
         userRepository.deleteAll();
-        User user = User.builder()
+        user = User.builder()
                 .name(NAME)
                 .email(EMAIL)
                 .password(PASSWORD)
@@ -53,21 +55,24 @@ class AuthenticationServiceNestedTest {
     @DisplayName("login 메서드는")
     class Describe_login {
         @Nested
-        @DisplayName("회원의 아이디와 비밀번호가 일치한다면")
+        @DisplayName("등록된 회원의 로그인 정보와 일치하는 아이디와 비밀번호가 주어지면")
         class Context_with_valid_data {
-            @DisplayName("정상적으로 로그인되어 토큰이 발급된다.")
+            @DisplayName("로그인 처리 후 토큰을 반환한다.")
             @Test
             void login() {
                 final String token = authenticationService.login(LoginForm.of(EMAIL, PASSWORD));
 
+                final Long decodeId = jwtUtil.decode(token);
+
                 assertThat(token).contains(".");
+                assertThat(decodeId).isEqualTo(user.getId());
             }
         }
 
         @Nested
         @DisplayName("회원의 아이디와 비밀번호가 불일치한다면")
         class Context_with_invalid_data {
-            @DisplayName("예외가 발생하며 토큰이 발급되지 않는다.")
+            @DisplayName("예외를 던진다.")
             @ParameterizedTest
             @CsvSource(value = {"catsbi@codesoom.co.kr:1234", "test@codesoom.co.kr:q1w2e3", "test:test"}, delimiter = ':')
             void login(String email, String password) {

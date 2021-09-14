@@ -7,6 +7,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.codesoom.assignment.errors.InvalidTokenException.DEFAULT_MESSAGE_WITHOUT_TOKEN;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductController.class)
@@ -198,5 +201,42 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(productService).deleteProduct(1000L);
+    }
+
+    @DisplayName("토큰이 없으면 상품 등록이 불가능하다.")
+    @Test
+    void createWithoutTokenProduct() throws Exception {
+        mockMvc.perform(
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(DEFAULT_MESSAGE_WITHOUT_TOKEN));
+
+    }
+
+    @DisplayName("토큰이 없으면 상품정보 변경이 불가능하다.")
+    @Test
+    void updateWithoutTokenProduct() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(DEFAULT_MESSAGE_WITHOUT_TOKEN));
+    }
+
+    @DisplayName("토큰이 없으면 상품 삭제가 불가능하다.")
+    @Test
+    void deleteWithoutTokenProduct() throws Exception {
+        mockMvc.perform(delete("/products/1"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(DEFAULT_MESSAGE_WITHOUT_TOKEN));
     }
 }

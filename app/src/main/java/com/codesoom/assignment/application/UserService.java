@@ -7,13 +7,13 @@ import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
-import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 public class UserService {
+
     private final Mapper mapper;
     private final UserRepository userRepository;
 

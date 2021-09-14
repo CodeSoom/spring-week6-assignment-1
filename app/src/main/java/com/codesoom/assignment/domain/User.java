@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,6 +27,7 @@ public class User {
     private String password;
 
     @Builder.Default
+    @Column(name = "deleted")
     private boolean deleted = false;
 
     public void changeWith(User source) {

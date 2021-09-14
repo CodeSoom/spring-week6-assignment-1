@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.AccessToken;
+import com.codesoom.assignment.dto.LoginRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ public class SessionControllerTest {
 
     @BeforeEach
     void setUp() {
-        given(authenticationService.authenticate(any(User.class)))
+        given(authenticationService.authenticate(any(LoginRequestDto.class)))
             .willReturn(new AccessToken("A1.2B.Cc"));
     }
 
@@ -43,13 +44,13 @@ public class SessionControllerTest {
         mockMvc.perform(
             post("/session")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(User.builder().build()))
+                .content(toJson(LoginRequestDto.builder().build()))
         )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.accessToken", matchesPattern(JWT_REGEX)));
     }
 
-    private String toJson(User user) throws JsonProcessingException {
+    private String toJson(LoginRequestDto user) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(user);
     }
 }

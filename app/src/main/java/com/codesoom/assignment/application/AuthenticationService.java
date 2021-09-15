@@ -17,10 +17,13 @@ public class AuthenticationService {
 
     private final Mapper mapper;
     private final UserRepository userRepository;
+    private final JwtEncoder jwtEncoder;
 
-    public AuthenticationService(Mapper dozerMapper, UserRepository userRepository) {
-        this.mapper = dozerMapper;
+    public AuthenticationService(Mapper mapper,
+        UserRepository userRepository, JwtEncoder jwtEncoder) {
+        this.mapper = mapper;
         this.userRepository = userRepository;
+        this.jwtEncoder = jwtEncoder;
     }
 
     /**
@@ -37,10 +40,7 @@ public class AuthenticationService {
             throw new UserNotAuthenticatedException(user);
         }
 
-        // TODO: JWT 생성 과정 필요
-
-        String secret = "12345678901234567890123456789012";
-        return new JwtEncoder(secret).encode();
+        return jwtEncoder.encode();
     }
 
     private User findUserFromEmail(User user) {

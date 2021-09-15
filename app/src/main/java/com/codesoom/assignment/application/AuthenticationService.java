@@ -1,5 +1,9 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.EmailNotFoundException;
 import com.codesoom.assignment.errors.UnauthorizedException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -13,9 +17,11 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public AuthenticationService(JwtUtil jwtUtil) {
+    public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
 
@@ -40,4 +46,18 @@ public class AuthenticationService {
             throw new UnauthorizedException(accessToken);
         }
     }
+
+    public String createToken(UserLoginData loginData) {
+        User user = findUserByEmail(loginData);
+
+        return encode(user.getId());
+    }
+
+    private User findUserByEmail(UserLoginData loginData) {
+        return userRepository.findByEmail(loginData.getEmail())
+                .orElseThrow(() -> new EmailNotFoundException(loginData));
+    }
+
+
 }
+

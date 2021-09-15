@@ -31,6 +31,8 @@ public class AuthenticationService {
      *
      * @param loginRequestDto 인증할 회원 정보
      * @return 생성된 액세스 토큰
+     * @throws UserNotFoundException         회원을 찾지 못한 경우
+     * @throws UserNotAuthenticatedException 삭제되었거나 인증에 실패한 경우
      */
     public AccessToken authenticate(LoginRequestDto loginRequestDto) {
         User user = mapper.map(loginRequestDto, User.class);

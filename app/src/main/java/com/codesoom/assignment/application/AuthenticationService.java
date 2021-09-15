@@ -24,7 +24,6 @@ public class AuthenticationService {
     }
 
     public String login(UserLoginData userLoginData) {
-
         User findedUser = userRepository.findByEmail(userLoginData.getEmail())
                 .orElseThrow(UserNotFoundException::new);
 
@@ -32,8 +31,10 @@ public class AuthenticationService {
             throw new LoginNotMatchPasswordException();
         }
 
-        System.out.println(jwtUtil.encode(findedUser.getId()));
-
         return jwtUtil.encode(findedUser.getId());
+    }
+
+    public void checkToken(String token) {
+        jwtUtil.decode(token);
     }
 }

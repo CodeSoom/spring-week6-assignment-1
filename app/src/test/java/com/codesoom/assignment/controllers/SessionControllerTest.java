@@ -103,7 +103,7 @@ class SessionControllerTest {
             @DisplayName("status: Created, data: token 을 반환합니다.")
             void it_response_created() throws Exception {
                 mockMvc.perform(post("/session")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(makeContent(correctUserLoginData)))
                         .andExpect(status().isCreated())
@@ -119,7 +119,7 @@ class SessionControllerTest {
             @DisplayName("status: Bad Request를 반환합니다.")
             void it_response_bad_request() throws Exception {
                 mockMvc.perform(post("/session")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(makeContent(userLoginDataWithWrongPassword)))
                         .andExpect(status().isBadRequest());
@@ -134,7 +134,7 @@ class SessionControllerTest {
             @DisplayName("status: Not Found를 반환합니다.")
             void it_response_not_found() throws Exception {
                 mockMvc.perform(post("/session")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(makeContent(notExistUserLoginData)))
                         .andExpect(status().isNotFound());

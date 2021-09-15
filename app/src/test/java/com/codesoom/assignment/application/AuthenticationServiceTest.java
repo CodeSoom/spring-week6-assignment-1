@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginNotMatchPasswordException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
@@ -118,6 +119,32 @@ class AuthenticationServiceTest {
                 UserLoginData userLoginData = mapper.map(user, UserLoginData.class);
                 assertThatThrownBy(() -> authenticationService.login(userLoginData))
                         .isInstanceOf(UserNotFoundException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("checkToken 메서드")
+    class Describe_checkToken {
+
+        @Nested
+        @DisplayName("유효하지 않은 토큰이 주어지면")
+        class Context_with_invalid_token {
+
+            private String invalid_token;
+
+            @BeforeEach
+            void prepare() {
+                User givenUser = userRepository.save(user);
+                String valid_token = jwtUtil.encode(givenUser.getId());
+                invalid_token = valid_token + "3";
+            }
+
+            @Test
+            @DisplayName("InvalidAccessToken을 던집니다.")
+            void it_throw_invalidAccessToken() {
+                assertThatThrownBy(() -> authenticationService.checkToken(invalid_token))
+                        .isInstanceOf(InvalidAccessTokenException.class);
             }
         }
     }

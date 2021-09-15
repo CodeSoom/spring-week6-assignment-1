@@ -49,8 +49,7 @@ public class AuthenticationService {
 
     public String createToken(UserLoginData loginData) {
         User user = findUserByEmail(loginData);
-
-        return encode(user.getId());
+        return jwtUtil.encode(user.getId());
     }
 
     private User findUserByEmail(UserLoginData loginData) {

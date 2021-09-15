@@ -32,7 +32,7 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("User's email address is already existed");
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserNotAuthenticatedException.class)
     public ErrorResponse handleUserNotAuthenticated() {
         return new ErrorResponse("User is not authenticated");

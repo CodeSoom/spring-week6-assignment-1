@@ -122,14 +122,14 @@ public class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("401를 응답한다")
-            void it_response_401() throws Exception {
+            @DisplayName("400를 응답한다")
+            void it_response_400() throws Exception {
                 mockMvc.perform(
                     post("/session")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(loginRequestDto))
                 )
-                    .andExpect(status().isUnauthorized());
+                    .andExpect(status().isBadRequest());
             }
         }
     }

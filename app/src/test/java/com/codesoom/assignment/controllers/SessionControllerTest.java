@@ -12,6 +12,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -48,18 +50,88 @@ public class SessionControllerTest {
         userRepository.deleteAll();
     }
 
-    @Test
-    void login() throws Exception {
-        mockMvc.perform(
-            post("/session")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(LoginRequestDto.builder()
+    @Nested
+    @DisplayName("POST /session 요청은")
+    class Describe_post_session {
+
+        private LoginRequestDto loginRequestDto;
+
+        @Nested
+        @DisplayName("올바른 로그인 요청이 주어질 때")
+        class Context_validLoginRequest {
+
+            @BeforeEach
+            void setUp() {
+                loginRequestDto = LoginRequestDto.builder()
                     .email(EMAIL)
                     .password(PASSWORD)
-                    .build()))
-        )
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.accessToken", matchesPattern(JWT_REGEX)));
+                    .build();
+            }
+
+            @Test
+            @DisplayName("201을 응답하고 액세스 토큰을 리턴한다")
+            void it_response_201_and_returns_accessToken() throws Exception {
+                mockMvc.perform(
+                    post("/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(loginRequestDto))
+                )
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.accessToken", matchesPattern(JWT_REGEX)));
+            }
+
+        }
+
+        @Nested
+        @DisplayName("삭제된 회원일 경우")
+        class Context_deletedUser {
+
+            @BeforeEach
+            void setUp() {
+                loginRequestDto = LoginRequestDto.builder()
+                    .email(EMAIL)
+                    .password(PASSWORD)
+                    .build();
+
+                userRepository.deleteAll();
+            }
+
+            @Test
+            @DisplayName("404를 응답한다")
+            void it_response_404() throws Exception {
+                mockMvc.perform(
+                    post("/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(loginRequestDto))
+                )
+                    .andExpect(status().isNotFound());
+            }
+        }
+
+
+        @Nested
+        @DisplayName("회원의 비밀번호가 일치하지 않을 경우")
+        class Context_passwordNotMatch {
+
+            @BeforeEach
+            void setUp() {
+                loginRequestDto = LoginRequestDto.builder()
+                    .email(EMAIL)
+                    .password("NOT_MATCH_PASSWORD")
+                    .build();
+            }
+
+            @Test
+            @DisplayName("401를 응답한다")
+            void it_response_401() throws Exception {
+                mockMvc.perform(
+                    post("/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(loginRequestDto))
+                )
+                    .andExpect(status().isUnauthorized());
+            }
+        }
     }
 
     private String toJson(LoginRequestDto user) throws JsonProcessingException {

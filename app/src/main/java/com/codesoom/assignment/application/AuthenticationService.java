@@ -1,8 +1,8 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.Identifier;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.domain.Identifier;
 import com.codesoom.assignment.errors.LoginDataNotMatchedException;
 import com.codesoom.assignment.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +18,15 @@ public class AuthenticationService {
     private final JwtUtil jwtUtil;
 
     /**
-     * 로그인 정보를 조회해서 토큰을 발급한다.
+     * 사용자를 식별하여 인증하고, 인증 토큰을 발급한다.
      *
-     * @param identifier 이메일과 비밀번호가 포함된 로그인 정보
-     * @return 토큰
-     * @throws LoginDataNotMatchedException 아이디 혹은 비밀번호가 유효하지 않다.
+     * @param identifier 사용자 식별 정보
+     * @return 인증 토큰
+     * @throws LoginDataNotMatchedException 인증에 실패한 경우
      */
     public String login(Identifier identifier) {
 
-        final User foundUser = userRepository.findByEmailAndDeletedIsFalse(identifier.getEmail())
+        final User foundUser = userRepository.findByEmailAndDeletedIsFalse(identifier)
                 .orElseThrow(LoginDataNotMatchedException::new);
 
         if (!foundUser.authenticate(identifier.getPassword())) {

@@ -68,7 +68,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public Optional<User> findByEmailAndDeletedIsFalse(String email) {
         return findByEmail(email)
-                .filter(user-> !user.isDeleted());
+                .filter(user -> !user.isDeleted());
     }
 
     @Override

@@ -31,7 +31,7 @@ class JwtUtilTest {
         @Nested
         @DisplayName("인자값이 유효한 경우")
         class Context_with_valid_id {
-            @DisplayName("토큰이 정상적으로 발급되어 반환된다.")
+            @DisplayName("토큰을 반환한다.")
             @ParameterizedTest
             @ValueSource(longs = {1, 3, 15, 500})
             void encode(Long userId) {
@@ -44,7 +44,7 @@ class JwtUtilTest {
         @Nested
         @DisplayName("인자값이 유효하지 않을 경우")
         class Context_with_invalid_id {
-            @DisplayName("예외가 발생하며 토큰이 발급되지 않는다.")
+            @DisplayName("예외를 던진다.")
             @ParameterizedTest
             @NullSource
             @ValueSource(longs = {-10, -1, 0})
@@ -70,7 +70,7 @@ class JwtUtilTest {
                 validToken = jwtUtil.encode(userId);
             }
 
-            @DisplayName("사용자 정보를 반환다.")
+            @DisplayName("사용자 정보를 반환한다.")
             @Test
             void decode() {
                 final Long decodedUserId = jwtUtil.decode(validToken);

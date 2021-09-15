@@ -76,7 +76,7 @@ class AuthenticationServiceNestedTest {
             @ParameterizedTest
             @CsvSource(value = {"catsbi@codesoom.co.kr:1234", "test@codesoom.co.kr:q1w2e3", "test:test"}, delimiter = ':')
             void login(String email, String password) {
-                assertThatThrownBy(()-> authenticationService.login(LoginForm.of(email, password)))
+                assertThatThrownBy(() -> authenticationService.login(LoginForm.of(email, password)))
                         .isInstanceOf(LoginDataNotMatchedException.class)
                         .hasMessage(LoginDataNotMatchedException.DEFAULT_MESSAGE);
             }

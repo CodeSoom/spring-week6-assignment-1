@@ -67,43 +67,39 @@ class SessionControllerNestedTest {
     @DisplayName("login 메서드는")
     class Describe_login {
         @Nested
-        @DisplayName("이메일이 존재하는 경우")
-        class Context_with_exists_email {
-            @Nested
-            @DisplayName("비밀번호가 일치한다면")
-            class Context_with_valid_password {
-                @DisplayName("토큰이 발급되며 201 응답코드를 반환한다.")
-                @Test
-                void loginWithValidForm() throws Exception {
-                    mockMvc.perform(
-                                    post("/session")
-                                            .contentType(MediaType.APPLICATION_JSON_UTF8)
-                                            .content(toJson(LoginForm.of(EMAIL, PASSWORD)))
-                            )
-                            .andExpect(status().isCreated())
-                            .andExpect(content().string(containsString(".")))
-                            .andDo((result)-> {
-                                final String token = result.getResponse().getContentAsString();
-                                final Long decodeId = jwtUtil.decode(token);
+        @DisplayName("이메일이 존재하고, 비밀번호가 일치한다면")
+        class Context_with_exists_email_and_matched_password {
+            @DisplayName("토큰이 발급되며 201 응답코드를 반환한다.")
+            @Test
+            void loginWithValidForm() throws Exception {
+                mockMvc.perform(
+                                post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                        .content(toJson(LoginForm.of(EMAIL, PASSWORD)))
+                        )
+                        .andExpect(status().isCreated())
+                        .andExpect(content().string(containsString(".")))
+                        .andDo((result) -> {
+                            final String token = result.getResponse().getContentAsString();
+                            final Long decodeId = jwtUtil.decode(token);
 
-                                assertThat(decodeId).isEqualTo(user.getId());
-                            });
-                }
+                            assertThat(decodeId).isEqualTo(user.getId());
+                        });
             }
+        }
 
-            @Nested
-            @DisplayName("비밀번호가 일치하지 않는다면")
-            class Context_with_invalid_password {
-                @DisplayName("예외가 발생하며 401 응답코드를 반환한다.")
-                @Test
-                void loginWithNotMatchedForm() throws Exception {
-                    mockMvc.perform(
-                                    post("/session")
-                                            .contentType(MediaType.APPLICATION_JSON_UTF8)
-                                            .content(toJson(LoginForm.of(EMAIL, "other")))
-                            )
-                            .andExpect(status().isUnauthorized());
-                }
+        @Nested
+        @DisplayName("이메일이 존재하고, 비밀번호가 일치하지 않는다면")
+        class Context_with_exists_email_and_unmatched_password {
+            @DisplayName("예외가 발생하며 401 응답코드를 반환한다.")
+            @Test
+            void loginWithNotMatchedForm() throws Exception {
+                mockMvc.perform(
+                                post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                        .content(toJson(LoginForm.of(EMAIL, "other")))
+                        )
+                        .andExpect(status().isUnauthorized());
             }
         }
 

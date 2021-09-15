@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.AccessToken;
 import com.codesoom.assignment.dto.LoginRequestDto;
 import com.codesoom.assignment.errors.UserNotAuthenticatedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -63,9 +62,12 @@ public class AuthenticationServiceTest {
             @Test
             @DisplayName("액세스 토큰을 리턴한다")
             void it_returns_accessToken() {
-                AccessToken accessToken = authenticationService.authenticate(loginRequestDto);
+                String accessToken = authenticationService.authenticate(loginRequestDto)
+                    .getAccessToken();
 
-                assertThat(Pattern.matches(JWT_REGEX, accessToken.getAccessToken())).isTrue();
+                System.out.println("*** AccessToken: " + accessToken);
+
+                assertThat(Pattern.matches(JWT_REGEX, accessToken)).isTrue();
             }
         }
 

@@ -38,7 +38,9 @@ public class AuthenticationService {
         }
 
         // TODO: JWT 생성 과정 필요
-        return new AccessToken("");
+
+        String secret = "12345678901234567890123456789012";
+        return new JwtEncoder(secret).encode();
     }
 
     private User findUserFromEmail(User user) {

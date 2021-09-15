@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
- * 인증관 http request handler.
+ * 인증관련 http request handler.
  */
 @RestController
 @RequestMapping("/authentication")

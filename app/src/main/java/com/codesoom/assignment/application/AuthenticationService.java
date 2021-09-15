@@ -25,7 +25,13 @@ public class AuthenticationService {
         this.userRepository = userRepository;
     }
 
-
+    /**
+     * 토큰을 decode한 후 속성정보를 반환한다.
+     *
+     * @param accessToken 인증토큰
+     * @return 속성 정보
+     * @throws UnauthorizedException 인증에 실패한 경우
+     */
     public Long parsetoken(String accessToken) {
         if (accessToken == null || accessToken.isBlank()) {
             throw new UnauthorizedException(accessToken);
@@ -38,6 +44,13 @@ public class AuthenticationService {
         }
     }
 
+    /**
+     * 로그인 데이터로 유저 정보 조회후, userID로 인증토큰을 반환한다.
+     *
+     * @param loginData 로그인 데이터
+     * @return 인증토큰
+     * @throws WrongPasswordException 비밀번호가 틀린 경우
+     */
     public String createToken(UserLoginData loginData) {
         User user = findUserByEmail(loginData);
         if (!user.authenticate(loginData.getPassword())) {
@@ -46,6 +59,13 @@ public class AuthenticationService {
         return jwtUtil.encode(user.getId());
     }
 
+    /**
+     * 주어진 로그인 데이터와 일치하는 유저를 반환한다.
+     *
+     * @param loginData 로그인 데이터
+     * @return 유저
+     * @throws EmailNotFoundException 이메일이 저장되어있지 않은 경우
+     */
     private User findUserByEmail(UserLoginData loginData) {
         return userRepository.findByEmail(loginData.getEmail())
                 .orElseThrow(() -> new EmailNotFoundException(loginData));

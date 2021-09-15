@@ -12,7 +12,7 @@ import javax.validation.Valid;
  * 인증관련 http request handler.
  */
 @RestController
-@RequestMapping("/authentication")
+@RequestMapping("/session")
 public class AuthenticationController {
 
     private AuthenticationService authenticationService;

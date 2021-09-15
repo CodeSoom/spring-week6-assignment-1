@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.EmailNotFoundException;
 import com.codesoom.assignment.errors.UnauthorizedException;
+import com.codesoom.assignment.errors.WrongPasswordException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
@@ -49,6 +50,10 @@ public class AuthenticationService {
 
     public String createToken(UserLoginData loginData) {
         User user = findUserByEmail(loginData);
+        if(!user.authenticate(loginData.getPassword())){
+            throw new WrongPasswordException(loginData);
+        }
+
         return jwtUtil.encode(user.getId());
     }
 

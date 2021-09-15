@@ -11,7 +11,10 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        JwtUtil jwtUtil = new JwtUtil();
+        String secret ="12345678901234567890123456789012";
+
+        JwtUtil jwtUtil = new JwtUtil(secret);
+        
         authenticationService = new AuthenticationService(jwtUtil);
     }
 

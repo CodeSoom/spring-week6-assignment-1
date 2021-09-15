@@ -32,13 +32,14 @@ class JwtUtilTest {
         class Context_with_valid_id {
 
             private final Long VALID_ID = 1L;
-            private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
             @Test
             @DisplayName("암호화된 토큰을 반환한다.")
             void it_return_token() {
                 String token = jwtUtil.encode(VALID_ID);
-                assertThat(token).isEqualTo(VALID_TOKEN);
+                Claims claims = jwtUtil.decode(token);
+
+                assertThat(claims.get("userId", Long.class)).isEqualTo(VALID_ID);
             }
         }
 

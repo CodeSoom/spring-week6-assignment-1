@@ -70,7 +70,7 @@ class JwtUtilTest {
                 validToken = jwtUtil.encode(userId);
             }
 
-            @DisplayName("사용자 정보가 반환된다.")
+            @DisplayName("사용자 정보를 반환다.")
             @Test
             void decode() {
                 final Long decodedUserId = jwtUtil.decode(validToken);
@@ -83,7 +83,7 @@ class JwtUtilTest {
         @DisplayName("인자값이 유효하지 않을 경우")
         class Context_with_invalid_token {
 
-            @DisplayName("예외가 발생한다.")
+            @DisplayName("예외를 던진다.")
             @ParameterizedTest
             @NullAndEmptySource
             @ValueSource(strings = {"a.b.c", "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGaa"})

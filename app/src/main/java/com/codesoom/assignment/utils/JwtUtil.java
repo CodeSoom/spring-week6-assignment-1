@@ -29,6 +29,13 @@ public class JwtUtil {
                 .signWith(key).compact();
     }
 
+    /**
+     * token을 파싱해 claim을 반환합니다.
+     *
+     * @param token 암호화된 token
+     * @return claim
+     * @throws InvalidAccessTokenException token이 유효하지 않은 값인 경우 던집니다.
+     */
     public Claims decode(String token) {
         if(!isValidToken(token)) {
             throw new InvalidAccessTokenException(token);

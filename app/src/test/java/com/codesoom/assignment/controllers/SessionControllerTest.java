@@ -1,16 +1,20 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.dto.LoginRequestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,14 +31,29 @@ class SessionControllerTest {
 
     @BeforeEach
     void setUp() {
-        given(authenticationService.login()).willReturn("a.b.c");
+        given(authenticationService.login(any(LoginRequestData.class))).willReturn("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5qbdTrYLuxHeNPvUdPmExYWv25gk7BwSjhAoPgoIvaA");
     }
 
     @Test
-    void login() throws Exception {
-        mockMvc.perform(post("/session"))
+    void loginWithValidAttributes() throws Exception {
+
+        mockMvc.perform(post("/session")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("{\"email\":\"shinsanghooon@gmail.com\",\"password\":\"1234\"}"))
                 .andExpect(status().isCreated())
-                .andExpect(content().string(containsString(".")))
+                .andExpect(content().string(containsString("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5qbdTrYLuxHeNPvUdPmExYWv25gk7BwSjhAoPgoIvaA")))
+                .andDo(print());
+
+        verify(authenticationService).login(any(LoginRequestData.class));
+    }
+
+    @Test
+    void loginWithInValidAttributes() throws Exception {
+
+        mockMvc.perform(post("/session")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("{}"))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 

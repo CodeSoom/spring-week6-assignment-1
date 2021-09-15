@@ -11,7 +11,7 @@ import java.security.Key;
 public class JwtUtil {
     private final Key key;
 
-    public JwtUtil(@Value("1234") String secret) {
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
     public String encode(Long userId) {
@@ -19,7 +19,5 @@ public class JwtUtil {
                 .claim("userId", 1L)
                 .signWith(key)
                 .compact();
-
-
     }
 }

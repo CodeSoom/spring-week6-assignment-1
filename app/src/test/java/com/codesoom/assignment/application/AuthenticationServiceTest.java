@@ -20,7 +20,7 @@ class AuthenticationServiceTest {
     void login() {
         String accessToken = authenticationService.login();
         // 테스트코드의 fail 을 활용한 꼼수 쓰기
-        assertThat(accessToken).contains(".");
+        assertThat(accessToken).contains(".xxx");
     }
 
 

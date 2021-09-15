@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     public AuthenticationService(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;

@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.AuthData;
+import com.codesoom.assignment.dto.SessionResponse;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,10 +21,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.UnsupportedEncodingException;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -33,6 +33,7 @@ class SessionControllerTest {
     MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$";
 
     private <T> T getResponseContent(ResultActions actions, TypeReference<T> type)
             throws UnsupportedEncodingException, JsonProcessingException {
@@ -73,12 +74,14 @@ class SessionControllerTest {
         @DisplayName("responses with a token")
         @Test
         void responsesWithToken() throws Exception {
-            mockMvc.perform(post("/session")
+            ResultActions actions = mockMvc.perform(post("/session")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(authData)))
-                    .andExpect(status().isCreated())
-                    .andExpect(content().string(containsString(".")));
-            // TODO: 제대로 된 토큰인지 확인하기
+                    .andExpect(status().isCreated());
+
+            SessionResponse response = getResponseContent(actions, new TypeReference<SessionResponse>() {});
+
+            assertThat(response.getAccessToken().matches(JWT_REGEX)).isTrue();
         }
     }
 

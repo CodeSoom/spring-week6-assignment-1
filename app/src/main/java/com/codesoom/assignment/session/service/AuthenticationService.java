@@ -11,7 +11,7 @@ public class AuthenticationService {
     public AuthenticationService(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
-    
+
     public String login(Long id) {
         JwtUtil jwtUtil = new JwtUtil(SECRET);
         return jwtUtil.encode(id);

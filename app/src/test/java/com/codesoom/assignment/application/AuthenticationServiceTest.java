@@ -20,6 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class AuthenticationServiceTest {
 
+    private static final String EMAIL = "email@email.com";
+    private static final String PASSWORD = "password";
+
     @Autowired
     private UserRepository userRepository;
 
@@ -31,14 +34,14 @@ public class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         loginRequestDto = LoginRequestDto.builder()
-            .email("email@email.com")
-            .password("password")
+            .email(EMAIL)
+            .password(PASSWORD)
             .build();
 
-       userRepository.save(User.builder()
-           .email("email@email.com")
-           .password("password")
-           .build());
+        userRepository.save(User.builder()
+            .email(EMAIL)
+            .password(PASSWORD)
+            .build());
     }
 
     @AfterEach
@@ -89,10 +92,10 @@ public class AuthenticationServiceTest {
 
             @BeforeEach
             void setUp() {
-               passwordNotMatchLoginRequestDto = LoginRequestDto.builder()
-                   .email("email@email.com")
-                   .password("NOT_MATCH_PASSWORD")
-                   .build();
+                passwordNotMatchLoginRequestDto = LoginRequestDto.builder()
+                    .email(EMAIL)
+                    .password("NOT_MATCH_PASSWORD")
+                    .build();
             }
 
             @Test

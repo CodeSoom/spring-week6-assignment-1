@@ -1,36 +1,51 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.domain.Product;
-import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.dto.ProductNotFoundException;
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.dto.UserNotFoundException;
 import com.codesoom.assignment.errors.UnauthorizedException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class AuthenticationService {
 
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public AuthenticationService(JwtUtil jwtUtil) {
+    public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
-    public String login() {
+    /**
+     * 로그인을 검증합니다.
+     * @param loginData 로그인 데이터
+     * @return 로그인에 성공할 경우 토큰발급
+     */
+    public String login(UserLoginData loginData) {
 
-        return jwtUtil.encode(1L);
+        User user = findUser(loginData);
+
+        if(user.getEmail().equals(loginData.getEmail()) && user.getPassword().equals(loginData.getPassword())) {
+            return jwtUtil.encode(user.getId());
+        } else {
+            return null;
+        }
 
     }
 
+    /**
+     * 토큰을 데이터로 변환합니다.
+     * @param accessToken 토큰값
+     * @return 유저 아이디
+     */
     public Long parseToken(String accessToken) {
 
         if(accessToken==null || accessToken.isBlank()) {
@@ -46,5 +61,17 @@ public class AuthenticationService {
         }
 
      }
+
+    /**
+     * 이메일이 존재하는지 확인합니다.
+     * @param loginData 로그인 데이터
+     * @return 이메일이 존재할 경우 해당 User 정보를 리턴합니다.
+     * @throws UserNotFoundException 찾지 못할경우 예외발생
+     */
+    public User findUser(UserLoginData loginData) {
+
+        return userRepository.findByEmail(loginData.getEmail()).orElseThrow(() -> new UserNotFoundException());
+
+    }
 
 }

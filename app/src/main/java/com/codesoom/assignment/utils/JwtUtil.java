@@ -25,7 +25,7 @@ public class JwtUtil {
 
         String compact = Jwts.builder()
                 .signWith(key)
-                .claim("userId",1L)
+                .claim("userId",userId)
                 .compact();
 
         return compact;

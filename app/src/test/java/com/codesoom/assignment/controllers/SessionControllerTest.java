@@ -29,7 +29,7 @@ class SessionControllerTest {
     @BeforeEach
     void setUp() {
 
-        given(authenticationService.login()).willReturn("a.b.c.");
+//        given(authenticationService.login()).willReturn("a.b.c.");
 
     }
 

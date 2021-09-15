@@ -18,17 +18,9 @@ public class Product {
     @Id
     @GeneratedValue
     private Long id;
-
-    @NotBlank
     private String name;
-
-    @NotBlank
     private String maker;
-
-    @NotBlank
     private Long price;
-
-    @NotBlank
     private String imgUrl;
 
     @Builder

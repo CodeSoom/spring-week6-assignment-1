@@ -12,10 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtUtilTest {
 
     private static final String SECRET = "12345678901234567890123456789010";
-
-    private static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJIeW91bmdVayJ9.RBmbXHWmnXrbl0DeVOvHl6fiPmkLQi1Z5MruzMl9RkQ";
-
-    private static final String ACCESS_INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJIeW91bmdVayJ9.RBmbXHWmnXrbl0DeVOvHl6fiPmkLQi1Z5MruzMl9RkQ" + "invalid";
+    private static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static final String ACCESS_INVALID_TOKEN = ACCESS_TOKEN + "invalid";
 
     private JwtUtil jwtUtil;
 
@@ -38,7 +36,7 @@ class JwtUtilTest {
 
         Claims claims = jwtUtil.decode(ACCESS_TOKEN);
 
-        assertThat(claims.get("userId", String.class)).isEqualTo("HyoungUk");
+        assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
         // TODO - > userId , verification
 
     }

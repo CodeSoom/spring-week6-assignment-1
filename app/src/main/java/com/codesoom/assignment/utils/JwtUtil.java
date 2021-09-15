@@ -25,7 +25,7 @@ public class JwtUtil {
 
         String compact = Jwts.builder()
                 .signWith(key)
-                .claim("userId","HyoungUk")
+                .claim("userId",1L)
                 .compact();
 
         return compact;
@@ -35,7 +35,6 @@ public class JwtUtil {
     public Claims decode(String token) {
 
          return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-
 
     }
 

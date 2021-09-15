@@ -38,7 +38,7 @@ public interface UserService {
      * @oaram 중복을 확인하려는 이메일 주소
      * @return 중복한 이메일이 존재한다면 true / 그렇지 않다면 false
      */
-    boolean emailCheck(String mail);
+    boolean emailDuplicateCheck(String mail);
 
 }
 

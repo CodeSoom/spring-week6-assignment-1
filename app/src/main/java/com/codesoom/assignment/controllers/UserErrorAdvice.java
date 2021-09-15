@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.UserEmailDuplicateException;
+import com.codesoom.assignment.errors.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,13 @@ public class UserErrorAdvice {
     @ExceptionHandler(UserEmailDuplicateException.class)
     public UserEmailDuplicateException duplicateException() {
         return new UserEmailDuplicateException();
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public UnauthorizedException unauthorizedException() {
+        return new UnauthorizedException();
     }
 
 }

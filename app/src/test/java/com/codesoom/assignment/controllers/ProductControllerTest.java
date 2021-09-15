@@ -1,14 +1,21 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.dto.ProductNotFoundException;
+import com.codesoom.assignment.errors.UnauthorizedException;
+import com.codesoom.assignment.utils.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,16 +26,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
 
-    private static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJIeW91bmdVayJ9.RBmbXHWmnXrbl0DeVOvHl6fiPmkLQi1Z5MruzMl9RkQ";
+    private static final String ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static final String ACCESS_INVALID_TOKEN = ACCESS_TOKEN + "invalid";
 
-    private static final String ACCESS_INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJIeW91bmdVayJ9.RBmbXHWmnXrbl0DeVOvHl6fiPmkLQi1Z5MruzMl9RkQ" + "invalid";
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     MockMvc mockMvc;
@@ -36,32 +47,75 @@ class ProductControllerTest {
     @MockBean
     ProductService productService;
 
+    @MockBean
+    AuthenticationService authenticationService;
+
+    private ProductData productData;
+    private Product product;
+
     @BeforeEach
     void setUp() {
-        Product product = Product.builder()
-                .name("쥐돌이")
-                .maker("냥이월드")
-                .price(5000L)
+
+        productData = ProductData.builder()
+                .name("name1")
+                .maker("maker1")
+                .price(1000L)
+                .imgUrl("img1").build();
+
+        product = Product.builder()
+                .name("name1")
+                .maker("maker1")
+                .price(1000L)
+                .imgUrl("img1")
                 .build();
 
-        given(productService.createProduct(any(ProductData.class)))
-                .willReturn(product);
+        given(productService.createProduct(any(ProductData.class))).willReturn(any(Product.class));
+        given(authenticationService.parseToken(ACCESS_TOKEN)).willReturn(1L);
+        given(authenticationService.parseToken(null)).willThrow(UnauthorizedException.class);
+        given(authenticationService.parseToken(ACCESS_INVALID_TOKEN)).willThrow(UnauthorizedException.class);
 
     }
 
     @Test
     void createWithAccessToken() throws Exception {
+
         mockMvc.perform(
                         post("/products")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                        "\"price\":5000}")
+                                .content(objectMapper.writeValueAsString(productData))
                                 .header("Authorization", "Bearer " + ACCESS_TOKEN)
                 )
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("쥐돌이")));
+                .andExpect(status().isCreated());
 
-        verify(productService).createProduct(any(ProductData.class));
     }
+
+    @Test
+    void createWithInvalidAccessToken() throws Exception {
+
+        mockMvc.perform(
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(productData))
+                                .header("Authorization", "Bearer " + ACCESS_INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
+    void createWithOutAccessToken() throws Exception {
+
+        mockMvc.perform(
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(productData))
+                )
+                .andExpect(status().isUnauthorized());
+
+    }
+
 }
+

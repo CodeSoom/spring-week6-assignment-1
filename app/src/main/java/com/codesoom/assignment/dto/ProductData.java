@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class ProductData {
     @NotBlank(message = "메이커 이름은 필수입니다.")
     private String maker;
 
-    @NotBlank(message = "가격은 필수입니다.")
+    @NotNull(message = "가격은 필수입니다.")
     private Long price;
 
     @NotBlank(message = "이미지는 필수입니다.")

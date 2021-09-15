@@ -9,6 +9,7 @@ import com.codesoom.assignment.dto.AccessToken;
 import com.codesoom.assignment.dto.LoginRequestDto;
 import com.codesoom.assignment.errors.UserNotAuthenticatedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class AuthenticationServiceTest {
+
+    private static final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]*$";
 
     private static final String EMAIL = "email@email.com";
     private static final String PASSWORD = "password";
@@ -62,7 +65,7 @@ public class AuthenticationServiceTest {
             void it_returns_accessToken() {
                 AccessToken accessToken = authenticationService.authenticate(loginRequestDto);
 
-                assertThat(accessToken).isNotNull();
+                assertThat(Pattern.matches(JWT_REGEX, accessToken.getAccessToken())).isTrue();
             }
         }
 

@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.AccessToken;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -21,9 +22,9 @@ public class JwtEncoder {
      *
      * @return 액세스 토큰
      */
-    public AccessToken encode() {
+    public AccessToken encode(User user) {
         return new AccessToken(Jwts.builder()
-            .setSubject("Joe")
+            .claim("userId", user.getId())
             .signWith(key)
             .compact());
     }

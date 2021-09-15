@@ -10,8 +10,6 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserLoginData {
     @NotBlank
     @Mapping("email")

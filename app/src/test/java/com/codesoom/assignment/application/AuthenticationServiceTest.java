@@ -7,6 +7,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AccessToken;
 import com.codesoom.assignment.dto.LoginRequestDto;
+import com.codesoom.assignment.errors.UserNotAuthenticatedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +73,7 @@ public class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("에러를 던진다")
+            @DisplayName("예외를 던진다")
             void it_throws() {
                 assertThatThrownBy(() -> {
                     authenticationService.authenticate(loginRequestDto);
@@ -95,11 +96,11 @@ public class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("에러를 던진다")
+            @DisplayName("예외를 던진다")
             void it_throws() {
                 assertThatThrownBy(() -> {
                     authenticationService.authenticate(passwordNotMatchLoginRequestDto);
-                }).isInstanceOf(RuntimeException.class);
+                }).isInstanceOf(UserNotAuthenticatedException.class);
             }
         }
     }

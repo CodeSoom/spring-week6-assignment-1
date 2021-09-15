@@ -42,7 +42,7 @@ public class AuthenticationService {
             throw new UserNotAuthenticatedException(user);
         }
 
-        return jwtEncoder.encode(user);
+        return jwtEncoder.encode(findUser);
     }
 
     private User findUserFromEmail(User user) {

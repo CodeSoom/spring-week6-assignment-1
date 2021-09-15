@@ -4,7 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +71,7 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
             .willThrow(new ProductNotFoundException(1000L));
         given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
-        given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
+        given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidTokenException(INVALID_TOKEN));
     }
 
     @Test

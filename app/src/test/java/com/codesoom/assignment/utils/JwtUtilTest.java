@@ -3,6 +3,7 @@ package com.codesoom.assignment.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,20 +34,18 @@ public class JwtUtilTest {
     @Test
     void decodeWithInvalidToken() {
         assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
-            .isInstanceOf(SignatureException.class);
+            .isInstanceOf(InvalidTokenException.class);
+        assertThatThrownBy(() -> jwtUtil.decode(null))
+                .isInstanceOf(InvalidTokenException.class);
+        assertThatThrownBy(() -> jwtUtil.decode(""))
+                .isInstanceOf(InvalidTokenException.class);
+        assertThatThrownBy(() -> jwtUtil.decode("   "))
+                .isInstanceOf(InvalidTokenException.class);
     }
-
-
 
     @Test
     void decodeWithValidToken() {
         Claims claims = jwtUtil.decode(VALID_TOKEN);
         assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
-
-    // @Test
-    // void decodeWithBlankToken() {
-    //     Claims claims = jwtUtil.decode("");
-    //     assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
-    // }
 }

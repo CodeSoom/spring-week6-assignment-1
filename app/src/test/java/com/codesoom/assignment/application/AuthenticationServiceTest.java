@@ -3,9 +3,10 @@ package com.codesoom.assignment.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static com.codesoom.assignment.utils.JwtUtilTest.VALID_TOKEN;
 import static com.codesoom.assignment.utils.JwtUtilTest.INVALID_TOKEN;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
-import com.codesoom.assignment.utils.JwtUtilTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,14 +27,29 @@ public class AuthenticationServiceTest {
     void login() {
         String accessToken = authenticationService.login();
 
-        assertThat(accessToken).contains(".");
+        assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }
 
     @Test
-    void parseToken() {
+    void parseTokenWithValidToken() {
         Long userId = authenticationService.parseToken(VALID_TOKEN);
 
         assertThat(userId).isEqualTo(1L);
     }
 
+    @Test
+    void parseTokenWithInvalidToken() {
+        assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
+                .isInstanceOf(InvalidTokenException.class);
+    }
+
+    @Test
+    void parseTokenWithBlankToken() {
+        assertThatThrownBy(() -> authenticationService.parseToken(null))
+                .isInstanceOf(InvalidTokenException.class);
+        assertThatThrownBy(() -> authenticationService.parseToken(""))
+                .isInstanceOf(InvalidTokenException.class);
+        assertThatThrownBy(() -> authenticationService.parseToken("   "))
+                .isInstanceOf(InvalidTokenException.class);
+    }
 }

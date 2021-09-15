@@ -1,5 +1,6 @@
 package com.codesoom.assignment.dto;
 
+import com.codesoom.assignment.domain.Identifier;
 import com.github.dozermapper.core.Mapping;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

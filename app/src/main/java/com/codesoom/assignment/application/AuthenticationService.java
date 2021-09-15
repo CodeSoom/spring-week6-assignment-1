@@ -2,7 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.Identifier;
+import com.codesoom.assignment.domain.Identifier;
 import com.codesoom.assignment.errors.LoginDataNotMatchedException;
 import com.codesoom.assignment.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;

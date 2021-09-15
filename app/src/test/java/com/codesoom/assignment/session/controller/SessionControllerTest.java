@@ -24,6 +24,8 @@ class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
+    private final String TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOjF9.mD0HZddWR7ufVRC_RyhCe_uUnB1ZF3XYM5kgfKFdEACQpLjIRoIozX4WqGYtSLqaSGGMhz2s1hovSn3QcG2_Og";
+
     @BeforeEach
     void setUp() {
         given(authenticationService.login(1L)).willReturn("a.b.c");
@@ -38,7 +40,7 @@ class SessionControllerTest {
         void login() throws Exception {
             mockMvc.perform(post("/session/1"))
                     .andExpect(status().isCreated())
-                    .andExpect(content().string(containsString(".")));
+                    .andExpect(content().string(TOKEN));
         }
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
-    private static final String SECRET = "12345678901234567890123456789012";
+    private static final String SECRET = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
     public AuthenticationService(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;

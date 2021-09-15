@@ -34,7 +34,7 @@ public class SessionController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LoginNotMatchPasswordException.class)
-    ErrorResponse handleLoginNotMatchPasswordException() {
-        return new ErrorResponse("로그인 실패: 이메일과 비밀번호가 매치되지 않습니다.");
+    ErrorResponse handleLoginNotMatchPasswordException(@RequestBody UserLoginData userLoginData) {
+        return new ErrorResponse("이메일과 비밀번호가 매치되지 않습니다.: " +  userLoginData.getEmail());
     }
 }

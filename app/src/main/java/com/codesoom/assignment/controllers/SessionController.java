@@ -1,7 +1,6 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
-import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.AccessToken;
 import com.codesoom.assignment.dto.LoginRequestDto;
 import org.springframework.http.HttpStatus;
@@ -26,10 +25,10 @@ public class SessionController {
     }
 
     /**
-     * 회원 인증 확인 후 생성한 JWT를 리턴합니다.
+     * 회원 인증 확인 후 생성한 액세스 토큰을 리턴합니다.
      *
      * @param loginRequestDto 회원
-     * @return 생성된 JWT
+     * @return 생성된 액세스 토큰
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

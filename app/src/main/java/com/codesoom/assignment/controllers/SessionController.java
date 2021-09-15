@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
-import com.codesoom.assignment.dto.LoginForm;
+import com.codesoom.assignment.dto.Identifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,7 +26,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String login(@RequestBody @Valid LoginForm form) {
+    public String login(@RequestBody @Valid Identifier form) {
         return authenticationService.login(form);
     }
 

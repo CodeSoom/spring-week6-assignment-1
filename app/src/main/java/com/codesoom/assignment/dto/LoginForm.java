@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
-public class LoginForm {
+public class LoginForm implements Identifier {
 
     @NotBlank
     @Size(min = 3)

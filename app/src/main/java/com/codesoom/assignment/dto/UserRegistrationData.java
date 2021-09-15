@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegistrationData {
+public class UserRegistrationData implements Identifier {
     @NotBlank
     @Size(min = 3)
     @Mapping("email")

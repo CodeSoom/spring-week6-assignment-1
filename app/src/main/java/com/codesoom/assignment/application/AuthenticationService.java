@@ -26,16 +26,6 @@ public class AuthenticationService {
     }
 
 
-    /**
-     * 유저 id로 인코딩한 토큰 return.
-     * @param userId
-     * @return 인증 토큰
-     */
-    public String login(Long userId) {
-        return jwtUtil.encode(userId);
-    }
-
-
     public Long parsetoken(String accessToken) {
         if (accessToken == null || accessToken.isBlank()) {
             throw new UnauthorizedException(accessToken);
@@ -50,10 +40,9 @@ public class AuthenticationService {
 
     public String createToken(UserLoginData loginData) {
         User user = findUserByEmail(loginData);
-        if(!user.authenticate(loginData.getPassword())){
+        if (!user.authenticate(loginData.getPassword())) {
             throw new WrongPasswordException(loginData);
         }
-
         return jwtUtil.encode(user.getId());
     }
 

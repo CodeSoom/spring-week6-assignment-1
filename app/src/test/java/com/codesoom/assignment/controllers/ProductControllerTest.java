@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.codesoom.assignment.application.JwtDecoder;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -40,6 +43,9 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService productService;
+
+    @SpyBean
+    private JwtDecoder jwtDecoder;
 
     private Product product;
 
@@ -385,7 +391,7 @@ class ProductControllerTest {
                 )
                     .andExpect(status().isUnauthorized());
 
-                verify(productService).deleteProduct(1L);
+                verify(productService, never()).deleteProduct(1L);
             }
         }
 
@@ -401,7 +407,7 @@ class ProductControllerTest {
                 )
                     .andExpect(status().isUnauthorized());
 
-                verify(productService).deleteProduct(1L);
+                verify(productService, never()).deleteProduct(1L);
             }
         }
     }

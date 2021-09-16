@@ -12,7 +12,7 @@ public class JwtDecoder {
 
     private final Key key;
 
-    public JwtDecoder(@Value("#{jwt.secret}") String secret) {
+    public JwtDecoder(@Value("#{environment['jwt.secret']}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 

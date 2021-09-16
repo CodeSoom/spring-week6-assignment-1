@@ -72,19 +72,15 @@ class SessionControllerTest {
                 invocation -> {
                     UserLoginData userLoginData = invocation.getArgument(0);
 
-                    System.out.println(userLoginData);
-
                     String email = userLoginData.getEmail();
                     String password = userLoginData.getPassword();
-
-                    System.out.println(email + ", " + password);
 
                     if(!email.equals(EXIST_EMAIL)) {
                         throw new UserNotFoundException();
                     }
 
                     if(!password.equals(VALID_PASSWORD)) {
-                        throw new LoginNotMatchPasswordException();
+                        throw new LoginNotMatchPasswordException(email);
                     }
 
                     return VALID_TOKEN;

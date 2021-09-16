@@ -28,7 +28,7 @@ public class AuthenticationService {
                 .orElseThrow(UserNotFoundException::new);
 
         if(!findedUser.authenticate(userLoginData.getPassword())) {
-            throw new LoginNotMatchPasswordException();
+            throw new LoginNotMatchPasswordException(findedUser.getEmail());
         }
 
         return jwtUtil.encode(findedUser.getId());

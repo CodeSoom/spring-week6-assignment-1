@@ -1,4 +1,4 @@
-package com.codesoom.assignment.dto;
+package com.codesoom.assignment.errors;
 
 public class UserEmailDuplicateException extends Exception{
 

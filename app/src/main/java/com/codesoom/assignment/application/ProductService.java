@@ -2,7 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.dto.ProductNotFoundException;
+import com.codesoom.assignment.errors.ProductNotFoundException;
 
 import java.util.List;
 

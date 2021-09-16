@@ -3,15 +3,13 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
-import com.codesoom.assignment.dto.UserNotFoundException;
+import com.codesoom.assignment.errors.LoginInconsistencyException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.errors.UnauthorizedException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -33,10 +31,10 @@ public class AuthenticationService {
 
         User user = findUser(loginData);
 
-        if(user.getEmail().equals(loginData.getEmail()) && user.getPassword().equals(loginData.getPassword())) {
+        if(user.getPassword().equals(loginData.getPassword())) {
             return jwtUtil.encode(user.getId());
         } else {
-            return null;
+            throw new LoginInconsistencyException();
         }
 
     }

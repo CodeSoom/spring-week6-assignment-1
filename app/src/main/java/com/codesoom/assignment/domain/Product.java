@@ -21,14 +21,14 @@ public class Product {
     private String name;
     private String maker;
     private Long price;
-    private String imgUrl;
+    private String imageUrl;
 
     @Builder
-    public Product(String name, String maker, Long price, String imgUrl) {
+    public Product(String name, String maker, Long price, String imageUrl) {
         this.name = name;
         this.maker = maker;
         this.price = price;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
     }
 
     public Product updateProduct(ProductData productData) {
@@ -36,7 +36,7 @@ public class Product {
         this.name = productData.getName();
         this.maker = productData.getMaker();
         this.price = productData.getPrice();
-        this.imgUrl = productData.getImgUrl();
+        this.imageUrl = productData.getImageUrl();
 
         return this;
 

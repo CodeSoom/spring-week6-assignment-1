@@ -3,8 +3,8 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserData;
-import com.codesoom.assignment.dto.UserEmailDuplicateException;
-import com.codesoom.assignment.dto.UserNotFoundException;
+import com.codesoom.assignment.errors.UserEmailDuplicateException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,15 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean emailDuplicateCheck(String mail) {
-        List<User> users = userRepository.findAll();
-
-        for (User user : users) {
-            if(user.getEmail().equals(mail)) {
-                return true;
-            }
-        }
-
-        return false;
+        return userRepository.existsByEmail(mail);
     }
 
 }

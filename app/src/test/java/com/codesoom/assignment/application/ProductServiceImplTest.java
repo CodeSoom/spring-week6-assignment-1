@@ -3,7 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.dto.ProductNotFoundException;
+import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/products")
+@CrossOrigin
 public class ProductController {
     private final AuthenticationService authenticationService;
     private final ProductService productService;
@@ -38,7 +39,7 @@ public class ProductController {
 
         System.out.println("authorization = " + authorization);
 
-        String accessToken = authorization.substring("bearer ".length());
+        String accessToken = authorization.substring("Bearer ".length());
 
         Long userId = authenticationService.parseToken(accessToken);
 
@@ -72,5 +73,6 @@ public class ProductController {
     public void handleMissingRequestHeaderException() {
 
     }
+
 }
 

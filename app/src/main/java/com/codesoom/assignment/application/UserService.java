@@ -2,7 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserData;
-import com.codesoom.assignment.dto.UserNotFoundException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**

@@ -21,14 +21,14 @@ public class ProductData {
     private Long price;
 
     @NotBlank(message = "이미지는 필수입니다.")
-    private String imgUrl;
+    private String imageUrl;
 
     @Builder
-    public ProductData(String name, String maker, Long price, String imgUrl) {
+    public ProductData(String name, String maker, Long price, String imageUrl) {
         this.name = name;
         this.maker = maker;
         this.price = price;
-        this.imgUrl = imgUrl;
+        this.imageUrl = imageUrl;
     }
 
 }

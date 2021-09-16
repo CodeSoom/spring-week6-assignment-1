@@ -56,8 +56,8 @@ public class AuthenticationServiceTest {
     class Describe_authenticate {
 
         @Nested
-        @DisplayName("인증된 회원일 경우")
-        class Context_authenticatedUser {
+        @DisplayName("인증된 회원 정보를 갖는 로그인 요청이 주어지면")
+        class Context_authenticatedUserLoginRequest {
 
             @Test
             @DisplayName("액세스 토큰을 리턴한다")
@@ -72,8 +72,8 @@ public class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("삭제된 회원일 경우")
-        class Context_deletedUser {
+        @DisplayName("삭제된 회원의 정보를 갖는 로그인 요청이 주어지면")
+        class Context_deletedUserLoginRequest {
 
             @BeforeEach
             void setUp() {
@@ -90,14 +90,12 @@ public class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("회원의 비밀번호가 일치하지 않을 경우")
-        class Context_passwordNotMatch {
-
-            private LoginRequestDto passwordNotMatchLoginRequestDto;
+        @DisplayName("인증되지 않은 회원의 정보를 갖는 로그인 요청이 주어지면")
+        class Context_notAuthenticatedUserLoginRequest {
 
             @BeforeEach
             void setUp() {
-                passwordNotMatchLoginRequestDto = LoginRequestDto.builder()
+                loginRequestDto = LoginRequestDto.builder()
                     .email(EMAIL)
                     .password("NOT_MATCH_PASSWORD")
                     .build();
@@ -107,7 +105,7 @@ public class AuthenticationServiceTest {
             @DisplayName("예외를 던진다")
             void it_throws() {
                 assertThatThrownBy(() -> {
-                    authenticationService.authenticate(passwordNotMatchLoginRequestDto);
+                    authenticationService.authenticate(loginRequestDto);
                 }).isInstanceOf(UserNotAuthenticatedException.class);
             }
         }

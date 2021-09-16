@@ -36,11 +36,11 @@ class JwtUtilTest {
     @DisplayName("decode")
     @Nested
     class Decode {
+        String token;
+
         @DisplayName("With a valid token")
         @Nested
         class WithValidToken {
-            String token;
-
             @BeforeEach
             void setup () {
                 token = jwtUtil.encode(1L);
@@ -58,17 +58,15 @@ class JwtUtilTest {
         @DisplayName("With an invalid token")
         @Nested
         class WithInvalidToken {
-            String invalidToken;
-
             @BeforeEach
             void setup() {
-                invalidToken = "..";
+                token = "..";
             }
 
             @DisplayName("throws InvalidTokenException")
             @Test
             void throwsInvalidTokenException() {
-                assertThatThrownBy(() -> jwtUtil.decode(invalidToken))
+                assertThatThrownBy(() -> jwtUtil.decode(token))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }

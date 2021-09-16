@@ -1,6 +1,9 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginInfoData;
+import com.codesoom.assignment.errors.InvalidLoginInfoException;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 
@@ -13,12 +16,20 @@ import io.jsonwebtoken.security.SignatureException;
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
 
-    public AuthenticationService(final JwtUtil jwtUtil) {
+    private final UserRepository userRepository;
+
+    public AuthenticationService(final JwtUtil jwtUtil, final UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     public String login(final LoginInfoData loginInfoData) {
-        return jwtUtil.encode(1L);
+        final User user = userRepository.findByEmail(loginInfoData.getEmail())
+            .orElseThrow(InvalidLoginInfoException::new);
+        if (!user.authenticate(loginInfoData.getPassword())) {
+            throw new InvalidLoginInfoException();
+        }
+        return jwtUtil.encode(user.getId());
     }
 
     public Long parseToken(String accessToken) {

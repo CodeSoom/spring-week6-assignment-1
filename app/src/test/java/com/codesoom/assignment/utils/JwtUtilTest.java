@@ -4,30 +4,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.codesoom.assignment.errors.InvalidTokenException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.SignatureException;
 
 public class JwtUtilTest {
-    private static final String SECRET = "01234567890123456789012345678912";
+    public static final String SECRET = "01234567890123456789012345678912";
     public static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.Vid3sIDrCUySUo7pLyfNpqGaAO3kI3FgGMWyRX11sRE";
     public static final String INVALID_TOKEN = VALID_TOKEN + "INVALID";
 
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    @BeforeEach
-    void setUp() {
+    public JwtUtilTest() {
         this.jwtUtil = new JwtUtil(SECRET);
-
-
     }
 
     @Test
     void encode() {
         final String token = jwtUtil.encode(1L);
-
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 

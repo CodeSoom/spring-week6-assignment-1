@@ -64,7 +64,7 @@ class AuthenticationControllerTest {
         }
 
         @Nested
-        @DisplayName("잘못 페스워드로 로그인할 때")
+        @DisplayName("잘못된 패스워드로 로그인할 때")
         class Context_WithWrongPassword {
             void setUp() {
 

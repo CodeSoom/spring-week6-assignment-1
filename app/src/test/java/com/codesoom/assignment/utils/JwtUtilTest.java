@@ -35,7 +35,4 @@ class JwtUtilTest {
         assertThatThrownBy(() -> jwtUtil.decode(""))
                 .isInstanceOf(InvalidAccessTokenException.class);
     }
-
-
-
 }

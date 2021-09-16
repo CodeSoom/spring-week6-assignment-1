@@ -45,7 +45,7 @@ public class AuthenticationService {
     }
 
     /**
-     * 로그인 데이터로 유저 정보 조회후, userID로 인증토큰을 반환한다.
+     * 로그인 데이터로 유저 정보 조회후, 사용자 정보로 생성한 인증토큰을 반환한다.
      *
      * @param loginData 로그인 데이터
      * @return 인증토큰
@@ -64,7 +64,7 @@ public class AuthenticationService {
      *
      * @param loginData 로그인 데이터
      * @return 유저
-     * @throws EmailNotFoundException 이메일이 저장되어있지 않은 경우
+     * @throws EmailNotFoundException 로그인 정보의 이메일을 찾지 못한 경우
      */
     private User findUserByEmail(UserLoginData loginData) {
         return userRepository.findByEmail(loginData.getEmail())

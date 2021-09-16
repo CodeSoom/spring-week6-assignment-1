@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.dto.LoginInfoData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 
@@ -16,7 +17,7 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String login() {
+    public String login(final LoginInfoData loginInfoData) {
         return jwtUtil.encode(1L);
     }
 

@@ -5,6 +5,7 @@ import static com.codesoom.assignment.utils.JwtUtilTest.VALID_TOKEN;
 import static com.codesoom.assignment.utils.JwtUtilTest.INVALID_TOKEN;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.codesoom.assignment.dto.LoginInfoData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 
@@ -25,7 +26,11 @@ public class AuthenticationServiceTest {
 
     @Test
     void login() {
-        String accessToken = authenticationService.login();
+        final LoginInfoData loginInfoData = LoginInfoData.builder()
+            .email("test@example.com")
+            .password("test")
+            .build();
+        String accessToken = authenticationService.login(loginInfoData);
 
         assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }

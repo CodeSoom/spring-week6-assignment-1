@@ -19,8 +19,15 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * userId을 jwt로 인코딩된 token로 변환합니다.
+     *
+     * @param userId 인코딩할 유저 Id
+     * @return jwt로 인코딩된 token
+     * @throws NotSupportedIdException 유효하지 않은 userId이 전달되는 경우 던집니다.
+     */
     public String encode(Long userId) {
-        if(!isValidUserId(userId)) {
+        if(!checkValidUserId(userId)) {
             throw new NotSupportedIdException(userId);
         }
 
@@ -37,7 +44,7 @@ public class JwtUtil {
      * @throws InvalidAccessTokenException token이 유효하지 않은 값인 경우 던집니다.
      */
     public Claims decode(String token) {
-        if(!isValidToken(token)) {
+        if(!checkValidToken(token)) {
             throw new InvalidAccessTokenException(token);
         }
 
@@ -52,11 +59,23 @@ public class JwtUtil {
         }
     }
 
-    public boolean isValidUserId(Long userId) {
+    /**
+     * userId가 인코딩을 위한 값인지 확인합니다.
+     *
+     * @param userId 유저의 id
+     * @return 유효한 유저 id일 경우 true, 아닌 경우 false
+     */
+    public boolean checkValidUserId(Long userId) {
         return userId != null;
     }
 
-    public boolean isValidToken(String token) {
+    /**
+     * toekn이 파싱을 위해 유효한 값인지 확인합니다.
+     *
+     * @param token 검사할 token
+     * @return 유효한 token일 경우 true, 아닌 경우 false
+     */
+    public boolean checkValidToken(String token) {
         if(token == null) {
             return false;
         }

@@ -71,7 +71,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("token을 반환합니다.")
+            @DisplayName("jwt로 인코딩된 token을 반환합니다.")
             void it_return_token() {
                 UserLoginData userLoginData = mapper.map(givenUser, UserLoginData.class);
                 String token = authenticationService.login(userLoginData);
@@ -105,7 +105,7 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("존재하지 않는 유저 정보가 주어지면")
+        @DisplayName("주어진 유저 정보를 찾을 수 없다면")
         class Context_with_not_exists_user {
 
             @BeforeEach

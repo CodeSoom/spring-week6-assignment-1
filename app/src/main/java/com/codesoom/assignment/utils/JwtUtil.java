@@ -24,4 +24,8 @@ public class JwtUtil {
                 .signWith(key)
                 .compact();
     }
+
+    public void decode(String token) {
+        Jwts.parserBuilder()
+    }
 }

@@ -1,11 +1,9 @@
-package com.codesoom.product.service;
+package com.codesoom.assignment.product.service;
 
 import com.codesoom.assignment.product.domain.Product;
 import com.codesoom.assignment.product.dto.ProductData;
 import com.codesoom.assignment.product.exception.ProductNotFoundException;
 import com.codesoom.assignment.product.repository.ProductRepository;
-import com.codesoom.assignment.product.service.ProductService;
-import com.codesoom.assignment.product.service.ProductServiceImpl;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.assertj.core.api.Assertions;

@@ -40,10 +40,10 @@ public class User {
     }
 
     /**
-     * 패스워드가 일치하다면 true, 일치하지 않거나 삭제된 유저라면 false를 리턴합니다.
+     * 인증에 성공하면 true, 인증에 실패하면 false를 리턴합니다.
      *
      * @param password 비교할 패스워드
-     * @return 패스워드가 일치하면 true, 일치하지 않거나 삭제되었다면 false
+     * @return 인증에 성공하면 true, 인증에 실패하면 false
      */
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);

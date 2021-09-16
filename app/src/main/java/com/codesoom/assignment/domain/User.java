@@ -26,7 +26,7 @@ public class User {
     private String password;
 
     @Builder.Default
-    private boolean deleted = false;
+    private Boolean deleted = false;
 
     public void changeWith(User source) {
         name = source.name;

@@ -1,9 +1,9 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.AuthData;
 import com.codesoom.assignment.dto.SessionResponse;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.dto.UserResultData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +34,7 @@ class SessionControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$";
+    private final String PASSWORD = "password";
 
     private <T> T getResponseContent(ResultActions actions, TypeReference<T> type)
             throws UnsupportedEncodingException, JsonProcessingException {
@@ -43,31 +44,40 @@ class SessionControllerTest {
         return objectMapper.readValue(contentAsString, type);
     }
 
+    private UserResultData createUser(String email, String password) throws Exception {
+        UserRegistrationData userData = UserRegistrationData.builder()
+                .email(email)
+                .password(password)
+                .name("nana")
+                .build();
+
+        ResultActions actions = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userData)));
+
+        return getResponseContent(actions, new TypeReference<UserResultData>() {});
+    }
+
+    private void deleteUser(Long id) throws Exception {
+        mockMvc.perform(delete("/users/" + id));
+    }
+
+    private String getNotDuplicatedEmail() {
+        return System.currentTimeMillis() + "test.com";
+    }
+
     @DisplayName("With a correct user")
     @Nested
     class WithCorrectUser {
         AuthData authData;
-        String email = System.currentTimeMillis() + "test.com";
-        String password = "password";
 
         @BeforeEach
-        void createUser() throws Exception {
-            UserRegistrationData userData = UserRegistrationData.builder()
-                    .email(email)
-                    .password(password)
-                    .name("nana")
-                    .build();
+        void setup() throws Exception {
+            UserResultData user = createUser(getNotDuplicatedEmail(), PASSWORD);
 
-            mockMvc.perform(post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(userData)));
-        }
-
-        @BeforeEach
-        void setupFixtures() {
             authData = AuthData.builder()
-                    .email(email)
-                    .password(password)
+                    .email(user.getEmail())
+                    .password(PASSWORD)
                     .build();
         }
 
@@ -89,27 +99,14 @@ class SessionControllerTest {
     @Nested
     class WithWrongPassword {
         AuthData authData;
-        String email = System.currentTimeMillis() + "test.com";
-        String password = "password";
 
         @BeforeEach
-        void createUser() throws Exception {
-            UserRegistrationData userData = UserRegistrationData.builder()
-                    .email(email)
-                    .password(password)
-                    .name("nana")
-                    .build();
+        void setup() throws Exception {
+            UserResultData user = createUser(getNotDuplicatedEmail(), PASSWORD);
 
-            mockMvc.perform(post("/users")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(userData)));
-        }
-
-        @BeforeEach
-        void setupFixtures() {
             authData = AuthData.builder()
-                    .email(email)
-                    .password("wrong-password")
+                    .email(user.getEmail())
+                    .password("wrong password")
                     .build();
         }
 
@@ -127,31 +124,15 @@ class SessionControllerTest {
     @Nested
     class WithNonExistentUser {
         AuthData authData;
-        String email = System.currentTimeMillis() + "test.com";
-        String password = "password";
 
         @BeforeEach
-        void deleteExistentUser() throws Exception {
-            UserRegistrationData userData = UserRegistrationData.builder()
-                    .email(email)
-                    .password(password)
-                    .name("nana")
-                    .build();
+        void setup() throws Exception {
+            UserResultData user = createUser(getNotDuplicatedEmail(), PASSWORD);
+            deleteUser(user.getId());
 
-            ResultActions actions = mockMvc.perform(post("/users")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(userData)));
-
-            User createdUser = getResponseContent(actions, new TypeReference<User>() {});
-
-            mockMvc.perform(delete("/users/" + createdUser.getId()));
-        }
-
-        @BeforeEach
-        void setupFixtures() {
             authData = AuthData.builder()
-                    .email(email)
-                    .password(password)
+                    .email(user.getEmail())
+                    .password(PASSWORD)
                     .build();
         }
 

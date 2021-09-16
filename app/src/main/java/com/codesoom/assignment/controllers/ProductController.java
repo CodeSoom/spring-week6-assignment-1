@@ -4,6 +4,8 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.NotValidTokenException;
+import com.codesoom.assignment.errors.UnauthorizedException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
@@ -38,10 +40,7 @@ public class ProductController {
     public Product createProduct(@RequestHeader("Authorization") String authorization, @RequestBody @Valid ProductData source) {
 
         System.out.println("authorization = " + authorization);
-
-        String accessToken = authorization.substring("Bearer ".length());
-
-        Long userId = authenticationService.parseToken(accessToken);
+        validTokenCheck(authorization);
 
         return productService.createProduct(source);
 
@@ -55,17 +54,29 @@ public class ProductController {
     }
 
     @RequestMapping(value = "{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
-    public Product updateProduct(@PathVariable Long id, @RequestBody ProductData source) {
+    public Product updateProduct(@RequestHeader("Authorization") String authorization ,@PathVariable Long id, @RequestBody ProductData source) {
+
+        validTokenCheck(authorization);
 
         return productService.updateProduct(id, source);
 
     }
 
     @DeleteMapping("{id}")
-    public void deleteProduct(@PathVariable Long id) {
+    public void deleteProduct(@RequestHeader("Authorization") String authorization, @PathVariable Long id) {
+
+        validTokenCheck(authorization);
 
         productService.deleteProduct(id);
 
+    }
+
+    private void validTokenCheck(@RequestHeader("Authorization") String authorization) {
+        String accessToken = authorization.substring("Bearer ".length());
+
+        if (authenticationService.parseToken(accessToken) == null) {
+            throw new NotValidTokenException();
+        }
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)

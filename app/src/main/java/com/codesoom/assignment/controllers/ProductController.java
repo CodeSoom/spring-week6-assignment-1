@@ -54,6 +54,8 @@ public class ProductController {
             @RequestBody @Valid ProductData productData,
             @RequestHeader("Authorization") String authorization
     ) {
+        String accessToken = authorization.substring("Bearer ".length());
+        Long userId = authenticationService.parseToken(accessToken);
         return productService.updateProduct(id, productData);
     }
 
@@ -64,6 +66,8 @@ public class ProductController {
             @PathVariable Long id,
             @RequestHeader("Authorization") String authorization
     ) {
+        String accessToken = authorization.substring("Bearer ".length());
+        Long userId = authenticationService.parseToken(accessToken);
         productService.deleteProduct(id);
     }
 

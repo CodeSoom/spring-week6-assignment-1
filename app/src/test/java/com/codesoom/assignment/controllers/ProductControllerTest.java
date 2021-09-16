@@ -30,8 +30,6 @@ import static com.codesoom.assignment.utils.JwtUtilTest.INVALID_TOKEN;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
-    private static final String SECRET = "01234567890123456789012345678912";
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -176,7 +174,8 @@ class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
-        )
+                .header("Authorization", "Bearer " + VALID_TOKEN)
+            )
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("쥐순이")));
         verify(productService).updateProduct(eq(1L), any(ProductData.class));
@@ -189,7 +188,8 @@ class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
-        )
+                .header("Authorization", "Bearer " + VALID_TOKEN)
+            )
             .andExpect(status().isNotFound());
         verify(productService).updateProduct(eq(1000L), any(ProductData.class));
     }
@@ -202,8 +202,49 @@ class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"\",\"maker\":\"\"," +
                     "\"price\":0}")
-        )
+                .header("Authorization", "Bearer " + VALID_TOKEN)
+            )
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateWithValidAccessToken() throws Exception {
+        mockMvc.perform(
+                patch("/products/1")
+                    .accept(MediaType.APPLICATION_JSON_UTF8)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                        "\"price\":5000}")
+                    .header("Authorization", "Bearer " + VALID_TOKEN)
+            )
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("쥐순이")));
+        verify(productService).updateProduct(eq(1L), any(ProductData.class));
+    }
+
+    @Test
+    void updateWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+            patch("/products/1")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+                .header("Authorization", "Bearer " + INVALID_TOKEN)
+            )
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                patch("/products/1")
+                    .accept(MediaType.APPLICATION_JSON_UTF8)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                        "\"price\":5000}")
+            )
+            .andExpect(status().isUnauthorized());
     }
 
     @Test

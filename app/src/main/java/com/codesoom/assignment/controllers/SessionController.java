@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RestController
 @RequestMapping("/session")
 public class SessionController {
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     public SessionController(final AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;

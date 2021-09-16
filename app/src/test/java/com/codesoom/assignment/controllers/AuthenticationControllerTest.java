@@ -40,7 +40,7 @@ class AuthenticationControllerTest {
     class Describe_POST {
         @Nested
         @DisplayName("로그인 인증에 성공하면")
-        class Context_with_success_authentication {
+        class Context_WithSuccessAuthentication {
             @BeforeEach
             void setUp() {
                 loginData = UserLoginData.builder()
@@ -53,7 +53,7 @@ class AuthenticationControllerTest {
 
             @DisplayName("201코드와 토큰을 응답한다.")
             @Test
-            void it_responds_201_and_token() throws Exception {
+            void It_Responds_201AndToken() throws Exception {
                 mockMvc.perform(post("/session")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginData)))
@@ -64,8 +64,8 @@ class AuthenticationControllerTest {
         }
 
         @Nested
-        @DisplayName("잘못되 페스워드로 로그인할 때")
-        class Context_with_fail_authentication {
+        @DisplayName("잘못 페스워드로 로그인할 때")
+        class Context_WithWrongPassword {
             void setUp() {
 
                 loginData = UserLoginData.builder()
@@ -78,7 +78,7 @@ class AuthenticationControllerTest {
 
             @Test
             @DisplayName("400 코드를 응답한다.")
-            void it_responds_400() throws Exception {
+            void It_Responds_400() throws Exception {
                 mockMvc.perform(post("/session")
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())
@@ -87,12 +87,12 @@ class AuthenticationControllerTest {
         }
 
         @Nested
-        @DisplayName("잘못된 이메일로 로그인할 때")
-        class Context_with_email {
+        @DisplayName("찾을 수 없는 이메일로 로그인할 때")
+        class Context_WithNotFoundEmail {
             void setUp() {
 
                 loginData = UserLoginData.builder()
-                        .email("worngEmail@test.codesoom")
+                        .email("NotFoundEmail@test.codesoom")
                         .password("wrongPassword")
                         .build();
                 given(authenticationService.createToken(loginData))
@@ -101,7 +101,7 @@ class AuthenticationControllerTest {
 
             @Test
             @DisplayName("400 코드를 응답한다.")
-            void it_responds_400() throws Exception {
+            void It_Responds_400() throws Exception {
                 mockMvc.perform(post("/session")
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())

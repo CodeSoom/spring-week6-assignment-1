@@ -27,7 +27,7 @@ public class SessionControllerTest {
 
     private static final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]*$";
 
-    private static final String EMAIL = "email@email.com";
+    private static final String EMAIL = "sprnd645@gmail.com";
     private static final String PASSWORD = "password";
 
     @Autowired

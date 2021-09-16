@@ -15,7 +15,7 @@ import java.security.Key;
  */
 @Component
 public class JwtUtil {
-    private Key key;
+    private final Key key;
 
     public JwtUtil(@Value("${jwt.secret}") String secret) {
         key = Keys.hmacShaKeyFor(secret.getBytes());

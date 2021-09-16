@@ -12,6 +12,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/session")
 @RequiredArgsConstructor
+@CrossOrigin
 public class SessionController {
 
     private final AuthenticationService authenticationService;

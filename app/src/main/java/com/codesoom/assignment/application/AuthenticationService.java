@@ -2,21 +2,21 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.PasswordInValidException;
 import com.codesoom.assignment.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
 
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    private UserService userService;
-
-    public AuthenticationService(JwtUtil jwtUtil, UserService userService) {
-        this.jwtUtil = jwtUtil;
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     /**
      * 로그인 요청 데이터로 사용자를 인증한 후 토큰을 만들어 리턴합니다.
@@ -44,5 +44,19 @@ public class AuthenticationService {
             throw new PasswordInValidException();
         }
         return user;
+    }
+
+    public Long parseToken(String accessToken) {
+        if ("".equals(accessToken) || accessToken==null) {
+            throw new InvalidAccessTokenException(accessToken);
+        }
+
+        try {
+            Claims claims = jwtUtil.decode(accessToken);
+            return claims.get("userId", Long.class);
+        } catch (SignatureException e) {
+            throw new InvalidAccessTokenException(accessToken);
+        }
+
     }
 }

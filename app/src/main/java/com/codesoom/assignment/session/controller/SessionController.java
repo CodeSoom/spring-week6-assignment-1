@@ -18,7 +18,6 @@ public class SessionController {
         this.authenticationService = authenticationService;
     }
 
-
     @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@PathVariable Long id) {

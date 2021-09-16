@@ -28,7 +28,7 @@ class SessionControllerTest {
 
     @BeforeEach
     void setUp() {
-        given(authenticationService.login(1L)).willReturn("a.b.c");
+        given(authenticationService.login(1L)).willReturn("eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOjF9.mD0HZddWR7ufVRC_RyhCe_uUnB1ZF3XYM5kgfKFdEACQpLjIRoIozX4WqGYtSLqaSGGMhz2s1hovSn3QcG2_Og");
     }
 
     @Nested
@@ -36,11 +36,11 @@ class SessionControllerTest {
     class testLogin {
 
         @Test
-        @DisplayName("토큰을 반환한다.")
+        @DisplayName("토큰을 응답한다.")
         void login() throws Exception {
             mockMvc.perform(post("/session/1"))
                     .andExpect(status().isCreated())
-                    .andExpect(content().string(TOKEN));
+                    .andExpect(content().string(containsString(TOKEN)));
         }
     }
 }

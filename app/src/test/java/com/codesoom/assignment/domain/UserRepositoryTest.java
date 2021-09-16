@@ -7,20 +7,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
+import static com.codesoom.assignment.domain.UserTest.USER;
+import static com.codesoom.assignment.domain.UserTest.USER_EMAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 @DisplayName("UserRepository 클래스")
 public class UserRepositoryTest {
-    public static final String USER_EMAIL = "test@email.com";
     public static final String INVALID_EMAIL = USER_EMAIL + "invalid";
-    public static final String USER_NAME = "test";
-    public static final String USER_PASSWORD = "test";
-    public static final User USER = User.builder()
-        .email(USER_EMAIL)
-        .password(USER_PASSWORD)
-        .name(USER_NAME)
-        .build();
 
     @Autowired
     private UserRepository userRepository;

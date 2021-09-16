@@ -29,9 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
-
+    private static final String INVALID_TOKEN = VALID_TOKEN + "INVALID_TOKEN";
     @Autowired
     private MockMvc mockMvc;
 
@@ -80,7 +78,7 @@ class ProductControllerTest {
         given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
 
         given(authenticationService.parseToken(INVALID_TOKEN))
-                .willThrow(new InvalidTokenException(null));
+                .willThrow(new InvalidTokenException(INVALID_TOKEN));
     }
 
     @Test
@@ -109,6 +107,7 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+
     @Test
     void createWithAccessToken() throws Exception {
         mockMvc.perform(
@@ -126,7 +125,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void createWithoutAccessToken() throws Exception {
+    void createWithOutAccessToken() throws Exception {
         mockMvc.perform(
                         post("/products")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -149,7 +148,6 @@ class ProductControllerTest {
                 )
                 .andExpect(status().isUnauthorized());
     }
-
 
     @Test
     void createWithValidAttributes() throws Exception {

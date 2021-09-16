@@ -2,6 +2,7 @@ package com.codesoom.assignment.utils;
 
 import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -14,12 +15,12 @@ import java.security.Key;
 public class JwtUtil {
     private final Key key;
 
-    public JwtUtil(@Value("{jwt.secret}") String secret) {
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        secret = "12345678901234567890123456789012";
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String encode(Long userId) {
-
         return Jwts.builder()
                 .claim("userId", userId)
                 .signWith(key)

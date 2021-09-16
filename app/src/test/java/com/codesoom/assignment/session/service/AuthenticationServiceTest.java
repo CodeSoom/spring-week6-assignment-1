@@ -1,10 +1,12 @@
 package com.codesoom.assignment.session.service;
 
+import com.codesoom.assignment.session.errors.InvalidTokenException;
 import com.codesoom.assignment.session.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
@@ -27,8 +29,26 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void parseToken() {
+    void parseTokenWithValidToken() {
         Long userId = authenticationService.parseToken(VALID_TOKEN);
         assertThat(userId).isEqualTo(1L);
+    }
+
+    @Test
+    void parseTokenWithInvalidToken() {
+        assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
+                .isInstanceOf(InvalidTokenException.class);
+    }
+
+    @Test
+    void parseTokenWithEmptyToken() {
+        assertThatThrownBy(() -> authenticationService.parseToken(null))
+                .isInstanceOf(InvalidTokenException.class);
+
+        assertThatThrownBy(() -> authenticationService.parseToken(""))
+                .isInstanceOf(InvalidTokenException.class);
+
+        assertThatThrownBy(() -> authenticationService.parseToken(" "))
+                .isInstanceOf(InvalidTokenException.class);
     }
 }

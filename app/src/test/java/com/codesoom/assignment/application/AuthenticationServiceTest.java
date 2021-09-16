@@ -45,7 +45,7 @@ class AuthenticationServiceTest {
 
         mapper = DozerBeanMapperBuilder.buildDefault();
         jwtUtil = new JwtUtil(SECRET);
-        authenticationService = new AuthenticationService(jwtUtil, mapper, userRepository);
+        authenticationService = new AuthenticationService(jwtUtil, userRepository);
     }
 
     @AfterEach

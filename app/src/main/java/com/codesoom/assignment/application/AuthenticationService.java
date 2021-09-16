@@ -14,12 +14,10 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final JwtUtil jwtUtil;
-    private final Mapper mapper;
     private final UserRepository userRepository;
 
-    public AuthenticationService(JwtUtil jwtUtil, Mapper mapper, UserRepository userRepository) {
+    public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
-        this.mapper = mapper;
         this.userRepository = userRepository;
     }
 

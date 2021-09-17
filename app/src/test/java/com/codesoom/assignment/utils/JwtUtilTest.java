@@ -1,8 +1,11 @@
 package com.codesoom.assignment.utils;
 
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,11 +30,23 @@ class JwtUtilTest {
     }
 
     @Test
-    void decodeWithBlankToken() {
-        assertThatThrownBy(() -> jwtUtil.decode(null))
-                .isInstanceOf(InvalidAccessTokenException.class);
+    void decodeWithValidToken() {
+        Claims claims = jwtUtil.decode(VALID_TOKEN);
+        Long userId = claims.get("userId", Long.class);
 
-        assertThatThrownBy(() -> jwtUtil.decode(""))
+        assertThat(userId).isEqualTo(1L);
+    }
+
+    @Test
+    void decodeWithInvalidToken() {
+        assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
                 .isInstanceOf(InvalidAccessTokenException.class);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void decodeWithBlankOrNullToken(String token) {
+            assertThatThrownBy(() -> jwtUtil.decode(token))
+                    .isInstanceOf(InvalidAccessTokenException.class);
     }
 }

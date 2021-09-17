@@ -1,17 +1,11 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginRequestData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
-import com.codesoom.assignment.utils.JwtUtil;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 

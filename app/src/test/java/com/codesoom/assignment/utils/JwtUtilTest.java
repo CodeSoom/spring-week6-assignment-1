@@ -33,7 +33,8 @@ class JwtUtilTest {
         class Context_with_valid_id {
             @DisplayName("토큰을 반환한다.")
             @ParameterizedTest
-            @ValueSource(longs = {1, 3, 15, 500})
+            @ValueSource(longs = {1, 3, 15, 500, 5000, 10000, 500000,
+                    1000000, 9999999, 999999999999L,Integer.MAX_VALUE, Long.MAX_VALUE})
             void encode(Long userId) {
                 final String token = jwtUtil.encode(userId);
 
@@ -47,7 +48,7 @@ class JwtUtilTest {
             @DisplayName("예외를 던진다.")
             @ParameterizedTest
             @NullSource
-            @ValueSource(longs = {-10, -1, 0})
+            @ValueSource(longs = {Long.MIN_VALUE,Integer.MIN_VALUE,  -99999999999L, -999999, -9999, -10, -1, 0})
             void encode(Long userId) {
                 assertThatThrownBy(() -> jwtUtil.encode(userId))
                         .isInstanceOf(NotSupportedUserIdException.class);
@@ -86,7 +87,13 @@ class JwtUtilTest {
             @DisplayName("예외를 던진다.")
             @ParameterizedTest
             @NullAndEmptySource
-            @ValueSource(strings = {"a.b.c", "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGaa"})
+            @ValueSource(strings = {
+                    "a.b.c",
+                    "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGaa",
+                    "eyJhbGciOiJIUzI1NiJ9",
+                    "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9",
+                    "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9....neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw"
+            })
             void decode(String invalidToken) {
 
                 assertThatThrownBy(() -> jwtUtil.decode(invalidToken))

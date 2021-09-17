@@ -17,8 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("AuthenticationService 테스트")
 @DataJpaTest
@@ -73,6 +72,7 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("jwt로 인코딩된 token을 반환합니다.")
             void it_return_token() {
+                System.out.println(givenUser.getId());
                 UserLoginData userLoginData = mapper.map(givenUser, UserLoginData.class);
                 String token = authenticationService.login(userLoginData);
 
@@ -126,6 +126,25 @@ class AuthenticationServiceTest {
     @Nested
     @DisplayName("checkToken 메서드")
     class Describe_checkToken {
+
+        @Nested
+        @DisplayName("유효한 토큰이 주어지면")
+        class Context_with_valid_token {
+
+            private String valid_token;
+
+            @BeforeEach
+            void prepare() {
+                User givenUser = userRepository.save(user);
+                valid_token = jwtUtil.encode(givenUser.getId());
+            }
+
+            @Test
+            @DisplayName("InvalidAccessToken을 던지지 않습니다.")
+            void it_not_throw_invalidAccessToken() {
+                assertThatNoException().isThrownBy(() -> authenticationService.checkToken(valid_token));
+            }
+        }
 
         @Nested
         @DisplayName("유효하지 않은 토큰이 주어지면")

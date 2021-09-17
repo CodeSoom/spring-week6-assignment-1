@@ -1,10 +1,9 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.TestUtil;
 import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.io.UnsupportedEncodingException;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,14 +40,6 @@ class ProductControllerTest {
     private ProductData invalidProductDataFixture;
     private String authorizationFixture;
 
-    private <T> T getResponseContent(ResultActions actions, TypeReference<T> type)
-            throws UnsupportedEncodingException, JsonProcessingException {
-        MvcResult mvcResult = actions.andReturn();
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-
-        return objectMapper.readValue(contentAsString, type);
-    }
-
     private Product createProductBeforeTest(ProductData productData) throws Exception {
         ResultActions actions = mockMvc.perform(post("/products")
                 .content(objectMapper.writeValueAsString(productData))
@@ -59,9 +47,7 @@ class ProductControllerTest {
                 .header("Authorization", authorizationFixture)
         );
 
-        Product createdProduct = getResponseContent(actions, new TypeReference<Product>() {});
-
-        return createdProduct;
+        return TestUtil.content(actions, Product.class);
     }
 
     private void deleteProductBeforeTest(Long id) throws Exception {

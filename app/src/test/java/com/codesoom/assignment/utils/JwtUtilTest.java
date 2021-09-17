@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.TestUtil;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,7 @@ class JwtUtilTest {
     private JwtUtil jwtUtil;
 
     private final String KEY = "12345678901234567890123456789012";
-    private final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$";
+//    private final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$";
 
     @BeforeEach
     void setup() {
@@ -29,7 +30,7 @@ class JwtUtilTest {
         void returnSignedToken() {
             String token = jwtUtil.encode(1L);
 
-            assertThat(token.matches(JWT_REGEX)).isTrue();
+            assertThat(TestUtil.isJwt(token)).isTrue();
         }
     }
 

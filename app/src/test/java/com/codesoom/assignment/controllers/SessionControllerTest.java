@@ -1,11 +1,10 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.TestUtil;
 import com.codesoom.assignment.dto.AuthData;
 import com.codesoom.assignment.dto.SessionResponse;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.dto.UserResultData;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.io.UnsupportedEncodingException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -33,16 +29,7 @@ class SessionControllerTest {
     MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$";
     private final String PASSWORD = "password";
-
-    private <T> T getResponseContent(ResultActions actions, TypeReference<T> type)
-            throws UnsupportedEncodingException, JsonProcessingException {
-        MvcResult mvcResult = actions.andReturn();
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-
-        return objectMapper.readValue(contentAsString, type);
-    }
 
     private UserResultData createUser(String email, String password) throws Exception {
         UserRegistrationData userData = UserRegistrationData.builder()
@@ -55,7 +42,7 @@ class SessionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userData)));
 
-        return getResponseContent(actions, new TypeReference<UserResultData>() {});
+        return TestUtil.content(actions, UserResultData.class);
     }
 
     private void deleteUser(Long id) throws Exception {
@@ -89,9 +76,9 @@ class SessionControllerTest {
                             .content(objectMapper.writeValueAsString(authData)))
                     .andExpect(status().isCreated());
 
-            SessionResponse response = getResponseContent(actions, new TypeReference<SessionResponse>() {});
+            SessionResponse response = TestUtil.content(actions, SessionResponse.class);
 
-            assertThat(response.getAccessToken().matches(JWT_REGEX)).isTrue();
+            assertThat(TestUtil.isJwt(response.getAccessToken())).isTrue();
         }
     }
 

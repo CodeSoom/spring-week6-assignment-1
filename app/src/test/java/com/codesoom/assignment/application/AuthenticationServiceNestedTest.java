@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginForm;
 import com.codesoom.assignment.errors.LoginDataNotMatchedException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -70,13 +72,26 @@ class AuthenticationServiceNestedTest {
         }
 
         @Nested
-        @DisplayName("회원의 아이디와 비밀번호가 불일치한다면")
-        class Context_with_invalid_data {
+        @DisplayName("등록되지 않은 회원의 아이디와 이메일이 주어지면")
+        class Context_with_not_exists_id {
             @DisplayName("예외를 던진다.")
             @ParameterizedTest
-            @CsvSource(value = {"catsbi@codesoom.co.kr:1234", "test@codesoom.co.kr:q1w2e3", "test:test"}, delimiter = ':')
+            @CsvSource(value = {"catsbii@codesoom.co.kr:1234", "test@codesoom.co.kr:q1w2e3", "test:test"}, delimiter = ':')
             void login(String email, String password) {
                 assertThatThrownBy(() -> authenticationService.login(LoginForm.of(email, password)))
+                        .isInstanceOf(UserNotFoundException.class)
+                        .hasMessage(UserNotFoundException.DEFAULT_MESSAGE + email);
+            }
+        }
+
+        @Nested
+        @DisplayName("등록된 회원의 로그인 정보와 일치하지 않는 비밀번호가 주어지면")
+        class Context_with_invalid_password {
+            @DisplayName("예외를 던진다.")
+            @ParameterizedTest
+            @ValueSource(strings = {"1234", "q2w2e3", "tttttt", "test", "string", "NaN", "undefined", "null"})
+            void login(String password) {
+                assertThatThrownBy(() -> authenticationService.login(LoginForm.of(EMAIL, password)))
                         .isInstanceOf(LoginDataNotMatchedException.class)
                         .hasMessage(LoginDataNotMatchedException.DEFAULT_MESSAGE);
             }

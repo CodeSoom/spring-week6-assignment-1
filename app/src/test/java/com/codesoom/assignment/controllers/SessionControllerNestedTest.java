@@ -99,7 +99,7 @@ class SessionControllerNestedTest {
                                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                                         .content(toJson(LoginForm.of(EMAIL, "other")))
                         )
-                        .andExpect(status().isUnauthorized());
+                        .andExpect(status().isBadRequest());
             }
         }
 
@@ -114,7 +114,7 @@ class SessionControllerNestedTest {
                                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                                         .content(toJson(LoginForm.of("other", PASSWORD)))
                         )
-                        .andExpect(status().isUnauthorized());
+                        .andExpect(status().isNotFound());
             }
         }
     }

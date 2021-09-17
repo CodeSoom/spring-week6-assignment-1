@@ -1,12 +1,13 @@
 package com.codesoom.assignment.dto;
 
+import com.codesoom.assignment.application.LoginForm;
 import com.github.dozermapper.core.Mapping;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class LoginRequestDto {
+public class LoginRequestDto implements LoginForm {
 
     @NotBlank
     @Mapping("email")

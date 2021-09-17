@@ -3,10 +3,8 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.AccessToken;
-import com.codesoom.assignment.dto.LoginRequestDto;
 import com.codesoom.assignment.errors.UserNotAuthenticatedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
-import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,13 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
 
-    private final Mapper mapper;
     private final UserRepository userRepository;
     private final JwtEncoder jwtEncoder;
 
-    public AuthenticationService(Mapper mapper,
-        UserRepository userRepository, JwtEncoder jwtEncoder) {
-        this.mapper = mapper;
+    public AuthenticationService(UserRepository userRepository,
+        JwtEncoder jwtEncoder) {
         this.userRepository = userRepository;
         this.jwtEncoder = jwtEncoder;
     }
@@ -29,24 +25,32 @@ public class AuthenticationService {
     /**
      * 회원을 인증하고 액세스 토큰을 생성해 리턴합니다.
      *
-     * @param loginRequestDto 인증할 회원 정보
+     * @param loginForm 인증할 회원 정보
      * @return 생성된 액세스 토큰
      * @throws UserNotFoundException         회원을 찾지 못한 경우
      * @throws UserNotAuthenticatedException 삭제되었거나 인증에 실패한 경우
      */
-    public AccessToken authenticate(LoginRequestDto loginRequestDto) {
-        User user = mapper.map(loginRequestDto, User.class);
-        User findUser = findUserFromEmail(user);
+    public AccessToken authenticate(LoginForm loginForm) {
+        String email = loginForm.getEmail();
+        String password = loginForm.getPassword();
 
-        if (!findUser.authenticate(user.getPassword())) {
-            throw new UserNotAuthenticatedException(user);
+        User findUser = findUserFromEmail(email);
+        if (!findUser.authenticate(password)) {
+            throw new UserNotAuthenticatedException(email);
         }
 
         return jwtEncoder.encode(findUser);
     }
 
-    private User findUserFromEmail(User user) {
-        return userRepository.findByEmail(user.getEmail())
-            .orElseThrow(() -> new UserNotFoundException(user.getId()));
+    /**
+     * 이메일로 회원을 찾아 리턴합니다.
+     *
+     * @param email 찾을 회원 이메일
+     * @return 찾은 회원
+     * @throws UserNotFoundException 회원을 찾지 못한 경우
+     */
+    private User findUserFromEmail(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException(email));
     }
 }

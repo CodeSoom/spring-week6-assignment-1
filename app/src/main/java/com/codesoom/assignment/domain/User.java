@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.application.LoginForm;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements LoginForm {
 
     @Id
     @GeneratedValue

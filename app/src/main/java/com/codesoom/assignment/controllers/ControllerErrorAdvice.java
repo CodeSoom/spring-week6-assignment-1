@@ -6,6 +6,7 @@ import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,7 +35,13 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidAccessTokenException.class)
-    public void handleInvalidAccessTokenException() {
-        //
+    public ErrorResponse handleInvalidAccessTokenException() {
+        return new ErrorResponse("Token is invalid");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ErrorResponse handleEmptyAuthorizationHeader() {
+        return new ErrorResponse("Authorization header is empty");
     }
 }

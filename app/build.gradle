@@ -48,8 +48,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
 
     // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.16'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     // DozerMapper
     implementation 'com.github.dozermapper:dozer-core:6.4.0'

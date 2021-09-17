@@ -5,16 +5,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class User implements LoginForm {
 
     @Id
@@ -30,6 +25,18 @@ public class User implements LoginForm {
     @Builder.Default
     @Column(name = "deleted")
     private boolean deleted = false;
+
+    protected User() {
+    }
+
+    @Builder
+    public User(Long id, String email, String name, String password, boolean deleted) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.deleted = deleted;
+    }
 
     public void changeWith(User source) {
         name = source.name;

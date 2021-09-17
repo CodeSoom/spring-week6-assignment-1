@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 class UserTest {
 
     private String UPDATE_NAME = "updateName";
-    private String UPDATE_EMAIL = "updateEmail@xxxx.com";
     private String UPDATE_PASSWORD = "13579";
 
     User user;
@@ -38,10 +37,9 @@ class UserTest {
     @DisplayName("사용자 객체가 올바르게 수정되는지 테스트")
     void user_update_test() {
 
-        user.userUpdate(UPDATE_NAME, UPDATE_EMAIL, UPDATE_PASSWORD);
+        user.userUpdate(UPDATE_NAME, UPDATE_PASSWORD);
 
         Assertions.assertEquals(UPDATE_NAME, user.getName());
-        Assertions.assertEquals(UPDATE_EMAIL, user.getEmail());
         Assertions.assertEquals(UPDATE_PASSWORD, user.getPassword());
 
     }

@@ -54,7 +54,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
-    public Product updateProduct(@RequestHeader("Authorization") String authorization ,@PathVariable Long id, @RequestBody ProductData source) {
+    public Product updateProduct(@RequestHeader("Authorization") String authorization ,@PathVariable Long id, @RequestBody @Valid ProductData source) {
 
         validTokenCheck(authorization);
 
@@ -63,6 +63,7 @@ public class ProductController {
     }
 
     @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@RequestHeader("Authorization") String authorization, @PathVariable Long id) {
 
         validTokenCheck(authorization);

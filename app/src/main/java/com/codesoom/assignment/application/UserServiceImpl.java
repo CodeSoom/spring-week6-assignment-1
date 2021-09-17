@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserData;
+import com.codesoom.assignment.dto.UserUpdateData;
 import com.codesoom.assignment.errors.UserEmailDuplicateException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long id, UserData source) {
+    public User getUser(Long id) {
 
-        User findUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
-        findUser.userUpdate(source.getName(), source.getEmail(), source.getPassword());
+       return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
+
+    }
+
+    @Override
+    public User updateUser(Long id, UserUpdateData userUpdateData) {
+
+        User findUser = getUser(id);
+
+        findUser.userUpdate(userUpdateData.getName(),  userUpdateData.getPassword());
 
         return findUser;
 
@@ -49,6 +58,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
+
+        User deleteUser = getUser(id);
 
         userRepository.deleteById(id);
 

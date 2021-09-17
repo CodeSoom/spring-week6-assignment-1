@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class UserData {
 
     @NotBlank(message = "이름은 필수 입력 항목입니다.")

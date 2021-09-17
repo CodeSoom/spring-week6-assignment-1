@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserData;
+import com.codesoom.assignment.dto.UserUpdateData;
 import com.codesoom.assignment.errors.UserEmailDuplicateException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.*;
@@ -103,7 +104,7 @@ class UserServiceImplTest {
         @DisplayName("수정할 사용자 정보가 있을 경우에")
         class Context_exist_update_user {
 
-            UserData updateSource;
+            UserUpdateData userUpdateSource;
             Long VALID_ID;
 
             @BeforeEach
@@ -117,9 +118,8 @@ class UserServiceImplTest {
 
                 VALID_ID = TEST_USER.getId();
 
-                updateSource = UserData.builder()
+                userUpdateSource = UserUpdateData.builder()
                         .name("UPDATE_NAME")
-                        .email("UPDATE_EMAIL")
                         .password("11111")
                         .build();
 
@@ -129,10 +129,9 @@ class UserServiceImplTest {
             @DisplayName("아이디와 수정 정보를 입력받아 사용자 정보를 수정한다")
             void It_return_update_user() {
 
-                User user = userService.updateUser(VALID_ID, updateSource);
+                User user = userService.updateUser(VALID_ID, userUpdateSource);
 
                 assertEquals("UPDATE_NAME",user.getName());
-                assertEquals("UPDATE_EMAIL", user.getEmail());
                 assertEquals("11111", user.getPassword());
 
             }
@@ -142,16 +141,15 @@ class UserServiceImplTest {
             class Context_exist_not_user {
 
                 Long INVALID_ID = 1000L;
-                UserData updateSource;
+                UserUpdateData userUpdateData;
 
                 @BeforeEach
                 void setUp() {
 
                     userRepository.deleteAll();
 
-                    updateSource = UserData.builder()
+                    userUpdateData = UserUpdateData.builder()
                             .name("UPDATE_NAME")
-                            .email("UPDATE_EMAIL")
                             .password("11111")
                             .build();
 
@@ -161,7 +159,7 @@ class UserServiceImplTest {
                 @DisplayName("UserNotFoundException 예외를 던진다.")
                 void It_return_userNotFoundException() {
 
-                    assertThatThrownBy(() -> userService.updateUser(INVALID_ID, updateSource)).isInstanceOf(UserNotFoundException.class);
+                    assertThatThrownBy(() -> userService.updateUser(INVALID_ID, userUpdateData)).isInstanceOf(UserNotFoundException.class);
 
                 }
 

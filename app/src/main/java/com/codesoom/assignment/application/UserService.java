@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserData;
+import com.codesoom.assignment.dto.UserUpdateData;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,20 @@ public interface UserService {
     User createUser(UserData source) throws Exception;
 
     /**
+     * 사용자를 찾아 리턴합니다.
+     * @param id 찾으려는 사용자 id
+     * @return 찾은 사용자
+     */
+    User getUser(Long id);
+
+    /**
      * 사용자 정보를 수정하고 수정된 사용자 정보를 리턴합니다.
      * @param id 사용자 id
-     * @param source 수정할 사용자 정보
+     * @param userUpdateData 수정할 사용자 정보
      * @return 수정된 사용자
      * @throws UserNotFoundException 사용자를 못찾을 경우
      */
-    User updateUser(Long id, UserData source) throws UserNotFoundException;
+    User updateUser(Long id, UserUpdateData userUpdateData) throws UserNotFoundException;
 
     /**
      * 사용자를 삭제합니다.

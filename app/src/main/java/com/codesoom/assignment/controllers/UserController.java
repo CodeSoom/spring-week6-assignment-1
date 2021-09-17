@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserData;
+import com.codesoom.assignment.dto.UserUpdateData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +29,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
-    public User update(@PathVariable Long id, @RequestBody @Valid UserData userData) {
+    public User update(@PathVariable Long id, @RequestBody @Valid UserUpdateData userUpdateData) {
 
-        return userService.updateUser(id, userData);
+        return userService.updateUser(id, userUpdateData);
 
     }
 

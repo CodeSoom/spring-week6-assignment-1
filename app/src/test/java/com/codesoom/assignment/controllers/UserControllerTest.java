@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserData;
+import com.codesoom.assignment.dto.UserUpdateData;
 import com.codesoom.assignment.errors.UserEmailDuplicateException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,19 +117,18 @@ class UserControllerTest {
         @DisplayName("수정할 사용자 내용이 있다면")
         class Context_exist_update_userData {
 
-            UserData updateData;
+            UserUpdateData userUpdateData;
             Long VALID_ID=1L;
 
             @BeforeEach
             void setUp() {
 
-                updateData = UserData.builder()
+                userUpdateData = UserUpdateData.builder()
                         .name("updateName")
-                        .email("updateEmail")
                         .password("12345")
                         .build();
 
-                given(userService.updateUser(VALID_ID,updateData)).will(invocation -> {
+                given(userService.updateUser(VALID_ID,userUpdateData)).will(invocation -> {
 
                     Long id = invocation.getArgument(0);
                     UserData source = invocation.getArgument(1);
@@ -149,7 +149,7 @@ class UserControllerTest {
                 mockMvc.perform(MockMvcRequestBuilders.patch("/user/" + VALID_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(updateData)))
+                                .content(objectMapper.writeValueAsString(userUpdateData)))
                         .andExpect(status().isOk());
 
             }

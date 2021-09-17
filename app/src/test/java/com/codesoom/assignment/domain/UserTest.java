@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,5 +49,15 @@ class UserTest {
 
         assertThat(user.authenticate("test")).isFalse();
         assertThat(user.authenticate("xxx")).isFalse();
+    }
+
+    @Test
+    @DisplayName("deleted 필드가 기본값이 false인지 확인합니다.")
+    void default_deleted_field() {
+        User user = User.builder()
+                .password("test")
+                .build();
+
+        assertThat(user.getDeleted()).isFalse();
     }
 }

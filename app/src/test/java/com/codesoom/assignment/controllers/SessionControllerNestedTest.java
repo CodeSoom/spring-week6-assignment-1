@@ -4,6 +4,7 @@ import com.codesoom.assignment.config.TestWebConfig;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginForm;
+import com.codesoom.assignment.dto.SessionResponseData;
 import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,8 +81,11 @@ class SessionControllerNestedTest {
                         .andExpect(status().isCreated())
                         .andExpect(content().string(containsString(".")))
                         .andDo((result) -> {
-                            final String token = result.getResponse().getContentAsString();
-                            final Long decodeId = jwtUtil.decode(token);
+                            final String responseData = result.getResponse().getContentAsString();
+                            final SessionResponseData sessionResponseData = objectMapper.readValue(responseData,
+                                    SessionResponseData.class);
+
+                            final Long decodeId = jwtUtil.decode(sessionResponseData.getAccessToken());
 
                             assertThat(decodeId).isEqualTo(user.getId());
                         });

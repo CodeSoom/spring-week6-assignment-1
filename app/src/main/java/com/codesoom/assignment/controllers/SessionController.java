@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.LoginForm;
+import com.codesoom.assignment.dto.SessionResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,10 +25,17 @@ import javax.validation.Valid;
 public class SessionController {
     private final AuthenticationService authenticationService;
 
+    /**
+     * 토큰을 생성한다.
+     * @param form 로그인 정보
+     * @return 접속 토큰
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String login(@RequestBody @Valid LoginForm form) {
-        return authenticationService.login(form);
+    public SessionResponseData login(@RequestBody @Valid LoginForm form) {
+        final String token = authenticationService.login(form);
+
+        return new SessionResponseData(token);
     }
 
 

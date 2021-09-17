@@ -100,7 +100,7 @@ class ProductControllerTest {
     }
 
     @Nested
-    @DisplayName("GET /prodcuts/{id} 요청은")
+    @DisplayName("GET /products/{id} 요청은")
     class Describe_getProductsWithId {
 
         @Nested
@@ -177,7 +177,6 @@ class ProductControllerTest {
 
                     verify(productService).createProduct(any(ProductData.class));
                 }
-
             }
 
             @Nested
@@ -315,7 +314,7 @@ class ProductControllerTest {
 
             @Test
             @DisplayName("401을 응답한다")
-            void it_resopnse_401() throws Exception {
+            void it_response_401() throws Exception {
                 mockMvc.perform(
                     patch("/products/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8)

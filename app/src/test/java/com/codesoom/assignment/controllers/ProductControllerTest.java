@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +26,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -48,8 +48,8 @@ class ProductControllerTest {
     private AuthenticationService authenticationService;
 
     private static final String SECRET = "12345678901234567890123456789010";
-    private static final Long VALID_ID = 1L;
     private String valid_token;
+    private String invalid_token;
 
     @BeforeEach
     void setUp() {
@@ -66,7 +66,8 @@ class ProductControllerTest {
                 .build();
 
         JwtUtil jwtUtil = new JwtUtil(SECRET);
-        valid_token = jwtUtil.encode(VALID_ID);
+        valid_token = jwtUtil.encode(1L);
+        invalid_token = valid_token + 1;
 
         given(productService.getProducts()).willReturn(List.of(product));
 
@@ -89,10 +90,14 @@ class ProductControllerTest {
                             .build();
                 });
 
+
         given(productService.updateProduct(eq(1000L), any(ProductData.class)))
                 .willThrow(new ProductNotFoundException(1000L));
 
         willThrow(new ProductNotFoundException(1000L)).given(productService).deleteProduct(1000L);
+
+        willDoNothing().given(authenticationService).checkToken(eq(valid_token));
+        willThrow(new InvalidAccessTokenException(invalid_token)).given(authenticationService).checkToken(eq(invalid_token));
     }
 
     @Nested
@@ -156,6 +161,7 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+                                .header("Authorization", "Bearer " + valid_token)
                 )
                         .andExpect(status().isCreated())
                         .andExpect(content().string(containsString("쥐돌이")));
@@ -177,8 +183,28 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
+                                .header("Authorization", "Bearer " + valid_token)
                 )
                         .andExpect(status().isBadRequest());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 access token이 주어지면")
+        class Context_with_invalid_token {
+
+            @Test
+            @DisplayName("status: Unauthorization 를 반환합니다.")
+            void it_response_unauthorization() throws Exception {
+                mockMvc.perform(
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                                .header("Authorization", "Bearer " + invalid_token)
+                )
+                        .andExpect(status().isUnauthorized());
             }
         }
     }
@@ -200,6 +226,7 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+                                .header("Authorization", "Bearer " + valid_token)
                 )
                         .andExpect(status().isOk())
                         .andExpect(content().string(containsString("쥐순이")));
@@ -220,6 +247,7 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+                                .header("Authorization", "Bearer " + valid_token)
                 )
                         .andExpect(status().isNotFound());
 
@@ -240,11 +268,30 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
+                                .header("Authorization", "Bearer " + valid_token)
                 )
                         .andExpect(status().isBadRequest());
             }
         }
 
+        @Nested
+        @DisplayName("유효하지 않은 access token이 주어지면")
+        class Context_with_invalid_token {
+
+            @Test
+            @DisplayName("status: Unauthorization 를 반환합니다.")
+            void it_response_unauthorization() throws Exception {
+                mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                                .header("Authorization", "Bearer " + invalid_token)
+                )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
     }
 
     @Nested
@@ -260,6 +307,7 @@ class ProductControllerTest {
             void it_response_created() throws Exception {
                 mockMvc.perform(
                         delete("/products/1")
+                                .header("Authorization", "Bearer " + valid_token)
                 )
                         .andExpect(status().isNoContent());
 
@@ -276,10 +324,26 @@ class ProductControllerTest {
             void it_response_bad_request() throws Exception {
                 mockMvc.perform(
                         delete("/products/1000")
+                                .header("Authorization", "Bearer " + valid_token)
                 )
                         .andExpect(status().isNotFound());
 
                 verify(productService).deleteProduct(1000L);
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 access token이 주어지면")
+        class Context_with_invalid_token {
+
+            @Test
+            @DisplayName("status: Unauthorization 를 반환합니다.")
+            void it_response_unauthorization() throws Exception {
+                mockMvc.perform(
+                        delete("/products/1000")
+                                .header("Authorization", "Bearer " + invalid_token)
+                )
+                        .andExpect(status().isUnauthorized());
             }
         }
     }

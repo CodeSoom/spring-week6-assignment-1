@@ -28,7 +28,7 @@ class JwtUtilTest {
     class Describe_encode {
 
         @Nested
-        @DisplayName("유효한 id이 주어지면")
+        @DisplayName("유효한 id가 주어지면")
         class Context_with_valid_id {
 
             private final Long VALID_ID = 1L;

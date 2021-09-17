@@ -16,13 +16,13 @@ class ProductDataTest {
                 .name("productData1")
                 .maker("maker1")
                 .price(1000L)
-                .imgUrl("img1")
+                .imageUrl("img1")
                 .build();
 
         assertEquals("productData1",productData.getName());
         assertEquals("maker1",productData.getMaker());
         assertEquals(1000l,productData.getPrice());
-        assertEquals("img1",productData.getImgUrl());
+        assertEquals("img1",productData.getImageUrl());
 
     }
 

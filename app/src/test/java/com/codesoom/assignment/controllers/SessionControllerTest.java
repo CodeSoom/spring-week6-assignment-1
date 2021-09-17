@@ -29,16 +29,12 @@ class SessionControllerTest {
     @BeforeEach
     void setUp() {
 
-//        given(authenticationService.login()).willReturn("a.b.c.");
 
     }
 
     @Test
     void login() throws Exception{
 
-        mockMvc.perform(post("/session"))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString(".")));
 
     }
 

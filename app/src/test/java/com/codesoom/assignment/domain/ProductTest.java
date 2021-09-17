@@ -20,14 +20,14 @@ public class ProductTest {
                 .name("product1")
                 .maker("maker1")
                 .price(1000L)
-                .imgUrl("img1")
+                .imageUrl("img1")
                 .build();
 
         updateData = ProductData.builder()
                 .name("updateName")
                 .maker("updateMaker")
                 .price(5000L)
-                .imgUrl("updateImg")
+                .imageUrl("updateImg")
                 .build();
 
     }
@@ -39,7 +39,7 @@ public class ProductTest {
         assertEquals("product1",product.getName());
         assertEquals("maker1",product.getMaker());
         assertEquals(1000l,product.getPrice());
-        assertEquals("img1",product.getImgUrl());
+        assertEquals("img1",product.getImageUrl());
 
     }
 
@@ -52,7 +52,7 @@ public class ProductTest {
         assertEquals("updateName", updateProduct.getName());
         assertEquals("updateMaker", updateProduct.getMaker());
         assertEquals(5000L, updateProduct.getPrice());
-        assertEquals("updateImg", updateProduct.getImgUrl());
+        assertEquals("updateImg", updateProduct.getImageUrl());
 
     }
 

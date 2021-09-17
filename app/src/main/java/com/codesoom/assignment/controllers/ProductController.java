@@ -40,7 +40,7 @@ public class ProductController {
     public Product createProduct(@RequestHeader("Authorization") String authorization, @RequestBody @Valid ProductData source) {
 
         System.out.println("authorization = " + authorization);
-        validTokenCheck(authorization);
+        isValid(authorization);
 
         return productService.createProduct(source);
 
@@ -56,7 +56,7 @@ public class ProductController {
     @RequestMapping(value = "{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
     public Product updateProduct(@RequestHeader("Authorization") String authorization ,@PathVariable Long id, @RequestBody @Valid ProductData source) {
 
-        validTokenCheck(authorization);
+        isValid(authorization);
 
         return productService.updateProduct(id, source);
 
@@ -66,13 +66,13 @@ public class ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@RequestHeader("Authorization") String authorization, @PathVariable Long id) {
 
-        validTokenCheck(authorization);
+        isValid(authorization);
 
         productService.deleteProduct(id);
 
     }
 
-    private void validTokenCheck(@RequestHeader("Authorization") String authorization) {
+    private void isValid(String authorization) {
         String accessToken = authorization.substring("Bearer ".length());
 
         if (authenticationService.parseToken(accessToken) == null) {

@@ -30,13 +30,11 @@ public class AuthenticationService {
     public String login(UserLoginData loginData) {
 
         User user = findUser(loginData);
-
-        if(user.getPassword().equals(loginData.getPassword())) {
-            return jwtUtil.encode(user.getId());
-        } else {
+        if(!user.getPassword().equals(loginData.getPassword())) {
             throw new LoginInconsistencyException();
         }
-
+        
+        return jwtUtil.encode(user.getId());
     }
 
     /**

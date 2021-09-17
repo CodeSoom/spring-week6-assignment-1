@@ -49,13 +49,13 @@ class ProductControllerTest {
                 .name("name1")
                 .maker("maker1")
                 .price(1000L)
-                .imgUrl("img1").build();
+                .imageUrl("img1").build();
 
         product = Product.builder()
                 .name("name1")
                 .maker("maker1")
                 .price(1000L)
-                .imgUrl("img1")
+                .imageUrl("img1")
                 .build();
 
         given(productService.createProduct(any(ProductData.class))).willReturn(any(Product.class));

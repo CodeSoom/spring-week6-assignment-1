@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(UserData source) throws Exception {
 
-        if( emailDuplicateCheck(source.getEmail()) ) {
+        if( isEmailDuplicated(source.getEmail()) ) {
             throw new UserEmailDuplicateException();
         }
 
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean emailDuplicateCheck(String mail) {
+    public boolean isEmailDuplicated(String mail) {
         return userRepository.existsByEmail(mail);
     }
 

@@ -105,7 +105,7 @@ class UserServiceImplTest {
         class Context_exist_update_user {
 
             UserUpdateData userUpdateSource;
-            Long VALID_ID;
+            Long validId;
 
             @BeforeEach
             void setUp() throws Exception {
@@ -116,7 +116,7 @@ class UserServiceImplTest {
                                         .password("12345")
                                         .build() );
 
-                VALID_ID = TEST_USER.getId();
+                validId = TEST_USER.getId();
 
                 userUpdateSource = UserUpdateData.builder()
                         .name("UPDATE_NAME")
@@ -129,7 +129,7 @@ class UserServiceImplTest {
             @DisplayName("아이디와 수정 정보를 입력받아 사용자 정보를 수정한다")
             void It_return_update_user() {
 
-                User user = userService.updateUser(VALID_ID, userUpdateSource);
+                User user = userService.updateUser(validId, userUpdateSource);
 
                 assertEquals("UPDATE_NAME",user.getName());
                 assertEquals("11111", user.getPassword());
@@ -140,7 +140,7 @@ class UserServiceImplTest {
             @DisplayName("수정할 사용자 정보가 없다면")
             class Context_exist_not_user {
 
-                Long INVALID_ID = 1000L;
+                Long invalidId = 1000L;
                 UserUpdateData userUpdateData;
 
                 @BeforeEach
@@ -159,7 +159,7 @@ class UserServiceImplTest {
                 @DisplayName("UserNotFoundException 예외를 던진다.")
                 void It_return_userNotFoundException() {
 
-                    assertThatThrownBy(() -> userService.updateUser(INVALID_ID, userUpdateData)).isInstanceOf(UserNotFoundException.class);
+                    assertThatThrownBy(() -> userService.updateUser(invalidId, userUpdateData)).isInstanceOf(UserNotFoundException.class);
 
                 }
 

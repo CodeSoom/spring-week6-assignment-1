@@ -56,14 +56,14 @@ class ProductServiceImplTest {
                         .name("name1")
                         .maker("maker2")
                         .price(1000L)
-                        .imgUrl("img1")
+                        .imageUrl("img1")
                         .build());
 
                 Product product2 = productService.createProduct(ProductData.builder()
                         .name("name2")
                         .maker("maker2")
                         .price(2000L)
-                        .imgUrl("img2")
+                        .imageUrl("img2")
                         .build());
 
                 productList.add(product1);
@@ -109,14 +109,14 @@ class ProductServiceImplTest {
         @DisplayName("저장소에 찾으려는 상품이 있다면")
         class Context_exist_product {
 
-            Long VALID_ID;
+            Long validId;
 
             @BeforeEach
             void setUp() {
 
                 Product product = createTestProduct();
 
-                VALID_ID = product.getId();
+                validId = product.getId();
 
             }
 
@@ -124,12 +124,12 @@ class ProductServiceImplTest {
             @DisplayName("찾은 상품을 리턴합니다.")
             void It_return_product() {
 
-                Product findProduct = productService.getProduct(VALID_ID);
+                Product findProduct = productService.getProduct(validId);
 
                 assertEquals("name1", findProduct.getName());
                 assertEquals("maker1", findProduct.getMaker());
                 assertEquals(1000L, findProduct.getPrice());
-                assertEquals("img1", findProduct.getImgUrl());
+                assertEquals("img1", findProduct.getImageUrl());
 
             }
 
@@ -139,7 +139,7 @@ class ProductServiceImplTest {
         @DisplayName("찾는 상품이 없다면")
         class Context_exist_not_product {
 
-            Long INVALID_ID = 1000L;
+            Long invalidId = 1000L;
 
             @BeforeEach
             void setUp() {
@@ -153,7 +153,7 @@ class ProductServiceImplTest {
             void It_return_noSuchElementException() {
 
                 Assertions.assertThatThrownBy(() -> {
-                    productService.getProduct(INVALID_ID);
+                    productService.getProduct(invalidId);
                 }).isInstanceOf(ProductNotFoundException.class);
 
             }
@@ -188,7 +188,7 @@ class ProductServiceImplTest {
                 assertEquals("name1", createProduct.getName());
                 assertEquals("maker1", createProduct.getMaker());
                 assertEquals(1000L, createProduct.getPrice());
-                assertEquals("img1", createProduct.getImgUrl());
+                assertEquals("img1", createProduct.getImageUrl());
 
             }
 
@@ -205,7 +205,7 @@ class ProductServiceImplTest {
         class Context_exist_update_product {
 
             ProductData updateData;
-            Long VALID_ID;
+            Long validId;
 
             @BeforeEach
             void setUp() {
@@ -216,10 +216,10 @@ class ProductServiceImplTest {
                         .name("updateName")
                         .maker("updateMaker")
                         .price(5000L)
-                        .imgUrl("updateImg")
+                        .imageUrl("updateImg")
                         .build();
 
-                VALID_ID = product.getId();
+                validId = product.getId();
 
             }
 
@@ -227,12 +227,12 @@ class ProductServiceImplTest {
             @DisplayName("상품을 수정한 후 수정한 상품을 리턴합니다.")
             void It_update_return_product() {
 
-                Product updateProduct = productService.updateProduct(VALID_ID, updateData);
+                Product updateProduct = productService.updateProduct(validId, updateData);
 
                 assertEquals("updateName", updateProduct.getName());
                 assertEquals("updateMaker", updateProduct.getMaker());
                 assertEquals(5000L, updateProduct.getPrice());
-                assertEquals("updateImg", updateProduct.getImgUrl());
+                assertEquals("updateImg", updateProduct.getImageUrl());
 
             }
 
@@ -242,7 +242,7 @@ class ProductServiceImplTest {
         @DisplayName("수정한 상품을 찾을 수 없다면")
         class Context_exist_not_updateProduct {
 
-            Long INVALID_ID = 1000L;
+            Long invalidId = 1000L;
 
             @BeforeEach
             void setUp() {
@@ -256,7 +256,7 @@ class ProductServiceImplTest {
             void It_return_noSuchElementException() {
 
                 Assertions.assertThatThrownBy(() -> {
-                    productService.getProduct(INVALID_ID);
+                    productService.getProduct(invalidId);
                 }).isInstanceOf(ProductNotFoundException.class);
 
             }
@@ -273,14 +273,14 @@ class ProductServiceImplTest {
         @DisplayName("삭제할 상품이 있다면")
         class Context_exist_deleteProduct {
 
-            Long VALID_ID;
+            Long validId;
 
             @BeforeEach
             void setUp() {
 
                 Product product = createTestProduct();
 
-                VALID_ID = product.getId();
+                validId = product.getId();
 
             }
 
@@ -288,9 +288,9 @@ class ProductServiceImplTest {
             @DisplayName("삭제할 상품의 id를 받아 삭제합니다.")
             void It_delete_product() {
 
-                productService.deleteProduct(VALID_ID);
+                productService.deleteProduct(validId);
 
-                assertThatThrownBy(() -> productService.getProduct(VALID_ID))
+                assertThatThrownBy(() -> productService.getProduct(validId))
                         .isInstanceOf(ProductNotFoundException.class);
 
             }
@@ -304,7 +304,7 @@ class ProductServiceImplTest {
                 .name("name1")
                 .maker("maker1")
                 .price(1000L)
-                .imgUrl("img1")
+                .imageUrl("img1")
                 .build());
     }
 
@@ -313,7 +313,7 @@ class ProductServiceImplTest {
                 .name("name1")
                 .maker("maker1")
                 .price(1000L)
-                .imgUrl("img1")
+                .imageUrl("img1")
                 .build();
     }
 

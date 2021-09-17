@@ -64,7 +64,7 @@ class UserControllerTest {
             @DisplayName("사용자를 등록하고 201 상태코드를 반환한다.")
             void It_create_return_200() throws Exception {
 
-                mockMvc.perform(post("/user")
+                mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createData)))
@@ -97,11 +97,11 @@ class UserControllerTest {
             @DisplayName("BadRequest 400 상태코드를 반환한다.")
             void It_return_UserEmailDuplicateException() throws Exception {
 
-                mockMvc.perform(post("/user")
+                mockMvc.perform(post("/users")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(userData)))
-                        .andExpect(status().isBadRequest());
+                        .andExpect(status().isNotFound());
 
             }
 
@@ -146,7 +146,7 @@ class UserControllerTest {
             @DisplayName("사용자 정보를 수정하고 200 상태코드를 반환한다.")
             void It_update_user_return_200() throws Exception{
 
-                mockMvc.perform(MockMvcRequestBuilders.patch("/user/" + VALID_ID)
+                mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + VALID_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(userUpdateData)))

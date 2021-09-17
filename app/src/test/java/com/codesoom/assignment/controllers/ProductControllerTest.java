@@ -18,25 +18,31 @@ import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import java.security.Key;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(ProductController.class)
+@TestInstance(Lifecycle.PER_CLASS)
 class ProductControllerTest {
 
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-        "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-        "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String SECRET = "12345678901234567890123456789010";
+
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMwMTJ9.blzNDJtKA5NOZh6n4GfNVevWShBPGTCj6DBx48DfmUs";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMwMTJ9.blzNDJtKA5NOZh6n4GfNVevWShBPGTCj6DBx48DfmU0";
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,10 +50,23 @@ class ProductControllerTest {
     @MockBean
     private ProductService productService;
 
-    @SpyBean
-    private JwtDecoder jwtDecoder;
+    @MockBean
+    private static JwtDecoder jwtDecoder;
 
     private Product product;
+
+    @BeforeAll
+    void beforeAll() {
+        Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+
+        given(jwtDecoder.decode(VALID_TOKEN))
+            .willReturn(Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(VALID_TOKEN)
+                .getBody()
+            );
+    }
 
     @BeforeEach
     void setUp() {
@@ -303,7 +322,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                             "\"price\":5000}")
-                        .header("Authorization", "Bearer " + VALID_TOKEN)
+                        .header("Authorization", "Bearer " + INVALID_TOKEN)
                 )
                     .andExpect(status().isUnauthorized());
             }
@@ -387,7 +406,7 @@ class ProductControllerTest {
             void it_response_401() throws Exception {
                 mockMvc.perform(
                     delete("/products/1")
-                        .header("Authorization", "Bearer " + VALID_TOKEN)
+                        .header("Authorization", "Bearer " + INVALID_TOKEN)
                 )
                     .andExpect(status().isUnauthorized());
 

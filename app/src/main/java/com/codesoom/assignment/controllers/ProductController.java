@@ -51,7 +51,7 @@ public class ProductController {
         @RequestHeader("Authorization") String auth,
         @RequestBody @Valid ProductData productData
     ) {
-        checkTokenInvalid(auth);
+        checkTokenValid(auth);
 
         return productService.createProduct(productData);
     }
@@ -62,7 +62,7 @@ public class ProductController {
         @PathVariable Long id,
         @RequestBody @Valid ProductData productData
     ) {
-        checkTokenInvalid(auth);
+        checkTokenValid(auth);
 
         return productService.updateProduct(id, productData);
     }
@@ -73,12 +73,18 @@ public class ProductController {
         @RequestHeader("Authorization") String auth,
         @PathVariable Long id
     ) {
-        checkTokenInvalid(auth);
+        checkTokenValid(auth);
 
         productService.deleteProduct(id);
     }
 
-    private void checkTokenInvalid(String auth) {
+    /**
+     * 토큰이 유효한지 검사합니다.
+     *
+     * @param auth 토큰을 찾을 문자열
+     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
+     */
+    private void checkTokenValid(String auth) {
         String token = auth.substring("Bearer ".length());
 
         try {

@@ -5,6 +5,8 @@ import com.codesoom.assignment.session.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -42,13 +44,9 @@ class AuthenticationServiceTest {
 
     @Test
     void parseTokenWithEmptyToken() {
-        assertThatThrownBy(() -> authenticationService.parseToken(null))
-                .isInstanceOf(InvalidTokenException.class);
-
-        assertThatThrownBy(() -> authenticationService.parseToken(""))
-                .isInstanceOf(InvalidTokenException.class);
-
-        assertThatThrownBy(() -> authenticationService.parseToken(" "))
-                .isInstanceOf(InvalidTokenException.class);
+        Stream.of("", null, " ").forEach((it) -> {
+            assertThatThrownBy(() -> authenticationService.parseToken(it))
+                    .isInstanceOf(InvalidTokenException.class);
+        });
     }
 }

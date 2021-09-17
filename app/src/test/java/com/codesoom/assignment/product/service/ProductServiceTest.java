@@ -99,7 +99,7 @@ class ProductServiceTest {
         }
 
         @Test
-        @DisplayName("존재하지 않는 식별자일 때 예외를 반환한다.")
+        @DisplayName("식별자와 일치하는 장난감이 존재하지 않을 때 예외를 반환한다.")
         void findProductByNotExistedId() {
             assertThatThrownBy(() -> productService.findProductById(NOT_EXIST_ID))
                     .isInstanceOf(ProductNotFoundException.class);

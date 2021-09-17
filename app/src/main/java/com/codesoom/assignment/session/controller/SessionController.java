@@ -22,6 +22,7 @@ public class SessionController {
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@PathVariable Long id) {
         String accessToken = authenticationService.login(id);
+
         return SessionResponseData.builder()
                 .accessToken(accessToken)
                 .build();

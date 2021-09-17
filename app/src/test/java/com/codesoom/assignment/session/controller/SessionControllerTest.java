@@ -28,7 +28,7 @@ class SessionControllerTest {
 
     @BeforeEach
     void setUp() {
-        given(authenticationService.login(1L)).willReturn("eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOjF9.mD0HZddWR7ufVRC_RyhCe_uUnB1ZF3XYM5kgfKFdEACQpLjIRoIozX4WqGYtSLqaSGGMhz2s1hovSn3QcG2_Og");
+        given(authenticationService.login(1L)).willReturn(TOKEN);
     }
 
     @Nested

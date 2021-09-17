@@ -13,13 +13,14 @@ public class ProductNotFoundExceptionHandler {
 
     @ExceptionHandler({ProductNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public void productNotFoundException(Exception e) {
+    public void productNotFoundException(ProductNotFoundException e) {
         LOGGER.error("error log = {}", e.toString());
     }
 
     @ExceptionHandler({IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void IllegalArgumentException(Exception e) {
+        System.out.println("test2");
         LOGGER.error("error log = {}", e.toString());
     }
 }

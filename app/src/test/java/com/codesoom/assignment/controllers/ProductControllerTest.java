@@ -4,7 +4,6 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,16 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -62,8 +60,7 @@ class ProductControllerTest {
 
         given(productService.getProduct(1L)).willReturn(product);
 
-        given(productService.getProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+        willThrow(new ProductNotFoundException(1000L)).given(productService).getProduct(1000L);
 
         given(productService.createProduct(any(ProductData.class)))
                 .willReturn(product);
@@ -83,8 +80,7 @@ class ProductControllerTest {
         given(productService.updateProduct(eq(1000L), any(ProductData.class)))
                 .willThrow(new ProductNotFoundException(1000L));
 
-        given(productService.deleteProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+        willThrow(new ProductNotFoundException(1000L)).given(productService).deleteProduct(1000L);
     }
 
     @Nested
@@ -94,7 +90,7 @@ class ProductControllerTest {
         @Test
         @DisplayName("status: Ok data: 모든 products 를 반환합니다.")
         void it_response_ok() throws Exception {
-            mockMvc.perform(get("/products"))
+            mockMvc.perform(get("/products").accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("쥐돌이")));
         }

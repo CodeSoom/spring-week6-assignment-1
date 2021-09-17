@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,7 @@ class AuthenticationServiceTest {
         given(authenticationService.parseToken("")).willThrow(new InvalidAccessTokenException(""));
 
         given(authenticationService.parseToken(null)).willThrow(new InvalidAccessTokenException(null));
+
     }
 
     @Test
@@ -84,4 +86,5 @@ class AuthenticationServiceTest {
         assertThatThrownBy(() -> authenticationService.parseToken(token))
                 .isInstanceOf(InvalidAccessTokenException.class);
     }
+
 }

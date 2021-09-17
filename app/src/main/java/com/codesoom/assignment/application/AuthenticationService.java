@@ -46,6 +46,12 @@ public class AuthenticationService {
         return user;
     }
 
+    /**
+     * 토큰을 디코딩해 userId를 리턴합니다.
+     *
+     * @param accessToken 액세스 토큰
+     * @return 사용자 아이디
+     */
     public Long parseToken(String accessToken) {
         if ("".equals(accessToken) || accessToken==null) {
             throw new InvalidAccessTokenException(accessToken);

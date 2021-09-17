@@ -32,7 +32,7 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PasswordInValidException.class)
     public ErrorResponse handlePasswordIsNotValid() {
-        return new ErrorResponse("Password is invalid!");
+        return new ErrorResponse("Email or Password is invalid!");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

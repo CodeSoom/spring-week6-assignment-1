@@ -30,9 +30,13 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         given(authenticationService.login(any(LoginRequestData.class))).willReturn(VALID_TOKEN);
+
         given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
         given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
+
         given(authenticationService.parseToken("")).willThrow(new InvalidAccessTokenException(""));
+
         given(authenticationService.parseToken(null)).willThrow(new InvalidAccessTokenException(null));
     }
 

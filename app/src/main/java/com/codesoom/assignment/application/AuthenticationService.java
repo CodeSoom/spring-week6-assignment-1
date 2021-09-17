@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.Identifier;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.errors.LoginDataNotMatchedException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class AuthenticationService {
     public String login(Identifier identifier) {
 
         final User foundUser = userRepository.findByEmailAndDeletedIsFalse(identifier)
-                .orElseThrow(LoginDataNotMatchedException::new);
+                .orElseThrow(() -> new UserNotFoundException(identifier.getEmail()));
 
         if (!foundUser.authenticate(identifier.getPassword())) {
             throw new LoginDataNotMatchedException();

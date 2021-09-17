@@ -11,10 +11,15 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArgumentResolver {
     private final JwtUtil jwtUtil;
+
+    private static final List<String> invalidTokens = Arrays.asList("undefined", "null");
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -27,11 +32,16 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
         final String authorizationHeader = webRequest.getHeader("Authorization");
+
         if (authorizationHeader == null || authorizationHeader.isBlank()) {
             throw new InvalidTokenException();
         }
 
         final String token = authorizationHeader.substring("bearer ".length());
+
+        if (token.isBlank() || invalidTokens.contains(token)) {
+            throw new InvalidTokenException();
+        }
 
         return jwtUtil.decode(token);
     }

@@ -10,7 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,9 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.codesoom.assignment.errors.InvalidTokenException.DEFAULT_MESSAGE_WITHOUT_TOKEN;
-import static com.codesoom.assignment.errors.InvalidTokenException.DEFAULT_MESSAGE_WITH_TOKEN;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -237,15 +238,25 @@ class ProductControllerTest {
 
     @DisplayName("토큰이 없으면 상품 삭제가 불가능하다.")
     @ParameterizedTest
-    @NullAndEmptySource
-    void deleteWithoutTokenProduct(String invalidToken) throws Exception {
+    @MethodSource("provideInvalidAuthAndToken")
+    void deleteWithoutTokenProduct(String authorization, String bearerToken) throws Exception {
         mockMvc.perform(
                         delete("/products/1")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", "Bearer " + invalidToken)
+                                .header(authorization, bearerToken)
                 )
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().string(containsString(DEFAULT_MESSAGE_WITH_TOKEN)));
+                .andExpect(status().isUnauthorized());
+    }
+
+    public static Stream<Arguments> provideInvalidAuthAndToken() {
+        final String authorization = "Authorization";
+        return Stream.of(
+                Arguments.of("Authorizationn", ""),
+                Arguments.of(authorization, ""),
+                Arguments.of(authorization, "Bearer null"),
+                Arguments.of(authorization, "Bearer undefined"),
+                Arguments.of(authorization, "Bearer ")
+        );
     }
 }

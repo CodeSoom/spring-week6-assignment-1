@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 @ResponseBody
 public class SessionControllerErrorAdvice {
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LoginDataNotMatchedException.class)
     public ErrorResponse handleLoginDataNotMatchedException(LoginDataNotMatchedException e) {
         return new ErrorResponse(e.getMessage());

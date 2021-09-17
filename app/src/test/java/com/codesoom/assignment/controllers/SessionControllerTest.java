@@ -28,9 +28,12 @@ class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5qbdTrYLuxHeNPvUdPmExYWv25gk7BwSjhAoPgoIvaA";
+
+
     @BeforeEach
     void setUp() {
-        given(authenticationService.login(any(LoginRequestData.class))).willReturn("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5qbdTrYLuxHeNPvUdPmExYWv25gk7BwSjhAoPgoIvaA");
+        given(authenticationService.login(any(LoginRequestData.class))).willReturn(VALID_TOKEN);
     }
 
     @Test
@@ -40,7 +43,7 @@ class SessionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"email\":\"shinsanghooon@gmail.com\",\"password\":\"1234\"}"))
                 .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.5qbdTrYLuxHeNPvUdPmExYWv25gk7BwSjhAoPgoIvaA")))
+                .andExpect(content().string(containsString(VALID_TOKEN)))
                 .andDo(print());
 
         verify(authenticationService).login(any(LoginRequestData.class));

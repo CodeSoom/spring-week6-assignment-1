@@ -102,7 +102,7 @@ class ProductControllerTest {
         @Test
         @DisplayName("status: Ok data: 모든 products 를 반환합니다.")
         void it_response_ok() throws Exception {
-            mockMvc.perform(get("/products").accept(MediaType.APPLICATION_JSON))
+            mockMvc.perform(get("/products"))
                     .andExpect(status().isOk())
                     .andExpect(content().string(containsString("쥐돌이")));
         }

@@ -1,10 +1,8 @@
 package com.codesoom.assignment.dto;
 
 import com.github.dozermapper.core.Mapping;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
@@ -18,4 +16,11 @@ public class UserLoginData {
     @NotBlank
     @Mapping("password")
     private String password;
+
+    public UserLoginData() {};
+
+    public UserLoginData(@NotBlank String email, @NotBlank String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

@@ -41,8 +41,8 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String accesstoken = authorization.substring("Bearer ".length());
-        authenticationService.checkToken(accesstoken);
+        String accessToken = authorization.substring("Bearer ".length());
+        authenticationService.checkToken(accessToken);
 
         return productService.createProduct(productData);
     }
@@ -53,8 +53,9 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        String accesstoken = authorization.substring("Bearer ".length());
-        authenticationService.checkToken(accesstoken);
+        String accessToken = authorization.substring("Bearer ".length());
+        System.out.println(accessToken);
+        authenticationService.checkToken(accessToken);
 
         return productService.updateProduct(id, productData);
     }
@@ -65,8 +66,8 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        String accesstoken = authorization.substring("Bearer ".length());
-        authenticationService.checkToken(accesstoken);
+        String accessToken = authorization.substring("Bearer ".length());
+        authenticationService.checkToken(accessToken);
 
         productService.deleteProduct(id);
     }

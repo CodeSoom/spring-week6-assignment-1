@@ -27,6 +27,7 @@ public class SessionController {
 
     /**
      * 토큰을 생성한다.
+     *
      * @param form 로그인 정보
      * @return 접속 토큰
      */

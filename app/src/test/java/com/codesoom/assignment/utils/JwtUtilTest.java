@@ -11,6 +11,11 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
 import static com.codesoom.assignment.ConstantForAuthenticationTest.SECRET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,7 +39,7 @@ class JwtUtilTest {
             @DisplayName("토큰을 반환한다.")
             @ParameterizedTest
             @ValueSource(longs = {1, 3, 15, 500, 5000, 10000, 500000,
-                    1000000, 9999999, 999999999999L,Integer.MAX_VALUE, Long.MAX_VALUE})
+                    1000000, 9999999, 999999999999L, Integer.MAX_VALUE, Long.MAX_VALUE})
             void encode(Long userId) {
                 final String token = jwtUtil.encode(userId);
 
@@ -48,7 +53,7 @@ class JwtUtilTest {
             @DisplayName("예외를 던진다.")
             @ParameterizedTest
             @NullSource
-            @ValueSource(longs = {Long.MIN_VALUE,Integer.MIN_VALUE,  -99999999999L, -999999, -9999, -10, -1, 0})
+            @ValueSource(longs = {Long.MIN_VALUE, Integer.MIN_VALUE, -99999999999L, -999999, -9999, -10, -1, 0})
             void encode(Long userId) {
                 assertThatThrownBy(() -> jwtUtil.encode(userId))
                         .isInstanceOf(NotSupportedUserIdException.class);
@@ -62,21 +67,67 @@ class JwtUtilTest {
         @Nested
         @DisplayName("인자값이 유효한 경우")
         class Context_with_valid_token {
-            private String validToken;
-            private Long userId;
+            List<SessionInfoPair> sessionInfoPairs;
+
 
             @BeforeEach
             void setUp() {
-                userId = 1L;
-                validToken = jwtUtil.encode(userId);
+                sessionInfoPairs = LongStream.range(1, 20)
+                        .mapToObj(index -> new SessionInfoPair(index, jwtUtil.encode(index)))
+                        .collect(Collectors.toList());
+            }
+
+            /**
+             * 유효한 인자값과 토큰 객체
+             */
+            private class SessionInfoPair {
+                private final Long id;
+                private final String token;
+
+                public SessionInfoPair(Long id, String token) {
+                    this.id = id;
+                    this.token = token;
+                }
+
+                public Long getId() {
+                    return id;
+                }
+
+                public String getToken() {
+                    return token;
+                }
+
+                @Override
+                public boolean equals(Object o) {
+                    if (this == o) {
+                        return true;
+                    }
+                    if (!(o instanceof SessionInfoPair)) {
+                        return false;
+                    }
+                    SessionInfoPair that = (SessionInfoPair) o;
+                    return Objects.equals(id, that.id) && Objects.equals(token, that.token);
+                }
+
+                @Override
+                public int hashCode() {
+                    return Objects.hash(id, token);
+                }
             }
 
             @DisplayName("사용자 정보를 반환한다.")
             @Test
             void decode() {
-                final Long decodedUserId = jwtUtil.decode(validToken);
+                for (SessionInfoPair sessionInfoPair : sessionInfoPairs) {
+                    final String token = sessionInfoPair.getToken();
+                    final Long decodedId = jwtUtil.decode(token);
 
-                assertThat(decodedUserId).isEqualTo(userId);
+                    assertThat(decodedId).isEqualTo(sessionInfoPair.getId());
+                    assertThat(new SessionInfoPair(decodedId, jwtUtil.encode(decodedId)))
+                            .isEqualTo(sessionInfoPair);
+
+
+                }
             }
         }
 

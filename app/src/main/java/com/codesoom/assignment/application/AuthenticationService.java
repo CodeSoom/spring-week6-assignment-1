@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -14,10 +15,10 @@ public class AuthenticationService {
     @Value("${jwt.secret}")
     String secret;
 
-    public String login(){
+    public String login(User user){
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.builder()
-                .claim("userId", 1L)
+                .claim("userId", user.getId())
                 .signWith(key)
                 .compact();
     }

@@ -43,9 +43,8 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("이메일이 존재하지 않을 경우")
         class Context_with_not_exist_email{
-
             SessionRequestData reqData = SessionRequestData.builder()
-                    .email("email")
+                    .email("notExistEmail")
                     .password("password")
                     .build();
 
@@ -66,33 +65,28 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("이메일이 존재할 경우")
         class Context_with_exist_email{
-
-            @BeforeEach
-            void setUp() {
-                given(userRepository.existsByEmail(reqData.getEmail())).willReturn(false);
-            }
-
             String email = "email";
             String validPassword = "validPassword";
-            String invalidPassword = "invalidPassword";
 
             SessionRequestData reqData = SessionRequestData.builder()
                     .email(email)
                     .password(validPassword)
                     .build();
 
+
             @Nested
             @DisplayName("패스워드가 옳바르지 않은 경우")
             class Context_with_wrong_password{
+                String invalidPassword = "invalidPassword";
+                User foundUser = User.builder()
+                        .email(email)
+                        .password(invalidPassword)
+                        .build();
 
                 @BeforeEach
                 void setUp() {
                     given(userRepository.findByEmail(reqData.getEmail()))
-                            .willReturn(Optional.of(
-                                    User.builder()
-                                            .email(email)
-                                            .password(invalidPassword)
-                                            .build()));
+                            .willReturn(Optional.of(foundUser));
                 }
 
                 @Test
@@ -106,15 +100,15 @@ class AuthenticationServiceTest {
             @Nested
             @DisplayName("패스워드가 옳바른 경우")
             class Context_with_valid_password{
+                User foundUser = User.builder()
+                        .email(email)
+                        .password(validPassword)
+                        .build();
 
                 @BeforeEach
                 void setUp() {
                     given(userRepository.findByEmail(reqData.getEmail()))
-                            .willReturn(Optional.of(
-                                    User.builder()
-                                            .email(email)
-                                            .password(validPassword)
-                                            .build()));
+                            .willReturn(Optional.of(foundUser));
                 }
 
                 @Test

@@ -84,6 +84,16 @@ class ProductControllerTest {
     }
 
     @Test
+    void listWithoutToken() throws Exception {
+        mockMvc.perform(
+                        get("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("쥐돌이")));
+    }
+
+    @Test
     void deatilWithExsitedProduct() throws Exception {
         mockMvc.perform(
                 get("/products/1")

@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,7 +23,12 @@ public class SessionControllerTest {
     @Autowired
     AuthenticationService authenticationService;
 
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static String VALID_TOKEN = "";
+
+    @BeforeEach
+    void setUp(){
+        VALID_TOKEN = authenticationService.login();
+    }
 
     @Test
     void login() throws Exception {

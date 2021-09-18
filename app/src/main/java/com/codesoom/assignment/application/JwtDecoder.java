@@ -1,6 +1,8 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -22,12 +24,20 @@ public class JwtDecoder {
      *
      * @param token 해석할 토큰
      * @return 클레임
-     * @throws SignatureException 토큰이 유효하지 않은 경우
+     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
      */
-    public Claims decode(String token) throws SignatureException {
-        return Jwts.parserBuilder()
+    public Claims decode(String token) {
+        JwtParser jwtParser = Jwts.parserBuilder()
             .setSigningKey(key)
-            .build()
+            .build();
+
+        try {
+            jwtParser.parseClaimsJws(token);
+        } catch (SignatureException e) {
+            throw new InvalidTokenException();
+        }
+
+        return jwtParser
             .parseClaimsJws(token)
             .getBody();
     }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,7 +79,7 @@ public class JwtDecoderTest {
             @DisplayName("예외를 던진다")
             void it_throws() {
                 assertThatThrownBy(() -> jwtDecoder.decode(invalidToken))
-                    .isInstanceOf(SignatureException.class);
+                    .isInstanceOf(InvalidTokenException.class);
             }
         }
     }

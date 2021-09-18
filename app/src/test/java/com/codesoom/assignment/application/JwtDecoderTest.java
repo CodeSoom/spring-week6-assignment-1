@@ -17,15 +17,19 @@ public class JwtDecoderTest {
 
     private static final String SECRET = "12345678901234567890123456789012";
 
+    private Long userId;
     private String token;
+
     private JwtDecoder jwtDecoder;
 
     @BeforeEach
     void setUp() {
         JwtEncoder jwtEncoder = new JwtEncoder(SECRET);
 
+        userId = 1L;
+
         User user = User.builder()
-            .id(1L)
+            .id(userId)
             .email("sprnd645@gmail.com")
             .password("password")
             .build();
@@ -39,7 +43,6 @@ public class JwtDecoderTest {
     @Nested
     @DisplayName("decode 메서드는")
     class Describe_decode {
-
 
         @Nested
         @DisplayName("올바른 토큰이 주어진 경우")
@@ -58,6 +61,11 @@ public class JwtDecoderTest {
                 Optional<Claims> claims = jwtDecoder.decode(validToken);
 
                 assertThat(claims.isPresent()).isTrue();
+
+                Long userIdFromClaims = claims.get()
+                    .get("userId", Long.class);
+
+                assertThat(userIdFromClaims).isEqualTo(userId);
             }
         }
 

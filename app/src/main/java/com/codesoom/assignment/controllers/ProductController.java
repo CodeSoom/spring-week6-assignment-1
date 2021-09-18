@@ -6,6 +6,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.SignatureException;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -88,9 +89,9 @@ public class ProductController {
         String token = auth.substring("Bearer ".length());
 
         try {
-            Claims decode = jwtDecoder.decode(token);
-            decode.get("userId", Long.class);
-        } catch (RuntimeException re) {
+            Claims claims = jwtDecoder.decode(token);
+            claims.get("userId", Long.class);
+        } catch (SignatureException | NullPointerException e) {
             throw new InvalidTokenException();
         }
     }

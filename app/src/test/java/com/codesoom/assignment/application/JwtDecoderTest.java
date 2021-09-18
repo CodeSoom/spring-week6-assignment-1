@@ -55,7 +55,7 @@ public class JwtDecoderTest {
 
             @Test
             @DisplayName("클레임을 리턴한다")
-            void it_returns_claims() {
+            void it_returns_claims() throws SignatureException {
                 Claims claims = jwtDecoder.decode(validToken);
 
                 assertThat(claims.get("userId", Long.class))
@@ -77,9 +77,8 @@ public class JwtDecoderTest {
             @Test
             @DisplayName("예외를 던진다")
             void it_throws() {
-                assertThatThrownBy(() -> {
-                    jwtDecoder.decode(invalidToken);
-                }).isInstanceOf(SignatureException.class);
+                assertThatThrownBy(() -> jwtDecoder.decode(invalidToken))
+                    .isInstanceOf(SignatureException.class);
             }
         }
     }

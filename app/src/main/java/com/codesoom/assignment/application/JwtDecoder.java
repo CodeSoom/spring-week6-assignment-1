@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class JwtDecoder {
      * @return 클레임
      * @throws InvalidTokenException 토큰이 유효하지 않은 경우
      */
-    public Claims decode(String token) {
+    public Optional<Claims> decode(String token) {
         JwtParser jwtParser = Jwts.parserBuilder()
             .setSigningKey(key)
             .build();
@@ -37,8 +38,8 @@ public class JwtDecoder {
             throw new InvalidTokenException();
         }
 
-        return jwtParser
+        return Optional.ofNullable(jwtParser
             .parseClaimsJws(token)
-            .getBody();
+            .getBody());
     }
 }

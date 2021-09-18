@@ -7,6 +7,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,8 +17,6 @@ public class JwtDecoderTest {
 
     private static final String SECRET = "12345678901234567890123456789012";
 
-    private long id;
-
     private String token;
     private JwtDecoder jwtDecoder;
 
@@ -25,9 +24,8 @@ public class JwtDecoderTest {
     void setUp() {
         JwtEncoder jwtEncoder = new JwtEncoder(SECRET);
 
-        id = 1L;
         User user = User.builder()
-            .id(id)
+            .id(1L)
             .email("sprnd645@gmail.com")
             .password("password")
             .build();
@@ -57,10 +55,9 @@ public class JwtDecoderTest {
             @Test
             @DisplayName("클레임을 리턴한다")
             void it_returns_claims() throws SignatureException {
-                Claims claims = jwtDecoder.decode(validToken);
+                Optional<Claims> claims = jwtDecoder.decode(validToken);
 
-                assertThat(claims.get("userId", Long.class))
-                    .isEqualTo(id);
+                assertThat(claims.isPresent()).isTrue();
             }
         }
 

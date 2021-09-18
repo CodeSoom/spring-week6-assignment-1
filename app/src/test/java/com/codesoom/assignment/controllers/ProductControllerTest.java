@@ -22,6 +22,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -60,11 +61,11 @@ class ProductControllerTest {
         Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
         given(jwtDecoder.decode(VALID_TOKEN))
-            .willReturn(Jwts.parserBuilder()
+            .willReturn(Optional.of(Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(VALID_TOKEN)
-                .getBody()
+                .getBody())
             );
     }
 

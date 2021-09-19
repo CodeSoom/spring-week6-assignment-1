@@ -3,7 +3,8 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginInfoData;
-import com.codesoom.assignment.errors.InvalidLoginInfoException;
+import com.codesoom.assignment.errors.InvalidEmailException;
+import com.codesoom.assignment.errors.InvalidPasswordException;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 
@@ -25,9 +26,9 @@ public class AuthenticationService {
 
     public String login(final LoginInfoData loginInfoData) {
         final User user = userRepository.findByEmail(loginInfoData.getEmail())
-            .orElseThrow(InvalidLoginInfoException::new);
+            .orElseThrow(InvalidEmailException::new);
         if (!user.authenticate(loginInfoData.getPassword())) {
-            throw new InvalidLoginInfoException();
+            throw new InvalidPasswordException();
         }
         return jwtUtil.encode(user.getId());
     }

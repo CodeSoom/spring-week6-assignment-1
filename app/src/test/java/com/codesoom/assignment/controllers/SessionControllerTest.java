@@ -13,8 +13,13 @@ import static com.codesoom.assignment.utils.JwtUtilTest.VALID_TOKEN;
 import com.codesoom.assignment.application.AuthenticationService;
 
 import com.codesoom.assignment.dto.LoginInfoData;
-import com.codesoom.assignment.errors.InvalidLoginInfoException;
-import org.junit.jupiter.api.*;
+import com.codesoom.assignment.errors.InvalidEmailException;
+import com.codesoom.assignment.errors.InvalidPasswordException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,8 +34,7 @@ public class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
-    @BeforeEach
-    void beforeEach() {
+    @BeforeEach void beforeEach() {
         reset(authenticationService);
     }
 
@@ -51,22 +55,48 @@ public class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("로그인 정보가 잘못 된 경우")
-        public final class Context_invalidLoginInfo {
+        @DisplayName("이메일에 해당하는 사용자가 없는경우")
+        public final class Context_invalidEmail {
             @BeforeEach
             private void beforeEach() {
                 given(authenticationService.login(any(LoginInfoData.class)))
-                    .willThrow(new InvalidLoginInfoException());
+                    .willThrow(new InvalidEmailException());
             }
 
             @Test
-            @DisplayName("요청이 잘못되었음을 알려준다.")
+            @DisplayName("이메일에 해당하는 사용자가 없음을 알려준다.")
             public void it_notify_bad_request() throws Exception {
                 mockMvc.perform(
                         post("/session")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{\"email\":\"invalid@example.com\",\"password\":\"test\"}")
-                    ).andExpect(status().isBadRequest());
+                    ).andExpect(status().isNotFound());
+            }
+
+            @AfterEach
+            private void afterEach() {
+                verify(authenticationService)
+                    .login(any(LoginInfoData.class));
+            }
+        }
+
+        @Nested
+        @DisplayName("비밀번호가 일치하지 않는경우")
+        public final class Context_invalidPassword {
+            @BeforeEach
+            private void beforeEach() {
+                given(authenticationService.login(any(LoginInfoData.class)))
+                    .willThrow(new InvalidPasswordException());
+            }
+
+            @Test
+            @DisplayName("비밀번호가 일치하지 않음을 알려준다.®")
+            public void it_notify_bad_request() throws Exception {
+                mockMvc.perform(
+                    post("/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"invalid@example.com\",\"password\":\"test\"}")
+                ).andExpect(status().isBadRequest());
             }
 
             @AfterEach

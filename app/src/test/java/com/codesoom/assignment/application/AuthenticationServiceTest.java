@@ -3,30 +3,22 @@ package com.codesoom.assignment.application;
 import static com.codesoom.assignment.domain.UserRepositoryTest.INVALID_EMAIL;
 import static com.codesoom.assignment.domain.UserTest.INVALID_PASSWORD;
 import static com.codesoom.assignment.domain.UserTest.USER;
-import static com.codesoom.assignment.domain.UserTest.USER_EMAIL;
-import static com.codesoom.assignment.domain.UserTest.USER_PASSWORD;
 import static com.codesoom.assignment.utils.JwtUtilTest.SECRET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static com.codesoom.assignment.utils.JwtUtilTest.VALID_TOKEN;
 import static com.codesoom.assignment.utils.JwtUtilTest.INVALID_TOKEN;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginInfoData;
-import com.codesoom.assignment.errors.InvalidLoginInfoException;
+import com.codesoom.assignment.errors.InvalidEmailException;
+import com.codesoom.assignment.errors.InvalidPasswordException;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.infra.JpaUserRepository;
 import com.codesoom.assignment.utils.JwtUtil;
 
-import org.apache.juli.logging.Log;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.stream.Stream;
 
 @DataJpaTest
 @DisplayName("AuthenticationService 클래스")
@@ -71,11 +63,13 @@ public class AuthenticationServiceTest {
                     .build();
             }
 
+            protected abstract Class<?> subjectException();
+
             @Test
             @DisplayName("InvalidLoginInfoException을 던진다.")
             public void it_throws_invalid_login_info_exception() {
                 assertThatThrownBy(() -> subjectLogin(loginInfoData))
-                    .isInstanceOf(InvalidLoginInfoException.class);
+                    .isInstanceOf(subjectException());
             }
         }
 
@@ -85,6 +79,11 @@ public class AuthenticationServiceTest {
             public Context_invalidEmail() {
                 super(INVALID_EMAIL, USER.getPassword());
             }
+
+            @Override
+            protected Class<?> subjectException() {
+                return InvalidEmailException.class;
+            }
         }
 
         @Nested
@@ -92,6 +91,11 @@ public class AuthenticationServiceTest {
         public final class Context_invalidPassword extends Context_invalidLogin {
             public Context_invalidPassword() {
                 super(USER.getEmail(), INVALID_PASSWORD);
+            }
+
+            @Override
+            protected Class<?> subjectException() {
+                return InvalidPasswordException.class;
             }
         }
 
@@ -109,6 +113,11 @@ public class AuthenticationServiceTest {
                             user.destroy();
                             jpaUserRepository.save(user);
                         });
+            }
+
+            @Override
+            protected Class<?> subjectException() {
+                return InvalidPasswordException.class;
             }
         }
 

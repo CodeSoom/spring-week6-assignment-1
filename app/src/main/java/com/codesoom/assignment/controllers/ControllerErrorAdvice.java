@@ -18,7 +18,7 @@ public class ControllerErrorAdvice {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler({ UserNotFoundException.class, InvalidEmailException.class })
     public ErrorResponse handleUserNotFound() {
         return new ErrorResponse("User not found");
     }
@@ -31,11 +31,13 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
-    public void handleInvalidAccessToken() {
+    public ErrorResponse handleInvalidAccessToken() {
+        return new ErrorResponse("Invalid access token.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(InvalidLoginInfoException.class)
-    public void handleInvalidLoginInfo() {
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ErrorResponse handleInvalidPasswordInfo() {
+        return new ErrorResponse("Invalid password.");
     }
 }

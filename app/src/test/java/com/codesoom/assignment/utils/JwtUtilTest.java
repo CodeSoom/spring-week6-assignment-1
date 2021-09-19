@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -31,15 +33,23 @@ class JwtUtilTest {
         @DisplayName("유효한 id가 주어지면")
         class Context_with_valid_id {
 
-            private final Long VALID_ID = 1L;
+            private List<Long> givenValidIds;
+
+            @BeforeEach
+            void prepare() {
+                givenValidIds = List.of(0L, 1L, 999999L, Long.MAX_VALUE, Long.MIN_VALUE);
+            }
 
             @Test
             @DisplayName("암호화된 토큰을 반환한다.")
             void it_return_token() {
-                String token = jwtUtil.encode(VALID_ID);
-                Claims claims = jwtUtil.decode(token);
 
-                assertThat(claims.get("userId", Long.class)).isEqualTo(VALID_ID);
+                for(Long id : givenValidIds){
+                    String token = jwtUtil.encode(id);
+                    Claims claims = jwtUtil.decode(token);
+
+                    assertThat(claims.get("userId", Long.class)).isEqualTo(id);
+                }
             }
         }
 
@@ -78,29 +88,27 @@ class JwtUtilTest {
         }
 
         @Nested
-        @DisplayName("Null 값이 주어지면")
-        class Context_with_null {
+        @DisplayName("유효하지 않는 데이터가 주어지면")
+        class Context_with_invalid_valid {
 
             private final String NULL_VALUE = null;
+            private List<String> givenValues;
 
-            @Test
-            @DisplayName("InvalidAccessTokenException을 던집니다.")
-            void it_throw_InvalidAccessTokenException() {
-                assertThatThrownBy(() -> jwtUtil.decode(NULL_VALUE))
-                        .isInstanceOf(InvalidAccessTokenException.class);
+            @BeforeEach
+            void prepare() {
+                givenValues = List.of("", " ");
             }
-        }
-
-        @Nested
-        @DisplayName("빈 값이 주어지면")
-        class Context_with_blank {
-
-            private final String BLANK_VALUE = " ";
 
             @Test
             @DisplayName("InvalidAccessTokenException을 던집니다.")
             void it_throw_InvalidAccessTokenException() {
-                assertThatThrownBy(() -> jwtUtil.decode(BLANK_VALUE))
+
+                for(String value: givenValues){
+                    assertThatThrownBy(() -> jwtUtil.decode(value))
+                            .isInstanceOf(InvalidAccessTokenException.class);
+                }
+
+                assertThatThrownBy(() -> jwtUtil.decode(NULL_VALUE))
                         .isInstanceOf(InvalidAccessTokenException.class);
             }
         }

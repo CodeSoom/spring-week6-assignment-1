@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+/**
+ * @see lombok.config
+ */
 @Entity
 @Getter
 @Builder

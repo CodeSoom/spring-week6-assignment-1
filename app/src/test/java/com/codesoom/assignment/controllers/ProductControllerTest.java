@@ -32,6 +32,7 @@ class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
     private static final String BLANK_TOKEN = "";
+    private static final long LOGIN_ID = 1L;
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,7 +46,7 @@ class ProductControllerTest {
     @BeforeEach
     void setUp() {
         Product product = Product.builder()
-                .id(1L)
+                .id(LOGIN_ID)
                 .name("쥐돌이")
                 .maker("냥이월드")
                 .price(5000)
@@ -53,7 +54,7 @@ class ProductControllerTest {
 
         given(productService.getProducts()).willReturn(List.of(product));
 
-        given(productService.getProduct(1L)).willReturn(product);
+        given(productService.getProduct(LOGIN_ID)).willReturn(product);
 
         given(productService.getProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
@@ -61,7 +62,7 @@ class ProductControllerTest {
         given(productService.createProduct(any(ProductData.class)))
                 .willReturn(product);
 
-        given(productService.updateProduct(eq(1L), any(ProductData.class)))
+        given(productService.updateProduct(eq(LOGIN_ID), any(ProductData.class)))
                 .will(invocation -> {
                     Long id = invocation.getArgument(0);
                     ProductData productData = invocation.getArgument(1);
@@ -79,7 +80,9 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
 
-        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+        given(authenticationService.login(LOGIN_ID)).willReturn(VALID_TOKEN);
+
+        given(authenticationService.parseToken(VALID_TOKEN)).willReturn(LOGIN_ID);
 
         given(authenticationService.parseToken(INVALID_TOKEN)).willThrow(InvalidTokenException.class);
 

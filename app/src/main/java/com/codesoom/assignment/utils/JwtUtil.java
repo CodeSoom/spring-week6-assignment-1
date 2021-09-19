@@ -4,6 +4,7 @@ import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,7 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(accessToken)
                     .getBody();
-        } catch (Exception e) {
+        } catch (SignatureException | IllegalArgumentException e) {
             throw new InvalidTokenException(accessToken);
         }
     }

@@ -23,7 +23,7 @@ class JwtUtilTest {
     }
 
     @Test
-    @DisplayName("JWT 암호화")
+    @DisplayName("User Id를 JWT 암호화를 사용하여 Access Token을 반환한다")
     void encode() {
         // when
         String accessToken = jwtUtil.encode(USER_ID);
@@ -33,7 +33,7 @@ class JwtUtilTest {
     }
 
     @Test
-    @DisplayName("JWT 복호화")
+    @DisplayName("Access Token을 JWT로 복호화 하여 User Id를 반환한다")
     void decodeWithValidToken() {
         // when
         Claims claims = jwtUtil.decode(ACCESS_TOKEN);

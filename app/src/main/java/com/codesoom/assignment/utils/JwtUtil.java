@@ -24,7 +24,7 @@ public class JwtUtil {
      *
      * @param userId 인코딩할 유저 Id
      * @return jwt로 인코딩된 token
-     * @throws NotSupportedIdException 유효하지 않은 userId이 전달되는 경우 던집니다.
+     * @throws NotSupportedIdException 유효하지 않은 userId이 전달되는 경우
      */
     public String encode(Long userId) {
         if(!checkValidUserId(userId)) {
@@ -41,7 +41,7 @@ public class JwtUtil {
      *
      * @param token 암호화된 token
      * @return claim
-     * @throws InvalidAccessTokenException token이 유효하지 않은 값인 경우 던집니다.
+     * @throws InvalidAccessTokenException token이 유효하지 않은 값인 경우
      */
     public Claims decode(String token) {
         if(!checkValidToken(token)) {
@@ -60,20 +60,20 @@ public class JwtUtil {
     }
 
     /**
-     * userId가 인코딩을 위한 값인지 확인합니다.
+     * userId 값이 인코딩이 가능하다면 true, 그렇지 않다면 false를 리턴합니다.
      *
      * @param userId 유저의 id
-     * @return 유효한 유저 id일 경우 true, 아닌 경우 false
+     * @return 유저 id가 유효한 경우 true, 아닌 경우 false를 리턴합니다.
      */
     public boolean checkValidUserId(Long userId) {
         return userId != null;
     }
 
     /**
-     * toekn이 파싱을 위해 유효한 값인지 확인합니다.
+     * toekn이 파싱 가능한 값이라면 true, 아니면 false를 리턴합니다.
      *
      * @param token 검사할 token
-     * @return 유효한 token일 경우 true, 아닌 경우 false
+     * @return 파싱 가능한 token일 경우 true, 아닌 경우 false
      */
     public boolean checkValidToken(String token) {
         if(token == null) {

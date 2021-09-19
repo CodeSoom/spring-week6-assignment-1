@@ -21,8 +21,7 @@ import static org.mockito.Mockito.mock;
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789010";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "invalid";
     public static final String INVALID_EMAIL = "invalidEmail";
 
     private AuthenticationService authenticationService;
@@ -39,12 +38,6 @@ class AuthenticationServiceTest {
     @Nested
     @DisplayName("login 메소드는")
     class Describe_login{
-        /*
-          유효할 때와 아닐 때의 조건을 given으로 설정하고 있는 구조이어서 대신 reqData를 가장 상단에 선언하여 하나만 사용하도록 처리하였습니다.
-          지금 테스트 구조가 가독성이 별로일까요?
-
-          추가 질문 DTO를 어디까지 만들어야 하는가.. cause User return
-         */
         String email = "email";
         String validPassword = "validPassword";
 

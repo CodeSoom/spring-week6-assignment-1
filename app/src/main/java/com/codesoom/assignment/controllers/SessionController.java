@@ -15,16 +15,16 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/session")
 public class SessionController {
-    private AuthenticationService authenticationService;
-    SessionController(AuthenticationService authenticationService){
+    @Autowired
+    AuthenticationService authenticationService;
+    /*SessionController(AuthenticationService authenticationService){
         this.authenticationService = authenticationService;
-    }
-
+    }*/
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String login(@Valid User user) {
-        String accessToken = authenticationService.login(user);
+    public String login(@Valid User inputUser) {
+        String accessToken = authenticationService.login(inputUser);
         return accessToken;
     }
 }

@@ -1,7 +1,11 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +27,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SessionControllerTest {
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     AuthenticationService authenticationService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    JwtUtil jwtUtil;
 
     private static String VALID_TOKEN = "";
-
     @BeforeEach
     void setUp(){
-        User user = new User();
-        user.builder().id(1l);
-        VALID_TOKEN = authenticationService.login(user);
+        System.out.println("== set up ==");
+        if(!userService.checkExistUserByEmail("kiheo@gmail.com")){
+            userService.registerUser(UserRegistrationData.builder()
+                    .email("kiheo@gmail.com")
+                    .name("kiheo")
+                    .password("1234")
+                    .build());
+            VALID_TOKEN = authenticationService.login(userService.findActiveUserByEmail("kiheo@gmail.com"));
+        }
     }
+
     @Test
     void login() throws Exception {
         mockMvc.perform(post("/session")
-                        .content("{\"userId\":1}")
+                        .content("{\"email\":\"kiheo@gmail.com\"}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(".")));
@@ -53,6 +66,6 @@ public class SessionControllerTest {
 
     //@Test
     void decode(){
-        authenticationService.decode(VALID_TOKEN);
+        jwtUtil.decode(VALID_TOKEN);
     }
 }

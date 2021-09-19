@@ -1,34 +1,36 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.PasswordInvalidException;
+import com.codesoom.assignment.errors.UserEmailNotFoundException;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.springframework.stereotype.Service;
-
-import java.security.Key;
 
 @Service
 public class AuthenticationService {
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    @Value("${jwt.secret}")
-    String secret;
-
-    public String login(User user){
-        Key key = Keys.hmacShaKeyFor(secret.getBytes());
-        return Jwts.builder()
-                .claim("userId", user.getId())
-                .signWith(key)
-                .compact();
+    public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
-    public Claims decode(String token){
-        Key key = Keys.hmacShaKeyFor(secret.getBytes());
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    /**
+     * 입력된 user 정보가 일치하면 토큰 반환
+     * @param 입력 받은 user정보
+     * @return jwt 토큰
+     * @Throw 입력된 email의 User정보 존재여부 확인
+     * @Throw 입력된 email의 User정보 패스워드 일치확인
+     *
+     */
+    public String login(User inputUser){
+        User checkUser = userRepository.findByEmail(inputUser.getEmail())
+                .orElseThrow(() -> new UserEmailNotFoundException(inputUser.getEmail()));
+        if(!inputUser.getPassword().equals(checkUser.getPassword())){
+            throw new PasswordInvalidException();
+        }
+        return jwtUtil.encode(inputUser.getId());
     }
 }

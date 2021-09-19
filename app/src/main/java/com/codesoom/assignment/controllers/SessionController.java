@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/session")
 public class SessionController {
@@ -28,7 +30,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login(@RequestBody SessionRequestData sessionRequestData) {
+    public SessionResponseData login(@RequestBody @Valid SessionRequestData sessionRequestData) {
 
         String accessToken = authenticationService.login(sessionRequestData);
         return SessionResponseData.builder()

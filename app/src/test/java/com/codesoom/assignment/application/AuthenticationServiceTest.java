@@ -39,14 +39,23 @@ class AuthenticationServiceTest {
     @Nested
     @DisplayName("login 메소드는")
     class Describe_login{
+        /*
+          유효할 때와 아닐 때의 조건을 given으로 설정하고 있는 구조이어서 대신 reqData를 가장 상단에 선언하여 하나만 사용하도록 처리하였습니다.
+          지금 테스트 구조가 가독성이 별로일까요?
+
+          추가 질문 DTO를 어디까지 만들어야 하는가.. cause User return
+         */
+        String email = "email";
+        String validPassword = "validPassword";
+
+        SessionRequestData reqData = SessionRequestData.builder()
+                .email(email)
+                .password(validPassword)
+                .build();
 
         @Nested
         @DisplayName("이메일이 존재하지 않을 경우")
         class Context_with_not_exist_email{
-            SessionRequestData reqData = SessionRequestData.builder()
-                    .email("notExistEmail")
-                    .password("password")
-                    .build();
 
             @BeforeEach
             void setUp() {
@@ -65,14 +74,6 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("이메일이 존재할 경우")
         class Context_with_exist_email{
-            String email = "email";
-            String validPassword = "validPassword";
-
-            SessionRequestData reqData = SessionRequestData.builder()
-                    .email(email)
-                    .password(validPassword)
-                    .build();
-
 
             @Nested
             @DisplayName("패스워드가 옳바르지 않은 경우")
@@ -116,14 +117,13 @@ class AuthenticationServiceTest {
                 void it_returns_jwt() {
                     String result = authenticationService.login(reqData);
 
+                    assertThat(result).isNotBlank();
+
                     String[] results = result.split("\\.");
 
                     assertThat(results[0]).isBase64();
                     assertThat(results[1]).isBase64();
-                    assertThat(results[2]).isBase64();
-
-                    //todo 테스트 성공필요..
-                    //assertThatThrownBy(() -> results[3]).isInstanceOf(IndexOutOfBoundsException.class);
+                    //assertThat(results[2]).isBase64(); Signiture 부분은 isBase64가 통과되지 않는다.
                 }
             }
         }

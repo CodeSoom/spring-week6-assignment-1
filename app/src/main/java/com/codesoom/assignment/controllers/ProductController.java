@@ -29,6 +29,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final AuthenticationService authenticationService;
+    // JwtUtil을 사용하면 의존성 주입과정에서 곤란한 게 있어 authService를 주입
 
     public ProductController(ProductService productService, AuthenticationService authenticationService) {
         this.productService = productService;
@@ -53,23 +54,34 @@ public class ProductController {
     ) {
         String accessToken = authorization.substring("Bearer ".length());
 
-        Long id = authenticationService.parseToken(accessToken);
+        Long userId = authenticationService.parseToken(accessToken);
+
         return productService.createProduct(productData);
     }
 
     @PatchMapping("{id}")
     public Product update(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
+        String accessToken = authorization.substring("Bearer ".length());
+
+        Long userid = authenticationService.parseToken(accessToken);
+
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
+        String accessToken = authorization.substring("Bearer ".length());
+
+        authenticationService.parseToken(accessToken);
+
         productService.deleteProduct(id);
     }
 

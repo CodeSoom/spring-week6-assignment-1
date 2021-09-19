@@ -2,7 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.errors.EmailNotFoundException;
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -48,7 +48,7 @@ public class ControllerErrorAdvice {
 
     //스프링 시큐리티를 통해 정리
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(InvalidAccessTokenException.class)
+    @ExceptionHandler(InvalidTokenException.class)
     public void handleInvalidAccessTokenException() {
 
     }

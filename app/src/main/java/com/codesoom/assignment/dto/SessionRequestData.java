@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SessionRequestData {
+
     @NotBlank
     @Size(min = 3)
     @Mapping("email")

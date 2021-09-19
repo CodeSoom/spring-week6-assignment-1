@@ -4,12 +4,9 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.errors.EmailNotFoundException;
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
-import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.errors.WrongPasswordException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,12 +41,7 @@ public class AuthenticationService {
 
 
     public Long parseToken(String accessToken) {
-        try {
-            Claims claims = jwtUtil.decode(accessToken);
-            return claims.get("userId", Long.class);
-
-        } catch (SignatureException e) {
-            throw new InvalidAccessTokenException(accessToken);
-        }
+        Claims claims = jwtUtil.decode(accessToken);
+        return claims.get("userId", Long.class);
     }
 }

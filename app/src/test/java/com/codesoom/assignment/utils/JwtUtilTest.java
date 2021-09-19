@@ -12,6 +12,7 @@ public class JwtUtilTest {
     public static final String SECRET = "01234567890123456789012345678912";
     public static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.Vid3sIDrCUySUo7pLyfNpqGaAO3kI3FgGMWyRX11sRE";
     public static final String INVALID_TOKEN = VALID_TOKEN + "INVALID";
+    public static final Long USER_ID = 1L;
 
     private final JwtUtil jwtUtil;
 
@@ -21,7 +22,7 @@ public class JwtUtilTest {
 
     @Test
     void encode() {
-        final String token = jwtUtil.encode(1L);
+        final String token = jwtUtil.encode(USER_ID);
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 
@@ -40,6 +41,6 @@ public class JwtUtilTest {
     @Test
     void decodeWithValidToken() {
         Claims claims = jwtUtil.decode(VALID_TOKEN);
-        assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
+        assertThat(claims.get("userId", Long.class)).isEqualTo(USER_ID);
     }
 }

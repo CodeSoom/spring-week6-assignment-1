@@ -90,7 +90,7 @@ public class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("비밀번호가 일치하지 않음을 알려준다.®")
+            @DisplayName("비밀번호가 일치하지 않음을 알려준다.")
             public void it_notify_bad_request() throws Exception {
                 mockMvc.perform(
                     post("/session")

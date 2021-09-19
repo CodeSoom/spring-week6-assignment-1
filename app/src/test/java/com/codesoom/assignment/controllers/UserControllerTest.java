@@ -1,10 +1,14 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.UserService;
+import com.codesoom.assignment.config.WebConfig;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.infra.AuthenticationPrincipalArgumentResolver;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +17,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.codesoom.assignment.ConstantForAuthenticationTest.EMAIL;
+import static com.codesoom.assignment.ConstantForAuthenticationTest.NAME;
+import static com.codesoom.assignment.ConstantForAuthenticationTest.PASSWORD;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -30,11 +40,33 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
+    @MockBean
+    private WebConfig webConfig;
+
+    @MockBean
+    private AuthenticationPrincipalArgumentResolver authenticationPrincipalArgumentResolver;
+
+    private UserRegistrationData userRegistrationData;
+
+    private ObjectMapper objectMapper;
+
     @BeforeEach
     void setUp() {
+        objectMapper = new ObjectMapper();
+
+        userRegistrationData = UserRegistrationData.builder()
+                .name(NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .build();
+
         given(userService.registerUser(any(UserRegistrationData.class)))
                 .will(invocation -> {
                     UserRegistrationData registrationData = invocation.getArgument(0);
+                    if (registrationData.equals(userRegistrationData)) {
+                        throw new UserEmailDuplicationException(EMAIL);
+                    }
+
                     return User.builder()
                             .id(13L)
                             .email(registrationData.getEmail())
@@ -65,11 +97,11 @@ class UserControllerTest {
     @Test
     void registerUserWithValidAttributes() throws Exception {
         mockMvc.perform(
-                post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"tester@example.com\"," +
-                                "\"name\":\"Tester\",\"password\":\"test\"}")
-        )
+                        post("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"email\":\"tester@example.com\"," +
+                                        "\"name\":\"Tester\",\"password\":\"test\"}")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(
                         containsString("\"id\":13")
@@ -87,20 +119,32 @@ class UserControllerTest {
     @Test
     void registerUserWithInvalidAttributes() throws Exception {
         mockMvc.perform(
-                post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}")
-        )
+                        post("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{}")
+                )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void registerUserWithDuplicatedEmail() throws Exception {
+        final String content = objectMapper.writeValueAsString(userRegistrationData);
+        mockMvc.perform(
+                        post("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("User's email address is already existed"));
     }
 
     @Test
     void updateUserWithValidAttributes() throws Exception {
         mockMvc.perform(
-                patch("/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"TEST\",\"password\":\"test\"}")
-        )
+                        patch("/users/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"TEST\",\"password\":\"test\"}")
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().string(
                         containsString("\"id\":1")
@@ -115,20 +159,20 @@ class UserControllerTest {
     @Test
     void updateUserWithInvalidAttributes() throws Exception {
         mockMvc.perform(
-                patch("/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"password\":\"\"}")
-        )
+                        patch("/users/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"\",\"password\":\"\"}")
+                )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void updateUserWithNotExsitedId() throws Exception {
         mockMvc.perform(
-                patch("/users/100")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"TEST\",\"password\":\"TEST\"}")
-        )
+                        patch("/users/100")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"TEST\",\"password\":\"TEST\"}")
+                )
                 .andExpect(status().isNotFound());
 
         verify(userService)

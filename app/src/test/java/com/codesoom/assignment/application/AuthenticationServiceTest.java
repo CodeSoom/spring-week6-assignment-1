@@ -4,6 +4,7 @@ import static com.codesoom.assignment.domain.UserRepositoryTest.INVALID_EMAIL;
 import static com.codesoom.assignment.domain.UserTest.INVALID_PASSWORD;
 import static com.codesoom.assignment.domain.UserTest.USER;
 import static com.codesoom.assignment.utils.JwtUtilTest.SECRET;
+import static com.codesoom.assignment.utils.JwtUtilTest.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static com.codesoom.assignment.utils.JwtUtilTest.VALID_TOKEN;
 import static com.codesoom.assignment.utils.JwtUtilTest.INVALID_TOKEN;
@@ -133,7 +134,7 @@ public class AuthenticationServiceTest {
     void parseTokenWithValidToken() {
         Long userId = authenticationService.parseToken(VALID_TOKEN);
 
-        assertThat(userId).isEqualTo(1L);
+        assertThat(userId).isEqualTo(USER_ID);
     }
 
     @Test

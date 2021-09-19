@@ -7,6 +7,9 @@ import com.codesoom.assignment.errors.InvalidTokenException;
 import org.junit.jupiter.api.Test;
 
 import io.jsonwebtoken.Claims;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.data.repository.query.Param;
 
 public class JwtUtilTest {
     public static final String SECRET = "01234567890123456789012345678912";
@@ -26,16 +29,19 @@ public class JwtUtilTest {
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 
+    @ParameterizedTest
+    @CsvSource(
+        value = {"null", "''", "'   '"}, nullValues = {"null"}
+    )
+    void decodeWithEmptyToken(final String token) {
+        assertThatThrownBy(() -> jwtUtil.decode(token))
+                .isInstanceOf(InvalidTokenException.class);
+    }
+
     @Test
     void decodeWithInvalidToken() {
         assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
             .isInstanceOf(InvalidTokenException.class);
-        assertThatThrownBy(() -> jwtUtil.decode(null))
-                .isInstanceOf(InvalidTokenException.class);
-        assertThatThrownBy(() -> jwtUtil.decode(""))
-                .isInstanceOf(InvalidTokenException.class);
-        assertThatThrownBy(() -> jwtUtil.decode("   "))
-                .isInstanceOf(InvalidTokenException.class);
     }
 
     @Test

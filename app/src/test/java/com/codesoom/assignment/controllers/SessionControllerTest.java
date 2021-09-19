@@ -35,17 +35,22 @@ public class SessionControllerTest {
     JwtUtil jwtUtil;
 
     private static String VALID_TOKEN = "";
+    private static String TEST_EMAIL = "kiheo@gmail.com";
+    private static String TEST_NAME = "kiheo";
+    private static String TEST_PASSWORD = "1234";
     @BeforeEach
     void setUp(){
         System.out.println("== set up ==");
-        if(!userService.checkExistUserByEmail("kiheo@gmail.com")){
+        if(!userService.checkExistUserByEmail(TEST_EMAIL)){
+            System.out.println("== set up1 ==");
             userService.registerUser(UserRegistrationData.builder()
-                    .email("kiheo@gmail.com")
-                    .name("kiheo")
-                    .password("1234")
+                    .email(TEST_EMAIL)
+                    .name(TEST_NAME)
+                    .password(TEST_PASSWORD)
                     .build());
-            VALID_TOKEN = authenticationService.login(userService.findActiveUserByEmail("kiheo@gmail.com"));
         }
+        VALID_TOKEN = authenticationService.login(userService.findActiveUserByEmail(TEST_EMAIL));
+        System.out.println(VALID_TOKEN);
     }
 
     @Test

@@ -28,8 +28,8 @@ public class AuthenticationService {
      *
      * @param userLoginData 로그인에 필요한 User 정보
      * @return access token
-     * @throws UserNotFoundException User 정보가 존재하지 않는 경우 던집니다.
-     * @throws LoginNotMatchPasswordException User의 password가 일치하지 않는 경우 던집니다.
+     * @throws UserNotFoundException User 정보가 찾을 수 없는 경우 던집니다.
+     * @throws LoginNotMatchPasswordException 로그인 시도에 사용한 password가 일치하지 않는 경우 던집니다.
      */
     public String login(UserLoginData userLoginData) {
         User findedUser = userRepository.findByEmail(userLoginData.getEmail())

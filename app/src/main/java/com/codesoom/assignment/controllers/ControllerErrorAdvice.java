@@ -23,11 +23,13 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("User not found");
     }
 
+    /*
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserEmailDuplicationException.class)
     public ErrorResponse handleUserEmailIsAlreadyExisted() {
         return new ErrorResponse("User's email address is already existed");
     }
+     */
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)

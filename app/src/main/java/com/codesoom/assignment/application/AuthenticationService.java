@@ -37,11 +37,7 @@ public class AuthenticationService {
         if (accessToken == null || accessToken.isBlank()) {
             throw new InvalidTokenException(accessToken);
         }
-        try {
-            Claims claims = jwtUtil.decode(accessToken);
-            return claims.get("userId", Long.class);
-        } catch (SignatureException exception) {
-            throw new InvalidTokenException(accessToken);
-        }
+        Claims claims = jwtUtil.decode(accessToken);
+        return claims.get("userId", Long.class);
     }
 }

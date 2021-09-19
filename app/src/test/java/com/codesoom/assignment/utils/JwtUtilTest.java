@@ -1,5 +1,7 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.config.WebConfig;
+import com.codesoom.assignment.controllers.SessionController;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.NotSupportedUserIdException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Objects;
@@ -81,37 +84,12 @@ class JwtUtilTest {
              * 유효한 인자값과 토큰 객체
              */
             private class SessionInfoPair {
-                private final Long id;
-                private final String token;
+                final Long id;
+                final String token;
 
                 public SessionInfoPair(Long id, String token) {
                     this.id = id;
                     this.token = token;
-                }
-
-                public Long getId() {
-                    return id;
-                }
-
-                public String getToken() {
-                    return token;
-                }
-
-                @Override
-                public boolean equals(Object o) {
-                    if (this == o) {
-                        return true;
-                    }
-                    if (!(o instanceof SessionInfoPair)) {
-                        return false;
-                    }
-                    SessionInfoPair that = (SessionInfoPair) o;
-                    return Objects.equals(id, that.id) && Objects.equals(token, that.token);
-                }
-
-                @Override
-                public int hashCode() {
-                    return Objects.hash(id, token);
                 }
             }
 
@@ -119,14 +97,10 @@ class JwtUtilTest {
             @Test
             void decode() {
                 for (SessionInfoPair sessionInfoPair : sessionInfoPairs) {
-                    final String token = sessionInfoPair.getToken();
+                    final String token = sessionInfoPair.token;
                     final Long decodedId = jwtUtil.decode(token);
 
-                    assertThat(decodedId).isEqualTo(sessionInfoPair.getId());
-                    assertThat(new SessionInfoPair(decodedId, jwtUtil.encode(decodedId)))
-                            .isEqualTo(sessionInfoPair);
-
-
+                    assertThat(decodedId).isEqualTo(sessionInfoPair.id);
                 }
             }
         }

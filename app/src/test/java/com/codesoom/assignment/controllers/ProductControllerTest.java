@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -251,6 +252,7 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
             delete("/products/1")
+                .header("Authorization", "Bearer " + VALID_TOKEN)
         )
             .andExpect(status().isNoContent());
         verify(productService).deleteProduct(1L);
@@ -260,8 +262,38 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
             delete("/products/1000")
+                .header("Authorization", "Bearer " + VALID_TOKEN)
         )
             .andExpect(status().isNotFound());
         verify(productService).deleteProduct(1000L);
+    }
+
+    @Test
+    void destroyWithValidAccessToken() throws Exception {
+        mockMvc.perform(
+                delete("/products/1000")
+                    .header("Authorization", "Bearer " + VALID_TOKEN)
+            )
+            .andExpect(status().isNotFound());
+        verify(productService).deleteProduct(1000L);
+    }
+
+    @Test
+    void destroyWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+                delete("/products/1")
+                    .header("Authorization", "Bearer " + INVALID_TOKEN)
+            )
+            .andExpect(status().isUnauthorized());
+        verify(productService, never()).deleteProduct(1000L);
+    }
+
+    @Test
+    void destroyWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                delete("/products/1")
+            )
+            .andExpect(status().isUnauthorized());
+        verify(productService, never()).deleteProduct(1000L);
     }
 }

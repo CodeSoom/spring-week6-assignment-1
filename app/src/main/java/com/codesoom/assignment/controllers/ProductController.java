@@ -62,14 +62,16 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-        @PathVariable Long id
+        @PathVariable Long id,
+        @RequestHeader("Authorization") final String authorization
     ) {
+        final String accessToken = authorization.substring("Bearer ".length());
+        final Long userId = authenticationService.parseToken(accessToken);
         productService.deleteProduct(id);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(MissingRequestHeaderException.class)
     public void handleMissingRequestHeader() {
-        //
     }
 }

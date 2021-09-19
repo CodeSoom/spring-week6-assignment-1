@@ -26,7 +26,7 @@ public class AuthenticationService {
     /**
      * User 로그인 정보를 확인해 access token 발급합니다.
      *
-     * @param userLoginData email과 password를 담은 User 정보
+     * @param userLoginData 로그인에 필요한 User 정보
      * @return access token
      * @throws UserNotFoundException User 정보가 존재하지 않는 경우 던집니다.
      * @throws LoginNotMatchPasswordException User의 password가 일치하지 않는 경우 던집니다.

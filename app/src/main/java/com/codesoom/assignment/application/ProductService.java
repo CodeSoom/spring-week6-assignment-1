@@ -1,60 +1,51 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.Product;
-import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.github.dozermapper.core.Mapper;
-import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
-@Service
-@Transactional
-public class ProductService {
-    private final Mapper mapper;
-    private final ProductRepository productRepository;
+/**
+ * 상품 조회, 수정, 삭제 서비스
+ */
+public interface ProductService {
 
-    public ProductService(
-            Mapper dozerMapper,
-            ProductRepository productRepository
-    ) {
-        this.mapper = dozerMapper;
-        this.productRepository = productRepository;
-    }
+    /**
+     * 모든 상품 목록을 리턴합니다.
+     * @return 상품 목록
+     */
+    List<Product> getProducts();
 
-    public List<Product> getProducts() {
-        return productRepository.findAll();
-    }
+    /**
+     * 상품 하나를 조회해 리턴합니다.
+     * @param id 조회할 상품의 id
+     * @return 조회된 상품
+     * @throws ProductNotFoundException 상품을 못찾을 경우
+     */
+    Product getProduct(Long id);
 
-    public Product getProduct(Long id) {
-        return findProduct(id);
-    }
+    /**
+     * 상품을 저장소에 등록합니다.
+     * @param source 등록할 상품의 내용
+     * @return 등록한 상품
+     */
+    Product createProduct(ProductData source);
 
-    public Product createProduct(ProductData productData) {
-        Product product = mapper.map(productData, Product.class);
-        return productRepository.save(product);
-    }
+    /**
+     * 상품의 내용을 수정합니다
+     * @param id 수정할 상품의 id
+     * @param source 상품의 수정 내용
+     * @return 수정한 상품
+     * @throws ProductNotFoundException 상품을 못찾을 경우
+     */
+    Product updateProduct(Long id, ProductData source);
 
-    public Product updateProduct(Long id, ProductData productData) {
-        Product product = findProduct(id);
+    /**
+     * 상품 삭제
+     * @param id 삭제할 상품의 id
+     */
+    void deleteProduct(Long id);
 
-        product.changeWith(mapper.map(productData, Product.class));
-
-        return product;
-    }
-
-    public Product deleteProduct(Long id) {
-        Product product = findProduct(id);
-
-        productRepository.delete(product);
-
-        return product;
-    }
-
-    private Product findProduct(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-    }
 }
+

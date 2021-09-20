@@ -1,15 +1,17 @@
 package com.codesoom.assignment.domain;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
-public interface UserRepository {
-    User save(User user);
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    Optional<User> findByEmail(String mail);
 
     boolean existsByEmail(String email);
 
-    Optional<User> findById(Long id);
-
-    Optional<User> findByIdAndDeletedIsFalse(Long id);
-
-    Optional<User> findByEmail(String email);
 }
+

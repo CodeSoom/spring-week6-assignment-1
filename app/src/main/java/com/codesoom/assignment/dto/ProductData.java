@@ -1,31 +1,34 @@
 package com.codesoom.assignment.dto;
 
-import com.github.dozermapper.core.Mapping;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Setter
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
 public class ProductData {
-    private Long id;
 
-    @NotBlank
-    @Mapping("name")
+    @NotBlank(message = "상품 이름은 필수입니다.")
     private String name;
 
-    @NotBlank
-    @Mapping("maker")
+    @NotBlank(message = "메이커 이름은 필수입니다.")
     private String maker;
 
-    @NotNull
-    @Mapping("price")
-    private Integer price;
+    @NotNull(message = "가격은 필수입니다.")
+    private Long price;
 
-    @Mapping("imageUrl")
+    @NotBlank(message = "이미지는 필수입니다.")
     private String imageUrl;
+
+    @Builder
+    public ProductData(String name, String maker, Long price, String imageUrl) {
+        this.name = name;
+        this.maker = maker;
+        this.price = price;
+        this.imageUrl = imageUrl;
+    }
+
 }

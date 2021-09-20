@@ -1,54 +1,52 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.UserModificationData;
-import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
+import com.codesoom.assignment.dto.UserData;
+import com.codesoom.assignment.dto.UserUpdateData;
 import com.codesoom.assignment.errors.UserNotFoundException;
-import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-
+/**
+ * 사용자 생성, 수정, 삭제 기능을 담당하는 클래스
+ */
 @Service
-@Transactional
-public class UserService {
-    private final Mapper mapper;
-    private final UserRepository userRepository;
+public interface UserService {
 
-    public UserService(Mapper dozerMapper, UserRepository userRepository) {
-        this.mapper = dozerMapper;
-        this.userRepository = userRepository;
-    }
+    /**
+     * 사용자를 생성하고, 생성된 사용자 정보를 리턴합니다.
+     * @param source 생성할 사용자 정보
+     * @return 생성된 사용자
+     */
+    User createUser(UserData source) throws Exception;
 
-    public User registerUser(UserRegistrationData registrationData) {
-        String email = registrationData.getEmail();
-        if (userRepository.existsByEmail(email)) {
-            throw new UserEmailDuplicationException(email);
-        }
+    /**
+     * 사용자를 찾아 리턴합니다.
+     * @param id 찾으려는 사용자 id
+     * @return 찾은 사용자
+     */
+    User getUser(Long id);
 
-        User user = mapper.map(registrationData, User.class);
-        return userRepository.save(user);
-    }
+    /**
+     * 사용자 정보를 수정하고 수정된 사용자 정보를 리턴합니다.
+     * @param id 사용자 id
+     * @param userUpdateData 수정할 사용자 정보
+     * @return 수정된 사용자
+     * @throws UserNotFoundException 사용자를 못찾을 경우
+     */
+    User updateUser(Long id, UserUpdateData userUpdateData) throws UserNotFoundException;
 
-    public User updateUser(Long id, UserModificationData modificationData) {
-        User user = findUser(id);
+    /**
+     * 사용자를 삭제합니다.
+     * @param id 삭제할 사용자 id
+     */
+    void deleteUser(Long id);
 
-        User source = mapper.map(modificationData, User.class);
-        user.changeWith(source);
+    /**
+     * 이메일 중복이 되었다면 true, 그렇지 않다면 false를 리턴합니다.
+     * @oaram 중복을 확인하려는 이메일 주소
+     * @return 중복한 이메일이 존재한다면 true / 그렇지 않다면 false
+     */
+    boolean isEmailDuplicated(String mail);
 
-        return user;
-    }
-
-    public User deleteUser(Long id) {
-        User user = findUser(id);
-        user.destroy();
-        return user;
-    }
-
-    private User findUser(Long id) {
-        return userRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-    }
 }
+

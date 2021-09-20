@@ -1,7 +1,14 @@
 package com.codesoom.assignment.errors;
 
-public class ProductNotFoundException extends RuntimeException {
-    public ProductNotFoundException(Long id) {
-        super("Product not found: " + id);
+import java.util.NoSuchElementException;
+
+public class ProductNotFoundException extends NoSuchElementException {
+
+    public ProductNotFoundException() {
+
+        super("조회하려는 상품을 찾을 수 없습니다.");
+
     }
+
 }
+

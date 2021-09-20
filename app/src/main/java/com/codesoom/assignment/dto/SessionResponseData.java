@@ -7,10 +7,8 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class UserResultData {
-    private Long id;
+public class SessionResponseData {
 
-    private String email;
+    private String accessToken;
 
-    private String name;
 }

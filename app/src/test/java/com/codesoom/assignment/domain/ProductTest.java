@@ -1,43 +1,59 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.dto.ProductData;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ProductTest {
-    @Test
-    void creationWithBuilder() {
-        Product product = Product.builder()
-                .id(1L)
-                .name("쥐돌이")
-                .maker("냥이월드")
-                .price(5000)
+@DisplayName("Product 클래스")
+public class ProductTest {
+
+    private Product product;
+    private ProductData updateData;
+
+    @BeforeEach
+    void setUp() {
+
+        product = Product.builder()
+                .name("product1")
+                .maker("maker1")
+                .price(1000L)
+                .imageUrl("img1")
                 .build();
 
-        assertThat(product.getId()).isEqualTo(1L);
-        assertThat(product.getName()).isEqualTo("쥐돌이");
-        assertThat(product.getMaker()).isEqualTo("냥이월드");
-        assertThat(product.getPrice()).isEqualTo(5000);
-        assertThat(product.getImageUrl()).isNull();
+        updateData = ProductData.builder()
+                .name("updateName")
+                .maker("updateMaker")
+                .price(5000L)
+                .imageUrl("updateImg")
+                .build();
+
     }
 
     @Test
-    void changeWith() {
-        Product product = Product.builder()
-                .id(1L)
-                .name("쥐돌이")
-                .maker("냥이월드")
-                .price(5000)
-                .build();
+    @DisplayName("객체가 올바르게 생성되는지 확인")
+    void createProduct() {
 
-        product.changeWith(Product.builder()
-                .name("쥐순이")
-                .maker("코드숨")
-                .price(10000)
-                .build());
+        assertEquals("product1",product.getName());
+        assertEquals("maker1",product.getMaker());
+        assertEquals(1000l,product.getPrice());
+        assertEquals("img1",product.getImageUrl());
 
-        assertThat(product.getName()).isEqualTo("쥐순이");
-        assertThat(product.getMaker()).isEqualTo("코드숨");
-        assertThat(product.getPrice()).isEqualTo(10000);
     }
+
+    @Test
+    @DisplayName("ProductData 객체로 올바르게 수정되는지 확인")
+    void updateProduct() {
+
+        Product updateProduct = this.product.updateProduct(updateData);
+
+        assertEquals("updateName", updateProduct.getName());
+        assertEquals("updateMaker", updateProduct.getMaker());
+        assertEquals(5000L, updateProduct.getPrice());
+        assertEquals("updateImg", updateProduct.getImageUrl());
+
+    }
+
 }

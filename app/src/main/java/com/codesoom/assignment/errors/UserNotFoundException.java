@@ -1,7 +1,12 @@
 package com.codesoom.assignment.errors;
 
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(Long id) {
-        super("User not found: " + id);
+import java.util.NoSuchElementException;
+
+public class UserNotFoundException extends NoSuchElementException  {
+
+    public UserNotFoundException() {
+        super("해당 유저를 찾을 수 없습니다.");
     }
+
 }
+

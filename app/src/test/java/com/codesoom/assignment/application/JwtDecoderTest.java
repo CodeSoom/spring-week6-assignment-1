@@ -7,6 +7,8 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,18 +75,31 @@ public class JwtDecoderTest {
         @DisplayName("올바르지 않은 토큰이 주어진 경우")
         class Context_invalidToken {
 
-            private String invalidToken;
+            private final List<String> invalidTokens = new ArrayList<>();
 
             @BeforeEach
             void setUp() {
-                invalidToken = token.substring(0, token.length() - 1);
+                invalidTokens.add(token.substring(0, token.length() - 1));
+                invalidTokens.add(token + "a");
+                invalidTokens.add(getInvalidTokenByIndex(1));
+                invalidTokens.add(getInvalidTokenByIndex(2));
+            }
+
+            private String getInvalidTokenByIndex(int index) {
+                String[] splitToken = token.split("\\.");
+
+                splitToken[index] = "invalid";
+
+                return String.join(".", splitToken);
             }
 
             @Test
             @DisplayName("예외를 던진다")
             void it_throws() {
-                assertThatThrownBy(() -> jwtDecoder.decode(invalidToken))
-                    .isInstanceOf(InvalidTokenException.class);
+                for (String invalidToken : invalidTokens) {
+                    assertThatThrownBy(() -> jwtDecoder.decode(invalidToken))
+                        .isInstanceOf(InvalidTokenException.class);
+                }
             }
         }
     }

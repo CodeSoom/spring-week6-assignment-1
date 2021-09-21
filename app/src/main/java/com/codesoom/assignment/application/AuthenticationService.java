@@ -34,7 +34,7 @@ public class AuthenticationService {
         String email = loginForm.getEmail();
         String password = loginForm.getPassword();
 
-        User findUser = findUserFromEmail(email);
+        User findUser = findUserByEmail(email);
         if (!findUser.authenticate(password)) {
             throw new UserNotAuthenticatedException(email);
         }
@@ -49,7 +49,7 @@ public class AuthenticationService {
      * @return 찾은 회원
      * @throws UserNotFoundException 회원을 찾지 못한 경우
      */
-    private User findUserFromEmail(String email) {
+    private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException(email));
     }

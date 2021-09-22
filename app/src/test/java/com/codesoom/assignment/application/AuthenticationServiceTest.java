@@ -8,6 +8,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginRequestDto;
 import com.codesoom.assignment.errors.UserNotAuthenticatedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.interceptors.AuthenticationInterceptor;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 public class AuthenticationServiceTest {
@@ -31,7 +33,16 @@ public class AuthenticationServiceTest {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @Autowired
+    private JwtEncoder jwtEncoder;
+
+    @MockBean
+    private AuthenticationInterceptor authenticationInterceptor;
+
     private LoginRequestDto loginRequestDto;
+
+    private Long userId;
+    private String token;
 
     @BeforeEach
     void setUp() {
@@ -40,10 +51,14 @@ public class AuthenticationServiceTest {
             .password(PASSWORD)
             .build();
 
-        userRepository.save(User.builder()
+        User user = userRepository.save(User.builder()
             .email(EMAIL)
             .password(PASSWORD)
             .build());
+
+        userId = user.getId();
+        token = jwtEncoder.encode(user)
+            .getAccessToken();
     }
 
     @AfterEach

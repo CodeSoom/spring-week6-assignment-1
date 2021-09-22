@@ -18,12 +18,12 @@ import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.interceptors.AuthenticationInterceptor;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,9 +54,12 @@ class ProductControllerTest {
     @MockBean
     private static JwtDecoder jwtDecoder;
 
+    @Autowired
+    private AuthenticationInterceptor authenticationInterceptor;
+
     private Product product;
 
-    @BeforeAll
+    @BeforeEach
     void beforeAll() {
         Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 

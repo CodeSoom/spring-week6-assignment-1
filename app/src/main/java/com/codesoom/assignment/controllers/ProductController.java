@@ -1,10 +1,8 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.application.JwtDecoder;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.InvalidTokenException;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,12 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     private final ProductService productService;
-    private final JwtDecoder jwtDecoder;
 
-    public ProductController(ProductService productService,
-        JwtDecoder jwtDecoder) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.jwtDecoder = jwtDecoder;
     }
 
     @GetMapping
@@ -47,46 +42,24 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-        @RequestHeader("Authorization") String auth,
         @RequestBody @Valid ProductData productData
     ) {
-        checkTokenValid(auth);
-
         return productService.createProduct(productData);
     }
 
     @PatchMapping("{id}")
     public Product update(
-        @RequestHeader("Authorization") String auth,
         @PathVariable Long id,
         @RequestBody @Valid ProductData productData
     ) {
-        checkTokenValid(auth);
-
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-        @RequestHeader("Authorization") String auth,
         @PathVariable Long id
     ) {
-        checkTokenValid(auth);
-
         productService.deleteProduct(id);
-    }
-
-    /**
-     * 토큰이 유효한지 검사합니다.
-     *
-     * @param auth 토큰을 찾을 문자열
-     * @throws InvalidTokenException 토큰이 유효하지 않은 경우
-     */
-    private void checkTokenValid(String auth) {
-        String token = auth.substring("Bearer ".length());
-
-        jwtDecoder.decode(token)
-            .orElseThrow(InvalidTokenException::new);
     }
 }

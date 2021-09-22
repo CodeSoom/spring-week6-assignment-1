@@ -22,17 +22,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         Object handler) throws IOException {
 
         String path = request.getRequestURI();
-        String method = request.getMethod();
+        if (!path.startsWith("/products")) {
+            return true;
+        }
 
+        String method = request.getMethod();
         if ("GET".equals(method)) {
             return true;
         }
 
         if ("OPTIONS".equals(method)) {
-            return true;
-        }
-
-        if (!path.startsWith("/products")) {
             return true;
         }
 

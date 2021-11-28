@@ -1,188 +1,294 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.application.ProductService;
+import com.codesoom.assignment.TestUtil;
+import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ProductController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class ProductControllerTest {
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
-
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private ProductService productService;
+    private AuthService authService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private ProductData productDataFixture;
+    private ProductData updatedProductDataFixture;
+    private ProductData invalidProductDataFixture;
+    private String authorizationFixture;
+
+    private Product createProductBeforeTest(ProductData productData) throws Exception {
+        ResultActions actions = mockMvc.perform(post("/products")
+                .content(objectMapper.writeValueAsString(productData))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", authorizationFixture)
+        );
+
+        return TestUtil.content(actions, Product.class);
+    }
+
+    private void deleteProductBeforeTest(Long id) throws Exception {
+        mockMvc.perform(delete("/products/" + id)
+                .header("Authorization", authorizationFixture));
+    }
 
     @BeforeEach
-    void setUp() {
-        Product product = Product.builder()
-                .id(1L)
-                .name("쥐돌이")
-                .maker("냥이월드")
+    void mockParseValidToken() {
+        given(authService.parseToken(any(String.class))).willReturn(1L);
+    }
+
+    @BeforeEach
+    void setupFixtures() {
+        productDataFixture = ProductData.builder()
+                .name("mouse")
+                .maker("adidas")
                 .price(5000)
                 .build();
-        given(productService.getProducts()).willReturn(List.of(product));
 
-        given(productService.getProduct(1L)).willReturn(product);
+        updatedProductDataFixture = ProductData.builder()
+                .name("mouse2")
+                .maker("new balance")
+                .price(5000)
+                .build();
 
-        given(productService.getProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+        invalidProductDataFixture = ProductData.builder()
+                .name("mouse")
+                .build();
 
-        given(productService.createProduct(any(ProductData.class)))
-                .willReturn(product);
-
-        given(productService.updateProduct(eq(1L), any(ProductData.class)))
-                .will(invocation -> {
-                    Long id = invocation.getArgument(0);
-                    ProductData productData = invocation.getArgument(1);
-                    return Product.builder()
-                            .id(id)
-                            .name(productData.getName())
-                            .maker(productData.getMaker())
-                            .price(productData.getPrice())
-                            .build();
-                });
-
-        given(productService.updateProduct(eq(1000L), any(ProductData.class)))
-                .willThrow(new ProductNotFoundException(1000L));
-
-        given(productService.deleteProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+        authorizationFixture = "Bearer 111.222.333";
     }
 
-    @Test
-    void list() throws Exception {
-        mockMvc.perform(
-                get("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
+    @Nested
+    @DisplayName("Post Request")
+    class PostRequest {
+        @DisplayName("responses with a created product and http status code 201")
+        @Test
+        void responsesWithCreatedProduct() throws Exception {
+            mockMvc.perform(post("/products")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(productDataFixture))
+                            .header("Authorization", authorizationFixture)
+                    )
+                    .andExpect(status().isCreated())
+                    .andExpect(content().string(containsString(productDataFixture.getName())));
+        }
+
+        @Nested
+        @DisplayName("Without a token")
+        class WithoutToken {
+            @DisplayName("responses with http status code 401")
+            @Test
+            void responsesWithUnauthorizedError() throws Exception {
+                mockMvc.perform(post("/products")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(productDataFixture))
+                        )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
+
+        @Nested
+        @DisplayName("With an invalid request body")
+        class WithInvalidRequestBody {
+            @DisplayName("responses with http status code 400")
+            @Test
+            void responsesWithBadRequest() throws Exception {
+                mockMvc.perform(post("/products")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(invalidProductDataFixture))
+                                .header("Authorization", authorizationFixture)
+                        )
+                        .andExpect(status().isBadRequest());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Get Request")
+    class GetRequest {
+        Product product;
+
+        @BeforeEach
+        void setupProduct() throws Exception {
+            product = createProductBeforeTest(productDataFixture);
+        }
+
+        @Nested
+        @DisplayName("Without a path parameter")
+        class WithoutPathParameter {
+            @Test
+            @DisplayName("responses with products and http status code 200")
+            void responsesWithProducts() throws Exception {
+                mockMvc.perform(get("/products"))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString(product.getName())));
+            }
+        }
+
+        @Nested
+        @DisplayName("With an existent id")
+        class WithExistentId {
+            @Test
+            @DisplayName("responses with a product and http status code 200")
+            void responsesWithProduct() throws Exception {
+                mockMvc.perform(get("/products/" + product.getId()))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString(product.getName())));
+            }
+        }
+
+        @Nested
+        @DisplayName("With a non existent id")
+        class WithNonExistentId {
+            @BeforeEach
+            void removeProduct() throws Exception {
+                deleteProductBeforeTest(product.getId());
+            }
+
+            @Test
+            @DisplayName("responses with http status code 404")
+            void responsesWithNotFoundError() throws Exception {
+                mockMvc.perform(get("/products/"+ product.getId()))
+                        .andExpect(status().isNotFound());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Patch Request")
+    class PatchRequest {
+        Product product;
+
+        @BeforeEach
+        void setupProduct() throws Exception {
+            product = createProductBeforeTest(productDataFixture);
+        }
+
+        @DisplayName("responses with an updated product and http status code 200")
+        @Test
+        void responsesWithUpdatedProduct() throws Exception {
+            mockMvc.perform(patch("/products/" + product.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedProductDataFixture))
+                        .header("Authorization", authorizationFixture))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+                .andExpect(content().string(containsString(updatedProductDataFixture.getName())));
+        }
+
+        @Nested
+        @DisplayName("Without a token")
+        class WithoutToken {
+            @DisplayName("responses with http status code 401")
+            @Test
+            void responsesWithUnauthorizedError() throws Exception {
+                mockMvc.perform(patch("/products/" + product.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updatedProductDataFixture)))
+                        .andExpect(status().isUnauthorized());
+            }
+        }
+
+        @Nested
+        @DisplayName("With an invalid request body")
+        class WithInvalidRequestBody {
+            @DisplayName("responses with http status code 400")
+            @Test
+            void responsesWithBadRequest() throws Exception {
+                mockMvc.perform(patch("/products/" + product.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(invalidProductDataFixture))
+                                .header("Authorization", authorizationFixture))
+                        .andExpect(status().isBadRequest());
+            }
+        }
+
+        @Nested
+        @DisplayName("With a non existent id")
+        class WithNonExistentId {
+            @BeforeEach
+            void removeProduct() throws Exception {
+                deleteProductBeforeTest(product.getId());
+            }
+
+            @DisplayName("responses with http status code 404")
+            @Test
+            void responsesWithNotFoundError() throws Exception {
+                mockMvc.perform(patch("/products" + product.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updatedProductDataFixture))
+                                .header("Authorization", authorizationFixture))
+                        .andExpect(status().isNotFound());
+            }
+        }
     }
 
-    @Test
-    void deatilWithExsitedProduct() throws Exception {
-        mockMvc.perform(
-                get("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
-    }
+    @Nested
+    @DisplayName("Delete Request")
+    class DeleteRequest {
+        Product product;
 
-    @Test
-    void deatilWithNotExsitedProduct() throws Exception {
-        mockMvc.perform(get("/products/1000"))
-                .andExpect(status().isNotFound());
-    }
+        @BeforeEach
+        void setupProduct() throws Exception {
+            product = createProductBeforeTest(productDataFixture);
+        }
 
-    @Test
-    void createWithValidAttributes() throws Exception {
-        mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("쥐돌이")));
-
-        verify(productService).createProduct(any(ProductData.class));
-    }
-
-    @Test
-    void createWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void updateWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
-
-        verify(productService).updateProduct(eq(1L), any(ProductData.class));
-    }
-
-    @Test
-    void updateWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isNotFound());
-
-        verify(productService).updateProduct(eq(1000L), any(ProductData.class));
-    }
-
-    @Test
-    void updateWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void destroyWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1")
-        )
+        @Test
+        @DisplayName("responses with a http status code 204")
+        void responsesWithNoContentStatus() throws Exception {
+            mockMvc.perform(delete("/products/" + product.getId())
+                            .header("Authorization", authorizationFixture))
                 .andExpect(status().isNoContent());
+        }
 
-        verify(productService).deleteProduct(1L);
-    }
+        @Nested
+        @DisplayName("Without a token")
+        class WithoutToken {
+            @Test
+            @DisplayName("responses with a http status code 401")
+            void responsesWithUnauthorizedError() throws Exception {
+                mockMvc.perform(delete("/products/" + product.getId()))
+                        .andExpect(status().isUnauthorized());
+            }
+        }
 
-    @Test
-    void destroyWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1000")
-        )
-                .andExpect(status().isNotFound());
+        @Nested
+        @DisplayName("With a non existent id")
+        class WithNonExistentId {
+            @BeforeEach
+            void removeProduct() throws Exception {
+                deleteProductBeforeTest(product.getId());
+            }
 
-        verify(productService).deleteProduct(1000L);
+            @Test
+            @DisplayName("responses with a http status code 404")
+            void responsesWithNotFoundError() throws Exception {
+                mockMvc.perform(delete("/products/" + product.getId())
+                                .header("Authorization", authorizationFixture))
+                        .andExpect(status().isNotFound());
+            }
+        }
     }
 }

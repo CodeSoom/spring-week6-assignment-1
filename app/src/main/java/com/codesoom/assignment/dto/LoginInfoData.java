@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -16,10 +17,12 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserModificationData {
+public class LoginInfoData {
     @NotBlank
-    @Mapping("name")
-    private String name;
+    @Size(min = 3)
+    @Pattern(regexp = "\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b")
+    @Mapping("email")
+    private String email;
 
     @NotBlank
     @Size(min = 4, max = 1024)

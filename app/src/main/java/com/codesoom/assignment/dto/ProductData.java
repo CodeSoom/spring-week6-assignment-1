@@ -6,6 +6,9 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * @see lombok.config
+ */
 @Setter
 @Getter
 @Builder

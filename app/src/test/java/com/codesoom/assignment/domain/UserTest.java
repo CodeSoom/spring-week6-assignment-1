@@ -1,52 +1,115 @@
 package com.codesoom.assignment.domain;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserTest {
-    @Test
-    void changeWith() {
-        User user = User.builder().build();
+@DisplayName("User 클래스")
+public final class UserTest {
+    public static final String USER_EMAIL = "test@email.com";
+    public static final String USER_NAME = "test";
+    public static final String USER_PASSWORD = "test";
+    public static final String INVALID_PASSWORD = USER_PASSWORD + "invalid";
+    public static final User USER = User.builder()
+        .email(USER_EMAIL)
+        .password(USER_PASSWORD)
+        .name(USER_NAME)
+        .build();
 
-        user.changeWith(User.builder()
-                .name("TEST")
-                .password("TEST")
-                .build());
+    private User user;
 
-        assertThat(user.getName()).isEqualTo("TEST");
-        assertThat(user.getPassword()).isEqualTo("TEST");
+    private User subjectInit() {
+        return User.builder().build();
     }
 
-    @Test
-    void destroy() {
-        User user = User.builder().build();
+    private void subjectChangeWith() {
+        user.changeWith(USER);
+    }
 
-        assertThat(user.isDeleted()).isFalse();
-
+    private void subjectDestroy() {
         user.destroy();
-
-        assertThat(user.isDeleted()).isTrue();
     }
 
-    @Test
-    void authenticate() {
-        User user = User.builder()
-                .password("test")
-                .build();
-
-        assertThat(user.authenticate("test")).isTrue();
-        assertThat(user.authenticate("xxx")).isFalse();
+    private String subjectGetName() {
+        return user.getName();
     }
 
-    @Test
-    void authenticateWithDeletedUser() {
-        User user = User.builder()
-                .password("test")
-                .deleted(true)
-                .build();
+    private String subjectGetPassword() {
+        return user.getPassword();
+    }
 
-        assertThat(user.authenticate("test")).isFalse();
-        assertThat(user.authenticate("xxx")).isFalse();
+    private boolean subjectIsDeleted() {
+        return user.isDeleted();
+    }
+
+    private boolean subjectAuthenticate(final String password) {
+        return user.authenticate(password);
+    }
+
+    @BeforeEach
+    private void beforeEach() {
+        user = subjectInit();
+    }
+
+    @Nested
+    @DisplayName("changeWith 메서드는")
+    public final class Describe_changeWith {
+        @Test
+        @DisplayName("사용자의 이름과 비밀번호를 업데이트한다.")
+        public void it_updates_user_name_and_password() {
+            subjectChangeWith();
+
+            assertThat(subjectGetName()).isEqualTo(USER_NAME);
+            assertThat(subjectGetPassword()).isEqualTo(USER_PASSWORD);
+        }
+    }
+
+    @Nested
+    @DisplayName("destroy 메서드는")
+    public final class Describe_destroy {
+        @Test
+        @DisplayName("사용자를 삭제한다.")
+        public void it_deactivates_user() {
+            assertThat(subjectIsDeleted()).isFalse();
+
+            subjectDestroy();
+
+            assertThat(subjectIsDeleted()).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("authenticate 메서드는")
+    public final class Describe_authenticate {
+        @BeforeEach
+        private void beforeEach() {
+            subjectChangeWith();
+        }
+
+        @Nested
+        @DisplayName("삭제된 유저인 경우")
+        public final class Context_deletedUser {
+            @BeforeEach
+            private void beforeEach() {
+                subjectDestroy();
+            }
+
+            @Test
+            @DisplayName("비밀번호 일치여부와 상관없이 입력한 비밀번호가 유저의 비밀번호와 일치하지 않음을 알려준다.")
+            public void it_returns_false_regardless_of_password_matches_or_not() {
+                assertThat(subjectAuthenticate(INVALID_PASSWORD)).isFalse();
+                assertThat(subjectAuthenticate(USER_PASSWORD)).isFalse();
+            }
+        }
+
+        @Test
+        @DisplayName("입력한 비밀번호가 유저의 비밀번호와 일치하는지 알려준다.")
+        public void it_notifies_password_matches_or_not() {
+            assertThat(subjectAuthenticate(INVALID_PASSWORD)).isFalse();
+            assertThat(subjectAuthenticate(USER_PASSWORD)).isTrue();
+        }
     }
 }

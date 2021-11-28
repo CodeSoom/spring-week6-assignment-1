@@ -12,13 +12,14 @@ class ProductTest {
                 .name("쥐돌이")
                 .maker("냥이월드")
                 .price(5000)
+                .imageUrl("imageUrl")
                 .build();
 
         assertThat(product.getId()).isEqualTo(1L);
         assertThat(product.getName()).isEqualTo("쥐돌이");
         assertThat(product.getMaker()).isEqualTo("냥이월드");
         assertThat(product.getPrice()).isEqualTo(5000);
-        assertThat(product.getImageUrl()).isNull();
+        assertThat(product.getImageUrl()).isEqualTo("imageUrl");
     }
 
     @Test

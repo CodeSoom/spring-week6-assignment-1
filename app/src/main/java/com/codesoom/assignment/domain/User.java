@@ -26,7 +26,7 @@ public class User {
     private String password;
 
     @Builder.Default
-    private boolean deleted = false;
+    private Boolean deleted = false;
 
     public void changeWith(User source) {
         name = source.name;
@@ -40,4 +40,6 @@ public class User {
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);
     }
+
+    public boolean isDeleted() { return deleted; }
 }

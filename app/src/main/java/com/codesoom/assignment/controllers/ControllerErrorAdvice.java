@@ -1,10 +1,12 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,5 +31,17 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserEmailDuplicationException.class)
     public ErrorResponse handleUserEmailIsAlreadyExisted() {
         return new ErrorResponse("User's email address is already existed");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidAccessTokenException.class)
+    public ErrorResponse handleInvalidAccessTokenException() {
+        return new ErrorResponse("Token is invalid");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ErrorResponse handleEmptyAuthorizationHeader() {
+        return new ErrorResponse("Authorization header is empty");
     }
 }

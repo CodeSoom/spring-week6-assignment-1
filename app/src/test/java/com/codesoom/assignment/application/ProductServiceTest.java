@@ -9,6 +9,7 @@ import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,9 @@ class ProductServiceTest {
                 .price(5000)
                 .build();
 
-        given(productRepository.findAll()).willReturn(List.of(product));
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+        given(productRepository.findAll()).willReturn(productList);
 
         given(productRepository.findById(1L)).willReturn(Optional.of(product));
 
@@ -55,7 +58,7 @@ class ProductServiceTest {
 
     @Test
     void getProductsWithNoProduct() {
-        given(productRepository.findAll()).willReturn(List.of());
+        given(productRepository.findAll()).willReturn(new ArrayList<>());
 
         assertThat(productService.getProducts()).isEmpty();
     }

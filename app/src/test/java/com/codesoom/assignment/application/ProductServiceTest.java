@@ -72,7 +72,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void getProductWithExsitedId() {
+    void getProductWithExistedId() {
         Product product = productService.getProduct(1L);
 
         assertThat(product).isNotNull();
@@ -80,7 +80,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void getProductWithNotExsitedId() {
+    void getProductWithNotExistedId() {
         assertThatThrownBy(() -> productService.getProduct(1000L))
                 .isInstanceOf(ProductNotFoundException.class);
     }

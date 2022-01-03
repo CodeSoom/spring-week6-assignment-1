@@ -84,7 +84,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithExsitedProduct() throws Exception {
+    void detailWithExistedProduct() throws Exception {
         mockMvc.perform(
                 get("/products/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -94,7 +94,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithNotExsitedProduct() throws Exception {
+    void detailWithNotExistedProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
                 .andExpect(status().isNotFound());
     }

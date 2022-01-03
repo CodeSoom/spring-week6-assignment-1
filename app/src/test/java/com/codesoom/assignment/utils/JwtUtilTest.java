@@ -19,8 +19,6 @@ class JwtUtilTest {
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
             ".eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
 
-    private final Long USER_ID = 1L;
-
     private JwtUtil jwUtil;
 
     @BeforeEach
@@ -34,6 +32,8 @@ class JwtUtilTest {
         @Nested
         @DisplayName("userId가 주어질때 ")
         class Context_userId {
+
+            private final Long USER_ID = 1L;
 
             @Test
             @DisplayName("토큰을 리턴한다.")
@@ -51,6 +51,8 @@ class JwtUtilTest {
         @Nested
         @DisplayName("올바른 토큰값이 주어질 때")
         class Context_with_validToken {
+
+            private final Long USER_ID = 1L;
 
             @Test
             @DisplayName("userId를 리턴한다.")

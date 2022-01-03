@@ -20,6 +20,11 @@ public class SessionController {
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * 사용자 로그인시 정보를 보호
+     *
+     * @return 사용자의 암호화된 정보
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login() {

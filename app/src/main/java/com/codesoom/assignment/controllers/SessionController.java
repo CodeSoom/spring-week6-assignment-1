@@ -25,6 +25,11 @@ public class SessionController {
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * user을 로그인하고 세션을 리턴한다.
+     *
+     * @return 세션 반응
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login() {

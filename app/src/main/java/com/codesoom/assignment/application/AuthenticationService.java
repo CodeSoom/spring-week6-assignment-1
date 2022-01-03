@@ -9,14 +9,22 @@ public class AuthenticationService {
 
     private JwtUtil jwtUtil;
 
+    private final Long userId =1L;
+
     public AuthenticationService(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
     public String login() {
-        return jwtUtil.encode(1L);
+        return jwtUtil.encode(userId);
     }
 
+    /**
+     * accessToken을 decode하여 리턴한다.
+     *
+     * @param accessToken userId의 토큰
+     * @return decode한 userId
+     */
     public Long parseToken(String accessToken) {
         Claims claims = jwtUtil.decode(accessToken);
         return claims.get("userId", Long.class);

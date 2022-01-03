@@ -22,6 +22,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     *
+     *
+     * @param registrationData
+     * @return
+     */
     public User registerUser(UserRegistrationData registrationData) {
         String email = registrationData.getEmail();
         if (userRepository.existsByEmail(email)) {
@@ -32,8 +38,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(Long id, UserModificationData modificationData) {
-        User user = findUser(id);
+    /**
+     *  id에 해당하는 user를 수정하고 리턴한다.
+     *
+     * @param userId user의 id
+     * @param modificationData 수정할 modificationData
+     * @return 수정된 user
+     */
+    public User updateUser(Long userId, UserModificationData modificationData) {
+        User user = findUser(userId);
 
         User source = mapper.map(modificationData, User.class);
         user.changeWith(source);
@@ -41,14 +54,26 @@ public class UserService {
         return user;
     }
 
-    public User deleteUser(Long id) {
-        User user = findUser(id);
+    /**
+     * id에 해당하는 user을 삭제하고 리턴한다.
+     *
+     * @param userId user의 id
+     */
+    public User deleteUser(Long userId) {
+        User user = findUser(userId);
         user.destroy();
         return user;
     }
 
-    private User findUser(Long id) {
-        return userRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+    /**
+     * id에 해당하는 user을 찾고 없다면 예외를 던진다.
+     *
+     * @param userId user의 id
+     * @return user의 정보
+     * @throws UserNotFoundException 예외를 던진다.
+     */
+    private User findUser(Long userId) {
+        return userRepository.findByIdAndDeletedIsFalse(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 }

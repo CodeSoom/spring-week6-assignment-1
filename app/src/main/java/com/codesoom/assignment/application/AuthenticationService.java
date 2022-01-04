@@ -4,11 +4,11 @@ import com.codesoom.assignment.utills.JwtUtill;
 import org.springframework.stereotype.Service;
 
 /**
- * 사용자 권한을 관리
+ * 사용자 권한을 관리합니다.
  */
 @Service
 public class AuthenticationService {
-    private JwtUtill jwtUtill;
+    private final JwtUtill jwtUtill;
 
     public AuthenticationService(JwtUtill jwtUtill) {
         this.jwtUtill = jwtUtill;

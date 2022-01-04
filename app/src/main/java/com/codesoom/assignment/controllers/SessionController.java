@@ -18,6 +18,11 @@ public class SessionController {
         this.authenticationService= authenticationService;
     }
 
+    /**
+     * access token을 생성합니다.
+     *
+     * @return SessionResponseData 생성된 access token 정보
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login() {
@@ -27,6 +32,4 @@ public class SessionController {
                 .accessToken(accessToken)
                 .build();
     }
-
-
 }

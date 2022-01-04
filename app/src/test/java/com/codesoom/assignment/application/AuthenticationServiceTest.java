@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("사용자 권한 서비스 클래스")
+@DisplayName("사용자 권한 서비스")
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789010";
     private AuthenticationService authenticationSrvice;
@@ -20,13 +20,13 @@ class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("login 메소드는")
+    @DisplayName("로그인 메소드는")
     class Decribe_login {
         @Nested
-        @DisplayName("")
+        @DisplayName("로그인 요청자를 로그인 처리하고")
         class Context {
             @Test
-            @DisplayName("사용자 권한 토큰이 인코딩된다.")
+            @DisplayName("엑세스 토큰을 리턴한다.")
             void it_return() {
                 String accessToken = authenticationSrvice.login();
 

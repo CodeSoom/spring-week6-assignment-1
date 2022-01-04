@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * session에 대한 요청을 처리
+ * session과 관련된 HTTP 요청을 처리합니다.
  */
 @RestController
 @RequestMapping("/session")

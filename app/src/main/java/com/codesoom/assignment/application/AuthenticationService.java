@@ -22,8 +22,7 @@ public class AuthenticationService {
     }
 
     public Long parseToken(String accessToken) {
-        if (accessToken.isEmpty()) {
-            //TODO isBlank로 변경 java 버전 변경
+        if (accessToken == null || accessToken.isBlank()) {
             throw new InvalidAccessTokenException(accessToken);
         }
         try {

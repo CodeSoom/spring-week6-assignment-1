@@ -39,11 +39,11 @@ class SessionControllerTest {
     @SpyBean
     private AuthenticationService authenticationService;
 
-    LoginData loginData;
+    LoginData testLoginData;
 
     @BeforeEach
     void setUp() {
-        loginData = LoginData.builder()
+        testLoginData = LoginData.builder()
                 .email("pjh0819@codesom.com")
                 .password("123456")
                 .build();
@@ -59,10 +59,10 @@ class SessionControllerTest {
 
             @Test
             @DisplayName("access token을 응답합니다.")
-            void login() throws Exception {
+            void it_return_accessToken() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(loginDataToContent(loginData)))
+                                .content(loginDataToContent(testLoginData)))
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("$.accessToken").value(containsString(".")))
                         .andDo(print());

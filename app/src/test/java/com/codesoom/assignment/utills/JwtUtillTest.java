@@ -59,7 +59,7 @@ class JwtUtillTest {
         @DisplayName("인증되지 않은 토큰이 들어오면")
         class Context_with_Invalid_Token {
             @Test
-            @DisplayName("")
+            @DisplayName("SignatureException 예외를 던진다.")
             void it_return_string() {
                 assertThatThrownBy(() -> jwtUtill.decode(INVALID_TOKEN))
                         .isInstanceOf(SignatureException.class);

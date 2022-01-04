@@ -1,6 +1,6 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utills.JwtUtill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,6 @@ class AuthenticationServiceTest {
             @DisplayName("엑세스 토큰을 리턴한다.")
             void it_return_accessToken() {
                 String accessToken = authenticationSrvice.login();
-                System.out.println("accessToken" + accessToken);
                 assertThat(accessToken).isEqualTo(VALID_TOKEN);
             }
         }
@@ -66,23 +65,7 @@ class AuthenticationServiceTest {
             void it_return() {
                 assertThatThrownBy(
                         () -> authenticationSrvice.parseToken(INVALID_TOKEN)
-                ).isInstanceOf(InvalidAccessTokenException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("비어있는 토큰이 들어오면")
-        class Context_with_blank_token {
-            @Test
-            @DisplayName("InvalidAccessTokenException 예외를 던진다.")
-            void it_return() {
-                assertThatThrownBy(
-                        () -> authenticationSrvice.parseToken("")
-                ).isInstanceOf(InvalidAccessTokenException.class);
-
-                assertThatThrownBy(
-                        () -> authenticationSrvice.parseToken(null)
-                ).isInstanceOf(InvalidAccessTokenException.class);
+                ).isInstanceOf(InvalidTokenException.class);
             }
         }
     }

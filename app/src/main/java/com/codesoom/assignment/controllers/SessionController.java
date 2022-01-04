@@ -26,9 +26,9 @@ public class SessionController {
     }
 
     /**
-     * user을 로그인하고 세션을 리턴한다.
+     * user을 로그인하고 세션응답을 리턴한다.
      *
-     * @return 세션 반응
+     * @return 세션 응답
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

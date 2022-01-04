@@ -39,7 +39,6 @@ class JwtUtilTest {
             @DisplayName("토큰을 리턴한다.")
             void it_return_token() {
                 String token = jwUtil.encode(USER_ID);
-
                 assertThat(token).isEqualTo(VALID_TOKEN);
             }
         }
@@ -76,17 +75,32 @@ class JwtUtilTest {
             }
         }
 
-        @Test
+        @Nested
+        @DisplayName("토큰값이 null이 주어진다면")
+        class Context_with_null_token {
+
+            @Test
+            @DisplayName("InvalidTokenException을 리턴한다.")
+            void it_return_InvalidTokenException() {
+                assertThatThrownBy(() -> jwUtil.decode(null))
+                        .isInstanceOf(InvalidTokenException.class);
+            }
+        }
+
+        @Nested
         @DisplayName("토큰값이 비어있다면")
-        void it_return_EmptyToken() {
-            assertThatThrownBy(() -> jwUtil.decode(null))
-                    .isInstanceOf(InvalidTokenException.class);
+        class Context_with_emptyToken {
 
-            assertThatThrownBy(() -> jwUtil.decode(""))
-                    .isInstanceOf(InvalidTokenException.class);
+            @Test
+            @DisplayName("InvalidTokenException을 리턴한다.")
+            void it_return_InvalidTokenException() {
+                assertThatThrownBy(() -> jwUtil.decode(""))
+                        .isInstanceOf(InvalidTokenException.class);
 
-            assertThatThrownBy(() -> jwUtil.decode("   "))
-                    .isInstanceOf(InvalidTokenException.class);
+                assertThatThrownBy(() -> jwUtil.decode("   "))
+                        .isInstanceOf(InvalidTokenException.class);
+
+            }
         }
     }
 }

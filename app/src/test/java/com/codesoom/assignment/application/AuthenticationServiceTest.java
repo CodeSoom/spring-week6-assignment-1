@@ -15,7 +15,7 @@ class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789010";
 
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+            "eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
 
@@ -37,7 +37,7 @@ class AuthenticationServiceTest {
             @DisplayName("엑세스 토큰을 리턴한다.")
             void it_return_accessToken() {
                 String accessToken = authenticationSrvice.login();
-
+                System.out.println("accessToken" + accessToken);
                 assertThat(accessToken).isEqualTo(VALID_TOKEN);
             }
         }

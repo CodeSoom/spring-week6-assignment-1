@@ -21,9 +21,9 @@ public class SessionController {
     }
 
     /**
-     * 사용자 로그인시 정보를 보호
+     * 사용자를 로그인 처리하고, 세션 응답 데이터를 리턴합니다.
      *
-     * @return 사용자의 암호화된 정보
+     * @return 세션 응답 데이터
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

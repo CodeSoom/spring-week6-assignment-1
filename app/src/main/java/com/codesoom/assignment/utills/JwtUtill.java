@@ -21,6 +21,12 @@ public class JwtUtill {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * id를 인코딩된 token으로 변환합니다.
+     *
+     * @param userId 인코딩할 유저 Id
+     * @return jwt로 인코딩된 token
+     */
     public String encode(Long userId) {
         return Jwts.builder()
                 .claim("userId", userId)
@@ -28,8 +34,15 @@ public class JwtUtill {
                 .compact();
     }
 
+    /**
+     * token을 디코딩해서 id값을 돌려주고 유효하지 않은 토큰이 들어올 경우 예외를 던진다.
+     *
+     * @param token
+     * @return 사용자 id
+     * @throws InvalidTokenException 유효하지 않은 토큰이 들어올 경우 덥집니다.
+     */
     public Claims decode(String token) {
-        if(token == null || token.isBlank()){
+        if (!checkValidToken(token)) {
             throw new InvalidTokenException(token);
         }
         try {
@@ -41,5 +54,18 @@ public class JwtUtill {
         } catch (SignatureException e) {
             throw new InvalidTokenException(token);
         }
+    }
+
+    /**
+     * token이 유효한 값이면 true, 그렇지 않으면 false 리턴한다.
+     *
+     * @param token 유저의 token
+     * @return 유효한 값일 경우 true, 그렇지 않으면 false
+     */
+    public boolean checkValidToken(String token) {
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+        return true;
     }
 }

@@ -3,6 +3,8 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +42,9 @@ class ProductControllerTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private Mapper mapper;
@@ -157,9 +162,29 @@ class ProductControllerTest {
     @DisplayName("POST /products 요청은")
     class Describe_post_products_request {
 
+        private Product newProduct;
+        private String requestContent;
+
         @Nested
         @DisplayName("상품 정보가 주어진다면")
         class Context_with_new_product_data {
+            private final static String NEW_PRODUCT_NAME = "도마뱀인형";
+            private final static String NEW_PRODUCT_MAKER = "코드숨";
+            private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
+            private final Integer NEW_PRODUCT_PRICE = 10000;
+
+            @BeforeEach
+            void prepare() throws JsonProcessingException {
+                ProductData productData = ProductData.builder()
+                        .name(NEW_PRODUCT_NAME)
+                        .maker(NEW_PRODUCT_MAKER)
+                        .imageUrl(NEW_PRODUCT_IMAGE_URL)
+                        .price(NEW_PRODUCT_PRICE)
+                        .build();
+
+                newProduct = mapper.map(productData, Product.class);
+                requestContent = objectMapper.writeValueAsString(newProduct);
+            }
 
             @Test
             @DisplayName("상품을 추가하고, 추가된 상품을 응답한다.")
@@ -167,20 +192,34 @@ class ProductControllerTest {
                 mockMvc.perform(
                                 post("/products")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{\"name\":\"도마뱀\"," +
-                                                "\"maker\":\"코드숨\"," +
-                                                "\"price\":10000," +
-                                                "\"imageUrl\":\"someUrl\"}")
+                                        .content(requestContent)
                         )
                         .andExpect(status().isCreated())
-                        .andExpect(jsonPath("name").value("도마뱀"))
-                        .andExpect(jsonPath("maker").value("코드숨"));
+                        .andExpect(jsonPath("name").value(NEW_PRODUCT_NAME))
+                        .andExpect(jsonPath("maker").value(NEW_PRODUCT_MAKER));
             }
         }
 
         @Nested
         @DisplayName("상품 정보가 비어있다면")
         class Context_with_blank_product_data {
+            private final static String NEW_PRODUCT_NAME = "";
+            private final static String NEW_PRODUCT_MAKER = "";
+            private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
+            private final Integer NEW_PRODUCT_PRICE = 5000;
+
+            @BeforeEach
+            void prepare() throws JsonProcessingException {
+                ProductData productData = ProductData.builder()
+                        .name(NEW_PRODUCT_NAME)
+                        .maker(NEW_PRODUCT_MAKER)
+                        .imageUrl(NEW_PRODUCT_IMAGE_URL)
+                        .price(NEW_PRODUCT_PRICE)
+                        .build();
+
+                newProduct = mapper.map(productData, Product.class);
+                requestContent = objectMapper.writeValueAsString(newProduct);
+            }
 
             @Test
             @DisplayName("Bad request를 응답한다.")
@@ -188,10 +227,7 @@ class ProductControllerTest {
                 mockMvc.perform(
                                 post("/products")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{\"name\":\"\"," +
-                                                "\"maker\":\"\"," +
-                                                "\"price\":10000" +
-                                                "\"imageUrl\":\"someUrl\"}")
+                                        .content(requestContent)
                         )
                         .andExpect(status().isBadRequest());
             }
@@ -219,7 +255,9 @@ class ProductControllerTest {
                 mockMvc.perform(
                                 patch("/products/" + existedProduct.getId())
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{\"name\":\"코끼리인형\",\"maker\":\"컬리\",\"price\":2000}")
+                                        .content("{\"name\":\"코끼리인형\"," +
+                                                "\"maker\":\"컬리\"," +
+                                                "\"price\":2000}")
                         )
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("name").value("코끼리인형"));
@@ -236,7 +274,9 @@ class ProductControllerTest {
                 mockMvc.perform(
                                 patch("/products/" + existedProduct.getId())
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{\"name\":\"\",\"maker\":\"\",\"price\":2000}")
+                                        .content("{\"name\":\"\"," +
+                                                "\"maker\":\"\"," +
+                                                "\"price\":2000}")
                         )
                         .andExpect(status().isBadRequest());
             }

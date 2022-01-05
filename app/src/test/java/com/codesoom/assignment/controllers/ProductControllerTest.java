@@ -3,7 +3,6 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -196,6 +194,73 @@ class ProductControllerTest {
                                                 "\"imageUrl\":\"someUrl\"}")
                         )
                         .andExpect(status().isBadRequest());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("PATCH /products/{id} 요청은")
+    class Describe_patch_products_request {
+
+        private Product notExistedProduct;
+
+        @BeforeEach
+        void prepare() {
+            prepareProduct();
+        }
+
+        @Nested
+        @DisplayName("존재하는 id이고, 수정할 상품 데이터가 주어지면")
+        class Context_with_existed_id_and_product_data {
+
+            @Test
+            @DisplayName("수정된 상품 정보를 응답한다.")
+            void it_response_updated_product_data() throws Exception {
+                mockMvc.perform(
+                                patch("/products/" + existedProduct.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"name\":\"코끼리인형\",\"maker\":\"컬리\",\"price\":2000}")
+                        )
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("name").value("코끼리인형"));
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하는 id이고, 수정할 상품 데이터가 비어있다면")
+        class Context_with_existed_id_and_blank_product_data {
+
+            @Test
+            @DisplayName("Bad request를 응답한다.")
+            void it_response_bad_request() throws Exception {
+                mockMvc.perform(
+                                patch("/products/" + existedProduct.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"name\":\"\",\"maker\":\"\",\"price\":2000}")
+                        )
+                        .andExpect(status().isBadRequest());
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 id이면")
+        class Context_with_not_existed_id {
+
+            @BeforeEach
+            void prepare() {
+                productRepository.delete(existedProduct);
+                notExistedProduct = existedProduct;
+            }
+
+            @Test
+            @DisplayName("Not found를 응답한다.")
+            void it_response_not_found() throws Exception {
+                mockMvc.perform(
+                                patch("/products/" + notExistedProduct.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"name\":\"코끼리인형\",\"maker\":\"컬리\",\"price\":2000}")
+                        )
+                        .andExpect(status().isNotFound());
             }
         }
     }

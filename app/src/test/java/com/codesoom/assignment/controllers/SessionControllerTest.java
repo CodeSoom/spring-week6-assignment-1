@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SessionController.class)
+@DisplayName("SessionController 클래스")
 class SessionControllerTest {
     private static final String VALID_TOKEN = "a.b.c";
 
@@ -32,7 +33,7 @@ class SessionControllerTest {
     }
 
     @Nested
-    @DisplayName("POST /session")
+    @DisplayName("POST /session은")
     class Describe_request_post_to_session_path {
 
         @Test

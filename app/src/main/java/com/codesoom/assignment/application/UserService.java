@@ -42,7 +42,7 @@ public class UserService {
      *  id에 해당하는 user를 수정하고 리턴한다.
      *
      * @param userId user의 id
-     * @param modificationData 수정할 modificationData
+     * @param modificationData 수정할 사용자 데이터
      * @return 수정된 user
      */
     public User updateUser(Long userId, UserModificationData modificationData) {

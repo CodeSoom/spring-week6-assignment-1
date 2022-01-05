@@ -3,61 +3,112 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtCodec;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DisplayName("AuthenticationService 클래스")
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
+    private static final Long TOKEN_USER_ID = 1L;
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     private static final String INVALID_TOKEN = VALID_TOKEN + "abc";
 
+    @Nested
+    @DisplayName("login 메소드는")
+    class Describe_login{
 
-    private AuthenticationService authenticationService;
+        AuthenticationService authenticationService;
 
-    @BeforeEach
-    void setUp(){
-        JwtCodec jwtCodec = new JwtCodec(SECRET);
-        authenticationService = new AuthenticationService(jwtCodec);
+        @BeforeEach
+        void setUp(){
+            JwtCodec jwtCodec = new JwtCodec(SECRET);
+            authenticationService = new AuthenticationService(jwtCodec);
+        }
+
+        @Test
+        @DisplayName("액세스 토큰을 리턴한다.")
+        void login(){
+            String accessToken = authenticationService.login();
+
+            assertThat(accessToken).isEqualTo(VALID_TOKEN);
+        }
     }
 
-    @Test
-    void login(){
-        String accessToken = authenticationService.login();
+    @Nested
+    @DisplayName("parseToken 메소드는")
+    class Describe_parse_token{
+        
+        @Nested
+        @DisplayName("유효한 토큰이 주어지면")
+        class Context_with_a_valid_token{
 
-        assertThat(accessToken).isEqualTo(VALID_TOKEN);
-    }
+            AuthenticationService authenticationService;
 
-    @Test
-    void parseTokenWithValidToken(){
-        Long userId = authenticationService.parseToken(VALID_TOKEN);
+            @BeforeEach
+            void setUp(){
+                JwtCodec jwtCodec = new JwtCodec(SECRET);
+                authenticationService = new AuthenticationService(jwtCodec);
+            }
 
-        assertThat(userId).isEqualTo(1L);
-    }
+            @Test
+            @DisplayName("토큰을 디코딩한 id를 리턴한다.")
+            void it_returns_decoded_id(){
+                Long userId = authenticationService.parseToken(VALID_TOKEN);
+                assertThat(userId).isEqualTo(TOKEN_USER_ID);
+            }
+        }
 
-    @Test
-    void parseTokenWithInValidToken(){
-        assertThatThrownBy(
-                () -> authenticationService.parseToken(INVALID_TOKEN)
-        ).isInstanceOf(InvalidTokenException.class);
+        @Nested
+        @DisplayName("유효하지 않은 토큰이 주어지면")
+        class Context_with_a_invalid_token{
 
-    }
+            AuthenticationService authenticationService;
 
-    @Test
-    void parseTokenWithBlankToken(){
-        assertThatThrownBy(
-                () -> authenticationService.parseToken(null)
-        ).isInstanceOf(InvalidTokenException.class);
+            @BeforeEach
+            void setUp(){
+                JwtCodec jwtCodec = new JwtCodec(SECRET);
+                authenticationService = new AuthenticationService(jwtCodec);
+            }
 
-        assertThatThrownBy(
-                () -> authenticationService.parseToken("")
-        ).isInstanceOf(InvalidTokenException.class);
+            @Test
+            @DisplayName("InvalidTokenException 예외를 던진다.")
+            void it_returns_string(){
+                assertThatThrownBy(
+                        () -> authenticationService.parseToken(INVALID_TOKEN)
+                ).isInstanceOf(InvalidTokenException.class);
+            }
+        }
 
-        assertThatThrownBy(
-                () -> authenticationService.parseToken("    ")
-        ).isInstanceOf(InvalidTokenException.class);
+        @Nested
+        @DisplayName("빈 토큰이 주어지면")
+        class Context_with_a_empty_token{
+
+            AuthenticationService authenticationService;
+
+            @BeforeEach
+            void setUp(){
+                JwtCodec jwtCodec = new JwtCodec(SECRET);
+                authenticationService = new AuthenticationService(jwtCodec);
+            }
+
+            @Test
+            @DisplayName("InvalidTokenException 예외를 던진다.")
+            void it_returns_string(){
+                Stream.of("", "   ", null).forEach((emptyToken) -> {
+                    assertThatThrownBy(
+                            () -> authenticationService.parseToken(emptyToken)
+                    ).isInstanceOf(InvalidTokenException.class);
+                });
+            }
+        }
+
     }
 }
 

@@ -19,6 +19,12 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * userId로 인코딩된 jwt를 리턴합니다.
+     *
+     * @param userId Payload에 들어갈 userId
+     * @return jwt
+     */
     public String encode(Long userId) {
 
         return Jwts.builder()
@@ -26,6 +32,11 @@ public class JwtUtil {
                 .signWith(key).compact();
     }
 
+    /**
+     * token을 디코딩하여 payload 정보를 리턴합니다.
+     * @param token
+     * @return
+     */
     public Claims decode(String token) {
         if (token == null || token.isBlank()) {
             throw new InvalidTokenException(token);

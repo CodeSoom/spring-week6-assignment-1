@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 
 @Component
-public class JwtUtil {
+public class JwtCodec {
     private final Key key;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret){
+    public JwtCodec(@Value("${jwt.secret}") String secret){
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String encode(Long userId){
         return Jwts.builder()
-                .claim("userId", 1L)
+                .claim("userId", userId)
                 .signWith(key)
                 .compact();
     }

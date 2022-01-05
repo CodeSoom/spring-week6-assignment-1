@@ -203,16 +203,16 @@ class ProductControllerTest {
         @Nested
         @DisplayName("상품 정보가 비어있다면")
         class Context_with_blank_product_data {
-            private final static String NEW_PRODUCT_NAME = "";
-            private final static String NEW_PRODUCT_MAKER = "";
+            private final static String BLANK_PRODUCT_NAME = "";
+            private final static String BLANK_PRODUCT_MAKER = "";
             private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
             private final Integer NEW_PRODUCT_PRICE = 5000;
 
             @BeforeEach
             void prepare() throws JsonProcessingException {
                 ProductData productData = ProductData.builder()
-                        .name(NEW_PRODUCT_NAME)
-                        .maker(NEW_PRODUCT_MAKER)
+                        .name(BLANK_PRODUCT_NAME)
+                        .maker(BLANK_PRODUCT_MAKER)
                         .imageUrl(NEW_PRODUCT_IMAGE_URL)
                         .price(NEW_PRODUCT_PRICE)
                         .build();
@@ -237,12 +237,26 @@ class ProductControllerTest {
     @Nested
     @DisplayName("PATCH /products/{id} 요청은")
     class Describe_patch_products_request {
+        private final static String UPDATE_PRODUCT_NAME = "코끼리인형";
+        private final static String UPDATE_PRODUCT_MAKER = "컬리";
+        private final Integer UPDATE_PRODUCT_PRICE = 10000;
 
+        private Product updatedProduct;
+        private String requestContent;
         private Product notExistedProduct;
 
         @BeforeEach
-        void prepare() {
+        void prepare() throws JsonProcessingException {
             prepareProduct();
+
+            ProductData productData = ProductData.builder()
+                    .name(UPDATE_PRODUCT_NAME)
+                    .maker(UPDATE_PRODUCT_MAKER)
+                    .price(UPDATE_PRODUCT_PRICE)
+                    .build();
+
+            updatedProduct = mapper.map(productData, Product.class);
+            requestContent = objectMapper.writeValueAsString(updatedProduct);
         }
 
         @Nested
@@ -255,18 +269,29 @@ class ProductControllerTest {
                 mockMvc.perform(
                                 patch("/products/" + existedProduct.getId())
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{\"name\":\"코끼리인형\"," +
-                                                "\"maker\":\"컬리\"," +
-                                                "\"price\":2000}")
+                                        .content(requestContent)
                         )
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("name").value("코끼리인형"));
+                        .andExpect(jsonPath("name").value(UPDATE_PRODUCT_NAME));
             }
         }
 
         @Nested
         @DisplayName("존재하는 id이고, 수정할 상품 데이터가 비어있다면")
         class Context_with_existed_id_and_blank_product_data {
+            private final Integer UPDATE_PRODUCT_PRICE = 10000;
+
+            @BeforeEach
+            void prepare() throws JsonProcessingException {
+                ProductData productData = ProductData.builder()
+                        .name("")
+                        .maker("")
+                        .price(UPDATE_PRODUCT_PRICE)
+                        .build();
+
+                updatedProduct = mapper.map(productData, Product.class);
+                requestContent = objectMapper.writeValueAsString(updatedProduct);
+            }
 
             @Test
             @DisplayName("Bad request를 응답한다.")
@@ -274,9 +299,7 @@ class ProductControllerTest {
                 mockMvc.perform(
                                 patch("/products/" + existedProduct.getId())
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{\"name\":\"\"," +
-                                                "\"maker\":\"\"," +
-                                                "\"price\":2000}")
+                                        .content(requestContent)
                         )
                         .andExpect(status().isBadRequest());
             }
@@ -298,7 +321,7 @@ class ProductControllerTest {
                 mockMvc.perform(
                                 patch("/products/" + notExistedProduct.getId())
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{\"name\":\"코끼리인형\",\"maker\":\"컬리\",\"price\":2000}")
+                                        .content(requestContent)
                         )
                         .andExpect(status().isNotFound());
             }

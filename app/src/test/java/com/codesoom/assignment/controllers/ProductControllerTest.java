@@ -20,12 +20,18 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@DisplayName("ProductController 테스트")
 class ProductControllerTest {
+    private static final String PRODUCT_NAME = "장난감 뱀";
+    private static final String PRODUCT_MAKER = "애용이네 장난감";
+    private final Integer PRODUCT_PRICE = 5000;
+
+    private Product existedProduct;
+    private ProductData productData;
 
     @Autowired
     private WebApplicationContext wac;
@@ -36,6 +42,17 @@ class ProductControllerTest {
 
     @Autowired
     private Mapper mapper;
+
+    void prepareProduct() {
+        productData = ProductData.builder()
+                .name(PRODUCT_NAME)
+                .maker(PRODUCT_MAKER)
+                .price(PRODUCT_PRICE)
+                .build();
+
+        existedProduct = mapper.map(productData, Product.class);
+        productRepository.save(existedProduct);
+    }
 
     @BeforeEach
     void setUpMockMvc() {
@@ -49,36 +66,88 @@ class ProductControllerTest {
     @Nested
     @DisplayName("GET /products 는")
     class Describe_list {
+        @Nested
+        @DisplayName("상품이 하나도 없다면")
+        class Context_not_existed_product {
+            private static final String EMPTY_PRODUCTS = "[]";
 
-        private Product product;
-        private ProductData productData;
+            @BeforeEach
+            void prepare() {
+                productRepository.deleteAll();
+            }
+
+            @Test
+            @DisplayName("빈 배열을 응답한다.")
+            void it_response_empty_array() throws Exception {
+                mockMvc.perform(get("/products"))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString(EMPTY_PRODUCTS)));
+            }
+        }
 
         @Nested
         @DisplayName("상품이 있다면")
         class Context_existed_product {
-            private static final String PRODUCT_NAME = "장난감 뱀";
-            private static final String PRODUCT_MAKER = "애용이네 장난감";
 
             @BeforeEach
-            void setUp() {
-                productData = ProductData.builder()
-                        .id(1L)
-                        .name(PRODUCT_NAME)
-                        .maker(PRODUCT_MAKER)
-                        .price(5000)
-                        .build();
-
-                product = mapper.map(productData, Product.class);
-                productRepository.save(product);
+            void prepare() {
+                prepareProduct();
             }
 
             @Test
-            @DisplayName("전체 상품을 리턴한다.")
-            void it_return_products() throws Exception {
+            @DisplayName("전체 상품을 응답한다.")
+            void it_response_products() throws Exception {
                 mockMvc.perform(get("/products"))
                         .andExpect(status().isOk())
                         .andExpect(content().string(containsString(PRODUCT_NAME)))
                         .andExpect(content().string(containsString(PRODUCT_MAKER)));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /products/{id} 요청은")
+    class Describe_get_products_detail {
+
+        @Nested
+        @DisplayName("존재하는 id로 요청하면")
+        class Context_existed_id {
+
+            @BeforeEach
+            void prepare() {
+                prepareProduct();
+            }
+
+            @Test
+            @DisplayName("해당 id의 상품을 응답한다")
+            void it_response_detail_product() throws Exception {
+                mockMvc.perform(get("/products/" + existedProduct.getId()))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("id").value(existedProduct.getId()))
+                        .andExpect(jsonPath("name").value(PRODUCT_NAME))
+                        .andExpect(jsonPath("maker").value(PRODUCT_MAKER))
+                        .andExpect(jsonPath("price").value(PRODUCT_PRICE));
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 id로 요청하면")
+        class Context_not_existed_id {
+
+            private Product notExistedProduct;
+
+            @BeforeEach
+            void prepare() {
+                prepareProduct();
+                productRepository.delete(existedProduct);
+                notExistedProduct = existedProduct;
+            }
+
+            @Test
+            @DisplayName("NotFound를 응답한다.")
+            void it_response_not_found() throws Exception {
+                mockMvc.perform(get("/products/" + notExistedProduct.getId()))
+                        .andExpect(status().isNotFound());
             }
         }
     }

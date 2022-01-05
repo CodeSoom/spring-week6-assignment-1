@@ -37,7 +37,7 @@ class SessionControllerTest {
     class Describe_request_post_to_session_path {
 
         @Test
-        @DisplayName("토큰을 응답합니다.")
+        @DisplayName("액세스 토큰을 응답합니다.")
         void it_responses_token() throws Exception {
             mockMvc.perform(post("/session"))
                     .andExpect(status().isCreated())

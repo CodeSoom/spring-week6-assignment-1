@@ -59,17 +59,26 @@ public class ProductController {
 
     @PatchMapping("{id}")
     public Product update(
-            @PathVariable Long id,
-            @RequestBody @Valid ProductData productData
+            @RequestHeader("Authorization") final String authorization,
+            @PathVariable final Long id,
+            @RequestBody @Valid final ProductData productData
     ) {
+        final String accessToken = authorization.substring("Bearer ".length());
+        authenticationService.parseToken(accessToken);
+
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") final String authorization,
             @PathVariable Long id
     ) {
+        final String accessToken = authorization.substring("Bearer ".length());
+
+        authenticationService.parseToken(accessToken);
+
         productService.deleteProduct(id);
     }
 

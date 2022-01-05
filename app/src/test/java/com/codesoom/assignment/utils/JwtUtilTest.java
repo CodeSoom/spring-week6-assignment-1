@@ -33,11 +33,6 @@ class JwtUtilTest {
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 
-    @DisplayName("decode 메소드는")
-    class Describe_decode_method {
-
-    }
-
     @Nested
     @DisplayName("decode 메소드는")
     class Describe_decode {

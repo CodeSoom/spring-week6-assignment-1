@@ -1,6 +1,8 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,12 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +37,9 @@ class SessionControllerTest {
     @SpyBean
     private AuthenticationService authenticationService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     LoginData testLoginData;
 
     @BeforeEach
@@ -52,6 +53,16 @@ class SessionControllerTest {
     @Nested
     @DisplayName("POST /session 요청은")
     class Describe_post {
+
+        @BeforeEach
+        void prepare() {
+            User user = User.builder()
+                    .email(testLoginData.getEmail())
+                    .password(testLoginData.getPassword())
+                    .build();
+
+            userRepository.save(user);
+        }
 
         @Nested
         @DisplayName("LoginData가 주어진다면")

@@ -42,8 +42,7 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        Long userId = authenticationService.parseToken(accessToken);
+        Long userId = getUserIdByParsingToken(authorization);
 
         return productService.createProduct(productData);
     }
@@ -54,8 +53,7 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        Long userId = authenticationService.parseToken(accessToken);
+        Long userId = getUserIdByParsingToken(authorization);
 
         return productService.updateProduct(id, productData);
     }
@@ -63,8 +61,11 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
+        Long userId = getUserIdByParsingToken(authorization);
+
         productService.deleteProduct(id);
     }
 
@@ -72,5 +73,10 @@ public class ProductController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public void handleMissingRequestHeaderException() {
 
+    }
+
+    private Long getUserIdByParsingToken(String token) {
+        String accessToken = token.substring("Bearer ".length());
+        return  authenticationService.parseToken(accessToken);
     }
 }

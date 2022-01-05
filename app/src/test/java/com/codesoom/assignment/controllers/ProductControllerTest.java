@@ -66,10 +66,11 @@ class ProductControllerTest {
 
     @Nested
     @DisplayName("GET /products 는")
-    class Describe_list {
+    class Describe_get_products {
+
         @Nested
         @DisplayName("상품이 하나도 없다면")
-        class Context_not_existed_product {
+        class Context_with_not_existed_product {
             private static final String EMPTY_PRODUCTS = "[]";
 
             @BeforeEach
@@ -88,7 +89,7 @@ class ProductControllerTest {
 
         @Nested
         @DisplayName("상품이 있다면")
-        class Context_existed_product {
+        class Context_with_existed_product {
 
             @BeforeEach
             void prepare() {
@@ -110,14 +111,14 @@ class ProductControllerTest {
     @DisplayName("GET /products/{id} 요청은")
     class Describe_get_products_detail {
 
+        @BeforeEach
+        void prepare() {
+            prepareProduct();
+        }
+
         @Nested
         @DisplayName("존재하는 id로 요청하면")
-        class Context_existed_id {
-
-            @BeforeEach
-            void prepare() {
-                prepareProduct();
-            }
+        class Context_with_existed_id {
 
             @Test
             @DisplayName("해당 id의 상품을 응답한다")
@@ -133,13 +134,12 @@ class ProductControllerTest {
 
         @Nested
         @DisplayName("존재하지 않는 id로 요청하면")
-        class Context_not_existed_id {
+        class Context_with_not_existed_id {
 
             private Product notExistedProduct;
 
             @BeforeEach
             void prepare() {
-                prepareProduct();
                 productRepository.delete(existedProduct);
                 notExistedProduct = existedProduct;
             }
@@ -260,6 +260,48 @@ class ProductControllerTest {
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"name\":\"코끼리인형\",\"maker\":\"컬리\",\"price\":2000}")
                         )
+                        .andExpect(status().isNotFound());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("DELETE /products/{id} 요청은")
+    class Describe_delete_product_request {
+
+        @BeforeEach
+        void prepare() {
+            prepareProduct();
+        }
+
+        @Nested
+        @DisplayName("존재하는 상품 id라면")
+        class Context_with_existed_product_id {
+
+            @Test
+            @DisplayName("해당 id의 상품을 삭제한다.")
+            void it_destroy_product() throws Exception {
+                mockMvc.perform(delete("/products/" + existedProduct.getId()))
+                        .andExpect(status().isNoContent());
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 id라면")
+        class Context_with_not_existed_product_id {
+
+            private Product notExistedProduct;
+
+            @BeforeEach
+            void prepare() {
+                productRepository.delete(existedProduct);
+                notExistedProduct = existedProduct;
+            }
+
+            @Test
+            @DisplayName("Not found를 응답한다.")
+            void it_response_not_found() throws Exception {
+                mockMvc.perform(delete("/products/" + notExistedProduct.getId()))
                         .andExpect(status().isNotFound());
             }
         }

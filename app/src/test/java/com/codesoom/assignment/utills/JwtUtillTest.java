@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -31,7 +33,7 @@ class JwtUtillTest {
         @DisplayName("사용자 정보가 들어오면")
         class Context_with_secret {
             @Test
-            @DisplayName("암호화된 사용자 정보를 리턴한다")
+            @DisplayName("암호화하여 리턴한다")
             void it_return_string() {
                 String token = jwtUtill.encode(1L);
 
@@ -69,17 +71,14 @@ class JwtUtillTest {
         @Nested
         @DisplayName("빈 토큰이 들어오면")
         class Context_with_Empty_Token {
+
             @Test
             @DisplayName("SignatureException 예외를 던진다.")
             void it_return_string() {
-                assertThatThrownBy(() -> jwtUtill.decode(null))
-                        .isInstanceOf(InvalidTokenException.class);
-
-                assertThatThrownBy(() -> jwtUtill.decode(""))
-                        .isInstanceOf(InvalidTokenException.class);
-
-                assertThatThrownBy(() -> jwtUtill.decode("    "))
-                        .isInstanceOf(InvalidTokenException.class);
+                Stream.of(null, "", "      ").forEach((token) -> {
+                    assertThatThrownBy(() -> jwtUtill.decode(token))
+                            .isInstanceOf(InvalidTokenException.class);
+                });
             }
         }
     }

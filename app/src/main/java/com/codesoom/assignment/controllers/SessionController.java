@@ -19,7 +19,7 @@ public class SessionController {
     private AuthenticationService authenticationService;
 
     public SessionController(AuthenticationService authenticationService) {
-        this.authenticationService= authenticationService;
+        this.authenticationService = authenticationService;
     }
 
     /**

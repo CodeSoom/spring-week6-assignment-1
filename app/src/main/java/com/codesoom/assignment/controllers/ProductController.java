@@ -51,7 +51,7 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        Long userId = getUserIdByParsingToken(authorization);
+        Long userId = pareToken(authorization);
 
         return productService.createProduct(productData);
     }
@@ -62,7 +62,7 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        Long userId = getUserIdByParsingToken(authorization);
+        Long userId = pareToken(authorization);
 
         return productService.updateProduct(id, productData);
     }
@@ -73,12 +73,12 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        Long userId = getUserIdByParsingToken(authorization);
+        Long userId = pareToken(authorization);
 
         productService.deleteProduct(id);
     }
 
-    private Long getUserIdByParsingToken(String token) {
+    private Long pareToken(String token) {
         String accessToken = token.substring("Bearer ".length());
         return  authenticationService.parseToken(accessToken);
     }

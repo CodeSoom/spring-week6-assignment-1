@@ -3,11 +3,14 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DisplayName("AuthenticationService 테스트")
 class AuthenticationServiceTest {
     private static final String SECRET = "01234567890123456789012345678901";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
@@ -23,11 +26,17 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(jwtUtil);
     }
 
-    @Test
-    void login() {
-        String accessToken = authenticationService.login();
+    @Nested
+    @DisplayName("login 메소드는")
+    class Describe_login {
 
-        assertThat(accessToken).contains(".");
+        @Test
+        @DisplayName("accessToken 을 리턴한다")
+        void it_return_accessToken() {
+            String accessToken = authenticationService.login();
+
+            assertThat(accessToken).contains(".");
+        }
     }
 
     @Test

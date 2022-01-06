@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @DisplayName("AuthenticationService 클래스")
@@ -42,21 +44,14 @@ class AuthenticationServiceTest {
     class Describe_login {
 
         @Nested
-        @DisplayName("LoginData가 주어진다면")
+        @DisplayName("등록된 유저의 LoginData가 주어진다면")
         class Context_with_LoginData {
-
-            LoginData givenLoginData;
 
             @BeforeEach
             void prepare() {
-                givenLoginData = LoginData.builder()
+                User user = User.builder()
                         .email(testLoginData.getEmail())
                         .password(testLoginData.getPassword())
-                        .build();
-
-                User user = User.builder()
-                        .email(givenLoginData.getEmail())
-                        .password(givenLoginData.getPassword())
                         .build();
 
                 userRepository.save(user);
@@ -65,9 +60,21 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("access token을 리턴합니다.")
             void it_return_accessToken() {
-                String accessToken = authenticationService.login(givenLoginData);
+                String accessToken = authenticationService.login(testLoginData);
 
                 assertThat(accessToken).isEqualTo(VALID_TOKEN);
+            }
+        }
+
+        @Nested
+        @DisplayName("등록되지 않은 유저의 LoginData가 주어진다면")
+        class Context_with_Invaild_LoginData {
+
+            @Test
+            @DisplayName("유저를 찾지 못했다는 내용의 예외를 던집니다.")
+            void it_return_accessToken() {
+                assertThatThrownBy(() -> authenticationService.login(testLoginData))
+                        .isInstanceOf(UserNotFoundException.class);
             }
         }
     }

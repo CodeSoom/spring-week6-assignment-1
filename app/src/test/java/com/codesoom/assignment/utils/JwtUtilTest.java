@@ -66,7 +66,7 @@ class JwtUtilTest {
 
             @Test
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다.")
-            void it_return_InvalidTokenException() {
+            void it_throw_InvalidTokenException() {
                 assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
                         .isInstanceOf(InvalidTokenException.class);
             }
@@ -78,7 +78,7 @@ class JwtUtilTest {
 
             @Test
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다.")
-            void it_return_InvalidTokenException() {
+            void it_throw_InvalidTokenException() {
                 assertThatThrownBy(() -> jwtUtil.decode(null))
                         .isInstanceOf(InvalidTokenException.class);
             }
@@ -90,7 +90,7 @@ class JwtUtilTest {
 
             @Test
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다.")
-            void it_return_InvalidTokenException() {
+            void it_throw_InvalidTokenException() {
                 assertThatThrownBy(() -> jwtUtil.decode(""))
                         .isInstanceOf(InvalidTokenException.class);
             }

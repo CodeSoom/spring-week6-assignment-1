@@ -72,7 +72,7 @@ class AuthenticationServiceTest {
 
             @Test
             @DisplayName("유저를 찾지 못했다는 내용의 예외를 던집니다.")
-            void it_return_accessToken() {
+            void it_throw_UserNotFoundException() {
                 assertThatThrownBy(() -> authenticationService.login(testLoginData))
                         .isInstanceOf(UserNotFoundException.class);
             }

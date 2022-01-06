@@ -78,12 +78,6 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public void handleMissingRequestHeaderException() {
-
-    }
-
     private Long getUserIdByParsingToken(String token) {
         String accessToken = token.substring("Bearer ".length());
         return  authenticationService.parseToken(accessToken);

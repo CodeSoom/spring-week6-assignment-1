@@ -59,6 +59,18 @@ class JwtUtilTest {
                         .isInstanceOf(SignatureException.class);
             }
         }
+
+        @Nested
+        @DisplayName("비어있는 토큰이라면")
+        class Context_blank_token {
+
+            @Test
+            @DisplayName("예외를 던진다")
+            void it_throw_expection() {
+                assertThatThrownBy(() -> jwtUtil.decode(""))
+                        .isInstanceOf(SignatureException.class);
+            }
+        }
     }
 
 

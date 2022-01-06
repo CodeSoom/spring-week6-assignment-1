@@ -35,20 +35,37 @@ class AuthenticationServiceTest {
         void it_return_accessToken() {
             String accessToken = authenticationService.login();
 
-            assertThat(accessToken).contains(".");
+            assertThat(accessToken).isEqualTo(VALID_TOKEN);
         }
     }
 
-    @Test
-    void parseTokenWithValidToken() {
-        Long userId = authenticationService.parseToken(VALID_TOKEN);
+    @Nested
+    @DisplayName("parseToken 메소드는")
+    class Describe_parseToken {
 
-        assertThat(userId).isEqualTo(1L);
-    }
+        @Nested
+        @DisplayName("유효한 토큰이라면")
+        class Context_with_valid_token {
 
-    @Test
-    void paresTokenWithInvalidToken() {
-        assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
-                .isInstanceOf(InvalidTokenException.class);
+            @Test
+            @DisplayName("parsing 한 결과를 리턴한다")
+            void it_return_parsing_token_data() {
+                Long userId = authenticationService.parseToken(VALID_TOKEN);
+
+                assertThat(userId).isEqualTo(1L);
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 토큰이라면")
+        class Context_with_invalid_token {
+
+            @Test
+            @DisplayName("예외를 던진다")
+            void it_throw_exception() {
+                assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
+                        .isInstanceOf(InvalidTokenException.class);
+            }
+        }
     }
 }

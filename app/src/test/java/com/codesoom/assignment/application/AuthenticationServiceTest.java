@@ -25,7 +25,7 @@ class AuthenticationServiceTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9." +
             "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
-    private static final Long testUserId = 1L;
+    private static final Long TEST_USER_ID = 1L;
 
     LoginData testLoginData;
 
@@ -67,8 +67,6 @@ class AuthenticationServiceTest {
             void it_return_accessToken() {
                 String accessToken = authenticationService.login(givenLoginData);
 
-                System.out.println("accessToken: " + accessToken);
-
                 assertThat(accessToken).isEqualTo(VALID_TOKEN);
             }
         }
@@ -82,14 +80,12 @@ class AuthenticationServiceTest {
         @DisplayName("accessToken이 주어진다면")
         class Context_with_accessToken {
 
-            Long givenUserid = testUserId;
+            Long givenUserid = TEST_USER_ID;
 
             @Test
             @DisplayName("user id 값을 리턴합니다.")
             void it_return_userId() {
                 Long userId = authenticationService.parseToken(VALID_TOKEN);
-
-                System.out.println(userId);
 
                 assertThat(userId).isEqualTo(givenUserid);
             }

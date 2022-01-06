@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 class UserServiceTest {
     private static final String EXISTED_EMAIL_ADDRESS = "existed@example.com";
+
     private static final Long DELETED_USER_ID = 200L;
 
     private UserService userService;

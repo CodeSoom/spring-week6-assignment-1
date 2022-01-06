@@ -83,19 +83,12 @@ class AuthenticationServiceTest {
     @DisplayName("parseToken() 메소드는")
     class Describe_parseToken {
 
-        @Nested
-        @DisplayName("accessToken이 주어진다면")
-        class Context_with_accessToken {
+        @Test
+        @DisplayName("user id을 리턴합니다.")
+        void it_return_userId() {
+            Long userId = authenticationService.parseToken(VALID_TOKEN);
 
-            Long givenUserid = TEST_USER_ID;
-
-            @Test
-            @DisplayName("user id 값을 리턴합니다.")
-            void it_return_userId() {
-                Long userId = authenticationService.parseToken(VALID_TOKEN);
-
-                assertThat(userId).isEqualTo(givenUserid);
-            }
+            assertThat(userId).isEqualTo(TEST_USER_ID);
         }
     }
 }

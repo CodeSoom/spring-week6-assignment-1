@@ -4,7 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -291,7 +291,7 @@ class ProductControllerTest {
             @BeforeEach
             void prepare() throws JsonProcessingException {
                 given(authenticationService.parseToken(INVALID_TOKEN))
-                        .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
+                        .willThrow(new InvalidTokenException(INVALID_TOKEN));
 
                 Integer NEW_PRODUCT_PRICE = 5000;
                 ProductData productData = ProductData.builder()

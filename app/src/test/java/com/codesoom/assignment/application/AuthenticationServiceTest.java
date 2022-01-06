@@ -1,6 +1,6 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.errors.InvalidAccessTokenException;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,15 +40,6 @@ class AuthenticationServiceTest {
     @Test
     void paresTokenWithInvalidToken() {
         assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
-                .isInstanceOf(InvalidAccessTokenException.class);
+                .isInstanceOf(InvalidTokenException.class);
     }
-
-    @Test
-    void parseTokenWithEmptyToken() {
-        assertThatThrownBy(() -> authenticationService.parseToken(null))
-                .isInstanceOf(InvalidAccessTokenException.class);
-        assertThatThrownBy(() -> authenticationService.parseToken(""))
-                .isInstanceOf(InvalidAccessTokenException.class);
-    }
-
 }

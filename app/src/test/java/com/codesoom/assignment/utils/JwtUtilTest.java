@@ -15,13 +15,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("JwtUtil 클래스")
 class JwtUtilTest {
 
-    private static final String SECRET = "12345678901234567890123456789010";
-
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9." +
             "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9." +
-            "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnG29304";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "ABCDE";
 
     private static final Long USER_ID = 1L;
 
@@ -36,15 +33,12 @@ class JwtUtilTest {
         @DisplayName("userId 값이 주어진다면")
         class Context_with_userId {
 
-            final Long givenId = USER_ID;
-            final String givenToken = VALID_TOKEN;
-
             @Test
             @DisplayName("token을 리턴합니다.")
             void it_return_token() {
-                String token = jwtUtil.encode(givenId);
+                String token = jwtUtil.encode(USER_ID);
 
-                assertThat(token).isEqualTo(givenToken);
+                assertThat(token).isEqualTo(VALID_TOKEN);
             }
         }
     }
@@ -53,9 +47,6 @@ class JwtUtilTest {
     @DisplayName("decode() 메소드는")
     class Describe_decode {
 
-        final Long givenId = USER_ID;
-        final String givenToken = VALID_TOKEN;
-
         @Nested
         @DisplayName("token이 주어진다면")
         class Context_with_token {
@@ -63,9 +54,9 @@ class JwtUtilTest {
             @Test
             @DisplayName("userId를 리턴합니다.")
             void it_return_userId() {
-                Claims claims = jwtUtil.decode(givenToken);
+                Claims claims = jwtUtil.decode(VALID_TOKEN);
 
-                assertThat(claims.get("userId", Long.class)).isEqualTo(givenId);
+                assertThat(claims.get("userId", Long.class)).isEqualTo(USER_ID);
             }
         }
 
@@ -73,12 +64,10 @@ class JwtUtilTest {
         @DisplayName("유효하지 않는 token이 주어진다면")
         class Context_with_invalid_token {
 
-            final String givenInvalidToken = INVALID_TOKEN;
-
             @Test
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다.")
             void it_return_InvalidTokenException() {
-                assertThatThrownBy(() -> jwtUtil.decode(givenInvalidToken))
+                assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }

@@ -21,9 +21,17 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.equalTo;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -34,7 +42,6 @@ class ProductControllerTest {
     private final Integer PRODUCT_PRICE = 5000;
 
     private Product existedProduct;
-    private ProductData productData;
 
     @Autowired
     private WebApplicationContext wac;
@@ -50,7 +57,7 @@ class ProductControllerTest {
     private Mapper mapper;
 
     void prepareProduct() {
-        productData = ProductData.builder()
+        ProductData productData = ProductData.builder()
                 .name(PRODUCT_NAME)
                 .maker(PRODUCT_MAKER)
                 .price(PRODUCT_PRICE)
@@ -88,7 +95,7 @@ class ProductControllerTest {
             void it_response_empty_array() throws Exception {
                 mockMvc.perform(get("/products"))
                         .andExpect(status().isOk())
-                        .andExpect(content().string(containsString(EMPTY_PRODUCTS)));
+                        .andExpect(content().string(equalTo(EMPTY_PRODUCTS)));
             }
         }
 
@@ -171,10 +178,10 @@ class ProductControllerTest {
             private final static String NEW_PRODUCT_NAME = "도마뱀인형";
             private final static String NEW_PRODUCT_MAKER = "코드숨";
             private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
-            private final Integer NEW_PRODUCT_PRICE = 10000;
 
             @BeforeEach
             void prepare() throws JsonProcessingException {
+                Integer NEW_PRODUCT_PRICE = 10000;
                 ProductData productData = ProductData.builder()
                         .name(NEW_PRODUCT_NAME)
                         .maker(NEW_PRODUCT_MAKER)
@@ -206,10 +213,10 @@ class ProductControllerTest {
             private final static String BLANK_PRODUCT_NAME = "";
             private final static String BLANK_PRODUCT_MAKER = "";
             private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
-            private final Integer NEW_PRODUCT_PRICE = 5000;
 
             @BeforeEach
             void prepare() throws JsonProcessingException {
+                Integer NEW_PRODUCT_PRICE = 5000;
                 ProductData productData = ProductData.builder()
                         .name(BLANK_PRODUCT_NAME)
                         .maker(BLANK_PRODUCT_MAKER)
@@ -239,7 +246,6 @@ class ProductControllerTest {
     class Describe_patch_products_request {
         private final static String UPDATE_PRODUCT_NAME = "코끼리인형";
         private final static String UPDATE_PRODUCT_MAKER = "컬리";
-        private final Integer UPDATE_PRODUCT_PRICE = 10000;
 
         private Product updatedProduct;
         private String requestContent;
@@ -249,6 +255,7 @@ class ProductControllerTest {
         void prepare() throws JsonProcessingException {
             prepareProduct();
 
+            Integer UPDATE_PRODUCT_PRICE = 10000;
             ProductData productData = ProductData.builder()
                     .name(UPDATE_PRODUCT_NAME)
                     .maker(UPDATE_PRODUCT_MAKER)
@@ -279,10 +286,10 @@ class ProductControllerTest {
         @Nested
         @DisplayName("존재하는 id이고, 수정할 상품 데이터가 비어있다면")
         class Context_with_existed_id_and_blank_product_data {
-            private final Integer UPDATE_PRODUCT_PRICE = 10000;
 
             @BeforeEach
             void prepare() throws JsonProcessingException {
+                Integer UPDATE_PRODUCT_PRICE = 10000;
                 ProductData productData = ProductData.builder()
                         .name("")
                         .maker("")

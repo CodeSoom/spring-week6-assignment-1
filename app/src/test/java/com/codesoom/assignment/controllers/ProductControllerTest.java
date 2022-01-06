@@ -1,9 +1,10 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.utils.JwtUtil;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -24,18 +25,10 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -43,13 +36,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductControllerTest {
     private static final String PRODUCT_NAME = "장난감 뱀";
     private static final String PRODUCT_MAKER = "애용이네 장난감";
-    private final Integer PRODUCT_PRICE = 5000;
-
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
             ".eyJ1c2VySWQiOjF9._sqAnLqnuii5tTri0u8AAwGJpI4PF6WRT9wkOLyxWaw";
     private static final String INVALID_TOKEN = VALID_TOKEN + "0";
-    private static final String SECRET = "01234567890123456789012345678901";
-
+    private final Integer PRODUCT_PRICE = 5000;
     private Product existedProduct;
 
     @Autowired
@@ -66,7 +56,7 @@ class ProductControllerTest {
     private Mapper mapper;
 
     @MockBean
-    private JwtUtil jwtUtil;
+    private AuthenticationService authenticationService;
 
     void prepareProduct() {
         ProductData productData = ProductData.builder()
@@ -86,11 +76,6 @@ class ProductControllerTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
-
-        given(jwtUtil.decode(any(String.class))).will(invocation -> {
-            String token = invocation.getArgument(0);
-            return new JwtUtil(SECRET).decode(token);
-        });
     }
 
     @Nested
@@ -190,7 +175,7 @@ class ProductControllerTest {
         private String requestContent;
 
         @Nested
-        @DisplayName("access token이 있고, 상품 정보가 주어진다면")
+        @DisplayName("유효한 access token이 있고, 상품 정보가 주어진다면")
         class Context_with_new_product_data {
             private final static String NEW_PRODUCT_NAME = "도마뱀인형";
             private final static String NEW_PRODUCT_MAKER = "코드숨";
@@ -198,6 +183,8 @@ class ProductControllerTest {
 
             @BeforeEach
             void prepare() throws JsonProcessingException {
+                given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
                 Integer NEW_PRODUCT_PRICE = 10000;
                 ProductData productData = ProductData.builder()
                         .name(NEW_PRODUCT_NAME)
@@ -226,7 +213,7 @@ class ProductControllerTest {
         }
 
         @Nested
-        @DisplayName("상품 정보가 비어있다면")
+        @DisplayName("유효한 access token이 있지만, 상품 정보가 비어있다면")
         class Context_with_blank_product_data {
             private final static String BLANK_PRODUCT_NAME = "";
             private final static String BLANK_PRODUCT_MAKER = "";
@@ -234,6 +221,8 @@ class ProductControllerTest {
 
             @BeforeEach
             void prepare() throws JsonProcessingException {
+                given(authenticationService.parseToken(VALID_TOKEN)).willReturn(1L);
+
                 Integer NEW_PRODUCT_PRICE = 5000;
                 ProductData productData = ProductData.builder()
                         .name(BLANK_PRODUCT_NAME)
@@ -256,6 +245,76 @@ class ProductControllerTest {
                                         .header("Authorization", "Bearer " + VALID_TOKEN)
                         )
                         .andExpect(status().isBadRequest());
+            }
+        }
+
+        @Nested
+        @DisplayName("access token이 비어 있다면")
+        class Context_without_access_token {
+            private final static String NEW_PRODUCT_NAME = "도마뱀인형";
+            private final static String NEW_PRODUCT_MAKER = "코드숨";
+            private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
+
+            @BeforeEach
+            void prepare() throws JsonProcessingException {
+                Integer NEW_PRODUCT_PRICE = 5000;
+                ProductData productData = ProductData.builder()
+                        .name(NEW_PRODUCT_NAME)
+                        .maker(NEW_PRODUCT_MAKER)
+                        .imageUrl(NEW_PRODUCT_IMAGE_URL)
+                        .price(NEW_PRODUCT_PRICE)
+                        .build();
+
+                newProduct = mapper.map(productData, Product.class);
+                requestContent = objectMapper.writeValueAsString(newProduct);
+            }
+
+            @Test
+            @DisplayName("Unauthorized를 응답한다")
+            void it_response_unauthorized() throws Exception {
+                mockMvc.perform(
+                                post("/products")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(requestContent)
+                        )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 access token이 주어진다면")
+        class Context_wrong_access_token {
+            private final static String NEW_PRODUCT_NAME = "도마뱀인형";
+            private final static String NEW_PRODUCT_MAKER = "코드숨";
+            private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
+
+            @BeforeEach
+            void prepare() throws JsonProcessingException {
+                given(authenticationService.parseToken(INVALID_TOKEN))
+                        .willThrow(new InvalidAccessTokenException(INVALID_TOKEN));
+
+                Integer NEW_PRODUCT_PRICE = 5000;
+                ProductData productData = ProductData.builder()
+                        .name(NEW_PRODUCT_NAME)
+                        .maker(NEW_PRODUCT_MAKER)
+                        .imageUrl(NEW_PRODUCT_IMAGE_URL)
+                        .price(NEW_PRODUCT_PRICE)
+                        .build();
+
+                newProduct = mapper.map(productData, Product.class);
+                requestContent = objectMapper.writeValueAsString(newProduct);
+            }
+
+            @Test
+            @DisplayName("Unauthorized를 응답한다")
+            void it_response_unauthorized() throws Exception {
+                mockMvc.perform(
+                                post("/products")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(requestContent)
+                                        .header("Authorization", "Bearer " + INVALID_TOKEN)
+                        )
+                        .andExpect(status().isUnauthorized());
             }
         }
     }

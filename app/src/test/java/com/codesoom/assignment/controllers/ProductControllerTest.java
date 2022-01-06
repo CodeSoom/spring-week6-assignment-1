@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,6 +25,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -41,6 +45,11 @@ class ProductControllerTest {
     private static final String PRODUCT_MAKER = "애용이네 장난감";
     private final Integer PRODUCT_PRICE = 5000;
 
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJ1c2VySWQiOjF9._sqAnLqnuii5tTri0u8AAwGJpI4PF6WRT9wkOLyxWaw";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "0";
+    private static final String SECRET = "01234567890123456789012345678901";
+
     private Product existedProduct;
 
     @Autowired
@@ -55,6 +64,9 @@ class ProductControllerTest {
 
     @Autowired
     private Mapper mapper;
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     void prepareProduct() {
         ProductData productData = ProductData.builder()
@@ -74,6 +86,11 @@ class ProductControllerTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .alwaysDo(print())
                 .build();
+
+        given(jwtUtil.decode(any(String.class))).will(invocation -> {
+            String token = invocation.getArgument(0);
+            return new JwtUtil(SECRET).decode(token);
+        });
     }
 
     @Nested
@@ -173,7 +190,7 @@ class ProductControllerTest {
         private String requestContent;
 
         @Nested
-        @DisplayName("상품 정보가 주어진다면")
+        @DisplayName("access token이 있고, 상품 정보가 주어진다면")
         class Context_with_new_product_data {
             private final static String NEW_PRODUCT_NAME = "도마뱀인형";
             private final static String NEW_PRODUCT_MAKER = "코드숨";
@@ -200,6 +217,7 @@ class ProductControllerTest {
                                 post("/products")
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content(requestContent)
+                                        .header("Authorization", "Bearer " + VALID_TOKEN)
                         )
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("name").value(NEW_PRODUCT_NAME))
@@ -235,6 +253,7 @@ class ProductControllerTest {
                                 post("/products")
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content(requestContent)
+                                        .header("Authorization", "Bearer " + VALID_TOKEN)
                         )
                         .andExpect(status().isBadRequest());
             }

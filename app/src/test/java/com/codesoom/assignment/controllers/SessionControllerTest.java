@@ -54,19 +54,19 @@ class SessionControllerTest {
     @DisplayName("POST /session 요청은")
     class Describe_post {
 
-        @BeforeEach
-        void prepare() {
-            User user = User.builder()
-                    .email(testLoginData.getEmail())
-                    .password(testLoginData.getPassword())
-                    .build();
-
-            userRepository.save(user);
-        }
-
         @Nested
-        @DisplayName("LoginData가 주어진다면")
-        class Context_with_loginData {
+        @DisplayName("등록된 유저의 LoginData가 주어진다면")
+        class Context_with_registered_loginData {
+
+            @BeforeEach
+            void prepare() {
+                User user = User.builder()
+                        .email(testLoginData.getEmail())
+                        .password(testLoginData.getPassword())
+                        .build();
+
+                userRepository.save(user);
+            }
 
             @Test
             @DisplayName("access token을 응답합니다.")
@@ -76,6 +76,21 @@ class SessionControllerTest {
                                 .content(loginDataToContent(testLoginData)))
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("$.accessToken").value(containsString(".")))
+                        .andDo(print());
+            }
+        }
+
+        @Nested
+        @DisplayName("등록되지 않은 유저의 LoginData가 주어진다면")
+        class Context_with_unregistered_loginData {
+
+            @Test
+            @DisplayName("404(Not Found)를 응답합니다.")
+            void it_return_accessToken() throws Exception {
+                mockMvc.perform(post("/session")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginDataToContent(testLoginData)))
+                        .andExpect(status().isNotFound())
                         .andDo(print());
             }
         }

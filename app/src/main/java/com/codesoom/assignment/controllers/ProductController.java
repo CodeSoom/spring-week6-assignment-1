@@ -5,10 +5,8 @@ import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +49,7 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        Long userId = pareToken(authorization);
+        Long userId = parseToken(authorization);
 
         return productService.createProduct(productData);
     }
@@ -62,7 +60,7 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        Long userId = pareToken(authorization);
+        Long userId = parseToken(authorization);
 
         return productService.updateProduct(id, productData);
     }
@@ -73,12 +71,12 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        Long userId = pareToken(authorization);
+        Long userId = parseToken(authorization);
 
         productService.deleteProduct(id);
     }
 
-    private Long pareToken(String token) {
+    private Long parseToken(String token) {
         String accessToken = token.substring("Bearer ".length());
         return  authenticationService.parseToken(accessToken);
     }

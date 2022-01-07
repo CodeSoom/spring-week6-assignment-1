@@ -1,6 +1,7 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.errors.WrongPasswordException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
 
-    private UserService userService;
+    private final UserService userService;
 
     public AuthenticationService(JwtUtil jwtUtil, UserService userService) {
         this.jwtUtil = jwtUtil;
@@ -21,12 +22,19 @@ public class AuthenticationService {
 
     /**
      * email을 받아서 user를 찾아 존재하는 user 라면 encode 하여 jwt 토큰을 리턴합니다.
+     * 만약 user의 password 가 요청받은 password 와 다르면 WrongPasswordException 을 던집니다.
      *
-     * @param email 유저의 email
+     * @param email    로그인을 요청한 유저의 email
+     * @param password 로그인을 요청한 유저의 password
      * @return jwt 토큰
+     * @throws WrongPasswordException 기존에 존재하는 user 의 비밀번호가 요청받은 비밀번호와 다를 경우
      */
-    public String login(String email) {
+    public String login(String email, String password) {
         User user = userService.findUserByEmail(email);
+
+        if (!user.getPassword().equals(password)) {
+            throw new WrongPasswordException();
+        }
 
         return jwtUtil.encode(
                 user.getId(),

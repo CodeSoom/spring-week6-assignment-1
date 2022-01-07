@@ -18,9 +18,11 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String encode(Long userId) {
+    public String encode(Long userId, String name, String email) {
         return Jwts.builder()
                 .claim("userId", userId)
+                .claim("name", name)
+                .claim("email", email)
                 .signWith(key)
                 .compact();
     }

@@ -24,7 +24,9 @@ public class SessionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody LoginRequestData loginRequestData) {
-        String accessToken = authenticationService.login();
+        String accessToken = authenticationService.login(
+                loginRequestData.getEmail()
+        );
 
         return SessionResponseData.builder()
                 .accessToken(accessToken)

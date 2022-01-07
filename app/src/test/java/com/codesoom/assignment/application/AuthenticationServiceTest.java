@@ -1,10 +1,12 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.UserNotFoundByEmailException;
 import com.codesoom.assignment.utils.JwtUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,16 +24,46 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class AuthenticationServiceTest {
     private static final String SECRET = "01234567890123456789012345678901";
 
+    private static final String EXISTED_USER_NAME = "곽형조";
+    private static final String EXISTED_USER_EMAIL = "rhkrgudwh@test.com";
+    private static final String EXISTED_USER_PASSWORD = "asdqwe1234";
+
+    private User existedUser;
+    private String existedUserToken;
+
     private AuthenticationService authenticationService;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private JwtUtil jwtUtil = new JwtUtil(SECRET);
 
     @BeforeEach
     void setUp() {
         authenticationService = new AuthenticationService(jwtUtil, userService);
+    }
+
+    void prepareUser() {
+        UserRegistrationData registrationData = UserRegistrationData.builder()
+                .name(EXISTED_USER_NAME)
+                .email(EXISTED_USER_EMAIL)
+                .password(EXISTED_USER_PASSWORD)
+                .build();
+        existedUser = userService.registerUser(registrationData);
+
+        existedUserToken = jwtUtil.encode(
+                existedUser.getId(),
+                existedUser.getName(),
+                existedUser.getEmail()
+        );
+    }
+
+    @AfterEach
+    void initializeUserRepository() {
+        userRepository.deleteAll();
     }
 
     @Nested
@@ -41,27 +73,10 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("email 이 존재하는 user 라면")
         class Context_existed_user_by_email {
-            private static final String EXISTED_USER_NAME = "곽형조";
-            private static final String EXISTED_USER_EMAIL = "rhkrgudwh@test.com";
-            private static final String EXISTED_USER_PASSWORD = "asdqwe1234";
-
-            private User existedUser;
-            private String existedUserToken;
 
             @BeforeEach
             void prepare() {
-                UserRegistrationData registrationData = UserRegistrationData.builder()
-                        .name(EXISTED_USER_NAME)
-                        .email(EXISTED_USER_EMAIL)
-                        .password(EXISTED_USER_PASSWORD)
-                        .build();
-                existedUser = userService.registerUser(registrationData);
-
-                existedUserToken = jwtUtil.encode(
-                        existedUser.getId(),
-                        existedUser.getName(),
-                        existedUser.getEmail()
-                );
+                prepareUser();
             }
 
             @Test
@@ -76,20 +91,11 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("email 이 존재하지 않는 user 라면")
         class Context_with_not_existed_user_by_email {
-            private static final String NOT_EXISTED_USER_NAME = "홍길동";
-            private static final String NOT_EXISTED_USER_EMAIL = "ghdrlfehd@test.com";
-            private static final String NOT_EXISTED_USER_PASSWORD = "asdqwe1234";
-
             private User notExistedUser;
 
             @BeforeEach
             void prepare() {
-                UserRegistrationData registrationData = UserRegistrationData.builder()
-                        .name(NOT_EXISTED_USER_NAME)
-                        .email(NOT_EXISTED_USER_EMAIL)
-                        .password(NOT_EXISTED_USER_PASSWORD)
-                        .build();
-                User existedUser = userService.registerUser(registrationData);
+                prepareUser();
                 notExistedUser = userService.deleteUser(existedUser.getId());
             }
 
@@ -109,26 +115,10 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효한 토큰이라면")
         class Context_with_valid_token {
-            private static final String EXISTED_USER_NAME = "철수";
-            private static final String EXISTED_USER_EMAIL = "cjftn@test.com";
-            private static final String EXISTED_USER_PASSWORD = "asdqwe1234";
-
-            private User existedUser;
-            private String existedUserToken;
 
             @BeforeEach
             void prepare() {
-                UserRegistrationData registrationData = UserRegistrationData.builder()
-                        .name(EXISTED_USER_NAME)
-                        .email(EXISTED_USER_EMAIL)
-                        .password(EXISTED_USER_PASSWORD)
-                        .build();
-                existedUser = userService.registerUser(registrationData);
-                existedUserToken = jwtUtil.encode(
-                        existedUser.getId(),
-                        existedUser.getName(),
-                        existedUser.getEmail()
-                );
+                prepareUser();
             }
 
             @Test
@@ -144,26 +134,9 @@ class AuthenticationServiceTest {
         @DisplayName("유효하지 않은 토큰이라면")
         class Context_with_invalid_token {
 
-            private static final String EXISTED_USER_NAME = "영희";
-            private static final String EXISTED_USER_EMAIL = "dudgml@test.com";
-            private static final String EXISTED_USER_PASSWORD = "asdqwe1234";
-
-            private User existedUser;
-            private String existedUserToken;
-
             @BeforeEach
             void prepare() {
-                UserRegistrationData registrationData = UserRegistrationData.builder()
-                        .name(EXISTED_USER_NAME)
-                        .email(EXISTED_USER_EMAIL)
-                        .password(EXISTED_USER_PASSWORD)
-                        .build();
-                existedUser = userService.registerUser(registrationData);
-                existedUserToken = jwtUtil.encode(
-                        existedUser.getId(),
-                        existedUser.getName(),
-                        existedUser.getEmail()
-                );
+                prepareUser();
             }
 
             @Test

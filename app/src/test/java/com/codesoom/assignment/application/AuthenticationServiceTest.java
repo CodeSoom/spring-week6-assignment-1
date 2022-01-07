@@ -21,23 +21,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("AuthenticationService 테스트")
 class AuthenticationServiceTest {
     private static final String SECRET = "01234567890123456789012345678901";
-    // TODO: userId: 2, name: 곽형조, email: rhkrgudwh@test.com 인 jwt token
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjIsIm5hbWUiOiLqs73tmJXsobAiLCJlbWFpbCI6InJoa3JndWR3aEB0ZXN0LmNvbSJ9." +
-            "oQH48OTpwh08jk1GV9TshGTC7SRJg5wubLrpqop4sG0";
-    private static final String INVALID_TOKEN = VALID_TOKEN + "0";
 
     private AuthenticationService authenticationService;
 
     @Autowired
     private UserService userService;
 
-    private User existedUser;
+    private JwtUtil jwtUtil = new JwtUtil(SECRET);
 
     @BeforeEach
     void setUp() {
-        JwtUtil jwtUtil = new JwtUtil(SECRET);
-
         authenticationService = new AuthenticationService(jwtUtil, userService);
     }
 
@@ -52,6 +45,9 @@ class AuthenticationServiceTest {
             private static final String EXISTED_USER_EMAIL = "rhkrgudwh@test.com";
             private static final String EXISTED_USER_PASSWORD = "asdqwe1234";
 
+            private User existedUser;
+            private String existedUserToken;
+
             @BeforeEach
             void prepare() {
                 UserRegistrationData registrationData = UserRegistrationData.builder()
@@ -60,6 +56,12 @@ class AuthenticationServiceTest {
                         .password(EXISTED_USER_PASSWORD)
                         .build();
                 existedUser = userService.registerUser(registrationData);
+
+                existedUserToken = jwtUtil.encode(
+                        existedUser.getId(),
+                        existedUser.getName(),
+                        existedUser.getEmail()
+                );
             }
 
             @Test
@@ -67,7 +69,7 @@ class AuthenticationServiceTest {
             void it_return_accessToken() {
                 String accessToken = authenticationService.login(existedUser.getEmail());
 
-                assertThat(accessToken).isEqualTo(VALID_TOKEN);
+                assertThat(accessToken).isEqualTo(existedUserToken);
             }
         }
 
@@ -87,7 +89,7 @@ class AuthenticationServiceTest {
                         .email(NOT_EXISTED_USER_EMAIL)
                         .password(NOT_EXISTED_USER_PASSWORD)
                         .build();
-                existedUser = userService.registerUser(registrationData);
+                User existedUser = userService.registerUser(registrationData);
                 notExistedUser = userService.deleteUser(existedUser.getId());
             }
 
@@ -107,13 +109,34 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효한 토큰이라면")
         class Context_with_valid_token {
+            private static final String EXISTED_USER_NAME = "철수";
+            private static final String EXISTED_USER_EMAIL = "cjftn@test.com";
+            private static final String EXISTED_USER_PASSWORD = "asdqwe1234";
+
+            private User existedUser;
+            private String existedUserToken;
+
+            @BeforeEach
+            void prepare() {
+                UserRegistrationData registrationData = UserRegistrationData.builder()
+                        .name(EXISTED_USER_NAME)
+                        .email(EXISTED_USER_EMAIL)
+                        .password(EXISTED_USER_PASSWORD)
+                        .build();
+                existedUser = userService.registerUser(registrationData);
+                existedUserToken = jwtUtil.encode(
+                        existedUser.getId(),
+                        existedUser.getName(),
+                        existedUser.getEmail()
+                );
+            }
 
             @Test
             @DisplayName("parsing 한 결과를 리턴한다")
             void it_return_parsing_token_data() {
-                Long userId = authenticationService.parseToken(VALID_TOKEN);
+                Long userId = authenticationService.parseToken(existedUserToken);
 
-                assertThat(userId).isEqualTo(1L);
+                assertThat(userId).isEqualTo(existedUser.getId());
             }
         }
 
@@ -121,10 +144,32 @@ class AuthenticationServiceTest {
         @DisplayName("유효하지 않은 토큰이라면")
         class Context_with_invalid_token {
 
+            private static final String EXISTED_USER_NAME = "영희";
+            private static final String EXISTED_USER_EMAIL = "dudgml@test.com";
+            private static final String EXISTED_USER_PASSWORD = "asdqwe1234";
+
+            private User existedUser;
+            private String existedUserToken;
+
+            @BeforeEach
+            void prepare() {
+                UserRegistrationData registrationData = UserRegistrationData.builder()
+                        .name(EXISTED_USER_NAME)
+                        .email(EXISTED_USER_EMAIL)
+                        .password(EXISTED_USER_PASSWORD)
+                        .build();
+                existedUser = userService.registerUser(registrationData);
+                existedUserToken = jwtUtil.encode(
+                        existedUser.getId(),
+                        existedUser.getName(),
+                        existedUser.getEmail()
+                );
+            }
+
             @Test
             @DisplayName("예외를 던진다")
             void it_throw_exception() {
-                assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
+                assertThatThrownBy(() -> authenticationService.parseToken(existedUserToken + "0"))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }

@@ -36,7 +36,7 @@ public class AuthenticationService {
     }
 
     /**
-     * accessToken 을 받아 분해한 결과른 리턴합니다.
+     * accessToken 을 받아 분해한 결과를 리턴합니다.
      *
      * @param accessToken 분해 할 token 입니다.
      * @return 분해 된 토큰의 정보 입니다.

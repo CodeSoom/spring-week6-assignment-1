@@ -98,10 +98,9 @@ class AuthenticationServiceTest {
                 authenticationService = new AuthenticationService(jwtCodec);
             }
 
-            @ParameterizedTest
+            @ParameterizedTest(name = "[{index}] InvalidTokenException 예외를 던진다.")
             @NullAndEmptySource
             @ValueSource(strings = {"  ", "\t", "\n"})
-            @DisplayName("InvalidTokenException 예외를 던진다.")
             void it_returns_string(String emptyToken){
                 assertThatThrownBy(
                             () -> authenticationService.parseToken(emptyToken)

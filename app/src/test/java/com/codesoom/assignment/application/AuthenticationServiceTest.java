@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.UserNotFoundByEmailException;
+import com.codesoom.assignment.errors.WrongPasswordException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,9 +83,31 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("user 를 찾아 accessToken 을 생성하고 리턴한다")
             void it_return_accessToken() {
-                String accessToken = authenticationService.login(existedUser.getEmail());
+                String accessToken = authenticationService.login(
+                        existedUser.getEmail(), existedUser.getPassword()
+                );
 
                 assertThat(accessToken).isEqualTo(existedUserToken);
+            }
+        }
+
+        @Nested
+        @DisplayName("password 가 틀리다면")
+        class Context_wrong_password {
+            private static final String WRONG_PASSWORD = "wrongpassword";
+
+            @BeforeEach
+            void prepare() {
+                prepareUser();
+            }
+
+            @Test
+            @DisplayName("잘못된 비밀번호 예외를 던진다")
+            void it_throw_wrong_password_exception() {
+                assertThatThrownBy(() -> authenticationService.login(
+                        existedUser.getEmail(), WRONG_PASSWORD
+                ))
+                        .isInstanceOf(WrongPasswordException.class);
             }
         }
 
@@ -102,7 +125,9 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("UserNotFoundByEmailException 예외를 던진다")
             void it_return_accessToken() {
-                assertThatThrownBy(() -> authenticationService.login(notExistedUser.getEmail()))
+                assertThatThrownBy(() -> authenticationService.login(
+                        notExistedUser.getEmail(), notExistedUser.getPassword()
+                ))
                         .isInstanceOf(UserNotFoundByEmailException.class);
             }
         }

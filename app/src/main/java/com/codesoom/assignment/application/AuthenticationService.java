@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
  * 사용자 인증, 인가와 관련된 처리를 합니다.
  */
 @Service
+@Transactional
 public class AuthenticationService {
     private final JwtUtill jwtUtill;
     private final UserRepository userRepository;
@@ -29,8 +30,8 @@ public class AuthenticationService {
      * 사용자가 로그인하면 아이디를 인코딩하여 리턴합니다.
      *
      * @return 인코딩된 아이디
-     * @throws UserNotFoundException          사용자 이메일을 찾을 수 없는 경우 던집니다.
-     * @throws LoginNotMatchPasswordException 로그인 시 password가 일치하지 않은 경우 던집니다.
+     * @throws UserNotFoundException          사용자 이메일을 찾을 수 없는 경우
+     * @throws LoginNotMatchPasswordException 로그인 시 password가 일치하지 않은 경우
      */
     public String login(final UserLoginData userLoginData) {
         String userEmail = userLoginData.getEmail();
@@ -48,7 +49,6 @@ public class AuthenticationService {
      * 인증된 토큰을 받아 아이디를 디코딩하여 리턴합니다.
      *
      * @return 사용자 아이디
-     * @throws InvalidTokenException 인증되지 않은 토큰일 경우 던집니다.
      */
     public Long parseToken(String token) {
         Claims claims = jwtUtill.decode(token);

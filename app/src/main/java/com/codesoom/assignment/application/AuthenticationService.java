@@ -20,10 +20,10 @@ public class AuthenticationService {
     public String login(SessionLoginData sessionLoginData){
         User user = userService.findUserByEmail(sessionLoginData.getEmail());
 
-        if (!user.getPassword().equals(sessionLoginData.getPassword())){
+        if (user.authenticate(sessionLoginData.getPassword())){
             throw new LoginWrongPasswordException();
         }
-
+        
         return jwtCodec.encode(user.getId());
     }
 
@@ -31,7 +31,4 @@ public class AuthenticationService {
         Claims claims = jwtCodec.decode(accessToken);
         return claims.get("userId", Long.class);
     }
-
-
-
 }

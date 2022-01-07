@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/session")
@@ -23,7 +25,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login(@RequestBody LoginRequestData loginRequestData) {
+    public SessionResponseData login(@RequestBody @Valid LoginRequestData loginRequestData) {
         String accessToken = authenticationService.login(
                 loginRequestData.getEmail()
         );

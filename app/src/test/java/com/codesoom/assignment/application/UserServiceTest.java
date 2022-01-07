@@ -5,7 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.UserNotFoundByIdException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -117,7 +117,7 @@ class UserServiceTest {
                 .build();
 
         assertThatThrownBy(() -> userService.updateUser(100L, modificationData))
-                .isInstanceOf(UserNotFoundException.class);
+                .isInstanceOf(UserNotFoundByIdException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(100L);
     }
@@ -133,7 +133,7 @@ class UserServiceTest {
         assertThatThrownBy(
                 () -> userService.updateUser(DELETED_USER_ID, modificationData)
         )
-                .isInstanceOf(UserNotFoundException.class);
+                .isInstanceOf(UserNotFoundByIdException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
     }
@@ -151,7 +151,7 @@ class UserServiceTest {
     @Test
     void deleteUserWithNotExistedId() {
         assertThatThrownBy(() -> userService.deleteUser(100L))
-                .isInstanceOf(UserNotFoundException.class);
+                .isInstanceOf(UserNotFoundByIdException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(100L);
     }
@@ -159,7 +159,7 @@ class UserServiceTest {
     @Test
     void deleteUserWithDeletedId() {
         assertThatThrownBy(() -> userService.deleteUser(DELETED_USER_ID))
-                .isInstanceOf(UserNotFoundException.class);
+                .isInstanceOf(UserNotFoundByIdException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
     }

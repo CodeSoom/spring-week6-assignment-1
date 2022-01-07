@@ -4,7 +4,7 @@ import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.UserNotFoundByIdException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +56,10 @@ class UserControllerTest {
                 });
 
         given(userService.updateUser(eq(100L), any(UserModificationData.class)))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundByIdException(100L));
 
         given(userService.deleteUser(100L))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundByIdException(100L));
     }
 
     @Test

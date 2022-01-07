@@ -3,6 +3,8 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.SessionLoginData;
 import com.codesoom.assignment.errors.InvalidTokenException;
+import com.codesoom.assignment.errors.LoginWrongPasswordException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtCodec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,33 +35,86 @@ class AuthenticationServiceTest {
 
         AuthenticationService authenticationService;
 
-
-        SessionLoginData sessionLoginData;
-
         @BeforeEach
-        void setUp(){
+        void setUp() {
             JwtCodec jwtCodec = new JwtCodec(SECRET);
             authenticationService = new AuthenticationService(jwtCodec, userService);
-            sessionLoginData = SessionLoginData.builder()
-                    .email("tester@example.com")
-                    .password("test")
+            SessionLoginData sessionLoginData = SessionLoginData.builder()
+                    .email("exist@example.com")
+                    .password("rightPassword")
                     .build();
 
             given(userService.findUserByEmail(sessionLoginData.getEmail()))
                     .willReturn(
                             User.builder()
-                            .id(1L)
-                            .email(sessionLoginData.getEmail())
-                            .password(sessionLoginData.getPassword())
-                            .build());
+                                    .id(1L)
+                                    .email(sessionLoginData.getEmail())
+                                    .password(sessionLoginData.getPassword())
+                                    .build());
 
+            given(userService.findUserByEmail("notExist@example.com"))
+                    .willThrow(new UserNotFoundException("notExist@example.com"));
         }
 
-        @Test
-        @DisplayName("액세스 토큰을 리턴한다.")
-        void login(){
-            String accessToken = authenticationService.login(sessionLoginData);
-            assertThat(accessToken).isEqualTo(VALID_TOKEN);
+        @Nested
+        @DisplayName("존재하는 id와 올바른 pw가 주어지면")
+        class Context_with_a_exist_id_and_right_pw {
+
+            SessionLoginData sessionLoginData;
+            @BeforeEach
+            void setUp(){
+                sessionLoginData = SessionLoginData.builder()
+                        .email("exist@example.com")
+                        .password("rightPassword")
+                        .build();
+            }
+
+            @Test
+            @DisplayName("액세스 토큰을 리턴한다.")
+            void login() {
+                String accessToken = authenticationService.login(sessionLoginData);
+                assertThat(accessToken).isEqualTo(VALID_TOKEN);
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하는 id와 잘못된 pw가 주어지면")
+        class Context_with_a_exist_id_and_wrong_pw{
+            SessionLoginData sessionLoginData;
+            @BeforeEach
+            void setUp(){
+                sessionLoginData = SessionLoginData.builder()
+                        .email("exist@example.com")
+                        .password("wrongPassword")
+                        .build();
+            }
+
+            @Test
+            @DisplayName("LoginWrongPasswordException 예외를 던진다.")
+            void login() {
+                assertThatThrownBy(() -> authenticationService.login(sessionLoginData))
+                        .isInstanceOf(LoginWrongPasswordException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 id가 주어지면")
+        class Context_with_a_not_exist_id{
+            SessionLoginData sessionLoginData;
+            @BeforeEach
+            void setUp(){
+                sessionLoginData = SessionLoginData.builder()
+                        .email("notExist@example.com")
+                        .password("rightPassword")
+                        .build();
+            }
+
+            @Test
+            @DisplayName("UserNotFoundException 예외를 던진다.")
+            void login() {
+                assertThatThrownBy(() -> authenticationService.login(sessionLoginData))
+                        .isInstanceOf(UserNotFoundException.class);
+            }
         }
     }
 

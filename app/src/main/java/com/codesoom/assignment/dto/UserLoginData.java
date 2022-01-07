@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 
 @Getter
-@Builder
 @NoArgsConstructor
 public class UserLoginData {
     @NotBlank
@@ -19,6 +18,7 @@ public class UserLoginData {
     @Mapping("password")
     private String password;
 
+    @Builder
     public UserLoginData(String email, String password) {
         this.email = email;
         this.password = password;

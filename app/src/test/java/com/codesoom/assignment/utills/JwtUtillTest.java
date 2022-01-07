@@ -7,8 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.Stream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -71,14 +69,15 @@ class JwtUtillTest {
         @Nested
         @DisplayName("빈 토큰이 들어오면")
         class Context_with_Empty_Token {
+            String[] emptyToken = new String[]{null, "", "       "};
 
             @Test
             @DisplayName("SignatureException 예외를 던진다.")
             void it_return_string() {
-                Stream.of(null, "", "      ").forEach((token) -> {
+                for (String token : emptyToken) {
                     assertThatThrownBy(() -> jwtUtill.decode(token))
                             .isInstanceOf(InvalidTokenException.class);
-                });
+                }
             }
         }
     }

@@ -15,7 +15,6 @@ class JwtUtillTest {
     private static final String SECRET = "12345678901234567890123456789010";
 
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    private static final String INVALID_TOKEN = VALID_TOKEN + "000";
 
     private JwtUtill jwtUtill;
 
@@ -46,22 +45,40 @@ class JwtUtillTest {
         @Nested
         @DisplayName("인증된 토큰이 들어오면")
         class Context_with_valid_Token {
+            String validToken;
+            Long userId;
+
+            @BeforeEach
+            void setUp() {
+                userId = 0L;
+                validToken = jwtUtill.encode(userId);
+            }
+
             @Test
             @DisplayName("디코딩된 사용자 정보를 리턴한다")
             void it_return_string() {
-                Claims claims = jwtUtill.decode(VALID_TOKEN);
+                Claims claims = jwtUtill.decode(validToken);
 
-                assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
+                assertThat(claims.get("userId", Long.class)).isEqualTo(userId);
             }
         }
 
         @Nested
         @DisplayName("인증되지 않은 토큰이 들어오면")
         class Context_with_Invalid_Token {
+            String invalidToken;
+            Long userId;
+
+            @BeforeEach
+            void setUp() {
+                userId = 0L;
+                String validToken = jwtUtill.encode(userId);
+                invalidToken = validToken + "000";
+            }
             @Test
             @DisplayName("SignatureException 예외를 던진다.")
             void it_return_string() {
-                assertThatThrownBy(() -> jwtUtill.decode(INVALID_TOKEN))
+                assertThatThrownBy(() -> jwtUtill.decode(invalidToken))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }
@@ -69,7 +86,7 @@ class JwtUtillTest {
         @Nested
         @DisplayName("빈 토큰이 들어오면")
         class Context_with_Empty_Token {
-            String[] emptyToken = new String[]{null, "", "       "};
+            final String[] emptyToken = new String[]{null, "", "       "};
 
             @Test
             @DisplayName("SignatureException 예외를 던진다.")

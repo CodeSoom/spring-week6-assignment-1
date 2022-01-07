@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @AutoConfigureMockMvc
 @DisplayName("AuthenticationService 테스트")
 class AuthenticationServiceTest {
-    private static final String SECRET = "01234567890123456789012345678901";
+    private static final String SECRET = "12345678901234567890123456789010";
 
     private static final String EXISTED_USER_NAME = "곽형조";
     private static final String EXISTED_USER_EMAIL = "rhkrgudwh@test.com";

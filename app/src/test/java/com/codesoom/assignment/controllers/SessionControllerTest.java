@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginRequestData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -31,9 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DisplayName("SessionController 테스트")
 class SessionControllerTest {
+    private static final String SECRET = "12345678901234567890123456789010";
+
     private final static String USER_NAME = "곽형조";
     private final static String USER_EMAIL = "rhkrgudwh@test.com";
     private final static String USER_PASSWORD = "asdqwe1234";
+
+    private JwtUtil jwtUtil = new JwtUtil(SECRET);
 
     @Autowired
     private WebApplicationContext wac;
@@ -52,6 +57,7 @@ class SessionControllerTest {
     private UserRepository userRepository;
 
     private User existedUser;
+    private String existedUserToken;
 
     @BeforeEach
     void setUpMockMvc() {
@@ -70,15 +76,19 @@ class SessionControllerTest {
                 .build();
 
         existedUser = mapper.map(registrationData, User.class);
+
         userRepository.save(existedUser);
+
+        existedUserToken = jwtUtil.encode(
+                existedUser.getId(),
+                existedUser.getName(),
+                existedUser.getEmail()
+        );
     }
 
     @Nested
     @DisplayName("POST /session 요청은")
     class Describe_post_session {
-        // TODO: existedUser 로 만든 실제 access token
-        private static final String EXISTED_USER_ACCESS_TOKEN = "...";
-
         private String requestContent;
 
         @Nested
@@ -105,7 +115,7 @@ class SessionControllerTest {
                                         .content(requestContent)
                         )
                         .andExpect(status().isCreated())
-                        .andExpect(jsonPath("accessToken").value(EXISTED_USER_ACCESS_TOKEN));
+                        .andExpect(jsonPath("accessToken").value(existedUserToken));
             }
         }
     }

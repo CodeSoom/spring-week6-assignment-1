@@ -22,7 +22,7 @@ public class JwtUtill {
     }
 
     /**
-     * id를 인코딩된 token으로 변환합니다.
+     * id를 인코딩된 token으로 변환해 리턴합니다.
      *
      * @param userId 인코딩할 유저 Id
      * @return jwt로 인코딩된 token
@@ -39,7 +39,7 @@ public class JwtUtill {
      *
      * @param token
      * @return 사용자 id
-     * @throws InvalidTokenException 유효하지 않은 토큰이 들어올 경우 덥집니다.
+     * @throws InvalidTokenException 유효하지 않은 토큰이 들어올 경우
      */
     public Claims decode(String token) {
         if (!checkValidToken(token)) {
@@ -63,9 +63,6 @@ public class JwtUtill {
      * @return 유효한 값일 경우 true, 그렇지 않으면 false
      */
     public boolean checkValidToken(String token) {
-        if (token == null || token.isBlank()) {
-            return false;
-        }
-        return true;
+        return !(token == null || token.isBlank());
     }
 }

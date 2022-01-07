@@ -94,7 +94,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("LoginNotMatchPasswordException을 던집니다.")
+            @DisplayName("비밀번호가 일치하지 않다는 예외를 던집니다.")
             void it_throw_LoginNotMatchPasswordException() {
                 UserLoginData userLoginData = mapper.map(givenUser, UserLoginData.class);
 
@@ -113,7 +113,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("UserNotFoundException을 던집니다.")
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던집니다.")
             void it_throw_() {
                 UserLoginData userLoginData = mapper.map(user, UserLoginData.class);
 
@@ -160,7 +160,7 @@ class AuthenticationServiceTest {
             }
 
             @Test
-            @DisplayName("InvalidTokenException 예외를 던진다.")
+            @DisplayName("인증되지 않은 토큰이라는 예외를 던진다.")
             void it_return() {
                 assertThatThrownBy(
                         () -> authenticationSrvice.parseToken(invalidToken)

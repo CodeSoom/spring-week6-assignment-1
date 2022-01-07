@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -86,6 +87,11 @@ class SessionControllerTest {
         );
     }
 
+    @AfterEach
+    void initializationUserRepository() {
+        userRepository.deleteAll();
+    }
+
     @Nested
     @DisplayName("POST /session 요청은")
     class Describe_post_session {
@@ -108,7 +114,7 @@ class SessionControllerTest {
 
             @Test
             @DisplayName("accessToken 을 응답한다")
-            void login() throws Exception {
+            void it_response_accessToken() throws Exception {
                 mockMvc.perform(
                                 post("/session")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,6 +122,36 @@ class SessionControllerTest {
                         )
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("accessToken").value(existedUserToken));
+            }
+        }
+
+        @Nested
+        @DisplayName("잘못된 비밀번호가 주어지면")
+        class Context_with_wrong_password {
+
+            private static final String WRONG_PASSWORD = "wrongpassword";
+
+            @BeforeEach
+            void prepare() throws JsonProcessingException {
+                prepareUser();
+
+                LoginRequestData loginRequestData = LoginRequestData.builder()
+                        .email(existedUser.getEmail())
+                        .password(WRONG_PASSWORD)
+                        .build();
+
+                requestContent = objectMapper.writeValueAsString(loginRequestData);
+            }
+
+            @Test
+            @DisplayName("예외를 던진다")
+            void it_response_exception() throws Exception {
+                mockMvc.perform(
+                                post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(requestContent)
+                        )
+                        .andExpect(status().isBadRequest());
             }
         }
     }

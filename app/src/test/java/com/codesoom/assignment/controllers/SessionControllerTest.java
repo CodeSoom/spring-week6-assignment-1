@@ -2,8 +2,8 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionLoginData;
-import com.codesoom.assignment.errors.LoginNotExistUserException;
 import com.codesoom.assignment.errors.LoginWrongPasswordException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,7 +103,7 @@ class SessionControllerTest {
             @BeforeEach
             void setUp() {
                 given(authenticationService.login(any(SessionLoginData.class)))
-                        .willThrow(new LoginNotExistUserException(sessionLoginData.getEmail()));
+                        .willThrow(new UserNotFoundException(sessionLoginData.getEmail()));
             }
 
             @Test

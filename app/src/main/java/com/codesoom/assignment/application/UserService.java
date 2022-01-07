@@ -33,7 +33,7 @@ public class UserService {
     }
 
     public User updateUser(Long id, UserModificationData modificationData) {
-        User user = findUser(id);
+        User user = findUserById(id);
 
         User source = mapper.map(modificationData, User.class);
         user.changeWith(source);
@@ -42,13 +42,18 @@ public class UserService {
     }
 
     public User deleteUser(Long id) {
-        User user = findUser(id);
+        User user = findUserById(id);
         user.destroy();
         return user;
     }
 
-    private User findUser(Long id) {
+    private User findUserById(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    public User findUserByEmail(String email){
+        return userRepository.findByEmailAndDeletedIsFalse(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 }

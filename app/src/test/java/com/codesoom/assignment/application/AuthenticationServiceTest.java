@@ -1,5 +1,7 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.dto.SessionLoginData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtCodec;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @DisplayName("AuthenticationService 클래스")
 class AuthenticationServiceTest {
@@ -21,22 +25,40 @@ class AuthenticationServiceTest {
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     private static final String INVALID_TOKEN = VALID_TOKEN + "abc";
 
+    private final UserService userService = mock(UserService.class);
+
     @Nested
     @DisplayName("login 메소드는")
     class Describe_login{
 
         AuthenticationService authenticationService;
 
+
+        SessionLoginData sessionLoginData;
+
         @BeforeEach
         void setUp(){
             JwtCodec jwtCodec = new JwtCodec(SECRET);
-            authenticationService = new AuthenticationService(jwtCodec);
+            authenticationService = new AuthenticationService(jwtCodec, userService);
+            sessionLoginData = SessionLoginData.builder()
+                    .email("tester@example.com")
+                    .password("test")
+                    .build();
+
+            given(userService.findUserByEmail(sessionLoginData.getEmail()))
+                    .willReturn(
+                            User.builder()
+                            .id(1L)
+                            .email(sessionLoginData.getEmail())
+                            .password(sessionLoginData.getPassword())
+                            .build());
+
         }
 
         @Test
         @DisplayName("액세스 토큰을 리턴한다.")
         void login(){
-            String accessToken = authenticationService.login(TOKEN_USER_ID);
+            String accessToken = authenticationService.login(sessionLoginData);
             assertThat(accessToken).isEqualTo(VALID_TOKEN);
         }
     }
@@ -54,7 +76,7 @@ class AuthenticationServiceTest {
             @BeforeEach
             void setUp(){
                 JwtCodec jwtCodec = new JwtCodec(SECRET);
-                authenticationService = new AuthenticationService(jwtCodec);
+                authenticationService = new AuthenticationService(jwtCodec, userService);
             }
 
             @Test
@@ -70,11 +92,12 @@ class AuthenticationServiceTest {
         class Context_with_a_invalid_token{
 
             AuthenticationService authenticationService;
+            UserService userService;
 
             @BeforeEach
             void setUp(){
                 JwtCodec jwtCodec = new JwtCodec(SECRET);
-                authenticationService = new AuthenticationService(jwtCodec);
+                authenticationService = new AuthenticationService(jwtCodec, userService);
             }
 
             @Test
@@ -91,11 +114,12 @@ class AuthenticationServiceTest {
         class Context_with_a_empty_token{
 
             AuthenticationService authenticationService;
+            UserService userService;
 
             @BeforeEach
             void setUp(){
                 JwtCodec jwtCodec = new JwtCodec(SECRET);
-                authenticationService = new AuthenticationService(jwtCodec);
+                authenticationService = new AuthenticationService(jwtCodec, userService);
             }
 
             @ParameterizedTest(name = "[{index}] InvalidTokenException 예외를 던진다.")

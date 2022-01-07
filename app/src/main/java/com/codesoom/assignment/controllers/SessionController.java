@@ -27,7 +27,8 @@ public class SessionController {
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid LoginRequestData loginRequestData) {
         String accessToken = authenticationService.login(
-                loginRequestData.getEmail()
+                loginRequestData.getEmail(),
+                loginRequestData.getPassword()
         );
 
         return SessionResponseData.builder()

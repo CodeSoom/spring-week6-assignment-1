@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 class UserServiceTest {
     private static final String EXISTED_EMAIL_ADDRESS = "existed@example.com";
+    private static final String NOT_EXISTED_EMAIL_ADDRESS = "notExisted@example.com";
     private static final Long DELETED_USER_ID = 200L;
 
     private UserService userService;
@@ -36,6 +37,10 @@ class UserServiceTest {
 
         given(userRepository.existsByEmail(EXISTED_EMAIL_ADDRESS))
                 .willReturn(true);
+
+        given(userRepository.existsByEmail(NOT_EXISTED_EMAIL_ADDRESS))
+                .willReturn(false);
+
 
         given(userRepository.save(any(User.class))).will(invocation -> {
             User source = invocation.getArgument(0);
@@ -59,6 +64,9 @@ class UserServiceTest {
                 .willReturn(Optional.empty());
 
         given(userRepository.findByIdAndDeletedIsFalse(DELETED_USER_ID))
+                .willReturn(Optional.empty());
+
+        given(userRepository.findByEmailAndDeletedIsFalse(NOT_EXISTED_EMAIL_ADDRESS))
                 .willReturn(Optional.empty());
     }
 
@@ -162,5 +170,11 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
+    }
+
+    @Test
+    void findUserByWrongEmail(){
+        assertThatThrownBy(() -> userService.findUserByEmail(NOT_EXISTED_EMAIL_ADDRESS))
+                .isInstanceOf(UserNotFoundException.class);
     }
 }

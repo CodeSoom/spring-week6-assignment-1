@@ -6,8 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,8 +36,7 @@ class AuthenticationServiceTest {
         @Test
         @DisplayName("액세스 토큰을 리턴한다.")
         void login(){
-            String accessToken = authenticationService.login();
-
+            String accessToken = authenticationService.login(TOKEN_USER_ID);
             assertThat(accessToken).isEqualTo(VALID_TOKEN);
         }
     }
@@ -98,14 +98,14 @@ class AuthenticationServiceTest {
                 authenticationService = new AuthenticationService(jwtCodec);
             }
 
-            @Test
+            @ParameterizedTest
+            @NullAndEmptySource
+            @ValueSource(strings = {"  ", "\t", "\n"})
             @DisplayName("InvalidTokenException 예외를 던진다.")
-            void it_returns_string(){
-                Stream.of("", "   ", null).forEach((emptyToken) -> {
-                    assertThatThrownBy(
+            void it_returns_string(String emptyToken){
+                assertThatThrownBy(
                             () -> authenticationService.parseToken(emptyToken)
                     ).isInstanceOf(InvalidTokenException.class);
-                });
             }
         }
 

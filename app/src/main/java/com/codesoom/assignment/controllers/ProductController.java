@@ -78,6 +78,6 @@ public class ProductController {
 
     private Long parseToken(String token) {
         String accessToken = token.substring("Bearer ".length());
-        return  authenticationService.parseToken(accessToken);
+        return authenticationService.parseToken(accessToken);
     }
 }

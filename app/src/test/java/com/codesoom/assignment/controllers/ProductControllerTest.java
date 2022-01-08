@@ -343,70 +343,107 @@ class ProductControllerTest {
         }
 
         @Nested
-        @DisplayName("존재하는 id이고, 수정할 상품 데이터가 주어지면")
-        class Context_with_existed_id_and_product_data {
-
-            @Test
-            @DisplayName("수정된 상품 정보를 응답한다.")
-            void it_response_updated_product_data() throws Exception {
-                mockMvc.perform(
-                                patch("/products/" + existedProduct.getId())
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(requestContent)
-                        )
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("name").value(UPDATE_PRODUCT_NAME));
-            }
-        }
-
-        @Nested
-        @DisplayName("존재하는 id이고, 수정할 상품 데이터가 비어있다면")
-        class Context_with_existed_id_and_blank_product_data {
-
-            @BeforeEach
-            void prepare() throws JsonProcessingException {
-                Integer UPDATE_PRODUCT_PRICE = 10000;
-                ProductData productData = ProductData.builder()
-                        .name("")
-                        .maker("")
-                        .price(UPDATE_PRODUCT_PRICE)
-                        .build();
-
-                updatedProduct = mapper.map(productData, Product.class);
-                requestContent = objectMapper.writeValueAsString(updatedProduct);
-            }
-
-            @Test
-            @DisplayName("Bad request를 응답한다.")
-            void it_response_bad_request() throws Exception {
-                mockMvc.perform(
-                                patch("/products/" + existedProduct.getId())
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(requestContent)
-                        )
-                        .andExpect(status().isBadRequest());
-            }
-        }
-
-        @Nested
-        @DisplayName("존재하지 않는 id이면")
-        class Context_with_not_existed_id {
+        @DisplayName("로그인을 한 상태이고")
+        class Context_with_valid_access_token {
 
             @BeforeEach
             void prepare() {
-                productRepository.delete(existedProduct);
-                notExistedProduct = existedProduct;
+                given(authenticationService.parseToken(VALID_TOKEN))
+                        .willReturn(existedProduct.getId());
+            }
+
+            @Nested
+            @DisplayName("존재하는 id이고, 수정할 상품 데이터가 주어지면")
+            class Context_with_existed_id_and_product_data {
+
+                @Test
+                @DisplayName("수정된 상품 정보를 응답한다.")
+                void it_response_updated_product_data() throws Exception {
+                    mockMvc.perform(
+                                    patch("/products/" + existedProduct.getId())
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + VALID_TOKEN)
+                            )
+                            .andExpect(status().isOk())
+                            .andExpect(jsonPath("name").value(UPDATE_PRODUCT_NAME));
+                }
+            }
+
+            @Nested
+            @DisplayName("존재하는 id이고, 수정할 상품 데이터가 비어있다면")
+            class Context_with_existed_id_and_blank_product_data {
+
+                @BeforeEach
+                void prepare() throws JsonProcessingException {
+                    Integer UPDATE_PRODUCT_PRICE = 10000;
+                    ProductData productData = ProductData.builder()
+                            .name("")
+                            .maker("")
+                            .price(UPDATE_PRODUCT_PRICE)
+                            .build();
+
+                    updatedProduct = mapper.map(productData, Product.class);
+                    requestContent = objectMapper.writeValueAsString(updatedProduct);
+                }
+
+                @Test
+                @DisplayName("Bad request를 응답한다.")
+                void it_response_bad_request() throws Exception {
+                    mockMvc.perform(
+                                    patch("/products/" + existedProduct.getId())
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + VALID_TOKEN)
+                            )
+                            .andExpect(status().isBadRequest());
+                }
+            }
+
+            @Nested
+            @DisplayName("존재하지 않는 id이면")
+            class Context_with_not_existed_id {
+
+                @BeforeEach
+                void prepare() {
+                    productRepository.delete(existedProduct);
+                    notExistedProduct = existedProduct;
+                }
+
+                @Test
+                @DisplayName("Not found를 응답한다.")
+                void it_response_not_found() throws Exception {
+                    mockMvc.perform(
+                                    patch("/products/" + notExistedProduct.getId())
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + VALID_TOKEN)
+                            )
+                            .andExpect(status().isNotFound());
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("로그인을 하지 않았으면")
+        class Context_without_access_token {
+
+            @BeforeEach
+            void prepare() {
+                given(authenticationService.parseToken(INVALID_TOKEN))
+                        .willThrow(new InvalidTokenException(INVALID_TOKEN));
             }
 
             @Test
-            @DisplayName("Not found를 응답한다.")
-            void it_response_not_found() throws Exception {
+            @DisplayName("Unauthorized 을 응답한다")
+            void it_response_unauthorized() throws Exception {
                 mockMvc.perform(
-                                patch("/products/" + notExistedProduct.getId())
+                                patch("/products/" + existedProduct.getId())
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content(requestContent)
+                                        .header("Authorization", "Bearer " + INVALID_TOKEN)
                         )
-                        .andExpect(status().isNotFound());
+                        .andExpect(status().isUnauthorized());
             }
         }
     }

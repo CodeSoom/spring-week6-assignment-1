@@ -29,17 +29,12 @@ class JwtUtilTest {
     @DisplayName("encode() 메소드는")
     class Describe_encode {
 
-        @Nested
-        @DisplayName("userId 값이 주어진다면")
-        class Context_with_userId {
+        @Test
+        @DisplayName("token을 리턴합니다.")
+        void it_return_token() {
+            String token = jwtUtil.encode(USER_ID);
 
-            @Test
-            @DisplayName("token을 리턴합니다.")
-            void it_return_token() {
-                String token = jwtUtil.encode(USER_ID);
-
-                assertThat(token).isEqualTo(VALID_TOKEN);
-            }
+            assertThat(token).isEqualTo(VALID_TOKEN);
         }
     }
 
@@ -47,17 +42,12 @@ class JwtUtilTest {
     @DisplayName("decode() 메소드는")
     class Describe_decode {
 
-        @Nested
-        @DisplayName("token이 주어진다면")
-        class Context_with_token {
+        @Test
+        @DisplayName("userId를 리턴합니다.")
+        void it_return_userId() {
+            Claims claims = jwtUtil.decode(VALID_TOKEN);
 
-            @Test
-            @DisplayName("userId를 리턴합니다.")
-            void it_return_userId() {
-                Claims claims = jwtUtil.decode(VALID_TOKEN);
-
-                assertThat(claims.get("userId", Long.class)).isEqualTo(USER_ID);
-            }
+            assertThat(claims.get("userId", Long.class)).isEqualTo(USER_ID);
         }
 
         @Nested

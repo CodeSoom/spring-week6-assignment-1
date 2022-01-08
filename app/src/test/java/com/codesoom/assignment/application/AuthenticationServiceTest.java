@@ -42,6 +42,9 @@ class AuthenticationServiceTest {
 
     User validUser;
 
+    User user;
+    String validToken;
+
     @BeforeEach
     void setUp() {
         vaildSessionRequestData = SessionRequestData.builder()
@@ -63,38 +66,27 @@ class AuthenticationServiceTest {
                 .email("pjh0819@codesom.com")
                 .password("abcdef")
                 .build();
+
+        user = userRepository.save(validUser);
+
+        validToken = jwtUtil.encode(user.getId());
+    }
+
+    @AfterEach
+    void afterEach() {
+        userRepository.deleteById(user.getId());
     }
 
     @Nested
     @DisplayName("login() 메소드는")
     class Describe_login {
 
-        @Nested
-        @DisplayName("정상적인 SessionRequestData 파라미터가 주어진다면 ")
-        class Context {
+        @Test
+        @DisplayName("access token을 리턴합니다.")
+        void it_return_accessToken() {
+            String accessToken = authenticationService.login(vaildSessionRequestData);
 
-            User user;
-            String validToken;
-
-            @BeforeEach
-            void prepare() {
-                user = userRepository.save(validUser);
-
-                validToken = jwtUtil.encode(user.getId());
-            }
-
-            @Test
-            @DisplayName("access token을 리턴합니다.")
-            void it_return_accessToken() {
-                String accessToken = authenticationService.login(vaildSessionRequestData);
-
-                assertThat(accessToken).isEqualTo(validToken);
-            }
-
-            @AfterEach
-            void afterEach() {
-                userRepository.deleteById(user.getId());
-            }
+            assertThat(accessToken).isEqualTo(validToken);
         }
 
         @Nested
@@ -113,23 +105,11 @@ class AuthenticationServiceTest {
         @DisplayName("password가 일치하지 않는 SessionRequestData가 주어진다면")
         class Context_with_wrong_password_sessionRequestData {
 
-            User user;
-
-            @BeforeEach
-            void prepare() {
-                user = userRepository.save(validUser);
-            }
-
             @Test
             @DisplayName("로그인이 실패했다는 내용의 예외를 던집니다.")
             void it_throw_LoginFailException() {
                 assertThatThrownBy(() -> authenticationService.login(invalidSessionRequestData))
                         .isInstanceOf(LoginFailException.class);
-            }
-
-            @AfterEach
-            void afterEach() {
-                userRepository.deleteById(user.getId());
             }
         }
     }

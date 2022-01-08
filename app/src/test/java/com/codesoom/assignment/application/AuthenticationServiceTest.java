@@ -39,6 +39,11 @@ class AuthenticationServiceTest {
                 .email("pjh0819@codesom.com")
                 .password("123456")
                 .build();
+
+        wrongPasswordSessionRequestData = SessionRequestData.builder()
+                .email("pjh0819@codesom.com")
+                .password("abcdef")
+                .build();
     }
 
     @Nested
@@ -46,8 +51,8 @@ class AuthenticationServiceTest {
     class Describe_login {
 
         @Nested
-        @DisplayName("등록된 유저의 LoginData가 주어진다면")
-        class Context_with_LoginData {
+        @DisplayName("정상적인 SessionRequestData 파라미터가 주어진다면 ")
+        class Context {
 
             @BeforeEach
             void prepare() {
@@ -69,14 +74,14 @@ class AuthenticationServiceTest {
         }
 
         @Nested
-        @DisplayName("등록되지 않은 유저의 LoginData가 주어진다면")
+        @DisplayName("등록되지 않은 유저의 SessionRequestData가 주어진다면")
         class Context_with_Invaild_SessionRequestData {
 
             @Test
-            @DisplayName("유저를 찾지 못했다는 내용의 예외를 던집니다.")
-            void it_throw_UserNotFoundException() {
-                assertThatThrownBy(() -> authenticationService.login(testLoginData))
-                        .isInstanceOf(UserNotFoundException.class);
+            @DisplayName("로그인이 실패했다는 내용의 예외를 던집니다.")
+            void it_throw_LoginFailException() {
+                assertThatThrownBy(() -> authenticationService.login(testSessionRequestData))
+                        .isInstanceOf(LoginFailException.class);
             }
         }
     }

@@ -73,7 +73,7 @@ class SessionControllerTest {
             void it_return_accessToken() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(loginDataToContent(testSessionRequestData)))
+                                .content(sessionRequestDataToContent(testSessionRequestData)))
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("$.accessToken").value(containsString(".")))
                         .andDo(print());
@@ -85,18 +85,18 @@ class SessionControllerTest {
         class Context_with_unregistered_loginData {
 
             @Test
-            @DisplayName("404(Not Found)를 응답합니다.")
+            @DisplayName("400(Bad Request)를 응답합니다.")
             void it_return_accessToken() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(loginDataToContent(testSessionRequestData)))
-                        .andExpect(status().isNotFound())
+                                .content(sessionRequestDataToContent(testSessionRequestData)))
+                        .andExpect(status().isBadRequest())
                         .andDo(print());
             }
         }
     }
 
-    private String loginDataToContent(SessionRequestData sessionRequestData) throws JsonProcessingException {
+    private String sessionRequestDataToContent(SessionRequestData sessionRequestData) throws JsonProcessingException {
         return objectMapper.writeValueAsString(sessionRequestData);
     }
 }

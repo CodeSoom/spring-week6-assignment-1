@@ -43,6 +43,7 @@ class AuthenticationServiceTest {
     User validUser;
 
     User user;
+
     String validToken;
 
     @BeforeEach

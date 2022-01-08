@@ -40,8 +40,4 @@ public class User {
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);
     }
-
-    public boolean authenticcate(String password) {
-        return !deleted && password.equals(this.password);
-    }
 }

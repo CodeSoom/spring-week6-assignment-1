@@ -37,7 +37,7 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new LoginFailException(email));
 
-        if (!user.authenticcate(password)) {
+        if (!user.authenticate(password)) {
             throw new LoginFailException(email);
         }
 

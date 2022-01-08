@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidTokenException;
+import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @DisplayName("ProductController 테스트")
 class ProductControllerTest {
+
     private static final String PRODUCT_NAME = "장난감 뱀";
     private static final String PRODUCT_MAKER = "애용이네 장난감";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9" +
@@ -45,16 +47,12 @@ class ProductControllerTest {
     @Autowired
     private WebApplicationContext wac;
     private MockMvc mockMvc;
-
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private Mapper mapper;
-
     @MockBean
     private AuthenticationService authenticationService;
 
@@ -423,34 +421,72 @@ class ProductControllerTest {
         }
 
         @Nested
-        @DisplayName("존재하는 상품 id라면")
-        class Context_with_existed_product_id {
+        @DisplayName("accessToken 이 유효하고")
+        class Context_with_accessToken {
 
-            @Test
-            @DisplayName("해당 id의 상품을 삭제한다.")
-            void it_destroy_product() throws Exception {
-                mockMvc.perform(delete("/products/" + existedProduct.getId()))
-                        .andExpect(status().isNoContent());
+            @BeforeEach
+            void prepare() {
+                given(authenticationService.parseToken(VALID_TOKEN))
+                        .willReturn(existedProduct.getId());
+            }
+
+            @Nested
+            @DisplayName("존재하는 상품 id 라면")
+            class Context_with_existed_product_id {
+
+                @Test
+                @DisplayName("해당 id의 상품을 삭제한다.")
+                void it_destroy_product() throws Exception {
+                    mockMvc.perform(
+                                    delete("/products/" + existedProduct.getId())
+                                            .header("Authorization", "Bearer " + VALID_TOKEN)
+                            )
+                            .andExpect(status().isNoContent());
+                }
+            }
+
+            @Nested
+            @DisplayName("존재하지 않는 id 라면")
+            class Context_with_not_existed_product_id {
+
+                private Product notExistedProduct;
+
+                @BeforeEach
+                void prepare() {
+                    productRepository.delete(existedProduct);
+                    notExistedProduct = existedProduct;
+                }
+
+                @Test
+                @DisplayName("Not found를 응답한다.")
+                void it_response_not_found() throws Exception {
+                    mockMvc.perform(
+                                    delete("/products/" + notExistedProduct.getId())
+                                            .header("Authorization", "Bearer " + VALID_TOKEN)
+                            )
+                            .andExpect(status().isNotFound());
+                }
             }
         }
 
         @Nested
-        @DisplayName("존재하지 않는 id라면")
-        class Context_with_not_existed_product_id {
-
-            private Product notExistedProduct;
+        @DisplayName("잘못된 accessToken 이라면")
+        class Context_without_accessToken {
 
             @BeforeEach
             void prepare() {
-                productRepository.delete(existedProduct);
-                notExistedProduct = existedProduct;
+                given(authenticationService.parseToken(INVALID_TOKEN))
+                        .willThrow(new InvalidTokenException(INVALID_TOKEN));
             }
 
             @Test
-            @DisplayName("Not found를 응답한다.")
-            void it_response_not_found() throws Exception {
-                mockMvc.perform(delete("/products/" + notExistedProduct.getId()))
-                        .andExpect(status().isNotFound());
+            @DisplayName("Unauthorized 를 응답한다")
+            void it_response_unauthorized() throws Exception {
+                mockMvc.perform(
+                            delete("/products/" + existedProduct.getId())
+                                    .header("Authorization", "Bearer " + INVALID_TOKEN)
+                        )
+                        .andExpect(status().isUnauthorized());
             }
         }
     }

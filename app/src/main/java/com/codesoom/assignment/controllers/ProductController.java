@@ -54,7 +54,6 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-
         String accessToken = authorization.substring("Bearer ".length());
         Long id = authenticationService.parseToken(accessToken);
 
@@ -73,8 +72,12 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
+        String accessToken = authorization.substring("Bearer ".length());
+        authenticationService.parseToken(accessToken);
+
         productService.deleteProduct(id);
     }
 

@@ -4,6 +4,8 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.errors.LoginFailException;
+import com.codesoom.assignment.utils.JwtUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +26,9 @@ class AuthenticationServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9." +
             "neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
@@ -35,11 +40,18 @@ class AuthenticationServiceTest {
 
     SessionRequestData wrongPasswordSessionRequestData;
 
+    User validUser;
+
     @BeforeEach
     void setUp() {
         vaildSessionRequestData = SessionRequestData.builder()
                 .email("pjh0819@codesom.com")
                 .password("123456")
+                .build();
+
+        validUser = User.builder()
+                .email(vaildSessionRequestData.getEmail())
+                .password(vaildSessionRequestData.getPassword())
                 .build();
 
         invalidSessionRequestData = SessionRequestData.builder()
@@ -57,26 +69,31 @@ class AuthenticationServiceTest {
     @DisplayName("login() 메소드는")
     class Describe_login {
 
-        @BeforeEach
-        void prepare() {
-            User user = User.builder()
-                    .email(vaildSessionRequestData.getEmail())
-                    .password(vaildSessionRequestData.getPassword())
-                    .build();
-
-            userRepository.save(user);
-        }
-
         @Nested
         @DisplayName("정상적인 SessionRequestData 파라미터가 주어진다면 ")
         class Context {
+
+            User user;
+            String validToken;
+
+            @BeforeEach
+            void prepare() {
+                user = userRepository.save(validUser);
+
+                validToken = jwtUtil.encode(user.getId());
+            }
 
             @Test
             @DisplayName("access token을 리턴합니다.")
             void it_return_accessToken() {
                 String accessToken = authenticationService.login(vaildSessionRequestData);
 
-                assertThat(accessToken).isEqualTo(VALID_TOKEN);
+                assertThat(accessToken).isEqualTo(validToken);
+            }
+
+            @AfterEach
+            void afterEach() {
+                userRepository.deleteById(user.getId());
             }
         }
 
@@ -96,11 +113,23 @@ class AuthenticationServiceTest {
         @DisplayName("password가 일치하지 않는 SessionRequestData가 주어진다면")
         class Context_with_wrong_password_sessionRequestData {
 
+            User user;
+
+            @BeforeEach
+            void prepare() {
+                user = userRepository.save(validUser);
+            }
+
             @Test
             @DisplayName("로그인이 실패했다는 내용의 예외를 던집니다.")
             void it_throw_LoginFailException() {
                 assertThatThrownBy(() -> authenticationService.login(invalidSessionRequestData))
                         .isInstanceOf(LoginFailException.class);
+            }
+
+            @AfterEach
+            void afterEach() {
+                userRepository.deleteById(user.getId());
             }
         }
     }

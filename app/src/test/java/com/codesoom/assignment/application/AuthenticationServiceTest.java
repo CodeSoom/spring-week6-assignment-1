@@ -29,14 +29,21 @@ class AuthenticationServiceTest {
 
     private static final Long TEST_USER_ID = 1L;
 
-    SessionRequestData testSessionRequestData;
+    SessionRequestData vaildSessionRequestData;
+
+    SessionRequestData invalidSessionRequestData;
 
     SessionRequestData wrongPasswordSessionRequestData;
 
     @BeforeEach
     void setUp() {
-        testSessionRequestData = SessionRequestData.builder()
+        vaildSessionRequestData = SessionRequestData.builder()
                 .email("pjh0819@codesom.com")
+                .password("123456")
+                .build();
+
+        invalidSessionRequestData = SessionRequestData.builder()
+                .email("skcldi1234@codesom.com")
                 .password("123456")
                 .build();
 
@@ -50,24 +57,24 @@ class AuthenticationServiceTest {
     @DisplayName("login() 메소드는")
     class Describe_login {
 
+        @BeforeEach
+        void prepare() {
+            User user = User.builder()
+                    .email(vaildSessionRequestData.getEmail())
+                    .password(vaildSessionRequestData.getPassword())
+                    .build();
+
+            userRepository.save(user);
+        }
+
         @Nested
         @DisplayName("정상적인 SessionRequestData 파라미터가 주어진다면 ")
         class Context {
 
-            @BeforeEach
-            void prepare() {
-                User user = User.builder()
-                        .email(testSessionRequestData.getEmail())
-                        .password(testSessionRequestData.getPassword())
-                        .build();
-
-                userRepository.save(user);
-            }
-
             @Test
             @DisplayName("access token을 리턴합니다.")
             void it_return_accessToken() {
-                String accessToken = authenticationService.login(testSessionRequestData);
+                String accessToken = authenticationService.login(vaildSessionRequestData);
 
                 assertThat(accessToken).isEqualTo(VALID_TOKEN);
             }
@@ -75,12 +82,24 @@ class AuthenticationServiceTest {
 
         @Nested
         @DisplayName("등록되지 않은 유저의 SessionRequestData가 주어진다면")
-        class Context_with_Invaild_SessionRequestData {
+        class Context_with_invaild_sessionRequestData {
 
             @Test
             @DisplayName("로그인이 실패했다는 내용의 예외를 던집니다.")
             void it_throw_LoginFailException() {
-                assertThatThrownBy(() -> authenticationService.login(testSessionRequestData))
+                assertThatThrownBy(() -> authenticationService.login(invalidSessionRequestData))
+                        .isInstanceOf(LoginFailException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("password가 일치하지 않는 SessionRequestData가 주어진다면")
+        class Context_with_wrong_password_sessionRequestData {
+
+            @Test
+            @DisplayName("로그인이 실패했다는 내용의 예외를 던집니다.")
+            void it_throw_LoginFailException() {
+                assertThatThrownBy(() -> authenticationService.login(invalidSessionRequestData))
                         .isInstanceOf(LoginFailException.class);
             }
         }

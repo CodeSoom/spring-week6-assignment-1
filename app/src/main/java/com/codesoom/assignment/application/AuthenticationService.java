@@ -8,8 +8,10 @@ import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -29,8 +31,15 @@ public class AuthenticationService {
      * @throws UserNotFoundException 이메일, 패스워드에 해당되는 유저가 없을 경우
      */
     public String login(SessionRequestData sessionRequestData) {
-        User user = userRepository.findByEmailAndPassword(sessionRequestData.getEmail(), sessionRequestData.getPassword())
-                .orElseThrow(() -> new LoginFailException(sessionRequestData.getEmail()));
+        final String email = sessionRequestData.getEmail();
+        final String password = sessionRequestData.getPassword();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new LoginFailException(email));
+
+        if (!user.authenticcate(password)) {
+            throw new LoginFailException(email);
+        }
 
         return jwtUtil.encode(user.getId());
     }

@@ -2,8 +2,8 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.LoginData;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.dto.SessionRequestData;
+import com.codesoom.assignment.errors.LoginFailException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,11 +29,13 @@ class AuthenticationServiceTest {
 
     private static final Long TEST_USER_ID = 1L;
 
-    LoginData testLoginData;
+    SessionRequestData testSessionRequestData;
+
+    SessionRequestData wrongPasswordSessionRequestData;
 
     @BeforeEach
     void setUp() {
-        testLoginData = LoginData.builder()
+        testSessionRequestData = SessionRequestData.builder()
                 .email("pjh0819@codesom.com")
                 .password("123456")
                 .build();
@@ -50,8 +52,8 @@ class AuthenticationServiceTest {
             @BeforeEach
             void prepare() {
                 User user = User.builder()
-                        .email(testLoginData.getEmail())
-                        .password(testLoginData.getPassword())
+                        .email(testSessionRequestData.getEmail())
+                        .password(testSessionRequestData.getPassword())
                         .build();
 
                 userRepository.save(user);
@@ -60,7 +62,7 @@ class AuthenticationServiceTest {
             @Test
             @DisplayName("access token을 리턴합니다.")
             void it_return_accessToken() {
-                String accessToken = authenticationService.login(testLoginData);
+                String accessToken = authenticationService.login(testSessionRequestData);
 
                 assertThat(accessToken).isEqualTo(VALID_TOKEN);
             }
@@ -68,7 +70,7 @@ class AuthenticationServiceTest {
 
         @Nested
         @DisplayName("등록되지 않은 유저의 LoginData가 주어진다면")
-        class Context_with_Invaild_LoginData {
+        class Context_with_Invaild_SessionRequestData {
 
             @Test
             @DisplayName("유저를 찾지 못했다는 내용의 예외를 던집니다.")

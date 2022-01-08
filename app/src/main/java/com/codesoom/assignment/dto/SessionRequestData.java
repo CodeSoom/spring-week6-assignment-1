@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor
-public class LoginData {
+public class SessionRequestData {
 
     @NotBlank
     @Size(min = 3)
@@ -20,7 +20,7 @@ public class LoginData {
     private String password;
 
     @Builder
-    public LoginData(String email, String password) {
+    public SessionRequestData(String email, String password) {
         this.email = email;
         this.password = password;
     }

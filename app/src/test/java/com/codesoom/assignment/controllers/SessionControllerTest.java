@@ -3,7 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.dto.SessionRequestData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,11 +40,11 @@ class SessionControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    LoginData testLoginData;
+    SessionRequestData testSessionRequestData;
 
     @BeforeEach
     void setUp() {
-        testLoginData = LoginData.builder()
+        testSessionRequestData = SessionRequestData.builder()
                 .email("pjh0819@codesom.com")
                 .password("123456")
                 .build();
@@ -61,8 +61,8 @@ class SessionControllerTest {
             @BeforeEach
             void prepare() {
                 User user = User.builder()
-                        .email(testLoginData.getEmail())
-                        .password(testLoginData.getPassword())
+                        .email(testSessionRequestData.getEmail())
+                        .password(testSessionRequestData.getPassword())
                         .build();
 
                 userRepository.save(user);
@@ -73,7 +73,7 @@ class SessionControllerTest {
             void it_return_accessToken() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(loginDataToContent(testLoginData)))
+                                .content(loginDataToContent(testSessionRequestData)))
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("$.accessToken").value(containsString(".")))
                         .andDo(print());
@@ -89,14 +89,14 @@ class SessionControllerTest {
             void it_return_accessToken() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(loginDataToContent(testLoginData)))
+                                .content(loginDataToContent(testSessionRequestData)))
                         .andExpect(status().isNotFound())
                         .andDo(print());
             }
         }
     }
 
-    private String loginDataToContent(LoginData loginData) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(loginData);
+    private String loginDataToContent(SessionRequestData sessionRequestData) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(sessionRequestData);
     }
 }

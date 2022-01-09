@@ -55,7 +55,7 @@ class SessionControllerTest {
     class Describe_post {
 
         @Nested
-        @DisplayName("등록된 유저의 LoginData가 주어진다면")
+        @DisplayName("등록된 유저의 SessionRequestData가 주어진다면")
         class Context_with_registered_loginData {
 
             @BeforeEach
@@ -81,7 +81,7 @@ class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("등록되지 않은 유저의 LoginData가 주어진다면")
+        @DisplayName("등록되지 않은 유저의 SessionRequestData가 주어진다면")
         class Context_with_unregistered_loginData {
 
             @Test

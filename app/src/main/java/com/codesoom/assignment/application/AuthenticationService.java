@@ -33,7 +33,7 @@ public class AuthenticationService {
     public String login(String email, String password) {
         User user = userService.findUserByEmail(email);
 
-        if (!user.getPassword().equals(password)) {
+        if (!user.authenticate(password)) {
             throw new WrongPasswordException();
         }
 

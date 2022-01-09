@@ -10,11 +10,11 @@ import java.security.Key;
 /**
  * JWT 토큰의 생성과, 디코딩을 담당합니다.
  */
-public class JwtUtil {
+public class JwtEncoder {
 
     private final Key key;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
+    public JwtEncoder(@Value("${jwt.secret}") String secret) {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 

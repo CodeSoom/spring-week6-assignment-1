@@ -6,10 +6,8 @@ import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 /**
- * 회원 인증 service 입니다.
+ * 회원 인증 기능을 제공합니다.
  */
 @Service
 public class AuthenticationService {
@@ -23,7 +21,7 @@ public class AuthenticationService {
     }
 
     /**
-     * email을 받아서 user를 찾아 존재하는 user 라면 encode 하여 jwt 토큰을 리턴합니다.
+     * 회원정보를 인코딩한 JWT 토큰을 생성해 리턴합니다.
      *
      * @param email    로그인을 요청한 유저의 email
      * @param password 로그인을 요청한 유저의 password

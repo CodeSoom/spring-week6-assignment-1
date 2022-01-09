@@ -1,7 +1,7 @@
 package com.codesoom.assignment.errors;
 
 /**
- * id 로 회원을 찾지 못했을 경우 발생한다.
+ * id를 이용해 회원을 찾지 못했을 경우 던집니다.
  */
 public class UserNotFoundByIdException extends RuntimeException {
     public UserNotFoundByIdException(Long id) {

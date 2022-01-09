@@ -3,7 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.LoginRequestData;
+import com.codesoom.assignment.dto.SessionRequestData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -105,11 +105,11 @@ class SessionControllerTest {
             void prepare() throws JsonProcessingException {
                 prepareUser();
 
-                LoginRequestData loginRequestData = LoginRequestData.builder()
+                SessionRequestData sessionRequestData = SessionRequestData.builder()
                         .email(existedUser.getEmail())
                         .password(existedUser.getPassword())
                         .build();
-                requestContent = objectMapper.writeValueAsString(loginRequestData);
+                requestContent = objectMapper.writeValueAsString(sessionRequestData);
             }
 
             @Test
@@ -135,12 +135,12 @@ class SessionControllerTest {
             void prepare() throws JsonProcessingException {
                 prepareUser();
 
-                LoginRequestData loginRequestData = LoginRequestData.builder()
+                SessionRequestData sessionRequestData = SessionRequestData.builder()
                         .email(existedUser.getEmail())
                         .password(WRONG_PASSWORD)
                         .build();
 
-                requestContent = objectMapper.writeValueAsString(loginRequestData);
+                requestContent = objectMapper.writeValueAsString(sessionRequestData);
             }
 
             @Test

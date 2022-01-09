@@ -23,7 +23,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) throws Exception {
 
-        return filterWithPathAndMethod(request) || 
+        return filterWithPathAndMethod(request) ||
                 doAuthentication(request, response);
     }
 
@@ -35,6 +35,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
 
         String method = request.getMethod();
+
         if (method.equals("GET")) {
             return true;
         }

@@ -5,6 +5,9 @@ import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -63,25 +66,14 @@ class JwtUtilTest {
         }
 
         @Nested
-        @DisplayName("null이 주어진다면")
+        @DisplayName("null 또는 빈값이 주어진다면")
         class Context_with_null {
 
-            @Test
             @DisplayName("토큰이 유효하지 않다는 예외를 던진다.")
-            void it_throw_InvalidTokenException() {
-                assertThatThrownBy(() -> jwtUtil.decode(null))
-                        .isInstanceOf(InvalidTokenException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("빈값이 주어진다면")
-        class Context_with_blank {
-
-            @Test
-            @DisplayName("토큰이 유효하지 않다는 예외를 던진다.")
-            void it_throw_InvalidTokenException() {
-                assertThatThrownBy(() -> jwtUtil.decode(""))
+            @ParameterizedTest(name = "{displayName} ({argumentsWithNames})")
+            @NullAndEmptySource
+            void it_throw_InvalidTokenException(String input) {
+                assertThatThrownBy(() -> jwtUtil.decode(input))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }

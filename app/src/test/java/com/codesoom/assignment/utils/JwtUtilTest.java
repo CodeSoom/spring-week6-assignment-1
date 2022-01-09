@@ -29,9 +29,9 @@ class JwtUtilTest {
     @DisplayName("encode 메소드는")
     class Describe_encode {
 
-        private final Long USER_ID = 1L;
         private static final String NAME = "곽형조";
         private static final String EMAIL = "rhkrgudwh@test.com";
+        private final Long USER_ID = 1L;
 
         @Nested
         @DisplayName("유저 아이디, 이름, 이메일을 받으면")
@@ -67,51 +67,16 @@ class JwtUtilTest {
         @Nested
         @DisplayName("토큰이 유효하지 않다면")
         class Context_with_invalid_token {
+            private final String[] invalidTokens = new String[]{INVALID_TOKEN, "", " ", null};
 
             @Test
             @DisplayName("InvalidTokenException 예외를 던진다")
             void it_throw_exception() {
-                assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
-                        .isInstanceOf(InvalidTokenException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("비어있는 토큰이라면")
-        class Context_with_blank_token {
-
-            @Test
-            @DisplayName("InvalidTokenException 예외를 던진다")
-            void it_throw_exception() {
-                assertThatThrownBy(() -> jwtUtil.decode(""))
-                        .isInstanceOf(InvalidTokenException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("공백으로 이루어진 토큰이라면")
-        class Context_with_whitespace_token {
-
-            @Test
-            @DisplayName("InvalidTokenException 예외를 던진다")
-            void it_throw_exception() {
-                assertThatThrownBy(() -> jwtUtil.decode("  "))
-                        .isInstanceOf(InvalidTokenException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("토큰이 null이라면")
-        class Context_with_null_token {
-
-            @Test
-            @DisplayName("InvalidTokenException 예외를 던진다")
-            void it_throw_exception() {
-                assertThatThrownBy(() -> jwtUtil.decode(null))
-                        .isInstanceOf(InvalidTokenException.class);
+                for (String invalidToken : invalidTokens) {
+                    assertThatThrownBy(() -> jwtUtil.decode(invalidToken))
+                            .isInstanceOf(InvalidTokenException.class);
+                }
             }
         }
     }
-
-
 }

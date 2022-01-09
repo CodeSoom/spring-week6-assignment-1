@@ -22,7 +22,6 @@ public class AuthenticationService {
 
     /**
      * email을 받아서 user를 찾아 존재하는 user 라면 encode 하여 jwt 토큰을 리턴합니다.
-     * 만약 user의 password 가 요청받은 password 와 다르면 WrongPasswordException 을 던집니다.
      *
      * @param email    로그인을 요청한 유저의 email
      * @param password 로그인을 요청한 유저의 password

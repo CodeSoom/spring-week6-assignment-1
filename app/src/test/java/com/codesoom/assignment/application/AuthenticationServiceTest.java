@@ -48,9 +48,16 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
+        final String validEmail = "pjh0819@codesom.com";
+        final String invalidEmail = "skcldi1234@codesom.com";
+        final String validPassword = "123456";
+        final String invalidPassword = "abcdef";
+
+        userRepository.deleteByEmail(validEmail);
+
         vaildSessionRequestData = SessionRequestData.builder()
-                .email("pjh0819@codesom.com")
-                .password("123456")
+                .email(validEmail)
+                .password(validPassword)
                 .build();
 
         validUser = User.builder()
@@ -59,23 +66,18 @@ class AuthenticationServiceTest {
                 .build();
 
         invalidSessionRequestData = SessionRequestData.builder()
-                .email("skcldi1234@codesom.com")
-                .password("123456")
+                .email(invalidEmail)
+                .password(validPassword)
                 .build();
 
         wrongPasswordSessionRequestData = SessionRequestData.builder()
-                .email("pjh0819@codesom.com")
-                .password("abcdef")
+                .email(validEmail)
+                .password(invalidPassword)
                 .build();
 
         user = userRepository.save(validUser);
 
         validToken = jwtUtil.encode(user.getId());
-    }
-
-    @AfterEach
-    void afterEach() {
-        userRepository.deleteById(user.getId());
     }
 
     @Nested

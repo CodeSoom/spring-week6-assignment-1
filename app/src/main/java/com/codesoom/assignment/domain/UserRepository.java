@@ -1,5 +1,7 @@
 package com.codesoom.assignment.domain;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 
 public interface UserRepository {
@@ -15,5 +17,6 @@ public interface UserRepository {
 
     Optional<User> findByEmailAndPassword(String email, String password);
 
-    void deleteById(Long id);
+    @Transactional
+    void deleteByEmail(String email);
 }

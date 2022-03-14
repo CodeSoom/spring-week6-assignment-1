@@ -1,188 +1,507 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.application.ProductService;
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.Product;
+import com.codesoom.assignment.domain.ProductRepository;
+import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.utils.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dozermapper.core.DozerBeanMapperBuilder;
+import com.github.dozermapper.core.Mapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductController.class)
+@AutoConfigureMockMvc
+@SpringBootTest
+@DisplayName("ProductController 테스트")
 class ProductControllerTest {
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String SECRET = "12345678901234567890123456789010";
 
+    private static final String PRODUCT_NAME = "장난감 뱀";
+    private static final String PRODUCT_MAKER = "애용이네 장난감";
+    private final static String USER_NAME = "곽형조";
+    private final static String USER_EMAIL = "rhkrgudwh@test.com";
+    private final static String USER_PASSWORD = "asdqwe1234";
+    private final Integer PRODUCT_PRICE = 5000;
+    private final JwtUtil jwtUtil = new JwtUtil(SECRET);
+    private Product existedProduct;
+    private String existedUserToken;
     @Autowired
+    private WebApplicationContext wac;
     private MockMvc mockMvc;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private Mapper mapper;
+    @Autowired
+    private AuthenticationService authenticationService;
 
-    @MockBean
-    private ProductService productService;
+    void prepareProduct() {
+        ProductData productData = ProductData.builder()
+                .name(PRODUCT_NAME)
+                .maker(PRODUCT_MAKER)
+                .price(PRODUCT_PRICE)
+                .build();
+
+        existedProduct = mapper.map(productData, Product.class);
+        productRepository.save(existedProduct);
+    }
+
+    void prepareUser() {
+        UserRegistrationData registrationData = UserRegistrationData.builder()
+                .name(USER_NAME)
+                .email(USER_EMAIL)
+                .password(USER_PASSWORD)
+                .build();
+
+        User existedUser = mapper.map(registrationData, User.class);
+
+        userRepository.save(existedUser);
+
+        existedUserToken = jwtUtil.encode(
+                existedUser.getId(),
+                existedUser.getName(),
+                existedUser.getEmail()
+        );
+    }
 
     @BeforeEach
-    void setUp() {
-        Product product = Product.builder()
-                .id(1L)
-                .name("쥐돌이")
-                .maker("냥이월드")
-                .price(5000)
+    void setUpMockMvc() {
+        this.mapper = DozerBeanMapperBuilder.buildDefault();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .alwaysDo(print())
                 .build();
-        given(productService.getProducts()).willReturn(List.of(product));
+    }
 
-        given(productService.getProduct(1L)).willReturn(product);
+    @AfterEach
+    void initializationUserRepository() {
+        userRepository.deleteAll();
+    }
 
-        given(productService.getProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+    @Nested
+    @DisplayName("GET /products 는")
+    class Describe_get_products {
 
-        given(productService.createProduct(any(ProductData.class)))
-                .willReturn(product);
+        @Nested
+        @DisplayName("상품이 하나도 없다면")
+        class Context_with_not_existed_product {
+            private static final String EMPTY_PRODUCTS = "[]";
 
-        given(productService.updateProduct(eq(1L), any(ProductData.class)))
-                .will(invocation -> {
-                    Long id = invocation.getArgument(0);
-                    ProductData productData = invocation.getArgument(1);
-                    return Product.builder()
-                            .id(id)
-                            .name(productData.getName())
-                            .maker(productData.getMaker())
-                            .price(productData.getPrice())
+            @BeforeEach
+            void prepare() {
+                productRepository.deleteAll();
+            }
+
+            @Test
+            @DisplayName("빈 배열을 응답한다.")
+            void it_response_empty_array() throws Exception {
+                mockMvc.perform(get("/products"))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(equalTo(EMPTY_PRODUCTS)));
+            }
+        }
+
+        @Nested
+        @DisplayName("상품이 있다면")
+        class Context_with_existed_product {
+
+            @BeforeEach
+            void prepare() {
+                prepareProduct();
+            }
+
+            @Test
+            @DisplayName("전체 상품을 응답한다.")
+            void it_response_products() throws Exception {
+                mockMvc.perform(get("/products"))
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString(PRODUCT_NAME)))
+                        .andExpect(content().string(containsString(PRODUCT_MAKER)));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /products/{id} 요청은")
+    class Describe_get_products_detail {
+
+        @BeforeEach
+        void prepare() {
+            prepareProduct();
+        }
+
+        @Nested
+        @DisplayName("존재하는 id로 요청하면")
+        class Context_with_existed_id {
+
+            @Test
+            @DisplayName("해당 id의 상품을 응답한다")
+            void it_response_detail_product() throws Exception {
+                mockMvc.perform(get("/products/" + existedProduct.getId()))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("id").value(existedProduct.getId()))
+                        .andExpect(jsonPath("name").value(PRODUCT_NAME))
+                        .andExpect(jsonPath("maker").value(PRODUCT_MAKER))
+                        .andExpect(jsonPath("price").value(PRODUCT_PRICE));
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 id로 요청하면")
+        class Context_with_not_existed_id {
+
+            private Product notExistedProduct;
+
+            @BeforeEach
+            void prepare() {
+                productRepository.delete(existedProduct);
+                notExistedProduct = existedProduct;
+            }
+
+            @Test
+            @DisplayName("NotFound를 응답한다.")
+            void it_response_not_found() throws Exception {
+                mockMvc.perform(get("/products/" + notExistedProduct.getId()))
+                        .andExpect(status().isNotFound());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /products 요청은")
+    class Describe_post_products_request {
+
+        private Product newProduct;
+        private String requestContent;
+
+        @BeforeEach
+        void prepare() {
+            prepareProduct();
+            prepareUser();
+        }
+
+        @Nested
+        @DisplayName("로그인을 했고")
+        class Context_with_valid_access_token {
+
+            @Nested
+            @DisplayName("상품 정보가 주어진다면")
+            class Context_with_new_product_data {
+                private final static String NEW_PRODUCT_NAME = "도마뱀인형";
+                private final static String NEW_PRODUCT_MAKER = "코드숨";
+                private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
+
+                @BeforeEach
+                void prepare() throws JsonProcessingException {
+                    Integer NEW_PRODUCT_PRICE = 10000;
+                    ProductData productData = ProductData.builder()
+                            .name(NEW_PRODUCT_NAME)
+                            .maker(NEW_PRODUCT_MAKER)
+                            .imageUrl(NEW_PRODUCT_IMAGE_URL)
+                            .price(NEW_PRODUCT_PRICE)
                             .build();
-                });
 
-        given(productService.updateProduct(eq(1000L), any(ProductData.class)))
-                .willThrow(new ProductNotFoundException(1000L));
+                    newProduct = mapper.map(productData, Product.class);
+                    requestContent = objectMapper.writeValueAsString(newProduct);
+                }
 
-        given(productService.deleteProduct(1000L))
-                .willThrow(new ProductNotFoundException(1000L));
+                @Test
+                @DisplayName("상품을 추가하고, 추가된 상품을 응답한다.")
+                void it_response_new_product() throws Exception {
+                    mockMvc.perform(
+                                    post("/products")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + existedUserToken)
+                            )
+                            .andExpect(status().isCreated())
+                            .andExpect(jsonPath("name").value(NEW_PRODUCT_NAME))
+                            .andExpect(jsonPath("maker").value(NEW_PRODUCT_MAKER));
+                }
+            }
+
+            @Nested
+            @DisplayName("상품 정보가 비어있다면")
+            class Context_with_blank_product_data {
+                private final static String BLANK_PRODUCT_NAME = "";
+                private final static String BLANK_PRODUCT_MAKER = "";
+                private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
+
+                @BeforeEach
+                void prepare() throws JsonProcessingException {
+                    Integer NEW_PRODUCT_PRICE = 5000;
+                    ProductData productData = ProductData.builder()
+                            .name(BLANK_PRODUCT_NAME)
+                            .maker(BLANK_PRODUCT_MAKER)
+                            .imageUrl(NEW_PRODUCT_IMAGE_URL)
+                            .price(NEW_PRODUCT_PRICE)
+                            .build();
+
+                    newProduct = mapper.map(productData, Product.class);
+                    requestContent = objectMapper.writeValueAsString(newProduct);
+                }
+
+                @Test
+                @DisplayName("Bad request를 응답한다.")
+                void it_response_bad_request() throws Exception {
+                    mockMvc.perform(
+                                    post("/products")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + existedUserToken)
+                            )
+                            .andExpect(status().isBadRequest());
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("로그인을 하지 않았다면")
+        class Context_with_invalid_access_token {
+            private final static String NEW_PRODUCT_NAME = "도마뱀인형";
+            private final static String NEW_PRODUCT_MAKER = "코드숨";
+            private final static String NEW_PRODUCT_IMAGE_URL = "someUrl";
+
+            @BeforeEach
+            void prepare() throws JsonProcessingException {
+                Integer NEW_PRODUCT_PRICE = 5000;
+                ProductData productData = ProductData.builder()
+                        .name(NEW_PRODUCT_NAME)
+                        .maker(NEW_PRODUCT_MAKER)
+                        .imageUrl(NEW_PRODUCT_IMAGE_URL)
+                        .price(NEW_PRODUCT_PRICE)
+                        .build();
+
+                newProduct = mapper.map(productData, Product.class);
+                requestContent = objectMapper.writeValueAsString(newProduct);
+            }
+
+            @Test
+            @DisplayName("Unauthorized를 응답한다")
+            void it_response_unauthorized() throws Exception {
+                mockMvc.perform(
+                                post("/products")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(requestContent)
+                                        .header("Authorization", "Bearer " + existedUserToken + "0")
+                        )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
     }
 
-    @Test
-    void list() throws Exception {
-        mockMvc.perform(
-                get("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+    @Nested
+    @DisplayName("PATCH /products/{id} 요청은")
+    class Describe_patch_products_request {
+        private final static String UPDATE_PRODUCT_NAME = "코끼리인형";
+        private final static String UPDATE_PRODUCT_MAKER = "컬리";
+
+        private Product updatedProduct;
+        private String requestContent;
+        private Product notExistedProduct;
+
+        @BeforeEach
+        void prepare() throws JsonProcessingException {
+            prepareProduct();
+            prepareUser();
+
+            Integer UPDATE_PRODUCT_PRICE = 10000;
+            ProductData productData = ProductData.builder()
+                    .name(UPDATE_PRODUCT_NAME)
+                    .maker(UPDATE_PRODUCT_MAKER)
+                    .price(UPDATE_PRODUCT_PRICE)
+                    .build();
+
+            updatedProduct = mapper.map(productData, Product.class);
+            requestContent = objectMapper.writeValueAsString(updatedProduct);
+        }
+
+        @Nested
+        @DisplayName("로그인을 한 상태이고")
+        class Context_with_valid_access_token {
+
+            @Nested
+            @DisplayName("존재하는 id이고, 수정할 상품 데이터가 주어지면")
+            class Context_with_existed_id_and_product_data {
+
+                @Test
+                @DisplayName("수정된 상품 정보를 응답한다.")
+                void it_response_updated_product_data() throws Exception {
+                    mockMvc.perform(
+                                    patch("/products/" + existedProduct.getId())
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + existedUserToken)
+                            )
+                            .andExpect(status().isOk())
+                            .andExpect(jsonPath("name").value(UPDATE_PRODUCT_NAME));
+                }
+            }
+
+            @Nested
+            @DisplayName("존재하는 id이고, 수정할 상품 데이터가 비어있다면")
+            class Context_with_existed_id_and_blank_product_data {
+
+                @BeforeEach
+                void prepare() throws JsonProcessingException {
+                    Integer UPDATE_PRODUCT_PRICE = 10000;
+                    ProductData productData = ProductData.builder()
+                            .name("")
+                            .maker("")
+                            .price(UPDATE_PRODUCT_PRICE)
+                            .build();
+
+                    updatedProduct = mapper.map(productData, Product.class);
+                    requestContent = objectMapper.writeValueAsString(updatedProduct);
+                }
+
+                @Test
+                @DisplayName("Bad request를 응답한다.")
+                void it_response_bad_request() throws Exception {
+                    mockMvc.perform(
+                                    patch("/products/" + existedProduct.getId())
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + existedUserToken)
+                            )
+                            .andExpect(status().isBadRequest());
+                }
+            }
+
+            @Nested
+            @DisplayName("존재하지 않는 id이면")
+            class Context_with_not_existed_id {
+
+                @BeforeEach
+                void prepare() {
+                    productRepository.delete(existedProduct);
+                    notExistedProduct = existedProduct;
+                }
+
+                @Test
+                @DisplayName("Not found를 응답한다.")
+                void it_response_not_found() throws Exception {
+                    mockMvc.perform(
+                                    patch("/products/" + notExistedProduct.getId())
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(requestContent)
+                                            .header("Authorization", "Bearer " + existedUserToken)
+                            )
+                            .andExpect(status().isNotFound());
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("로그인을 하지 않았으면")
+        class Context_without_access_token {
+
+            @Test
+            @DisplayName("Unauthorized 을 응답한다")
+            void it_response_unauthorized() throws Exception {
+                mockMvc.perform(
+                                patch("/products/" + existedProduct.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(requestContent)
+                                        .header("Authorization", "Bearer " + existedUserToken + "0")
+                        )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
     }
 
-    @Test
-    void deatilWithExsitedProduct() throws Exception {
-        mockMvc.perform(
-                get("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
-    }
+    @Nested
+    @DisplayName("DELETE /products/{id} 요청은")
+    class Describe_delete_product_request {
 
-    @Test
-    void deatilWithNotExsitedProduct() throws Exception {
-        mockMvc.perform(get("/products/1000"))
-                .andExpect(status().isNotFound());
-    }
+        @BeforeEach
+        void prepare() {
+            prepareProduct();
+            prepareUser();
+        }
 
-    @Test
-    void createWithValidAttributes() throws Exception {
-        mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("쥐돌이")));
+        @Nested
+        @DisplayName("accessToken 이 유효하고")
+        class Context_with_accessToken {
 
-        verify(productService).createProduct(any(ProductData.class));
-    }
+            @Nested
+            @DisplayName("존재하는 상품 id 라면")
+            class Context_with_existed_product_id {
 
-    @Test
-    void createWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
-    }
+                @Test
+                @DisplayName("해당 id의 상품을 삭제한다.")
+                void it_destroy_product() throws Exception {
+                    mockMvc.perform(
+                                    delete("/products/" + existedProduct.getId())
+                                            .header("Authorization", "Bearer " + existedUserToken)
+                            )
+                            .andExpect(status().isNoContent());
+                }
+            }
 
-    @Test
-    void updateWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
+            @Nested
+            @DisplayName("존재하지 않는 id 라면")
+            class Context_with_not_existed_product_id {
 
-        verify(productService).updateProduct(eq(1L), any(ProductData.class));
-    }
+                private Product notExistedProduct;
 
-    @Test
-    void updateWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isNotFound());
+                @BeforeEach
+                void prepare() {
+                    productRepository.delete(existedProduct);
+                    notExistedProduct = existedProduct;
+                }
 
-        verify(productService).updateProduct(eq(1000L), any(ProductData.class));
-    }
+                @Test
+                @DisplayName("Not found를 응답한다.")
+                void it_response_not_found() throws Exception {
+                    mockMvc.perform(
+                                    delete("/products/" + notExistedProduct.getId())
+                                            .header("Authorization", "Bearer " + existedUserToken)
+                            )
+                            .andExpect(status().isNotFound());
+                }
+            }
+        }
 
-    @Test
-    void updateWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
-    }
+        @Nested
+        @DisplayName("잘못된 accessToken 이라면")
+        class Context_without_accessToken {
 
-    @Test
-    void destroyWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1")
-        )
-                .andExpect(status().isNoContent());
-
-        verify(productService).deleteProduct(1L);
-    }
-
-    @Test
-    void destroyWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1000")
-        )
-                .andExpect(status().isNotFound());
-
-        verify(productService).deleteProduct(1000L);
+            @Test
+            @DisplayName("Unauthorized 를 응답한다")
+            void it_response_unauthorized() throws Exception {
+                mockMvc.perform(
+                                delete("/products/" + existedProduct.getId())
+                                        .header("Authorization", "Bearer " + existedUserToken + "0")
+                        )
+                        .andExpect(status().isUnauthorized());
+            }
+        }
     }
 }

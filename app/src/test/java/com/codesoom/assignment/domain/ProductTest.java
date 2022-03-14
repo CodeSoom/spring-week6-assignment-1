@@ -40,4 +40,12 @@ class ProductTest {
         assertThat(product.getMaker()).isEqualTo("코드숨");
         assertThat(product.getPrice()).isEqualTo(10000);
     }
+
+    @Test
+    void constructorTest() {
+        Product product = new Product(1L, "장난감 총", "코드숨", 5000, "someUrl");
+
+        assertThat(product.getName()).isEqualTo("장난감 총");
+        assertThat(product.getMaker()).isEqualTo("코드숨");
+    }
 }

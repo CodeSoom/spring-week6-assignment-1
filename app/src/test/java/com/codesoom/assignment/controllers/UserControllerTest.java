@@ -4,11 +4,13 @@ import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.UserNotFoundByIdException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,7 +24,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc
+@SpringBootTest
+@DisplayName("UserController 테스트")
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -56,10 +60,10 @@ class UserControllerTest {
                 });
 
         given(userService.updateUser(eq(100L), any(UserModificationData.class)))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundByIdException(100L));
 
         given(userService.deleteUser(100L))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundByIdException(100L));
     }
 
     @Test

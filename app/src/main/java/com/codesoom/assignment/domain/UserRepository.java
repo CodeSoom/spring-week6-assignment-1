@@ -7,7 +7,7 @@ public interface UserRepository {
 
     boolean existsByEmail(String email);
 
-    Optional<User> findById(Long id);
+    void deleteAll();
 
     Optional<User> findByIdAndDeletedIsFalse(Long id);
 

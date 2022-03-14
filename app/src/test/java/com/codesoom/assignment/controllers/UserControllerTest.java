@@ -123,7 +123,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUserWithNotExsitedId() throws Exception {
+    void updateUserWithNotExistedId() throws Exception {
         mockMvc.perform(
                 patch("/users/100")
                         .contentType(MediaType.APPLICATION_JSON)

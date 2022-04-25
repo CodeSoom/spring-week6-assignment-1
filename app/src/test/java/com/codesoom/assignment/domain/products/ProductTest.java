@@ -1,7 +1,5 @@
-package com.codesoom.assignment.domain;
+package com.codesoom.assignment.domain.products;
 
-import com.codesoom.assignment.domain.products.Product;
-import com.codesoom.assignment.domain.products.ProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

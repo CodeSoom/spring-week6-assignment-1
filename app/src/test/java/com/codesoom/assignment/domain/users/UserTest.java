@@ -1,6 +1,5 @@
-package com.codesoom.assignment.domain;
+package com.codesoom.assignment.domain.users;
 
-import com.codesoom.assignment.domain.users.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

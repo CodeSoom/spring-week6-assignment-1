@@ -1,52 +1,64 @@
-// 고양이 장난감 쇼핑몰
-// Product 모델
-// User 모델
-// Order 모델
-// ... 모델
-// Application (UseCase)
-// Product -> 관리자 등록/수정/삭제 -> list/detail
-// 주문 -> 확인 -> 배송 등 처리
-
-// Product
-// 0. 식별자 - identifier (ID)
-// 1. 이름 - 쥐돌이
-// 2. 제조사 - 냥이월드
-// 3. 가격 - 5,000원 (판매가)
-// 4. 이미지 - static, CDN => image URL
-
 package com.codesoom.assignment.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
-@Entity
+
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
 public class Product {
-    @Id
-    @GeneratedValue
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String maker;
 
-    private Integer price;
+    @Column(nullable = false)
+    private BigDecimal price;
 
+    @Column(name = "IMAGE_URL")
     private String imageUrl;
 
-    public void changeWith(Product source) {
-        this.name = source.name;
-        this.maker = source.maker;
-        this.price = source.price;
-        this.imageUrl = source.imageUrl;
+    protected Product() {
     }
+
+    public Product(String name, String maker, BigDecimal price, String imageUrl) {
+        this.name = name;
+        this.maker = maker;
+        this.price = price;
+        this.imageUrl = imageUrl;
+    }
+
+    public Product(Long id, String name, String maker, BigDecimal price, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.maker = maker;
+        this.price = price;
+        this.imageUrl = imageUrl;
+    }
+
+    public Product update(Product product) {
+        this.name = product.getName();
+        this.maker = product.getMaker();
+        this.price = product.getPrice();
+        this.imageUrl = product.getImageUrl();
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Product = { id: %s, name: %s, maker: %s, price: %s, image: %s }",
+                id, name, maker, price, imageUrl);
+    }
+
 }

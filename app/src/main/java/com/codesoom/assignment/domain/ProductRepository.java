@@ -1,14 +1,17 @@
 package com.codesoom.assignment.domain;
 
-import java.util.List;
-import java.util.Optional;
+import com.codesoom.assignment.application.ProductSaveRequest;
+import org.springframework.data.repository.CrudRepository;
 
-public interface ProductRepository {
+import java.util.List;
+
+public interface ProductRepository extends CrudRepository<Product, Long> {
+
+    @Override
     List<Product> findAll();
 
-    Optional<Product> findById(Long id);
+    default Product save(ProductSaveRequest productSaveRequest) {
+        return save(productSaveRequest.product());
+    }
 
-    Product save(Product product);
-
-    void delete(Product product);
 }

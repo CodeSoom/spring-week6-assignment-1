@@ -1,15 +1,17 @@
 package com.codesoom.assignment.domain;
 
-import java.util.Optional;
+import com.codesoom.assignment.application.UserSaveRequest;
+import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository {
-    User save(User user);
+import java.util.List;
 
-    boolean existsByEmail(String email);
+public interface UserRepository extends CrudRepository<User, Long> {
 
-    Optional<User> findById(Long id);
+    @Override
+    List<User> findAll();
 
-    Optional<User> findByIdAndDeletedIsFalse(Long id);
+    default User save(UserSaveRequest userSaveRequest) {
+        return save(userSaveRequest.user());
+    }
 
-    Optional<User> findByEmail(String email);
 }

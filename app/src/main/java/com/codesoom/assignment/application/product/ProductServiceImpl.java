@@ -13,14 +13,9 @@ import java.util.List;
 @Service
 @Transactional
 public class ProductServiceImpl implements ProductService  {
-    private final Mapper mapper;
-    private final ProductRepository productRepository;
+     private final ProductRepository productRepository;
 
-    public ProductServiceImpl(
-            Mapper dozerMapper,
-            ProductRepository productRepository
-    ) {
-        this.mapper = dozerMapper;
+    public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

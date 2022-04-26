@@ -13,7 +13,16 @@ public class UserNotFoundException extends RuntimeException {
     }
 
     public UserNotFoundException(Long id) {
-        this(String.valueOf(HttpStatus.NOT_FOUND), id);
+        this(String.valueOf(HttpStatus.NOT_FOUND.value()), id);
+    }
+
+    public UserNotFoundException(String code, String message) {
+        super(message);
+        this.code = code;
+    }
+
+    public UserNotFoundException(String message) {
+        this(String.valueOf(HttpStatus.NOT_FOUND.value()), message);
     }
 
     public String getCode() {

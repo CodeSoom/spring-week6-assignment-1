@@ -47,4 +47,8 @@ public class User {
         return this;
     }
 
+    public boolean authenticate(String password) {
+        return this.password.equals(password);
+    }
+
 }

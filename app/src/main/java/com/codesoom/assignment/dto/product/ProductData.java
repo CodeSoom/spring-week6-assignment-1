@@ -71,4 +71,14 @@ public class ProductData {
         }
     }
 
+    @Getter
+    public static class SearchOneProductRequest {
+        @NotNull
+        private final Long id;
+
+        public SearchOneProductRequest(Long id) {
+            this.id = id;
+        }
+    }
+
 }

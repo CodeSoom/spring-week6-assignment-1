@@ -1,9 +1,9 @@
-package com.codesoom.assignment.application;
+package com.codesoom.assignment.application.user;
 
-import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.UserModificationData;
-import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.domain.user.User;
+import com.codesoom.assignment.domain.user.UserRepository;
+import com.codesoom.assignment.dto.user.UserModificationData;
+import com.codesoom.assignment.dto.user.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;

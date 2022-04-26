@@ -102,11 +102,11 @@ public class UserSaveControllerMockMvcTest extends ControllerTest {
             private final UserSaveDto EMPTY_EMAIL
                     = new UserSaveDto("홍길동", "", "password");
             private final UserSaveDto BLANK_EMAIL
-                    = new UserSaveDto("홍길동",  " ", "password");
+                    = new UserSaveDto("Kyrie Irving",  " ", "earthisflat");
             private final UserSaveDto NULL_EMAIL
-                    = new UserSaveDto("홍길동", null, "password");
+                    = new UserSaveDto("제갈길동", null, "jaegal0909!");
             private final UserSaveDto INVALID_EMAIL
-                    = new UserSaveDto("홍길동", "itsNotEmailFormat@", "password");
+                    = new UserSaveDto("홍 길동", "itsNotEmailFormat@", "password");
             private final List<UserSaveDto> INVALID_EMAILS
                     = List.of(EMPTY_EMAIL, BLANK_EMAIL, NULL_EMAIL, INVALID_EMAIL);
 
@@ -127,15 +127,15 @@ public class UserSaveControllerMockMvcTest extends ControllerTest {
         class Context_with_empty_password {
 
             private final UserSaveDto EMPTY_PASSWORD
-                    = new UserSaveDto("홍길동", "hkd@codesoom.com", "");
+                    = new UserSaveDto("러셀 웨스트브룩", "why@not.zero", "");
             private final UserSaveDto BLANK_PASSWORD
-                    = new UserSaveDto("홍길동", "hkd@codesoom.com", " ");
+                    = new UserSaveDto("김철수", "hkd@gmail.com", " ");
             private final UserSaveDto NULL_PASSWORD
-                    = new UserSaveDto("홍길동", "hkd@codesoom.com", null);
+                    = new UserSaveDto("안영희", "hkd_lil@naver.com", null);
             private final UserSaveDto TOO_SHORT_PASSWORD
-                    = new UserSaveDto("홍길동", "hkd@codesoom.com", "1234");
+                    = new UserSaveDto("엉클 밥", "hkd423@yahoo.com", "1234");
             private final UserSaveDto TOO_LONG_PASSWORD
-                    = new UserSaveDto("홍길동", "hkd@codesoom.com"
+                    = new UserSaveDto("강백호", "hkd@codesoom.com"
                     , "qwertyuiopasdfghjklzxcvbnm123456789");
             private final List<UserSaveDto> INVALID_PASSWORDS
                     = List.of(EMPTY_PASSWORD, BLANK_PASSWORD, NULL_PASSWORD

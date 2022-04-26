@@ -55,7 +55,7 @@ class SessionControllerTest {
             void it_response_201() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("\"email\": \"test@naver.com\", \"password\": \"1234\"")
+                                .content("{\"email\": \"test@naver.com\", \"password\": \"1234\"}")
                         )
                         .andDo(print())
                         .andExpect(status().isCreated())
@@ -72,9 +72,35 @@ class SessionControllerTest {
             void it_response_400() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("\"email\": \"test@naver.com\", \"password\": \"1234\"")
+                                .content("{\"email\": \"test@naver.com\", \"password\": \"1234\"}")
                         )
                         .andDo(print())
+                        .andExpect(status().isBadRequest());
+            }
+        }
+
+
+        @Nested
+        @DisplayName("비밀번호가 일치하지 않다면")
+        class Context_notMatchPassword {
+
+            final User validUser = User.builder()
+                    .email("test@naver.com")
+                    .password("1234")
+                    .build();
+
+            @BeforeEach
+            void setUp() {
+                userRepository.save(validUser);
+            }
+
+            @Test
+            @DisplayName("Bad Request 를 응답한다. [400]")
+            void it_response_400() throws Exception {
+                mockMvc.perform(post("/session")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"email\": \"test@naver.com\", \"password\": \"1235\"}")
+                        )
                         .andExpect(status().isBadRequest());
             }
         }

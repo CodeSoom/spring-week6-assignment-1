@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/session")
@@ -24,7 +24,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonWebTokenResponse signin(@RequestBody HashMap<String, String> params) {
+    public JsonWebTokenResponse signin(@RequestBody Map<String, String> params) {
 
         final User foundUser = userService.findUserByEmail(params.get("email"));
 

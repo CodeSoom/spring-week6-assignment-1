@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class JwtUtilTest {
 
     private static final String SECRET_KEY = "NcRfUjXn2r5u8x/A?D(G+KbPdSgVkYp3";
-
     private JwtUtil jwtUtil;
 
     private String VALID_TOKEN;
@@ -31,6 +30,8 @@ public class JwtUtilTest {
     void encodeTest() {
         String token = jwtUtil.encode(USER_ID);
         assertThat(token).contains(".");
+        assertThat(token.split("\\.").length).isEqualTo(3);
+        assertThat(token).isEqualTo(VALID_TOKEN);
     }
 
     @DisplayName("유효한 토큰이 주어지면 검증에 성공한다.")

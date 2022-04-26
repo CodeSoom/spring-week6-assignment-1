@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.UserPasswordDoesNotMatchException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserEmailNotExistException;
@@ -36,6 +37,12 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserEmailNotExistException.class)
     public ErrorResponse handleUserEmailNotExisted() {
         return new ErrorResponse("존재하지 않는 이메일입니다.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserPasswordDoesNotMatchException.class)
+    public ErrorResponse handleUserPasswordNotMatch() {
+        return new ErrorResponse("비밀번호가 일치하지 않습니다.");
     }
 
 }

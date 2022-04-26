@@ -26,7 +26,8 @@ public class SessionController {
     @ResponseStatus(HttpStatus.CREATED)
     public JsonWebTokenResponse signin(@RequestBody Map<String, String> params) {
 
-        final User foundUser = userService.findUserByEmail(params.get("email"));
+        final User foundUser = userService.
+                findUserByEmailAndPassword(params.get("email"), params.get("password"));
 
         return new JsonWebTokenResponse("token.token.token");
     }

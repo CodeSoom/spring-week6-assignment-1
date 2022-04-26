@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserPasswordDoesNotMatchException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserEmailNotExistException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -53,8 +54,15 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+    public User findUserByEmailAndPassword(final String email, final String password) {
+        final User foundUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserEmailNotExistException("존재하지않는 이메일 입니다."));
+        
+        boolean isAuthenticate = foundUser.authenticate(password);
+
+        if(!isAuthenticate) {
+            throw new UserPasswordDoesNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+        return foundUser;
     }
 }

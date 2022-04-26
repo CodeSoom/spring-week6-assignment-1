@@ -27,7 +27,8 @@ public class ProductCommandService implements ProductSaveService, ProductUpdateS
     @Override
     public Product updateProduct(Long id, ProductSaveRequest productSaveRequest) {
         Product product = repository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+                .orElseThrow(() ->
+                        new ProductNotFoundException(String.format("%s에 해당하는 상품을 찾을 수 없어 수정에 실패하였습니다.", id)));
 
         product.update(productSaveRequest.product());
 
@@ -37,7 +38,8 @@ public class ProductCommandService implements ProductSaveService, ProductUpdateS
     @Override
     public void deleteProduct(Long id) {
         final Product product = repository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+                .orElseThrow(() ->
+                        new ProductNotFoundException(String.format("%s에 해당하는 상품을 찾을 수 없어 삭제 하지 못했습니다.", id)));
 
         repository.delete(product);
     }

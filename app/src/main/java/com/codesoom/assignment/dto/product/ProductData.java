@@ -1,5 +1,6 @@
 package com.codesoom.assignment.dto.product;
 
+import com.codesoom.assignment.domain.product.Product;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -31,13 +32,22 @@ public class ProductData {
                     ", imageUrl='" + imageUrl + '\'' +
                     '}';
         }
+
+        public Product toEntity() {
+            return Product.builder()
+                    .name(name)
+                    .maker(maker)
+                    .price(price)
+                    .imageUrl(imageUrl)
+                    .build();
+        }
     }
 
     @Getter
     @Builder
     public static class UpdateProductRequest {
-        @NotNull
-        private final Long id;
+
+        private Long id;
 
         @NotBlank
         private final String name;
@@ -59,11 +69,25 @@ public class ProductData {
                     ", imageUrl='" + imageUrl + '\'' +
                     '}';
         }
+
+        public void initProductId(long id) {
+            this.id = id;
+        }
+
+        public Product toEntity() {
+            return Product.builder()
+                    .id(id)
+                    .name(name)
+                    .maker(maker)
+                    .price(price)
+                    .imageUrl(imageUrl)
+                    .build();
+        }
     }
 
     @Getter
     public static class RemoveProductRequest {
-        @NotNull
+
         private final Long id;
 
         public RemoveProductRequest(Long id) {
@@ -73,7 +97,7 @@ public class ProductData {
 
     @Getter
     public static class SearchOneProductRequest {
-        @NotNull
+
         private final Long id;
 
         public SearchOneProductRequest(Long id) {

@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
+import com.codesoom.assignment.errors.UserEmailNotExistException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
@@ -50,5 +51,10 @@ public class UserService {
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserEmailNotExistException("존재하지않는 이메일 입니다."));
     }
 }

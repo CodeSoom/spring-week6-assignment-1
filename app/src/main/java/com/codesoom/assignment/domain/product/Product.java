@@ -14,7 +14,7 @@
 // 3. 가격 - 5,000원 (판매가)
 // 4. 이미지 - static, CDN => image URL
 
-package com.codesoom.assignment.domain;
+package com.codesoom.assignment.domain.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

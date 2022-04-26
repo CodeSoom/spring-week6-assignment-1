@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * 회원 인증에 대한 HTTP 요청 처리
+ */
 @RestController
 @RequestMapping("/session")
 public class SessionController {
@@ -27,9 +30,14 @@ public class SessionController {
         this.jsonWebTokenManager = jsonWebTokenManager;
     }
 
+    /**
+     * 인증 토큰을 리턴합니다.
+     * @param params 인증에 필요한 데이터
+     * @return 인증 토큰 데이터
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonWebTokenResponse signin(@RequestBody Map<String, String> params) {
+    public JsonWebTokenResponse authentication(@RequestBody Map<String, String> params) {
 
         final User foundUser = userService.
                 findUserByEmailAndPassword(params.get("email"), params.get("password"));

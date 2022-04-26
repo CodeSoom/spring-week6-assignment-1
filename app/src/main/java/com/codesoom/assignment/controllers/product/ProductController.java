@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers.product;
 
+import com.codesoom.assignment.application.product.ProductService;
 import com.codesoom.assignment.application.product.ProductServiceImpl;
 import com.codesoom.assignment.domain.product.Product;
 import com.codesoom.assignment.dto.product.ProductData;
@@ -13,9 +14,9 @@ import java.util.List;
 @RequestMapping("/products")
 @CrossOrigin
 public class ProductController {
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
 
-    public ProductController(ProductServiceImpl productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 

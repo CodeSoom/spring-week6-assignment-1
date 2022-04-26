@@ -3,6 +3,8 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.JsonWebTokenResponse;
+import com.codesoom.assignment.token.JsonWebTokenAttribute;
+import com.codesoom.assignment.token.JsonWebTokenManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +20,11 @@ public class SessionController {
 
     private final UserService userService;
 
-    public SessionController(UserService userService) {
+    private final JsonWebTokenManager jsonWebTokenManager;
+
+    public SessionController(UserService userService, JsonWebTokenManager jsonWebTokenManager) {
         this.userService = userService;
+        this.jsonWebTokenManager = jsonWebTokenManager;
     }
 
     @PostMapping
@@ -29,6 +34,8 @@ public class SessionController {
         final User foundUser = userService.
                 findUserByEmailAndPassword(params.get("email"), params.get("password"));
 
-        return new JsonWebTokenResponse("token.token.token");
+        JsonWebTokenAttribute attribute = JsonWebTokenAttribute.of(foundUser.getId());
+
+        return new JsonWebTokenResponse(jsonWebTokenManager.createToken(attribute));
     }
 }

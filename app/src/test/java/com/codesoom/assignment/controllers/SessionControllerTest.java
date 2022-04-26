@@ -54,7 +54,7 @@ class SessionControllerTest {
             @DisplayName("토큰을 생성하고 토큰을 응답합니다. [201] ")
             void it_response_201() throws Exception {
                 mockMvc.perform(post("/session")
-                                .contentType(MediaType.APPLICATION_CBOR)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content("\"email\": \"test@naver.com\", \"password\": \"1234\"")
                         )
                         .andDo(print())
@@ -71,7 +71,7 @@ class SessionControllerTest {
             @DisplayName("Bad Request 를 응답한다. [400]")
             void it_response_400() throws Exception {
                 mockMvc.perform(post("/session")
-                                .contentType(MediaType.APPLICATION_CBOR)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content("\"email\": \"test@naver.com\", \"password\": \"1234\"")
                         )
                         .andDo(print())

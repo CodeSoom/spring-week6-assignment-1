@@ -34,8 +34,10 @@ public class SessionController {
         final User foundUser = userService.
                 findUserByEmailAndPassword(params.get("email"), params.get("password"));
 
-        JsonWebTokenAttribute attribute = JsonWebTokenAttribute.of(foundUser.getId());
+        JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder()
+                .id(foundUser.getId())
+                .build();
 
-        return new JsonWebTokenResponse(jsonWebTokenManager.createToken(attribute));
+        return new JsonWebTokenResponse(jsonWebTokenManager.createToken(jwtAttribute));
     }
 }

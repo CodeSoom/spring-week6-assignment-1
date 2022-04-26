@@ -46,11 +46,11 @@ public class JsonWebTokenManager {
     }
 
     private Date makeExpiration(JsonWebTokenAttribute attribute) {
-        if (attribute.getExpiredMinute() == null) {
+        if (attribute.getExpireMinute() == null) {
             return null;
         }
 
-        long expiredMiliSecond = 1000 * 60L * attribute.getExpiredMinute();
+        long expiredMiliSecond = 1000 * 60L * attribute.getExpireMinute();
         Date exp = new Date();
         exp.setTime(exp.getTime() + expiredMiliSecond);
         return exp;

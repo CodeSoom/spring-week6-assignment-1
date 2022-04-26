@@ -15,17 +15,7 @@ class JsonWebTokenManagerTest {
     @DisplayName("createJwt 메소드는")
     class Describe_createAccessToken {
 
-        JsonWebTokenAttribute jwtAttribute = new JsonWebTokenAttribute() {
-            @Override
-            public String getId() {
-                return "1";
-            }
-
-            @Override
-            public Integer getExpiredMinute() {
-                return null;
-            }
-        };
+        final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder().build();
 
         @Test
         @DisplayName("Json Web Ttoken 을 생성한다.")

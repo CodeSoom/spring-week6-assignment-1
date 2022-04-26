@@ -1,25 +1,21 @@
 package com.codesoom.assignment.token;
 
+import lombok.Builder;
+import lombok.Getter;
+
 /**
- * JWT 생성시 필요 데이터
+ * JWT 생성시 필요 속성
  */
-public interface JsonWebTokenAttribute {
+@Getter
+public class JsonWebTokenAttribute {
 
-    String getId();
+    private final Long id;
 
-    Integer getExpiredMinute();
+    private final Integer expireMinute;
 
-    static JsonWebTokenAttribute of(Long id) {
-        return new JsonWebTokenAttribute() {
-            @Override
-            public String getId() {
-                return String.valueOf(id);
-            }
-
-            @Override
-            public Integer getExpiredMinute() {
-                return null;
-            }
-        };
+    @Builder
+    public JsonWebTokenAttribute(Long id, Integer expireMinute) {
+        this.id = id;
+        this.expireMinute = expireMinute;
     }
 }

@@ -43,10 +43,12 @@ public class Product {
 
     private String imageUrl;
 
-    public void changeWith(Product source) {
+    public Product changeWith(Product source) {
         this.name = source.name;
         this.maker = source.maker;
         this.price = source.price;
         this.imageUrl = source.imageUrl;
+
+        return this;
     }
 }

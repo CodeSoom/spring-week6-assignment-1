@@ -1,6 +1,6 @@
 package com.codesoom.assignment.controllers.product;
 
-import com.codesoom.assignment.application.product.ProductService;
+import com.codesoom.assignment.application.product.ProductServiceImpl;
 import com.codesoom.assignment.domain.product.Product;
 import com.codesoom.assignment.dto.product.ProductData;
 import org.springframework.http.HttpStatus;
@@ -13,9 +13,9 @@ import java.util.List;
 @RequestMapping("/products")
 @CrossOrigin
 public class ProductController {
-    private final ProductService productService;
+    private final ProductServiceImpl productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductServiceImpl productService) {
         this.productService = productService;
     }
 
@@ -26,13 +26,14 @@ public class ProductController {
 
     @GetMapping("{id}")
     public Product detail(@PathVariable Long id) {
-        return productService.getProduct(id);
+        ProductData.SearchOneProductRequest searchOneProductRequest = new ProductData.SearchOneProductRequest(id);
+        return productService.getProduct(searchOneProductRequest);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestBody @Valid ProductData productData
+            @RequestBody @Valid ProductData.CreateProductRequest productData
     ) {
         return productService.createProduct(productData);
     }
@@ -40,9 +41,10 @@ public class ProductController {
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
-            @RequestBody @Valid ProductData productData
+            @RequestBody @Valid ProductData.UpdateProductRequest productData
     ) {
-        return productService.updateProduct(id, productData);
+        productData.initProductId(id);
+        return productService.updateProduct(productData);
     }
 
     @DeleteMapping("{id}")
@@ -50,6 +52,7 @@ public class ProductController {
     public void destroy(
             @PathVariable Long id
     ) {
-        productService.deleteProduct(id);
+        ProductData.RemoveProductRequest searchOneProductRequest = new ProductData.RemoveProductRequest(id);
+        productService.deleteProduct(searchOneProductRequest);
     }
 }

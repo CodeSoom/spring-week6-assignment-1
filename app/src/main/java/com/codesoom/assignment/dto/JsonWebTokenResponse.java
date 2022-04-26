@@ -3,11 +3,11 @@ package com.codesoom.assignment.dto;
 import lombok.Getter;
 
 @Getter
-public class UserSignInResponse {
+public class JsonWebTokenResponse {
 
     private final String accessToken;
 
-    public UserSignInResponse(String accessToken) {
+    public JsonWebTokenResponse(String accessToken) {
         this.accessToken = accessToken;
     }
 }

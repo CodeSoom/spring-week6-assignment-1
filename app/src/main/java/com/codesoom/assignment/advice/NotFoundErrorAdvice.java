@@ -1,4 +1,4 @@
-package com.codesoom.assignment.application.advice;
+package com.codesoom.assignment.advice;
 
 import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.exceptions.ProductNotFoundException;

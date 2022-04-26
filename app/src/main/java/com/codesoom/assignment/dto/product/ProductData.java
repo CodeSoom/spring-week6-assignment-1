@@ -1,31 +1,74 @@
 package com.codesoom.assignment.dto.product;
 
-import com.github.dozermapper.core.Mapping;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Setter
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class ProductData {
-    private Long id;
 
-    @NotBlank
-    @Mapping("name")
-    private String name;
+    @Getter
+    @Builder
+    public static class CreateProductRequest {
+        @NotBlank
+        private final String name;
 
-    @NotBlank
-    @Mapping("maker")
-    private String maker;
+        @NotBlank
+        private final String maker;
 
-    @NotNull
-    @Mapping("price")
-    private Integer price;
+        @NotNull
+        private final Integer price;
+        private final String imageUrl;
 
-    @Mapping("imageUrl")
-    private String imageUrl;
+        @Override
+        public String toString() {
+            return "CreateProduct{" +
+                    "name='" + name + '\'' +
+                    ", maker='" + maker + '\'' +
+                    ", price=" + price +
+                    ", imageUrl='" + imageUrl + '\'' +
+                    '}';
+        }
+    }
+
+    @Getter
+    @Builder
+    public static class UpdateProductRequest {
+        @NotNull
+        private final Long id;
+
+        @NotBlank
+        private final String name;
+
+        @NotBlank
+        private final String maker;
+
+        @NotNull
+        private final Integer price;
+        private final String imageUrl;
+
+        @Override
+        public String toString() {
+            return "UpdateProductRequest{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", maker='" + maker + '\'' +
+                    ", price=" + price +
+                    ", imageUrl='" + imageUrl + '\'' +
+                    '}';
+        }
+    }
+
+    @Getter
+    public static class RemoveProductRequest {
+        @NotNull
+        private final Long id;
+
+        public RemoveProductRequest(Long id) {
+            this.id = id;
+        }
+    }
+
 }

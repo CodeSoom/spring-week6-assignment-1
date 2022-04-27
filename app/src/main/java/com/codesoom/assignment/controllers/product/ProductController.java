@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.codesoom.assignment.dto.product.ProductData.RemoveProductRequest;
+import static com.codesoom.assignment.dto.product.ProductData.SearchOneProductRequest;
+
 @RestController
 @RequestMapping("/products")
 @CrossOrigin
@@ -27,7 +30,7 @@ public class ProductController {
 
     @GetMapping("{id}")
     public Product detail(@PathVariable Long id) {
-        ProductData.SearchOneProductRequest searchOneProductRequest = new ProductData.SearchOneProductRequest(id);
+        SearchOneProductRequest searchOneProductRequest = SearchOneProductRequest.initProductId(id);
         return productService.getProduct(searchOneProductRequest);
     }
 
@@ -53,7 +56,7 @@ public class ProductController {
     public void destroy(
             @PathVariable Long id
     ) {
-        ProductData.RemoveProductRequest searchOneProductRequest = new ProductData.RemoveProductRequest(id);
+        RemoveProductRequest searchOneProductRequest = RemoveProductRequest.initProductId(id);
         productService.deleteProduct(searchOneProductRequest);
     }
 }

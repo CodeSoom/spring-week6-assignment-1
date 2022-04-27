@@ -87,21 +87,29 @@ public class ProductData {
 
     @Getter
     public static class RemoveProductRequest {
+        private Long productId;
 
-        private final Long id;
+        private RemoveProductRequest(long productId) {
+            this.productId = productId;
+        }
 
-        public RemoveProductRequest(Long id) {
-            this.id = id;
+        public static RemoveProductRequest initProductId(long productId) {
+            RemoveProductRequest removeProductRequest = new RemoveProductRequest(productId);
+            return removeProductRequest;
         }
     }
 
     @Getter
     public static class SearchOneProductRequest {
+        private Long productId;
 
-        private final Long id;
+        private SearchOneProductRequest(Long productId) {
+            this.productId = productId;
+        }
 
-        public SearchOneProductRequest(Long id) {
-            this.id = id;
+        public static SearchOneProductRequest initProductId(long productId) {
+            SearchOneProductRequest searchOneProductRequest = new SearchOneProductRequest(productId);
+            return searchOneProductRequest;
         }
     }
 

@@ -24,22 +24,6 @@ public class JsonWebTokenManager {
     }
 
     /**
-     * JWT 의 고유 아이디를 리턴합니다.
-     *
-     * @param token Json Web Token
-     * @return JWT ID
-     */
-    public String getJwtId(String token) {
-
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getId();
-    }
-
-    /**
      * JWT 를 생성합니다.
      *
      * @param attribute 생성시 필요 데이터
@@ -49,7 +33,7 @@ public class JsonWebTokenManager {
         return Jwts.builder()
                 .signWith(key)
                 .setHeader(makeHeaders())
-                .setId(String.valueOf(attribute.getId()))
+                .setId(String.valueOf(attribute.getJwtId()))
                 .setExpiration(makeExpiration(attribute.getExpireMinute()))
                 .compact();
     }
@@ -82,5 +66,21 @@ public class JsonWebTokenManager {
         Date exp = new Date();
         exp.setTime(exp.getTime() + expiredMiliSecond);
         return exp;
+    }
+
+    /**
+     * JWT 의 고유 아이디를 리턴합니다.
+     *
+     * @param token JWT
+     * @return JWT ID
+     */
+    public String getJwtId(String token) {
+
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getId();
     }
 }

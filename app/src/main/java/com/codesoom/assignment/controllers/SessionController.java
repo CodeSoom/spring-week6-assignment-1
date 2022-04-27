@@ -43,7 +43,7 @@ public class SessionController {
                 findUserByEmailAndPassword(params.get("email"), params.get("password"));
 
         JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder()
-                .id(foundUser.getId())
+                .jwtId(String.valueOf(foundUser.getId()))
                 .build();
 
         return new JsonWebTokenResponse(jsonWebTokenManager.createToken(jwtAttribute));

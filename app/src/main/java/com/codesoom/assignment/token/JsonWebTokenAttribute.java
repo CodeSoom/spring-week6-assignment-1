@@ -9,13 +9,13 @@ import lombok.Getter;
 @Getter
 public class JsonWebTokenAttribute {
 
-    private final Long id;
+    private final String jwtId;
 
     private final Integer expireMinute;
 
     @Builder
-    public JsonWebTokenAttribute(Long id, Integer expireMinute) {
-        this.id = id;
+    public JsonWebTokenAttribute(String jwtId, Integer expireMinute) {
+        this.jwtId = jwtId;
         this.expireMinute = expireMinute;
     }
 }

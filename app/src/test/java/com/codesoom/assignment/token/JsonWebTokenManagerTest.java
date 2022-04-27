@@ -12,7 +12,7 @@ class JsonWebTokenManagerTest {
 
     private static final String TEST_SECRET_KEY = "12345678901234567890123456789010";
 
-    private static final Long TEST_VALID_USER_ID = 1L;
+    private static final String TEST_VALID_USER_ID = "1";
 
     private JsonWebTokenManager tokenManager;
 
@@ -40,7 +40,7 @@ class JsonWebTokenManagerTest {
     @DisplayName("getJwtId 메소드는")
     class Describe_getJwtId {
 
-        final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder().id(TEST_VALID_USER_ID).build();
+        final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder().jwtId(TEST_VALID_USER_ID).build();
 
         @Nested
         @DisplayName("유효한 토큰이 주어졌을 경우")
@@ -58,7 +58,7 @@ class JsonWebTokenManagerTest {
             void it_unique_id() {
                 String uniqueId = tokenManager.getJwtId(validToken);
 
-                assertThat(uniqueId).isEqualTo(String.valueOf(TEST_VALID_USER_ID));
+                assertThat(uniqueId).isEqualTo(TEST_VALID_USER_ID);
             }
         }
     }

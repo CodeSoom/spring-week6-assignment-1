@@ -1,5 +1,6 @@
 package com.codesoom.assignment.token;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("JsonWebTokenManager 클래스")
 class JsonWebTokenManagerTest {
 
-    private final JsonWebTokenManager tokenManager = new JsonWebTokenManager();
+    private static final String TEST_SECRET_KEY = "12345678901234567890123456789010";
+
+    private JsonWebTokenManager tokenManager;
+
+    @BeforeEach
+    void setUp() {
+        tokenManager = new JsonWebTokenManager(TEST_SECRET_KEY);
+    }
 
     @Nested
     @DisplayName("createJwt 메소드는")

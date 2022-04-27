@@ -1,9 +1,7 @@
 package com.codesoom.assignment.controller.products;
 
 import com.codesoom.assignment.application.products.ProductSaveService;
-import com.codesoom.assignment.controller.products.ProductSaveController;
 import com.codesoom.assignment.domain.products.Product;
-import com.codesoom.assignment.domain.products.ProductDto;
 import com.codesoom.assignment.domain.products.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,8 +49,9 @@ public class ProductSaveControllerTest {
         @Nested
         class Context_with_valid_data {
 
-            private final ProductDto VALID_PRODUCT_DTO
-                    = new ProductDto("어쩌구", "어쩌구컴퍼니", BigDecimal.valueOf(2000), "url");
+            private final ProductSaveController.ProductSaveDto VALID_PRODUCT_DTO
+                    = new ProductSaveController.ProductSaveDto(
+                            "쥐돌이", "냥이월드", BigDecimal.valueOf(2000), "url");
 
             @AfterEach
             void cleanup() {

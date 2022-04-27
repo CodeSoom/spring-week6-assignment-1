@@ -24,6 +24,15 @@ public class JsonWebTokenManager {
     }
 
     /**
+     * JWT 의 고유 아이디를 리턴합니다.
+     *
+     * @param token JWT
+     */
+    public Long getJwtId(String token) {
+        return null;
+    }
+
+    /**
      * JWT 를 생성합니다.
      *
      * @param attribute 생성시 필요 데이터

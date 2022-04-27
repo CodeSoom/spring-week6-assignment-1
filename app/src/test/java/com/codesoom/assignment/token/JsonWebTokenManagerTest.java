@@ -12,6 +12,8 @@ class JsonWebTokenManagerTest {
 
     private static final String TEST_SECRET_KEY = "12345678901234567890123456789010";
 
+    private static final Long TEST_VALID_USER_ID = 1L;
+
     private JsonWebTokenManager tokenManager;
 
     @BeforeEach
@@ -20,7 +22,7 @@ class JsonWebTokenManagerTest {
     }
 
     @Nested
-    @DisplayName("createJwt 메소드는")
+    @DisplayName("createToken 메소드는")
     class Describe_createAccessToken {
 
         final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder().build();
@@ -31,6 +33,33 @@ class JsonWebTokenManagerTest {
             String jwt = tokenManager.createToken(jwtAttribute);
             String[] tests = jwt.split("\\.");
             assertThat(tests.length).isEqualTo(3);
+        }
+    }
+
+    @Nested
+    @DisplayName("getJwtId 메소드는")
+    class Describe_getJwtId {
+
+        final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder().id(TEST_VALID_USER_ID).build();
+
+        @Nested
+        @DisplayName("유효한 토큰이 주어졌을 경우")
+        class Context_validToken {
+
+            String validToken;
+
+            @BeforeEach
+            void setUp() {
+                validToken = tokenManager.createToken(jwtAttribute);
+            }
+
+            @Test
+            @DisplayName("고유 아이디를 리턴한다.")
+            void it_unique_id() {
+                Long uniqueId = tokenManager.getJwtId(validToken);
+
+                assertThat(uniqueId).isEqualTo(TEST_VALID_USER_ID);
+            }
         }
     }
 }

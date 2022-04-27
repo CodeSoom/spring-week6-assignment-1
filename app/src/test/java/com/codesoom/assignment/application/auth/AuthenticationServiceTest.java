@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AuthenticationServiceTest extends ServiceTest {
 
-    private AuthenticationService service;
+    private UserLoginService service;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -29,7 +29,7 @@ class AuthenticationServiceTest extends ServiceTest {
 
     @BeforeEach
     void setup() {
-        this.service = new AuthenticationService(jwtUtil, repository);
+        this.service = new UserLoginService(jwtUtil, repository);
         cleanup();
     }
 

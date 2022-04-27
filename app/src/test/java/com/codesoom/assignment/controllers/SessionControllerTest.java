@@ -51,7 +51,7 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("토큰을 생성하고 토큰을 응답합니다. [201] ")
+            @DisplayName("토큰을 생성하고 토큰을 응답합니다. [Created - 201] ")
             void it_response_201() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)

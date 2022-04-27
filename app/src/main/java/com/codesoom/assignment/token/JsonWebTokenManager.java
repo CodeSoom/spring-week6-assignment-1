@@ -40,6 +40,7 @@ public class JsonWebTokenManager {
 
     /**
      * JWT 헤더 정보를 리턴합니다.
+     *
      * @return JWT 헤더
      */
     private Map<String, Object> makeHeaders() {
@@ -51,6 +52,7 @@ public class JsonWebTokenManager {
 
     /**
      * JWT Payload 에 들어갈 클레임 리스트를 리턴합니다.
+     *
      * @param id 인증된 회원 고유 아이디
      * @return 클레임 리스트
      */
@@ -62,6 +64,7 @@ public class JsonWebTokenManager {
 
     /**
      * JWT 만료 시간을 리턴합니다.
+     *
      * @param expireMinute 만료할 시간 (분)
      * @return 만료 시간
      */

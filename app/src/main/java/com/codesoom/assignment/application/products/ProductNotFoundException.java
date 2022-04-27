@@ -4,7 +4,7 @@ package com.codesoom.assignment.application.products;
 import org.springframework.http.HttpStatus;
 
 /** 상품을 찾지 못하면 던집니다. */
-public class ProductNotFoundException extends RuntimeException{
+public class ProductNotFoundException extends RuntimeException {
 
     private final String code;
 

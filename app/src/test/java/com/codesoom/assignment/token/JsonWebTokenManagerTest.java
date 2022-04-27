@@ -1,11 +1,14 @@
 package com.codesoom.assignment.token;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("JsonWebTokenManager 클래스")
 class JsonWebTokenManagerTest {
@@ -59,6 +62,21 @@ class JsonWebTokenManagerTest {
                 String uniqueId = tokenManager.getJwtId(validToken);
 
                 assertThat(uniqueId).isEqualTo(TEST_VALID_USER_ID);
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않는 토큰이 주어졌을 경우")
+        class Context_invalidToken {
+
+            final String invalidToken = "aaaa.bbbb.cccc";
+
+            @Test
+            @DisplayName("예외를 던진다.")
+            void it_throw_exception() {
+                assertThatThrownBy(
+                        () -> tokenManager.getJwtId(invalidToken)
+                ).isInstanceOf(InvalidTokenException.class);
             }
         }
     }

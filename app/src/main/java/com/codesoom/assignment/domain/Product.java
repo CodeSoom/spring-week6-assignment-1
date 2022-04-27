@@ -2,10 +2,9 @@ package com.codesoom.assignment.domain;
 
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.catalina.User;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,20 +25,23 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String name;
+    String name;
 
-    private String maker;
+    String maker;
 
-    private Integer price;
+    Integer price;
 
-    private String imageUrl;
+    String imageUrl;
 
-    @Builder
-    public Product(String name, String maker, Integer price, String imageUrl) {
+    private Product(String name, String maker, Integer price, String imageUrl) {
         this.name = name;
         this.maker = maker;
         this.price = price;
         this.imageUrl = imageUrl;
+    }
+
+    public static Product of(String name, String maker, Integer price, String imageUrl) {
+        return new Product(name, maker, price, imageUrl);
     }
 
     public void change(String name,

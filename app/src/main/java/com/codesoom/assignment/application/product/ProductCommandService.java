@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 @Service
 @Transactional
-public class ProductCommandService implements ProductCreator, ProductUpdater, ProductDeleter {
+public class ProductCommandService implements ProductCreator, ProductChanger {
     private final ProductRepository productRepository;
 
     public ProductCommandService(ProductRepository productRepository) {

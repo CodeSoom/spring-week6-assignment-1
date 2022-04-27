@@ -18,15 +18,14 @@ class ProductTest {
     private static final String CHANGE_PRODUCT_IMAGE_URL = "changedImageUrl";
 
     @Test
-    @DisplayName("Builder 패턴을 사용하여 Product를 생성할 때")
+    @DisplayName("of() 메소드를 사용하여 Product를 생성할 때")
     void creationWithBuilder() {
-        Product product = Product
-                .builder()
-                .name(PRODUCT_NAME)
-                .maker(PRODUCT_MAKER)
-                .price(PRODUCT_PRICE)
-                .imageUrl(PRODUCT_IMAGE_URL)
-                .build();
+        Product product = Product.of(
+                PRODUCT_NAME,
+                PRODUCT_MAKER,
+                PRODUCT_PRICE,
+                PRODUCT_IMAGE_URL
+        );
 
         assertThat(product.getName()).isEqualTo(PRODUCT_NAME);
         assertThat(product.getMaker()).isEqualTo(PRODUCT_MAKER);
@@ -37,12 +36,12 @@ class ProductTest {
     @Test
     @DisplayName("chnage 메소드로 데이터를 변경할 때")
     void change() {
-        Product product = Product.builder()
-                .name(PRODUCT_NAME)
-                .maker(PRODUCT_MAKER)
-                .price(PRODUCT_PRICE)
-                .imageUrl(PRODUCT_IMAGE_URL)
-                .build();
+        Product product = Product.of(
+                PRODUCT_NAME,
+                PRODUCT_MAKER,
+                PRODUCT_PRICE,
+                PRODUCT_IMAGE_URL
+        );
 
         product.change(
                 CHANGE_PRODUCT_NAME,

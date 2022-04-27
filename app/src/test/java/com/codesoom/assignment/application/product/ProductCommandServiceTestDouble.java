@@ -3,11 +3,13 @@ package com.codesoom.assignment.application.product;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductDto;
 import com.codesoom.assignment.exceptions.ProductNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductCommandServiceTestDouble implements ProductCreator, ProductDeleter, ProductUpdater {
+@Service
+public class ProductCommandServiceTestDouble implements ProductCreator, ProductChanger {
     private final static List<Product> productList = new ArrayList<>();
 
     @Override
@@ -45,5 +47,9 @@ public class ProductCommandServiceTestDouble implements ProductCreator, ProductD
                         () -> new ProductNotFoundException("ID [" + id + "]를 찾지 못했기 때문에 삭제를 실패했습니다.")
                 );
         productList.remove(product);
+    }
+
+    public List<Product> getProductList() {
+        return productList;
     }
 }

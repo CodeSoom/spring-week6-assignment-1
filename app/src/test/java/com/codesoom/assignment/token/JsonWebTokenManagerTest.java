@@ -88,7 +88,7 @@ class JsonWebTokenManagerTest {
 
             @ParameterizedTest(name = "예외를 던진다. (\"{0}\")")
             @NullAndEmptySource
-            void it_throw_exception(String emptyString) throws Exception {
+            void it_throw_exception(String emptyString) {
                 assertThatThrownBy(
                         () -> tokenManager.getJwtId(emptyString)
                 ).isInstanceOf(InvalidTokenException.class);

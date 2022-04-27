@@ -88,6 +88,8 @@ public class JsonWebTokenManager {
                     .getId();
         } catch (MalformedJwtException e) {
             throw new InvalidTokenException("JWT가 올바르게 구성되어 있지 않습니다.");
+        } catch (IllegalArgumentException e) {
+            throw new InvalidTokenException("부적절한 인수가 전달되었습니다.");
         }
     }
 }

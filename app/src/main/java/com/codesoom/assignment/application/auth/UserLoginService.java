@@ -21,10 +21,10 @@ public class UserLoginService implements AuthenticationService {
     @Override
     public String login(LoginRequestDto loginRequestDto) {
         User user = repository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("이메일과 일치하는 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException("회원을 찾을 수 없으므로 로그인에 실패했습니다."));
 
         if (!user.authenticate(loginRequestDto.getPassword())) {
-            throw new InvalidPasswordException("정확한 비밀번호를 입력하세요.");
+            throw new InvalidPasswordException("비밀번호가 일치하지 않아 로그인에 실패했습니다.");
         }
 
         return jwtUtil.encode(user.getId());

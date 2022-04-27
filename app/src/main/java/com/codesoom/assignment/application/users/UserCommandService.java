@@ -27,7 +27,8 @@ public class UserCommandService implements UserSaveService, UserUpdateService, U
     @Override
     public User updateUser(Long id, UserSaveRequest userSaveRequest) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+                .orElseThrow(() ->
+                        new UserNotFoundException(String.format("%에 해당하는 회원을 찾을 수 없어 수정에 실패하였습니다.", id)));
 
         user.update(userSaveRequest.user());
 
@@ -37,7 +38,8 @@ public class UserCommandService implements UserSaveService, UserUpdateService, U
     @Override
     public void deleteUser(Long id) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+                .orElseThrow(() ->
+                        new UserNotFoundException(String.format("%에 해당하는 회원을 찾을 수 없어 삭제에 실패하였습니다.", id)));
 
         repository.delete(user);
     }

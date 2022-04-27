@@ -1,19 +1,18 @@
 package com.codesoom.assignment.application.product;
 
 import com.codesoom.assignment.domain.Product;
+import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductDto;
 import com.codesoom.assignment.exceptions.ProductNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ProductQueryServiceTestDouble implements ProductSelector {
-    private final ProductCommandServiceTestDouble productCommandServiceTestDouble;
-
-    ProductQueryServiceTestDouble(ProductCommandServiceTestDouble productCommandServiceTestDouble) {
-        this.productCommandServiceTestDouble = productCommandServiceTestDouble;
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public Product product(Long id) {
@@ -23,9 +22,9 @@ public class ProductQueryServiceTestDouble implements ProductSelector {
                 .price(100000)
                 .imageUrl("이미지URL")
                 .build();
-        productCommandServiceTestDouble.create(productDto);
+        productRepository.save(ProductDto.from(productDto));
 
-        List<Product> products = productCommandServiceTestDouble.getProductList();
+        List<Product> products = productRepository.findAll();
         return products.stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst()
@@ -35,6 +34,6 @@ public class ProductQueryServiceTestDouble implements ProductSelector {
 
     @Override
     public List<Product> products() {
-        return productCommandServiceTestDouble.getProductList();
+        return productRepository.findAll();
     }
 }

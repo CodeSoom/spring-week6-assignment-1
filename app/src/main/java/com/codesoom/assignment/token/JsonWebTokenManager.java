@@ -1,6 +1,8 @@
 package com.codesoom.assignment.token;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,14 +75,19 @@ public class JsonWebTokenManager {
      *
      * @param token JWT
      * @return JWT ID
+     * @throws InvalidTokenException JWT 가 올바르게 구성되어 있지 않은 경우
      */
     public String getJwtId(String token) {
 
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getId();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getId();
+        } catch (MalformedJwtException e) {
+            throw new InvalidTokenException("JWT가 올바르게 구성되어 있지 않습니다.");
+        }
     }
 }

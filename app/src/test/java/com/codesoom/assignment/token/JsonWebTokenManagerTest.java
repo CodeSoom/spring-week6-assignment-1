@@ -26,7 +26,7 @@ class JsonWebTokenManagerTest {
         final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder().build();
 
         @Test
-        @DisplayName("Json Web Ttoken 을 생성한다.")
+        @DisplayName("Json Web Token 을 생성한다.")
         void it_generate_jwt() {
             String jwt = tokenManager.createToken(jwtAttribute);
             String[] tests = jwt.split("\\.");

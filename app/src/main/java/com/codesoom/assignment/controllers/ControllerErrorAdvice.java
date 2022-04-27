@@ -4,7 +4,7 @@ import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.errors.UserPasswordDoesNotMatchException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserEmailNotExistException;
+import com.codesoom.assignment.errors.UserEmailNotFoundException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,9 +34,9 @@ public class ControllerErrorAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserEmailNotExistException.class)
-    public ErrorResponse handleUserEmailNotExisted() {
-        return new ErrorResponse("존재하지 않는 이메일입니다.");
+    @ExceptionHandler(UserEmailNotFoundException.class)
+    public ErrorResponse handleUserEmailNotFound() {
+        return new ErrorResponse("찾을 수 없는 이메일 입니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

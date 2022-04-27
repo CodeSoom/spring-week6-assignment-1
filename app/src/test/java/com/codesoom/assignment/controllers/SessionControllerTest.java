@@ -64,8 +64,8 @@ class SessionControllerTest {
         }
 
         @Nested
-        @DisplayName("이메일이 존재하지 않다면")
-        class Context_notExistEmail {
+        @DisplayName("이메일을 찾을 수 없다면")
+        class Context_notFoundEmail {
 
             @Test
             @DisplayName("Bad Request 를 응답한다. [400]")

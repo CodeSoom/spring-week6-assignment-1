@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -76,6 +78,19 @@ class JsonWebTokenManagerTest {
             void it_throw_exception() {
                 assertThatThrownBy(
                         () -> tokenManager.getJwtId(invalidToken)
+                ).isInstanceOf(InvalidTokenException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("null 이나 \"\" 문자열이 주어졌을 경우")
+        class Context_nullOrEmptyArgument {
+
+            @ParameterizedTest(name = "예외를 던진다. (\"{0}\")")
+            @NullAndEmptySource
+            void it_throw_exception(String emptyString) throws Exception {
+                assertThatThrownBy(
+                        () -> tokenManager.getJwtId(emptyString)
                 ).isInstanceOf(InvalidTokenException.class);
             }
         }

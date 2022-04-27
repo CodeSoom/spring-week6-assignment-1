@@ -56,9 +56,9 @@ class JsonWebTokenManagerTest {
             @Test
             @DisplayName("고유 아이디를 리턴한다.")
             void it_unique_id() {
-                Long uniqueId = tokenManager.getJwtId(validToken);
+                String uniqueId = tokenManager.getJwtId(validToken);
 
-                assertThat(uniqueId).isEqualTo(TEST_VALID_USER_ID);
+                assertThat(uniqueId).isEqualTo(String.valueOf(TEST_VALID_USER_ID));
             }
         }
     }

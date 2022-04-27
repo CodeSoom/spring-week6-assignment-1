@@ -26,10 +26,17 @@ public class JsonWebTokenManager {
     /**
      * JWT 의 고유 아이디를 리턴합니다.
      *
-     * @param token JWT
+     * @param token Json Web Token
+     * @return JWT ID
      */
-    public Long getJwtId(String token) {
-        return null;
+    public String getJwtId(String token) {
+
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getId();
     }
 
     /**
@@ -42,7 +49,7 @@ public class JsonWebTokenManager {
         return Jwts.builder()
                 .signWith(key)
                 .setHeader(makeHeaders())
-                .setClaims(makeClaims(attribute.getId()))
+                .setId(String.valueOf(attribute.getId()))
                 .setExpiration(makeExpiration(attribute.getExpireMinute()))
                 .compact();
     }
@@ -57,18 +64,6 @@ public class JsonWebTokenManager {
         headers.put("typ", "JWT");
         headers.put("alg", SignatureAlgorithm.HS256);
         return headers;
-    }
-
-    /**
-     * JWT Payload 에 들어갈 클레임 리스트를 리턴합니다.
-     *
-     * @param id 인증된 회원 고유 아이디
-     * @return 클레임 리스트
-     */
-    private Map<String, Object> makeClaims(final Long id) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", id);
-        return claims;
     }
 
     /**

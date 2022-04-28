@@ -58,6 +58,7 @@ public class Product {
     public static class ProductBuilder implements ProductBuilderInfo {
         private String name;
         private String maker;
+        private long productId;
         private Integer price;
         private String imageUrl;
 
@@ -66,6 +67,9 @@ public class Product {
         }
 
         public static Name builder() {
+            return new ProductBuilder();
+        }
+        public static ProductId builderWithId(){
             return new ProductBuilder();
         }
 
@@ -95,6 +99,12 @@ public class Product {
         @Override
         public OptionBuilder price(int price) {
             this.price = price;
+            return this;
+        }
+
+        @Override
+        public Name productId(long productId) {
+            this.productId =productId;
             return this;
         }
     }

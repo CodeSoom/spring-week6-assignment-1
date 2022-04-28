@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controller.products;
 
+import com.codesoom.assignment.application.products.ProductSaveRequest;
 import com.codesoom.assignment.application.products.ProductUpdateService;
 import com.codesoom.assignment.domain.products.Product;
 import com.codesoom.assignment.domain.products.ProductDto;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * 상픔 변경 요청을 처리합니다.
@@ -34,8 +38,54 @@ public class ProductUpdateController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
     public Product updateProduct(@PathVariable Long id,
-                                 @Valid @RequestBody ProductDto productDto) {
+                                 @Valid @RequestBody ProductUpdateDto productDto) {
         return service.updateProduct(id, productDto);
+    }
+
+
+    public static class ProductUpdateDto implements ProductSaveRequest {
+
+        @NotBlank(message = "이름을 입력하세요.")
+        private String name;
+
+        @NotBlank(message = "판매자를 입력하세요.")
+        private String maker;
+
+        @NotNull(message = "가격을 입력하세요.")
+        private BigDecimal price;
+
+        private String imageUrl;
+
+        public ProductUpdateDto() {
+        }
+
+        public ProductUpdateDto(String name, String maker, BigDecimal price, String imageUrl) {
+            this.name = name;
+            this.maker = maker;
+            this.price = price;
+            this.imageUrl = imageUrl;
+        }
+
+        @Override
+        public String getName() {
+            return this.name;
+        }
+
+        @Override
+        public String getMaker() {
+            return this.maker;
+        }
+
+        @Override
+        public BigDecimal getPrice() {
+            return this.price;
+        }
+
+        @Override
+        public String getImageUrl() {
+            return this.imageUrl;
+        }
+
     }
 
 }

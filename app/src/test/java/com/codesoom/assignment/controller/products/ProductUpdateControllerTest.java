@@ -49,8 +49,9 @@ public class ProductUpdateControllerTest {
     @Nested
     class Describe_update_product {
 
-        private final ProductDto productToUpdate
-                = new ProductDto("소쩍새", "유령회사", BigDecimal.valueOf(3000), "");
+        private final ProductUpdateController.ProductUpdateDto productToUpdate
+                = new ProductUpdateController.ProductUpdateDto(
+                        "소쩍새", "유령회사", BigDecimal.valueOf(3000), "");
 
         @DisplayName("찾을 수 있는 상품 id가 주어지면")
         @Nested

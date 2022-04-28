@@ -5,7 +5,6 @@ import com.codesoom.assignment.application.users.UserNotFoundException;
 import com.codesoom.assignment.domain.users.User;
 import com.codesoom.assignment.domain.users.UserRepository;
 import com.codesoom.assignment.domain.users.UserSaveDto;
-import com.codesoom.assignment.dto.LoginRequestDto;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +51,17 @@ class AuthenticationServiceTest extends ServiceTest {
                 private final String USER_EMAIL = "hgd@codesoom.com";
                 private final String USER_PASSWORD = "hgdZzang123!";
 
-                private LoginRequestDto LOGIN_REQUEST_DTO= new LoginRequestDto(USER_EMAIL, USER_PASSWORD);
+                private final LoginRequest LOGIN_REQUEST_DTO = new LoginRequest() {
+                    @Override
+                    public String getEmail() {
+                        return USER_EMAIL;
+                    }
+
+                    @Override
+                    public String getPassword() {
+                        return USER_PASSWORD;
+                    }
+                };
 
                 @BeforeEach
                 void setup() {
@@ -81,7 +90,17 @@ class AuthenticationServiceTest extends ServiceTest {
                 private final String CORRECT_PASSWORD = "hgdZzang123!";
                 private final String INCORRECT_PASSWORD = "HiImTroll";
 
-                private final LoginRequestDto LOGIN_REQUEST_DTO = new LoginRequestDto(USER_EMAIL, INCORRECT_PASSWORD);
+                private final LoginRequest INCORRECT_PASSWORD_REQUEST = new LoginRequest() {
+                    @Override
+                    public String getEmail() {
+                        return USER_EMAIL;
+                    }
+
+                    @Override
+                    public String getPassword() {
+                        return INCORRECT_PASSWORD;
+                    }
+                };
 
                 @BeforeEach
                 void setup() {
@@ -96,7 +115,7 @@ class AuthenticationServiceTest extends ServiceTest {
                 @DisplayName("예외를 던진다.")
                 @Test
                 void it_throws_invalid_password() {
-                    assertThatThrownBy(() -> service.login(LOGIN_REQUEST_DTO))
+                    assertThatThrownBy(() -> service.login(INCORRECT_PASSWORD_REQUEST))
                             .isInstanceOf(InvalidPasswordException.class);
                 }
             }
@@ -107,7 +126,17 @@ class AuthenticationServiceTest extends ServiceTest {
         class Context_with_not_exist_user {
 
             private final String NOT_EXIST_USER_EMAIL = "ace@codesoom.com";
-            private LoginRequestDto LOGIN_REQUEST_DTO = new LoginRequestDto(NOT_EXIST_USER_EMAIL, "12345678");
+            private final LoginRequest NOT_EXIST_LOGIN_REQUEST = new LoginRequest() {
+                @Override
+                public String getEmail() {
+                    return NOT_EXIST_USER_EMAIL;
+                }
+
+                @Override
+                public String getPassword() {
+                    return "password12343";
+                }
+            };
 
             @BeforeEach
             void setup() {
@@ -120,7 +149,7 @@ class AuthenticationServiceTest extends ServiceTest {
             @DisplayName("예외를 던진다.")
             @Test
             void it_throws_user_not_found() {
-                assertThatThrownBy(() -> service.login(LOGIN_REQUEST_DTO))
+                assertThatThrownBy(() -> service.login(NOT_EXIST_LOGIN_REQUEST))
                         .isInstanceOf(UserNotFoundException.class);
             }
         }

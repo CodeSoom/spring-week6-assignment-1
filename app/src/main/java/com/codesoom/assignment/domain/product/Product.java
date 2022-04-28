@@ -16,10 +16,8 @@
 
 package com.codesoom.assignment.domain.product;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.codesoom.assignment.domain.product.builder.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,9 +25,6 @@ import javax.persistence.Id;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Product {
     @Id
     @GeneratedValue
@@ -50,5 +45,57 @@ public class Product {
         this.imageUrl = source.imageUrl;
 
         return this;
+    }
+
+    private Product(ProductBuilder productBuilderInfo) {
+        this.name = productBuilderInfo.name;
+        this.maker = productBuilderInfo.maker;
+        this.price = productBuilderInfo.price;
+        this.imageUrl = productBuilderInfo.imageUrl;
+    }
+
+
+    public static class ProductBuilder implements ProductBuilderInfo {
+        private String name;
+        private String maker;
+        private Integer price;
+        private String imageUrl;
+
+
+        private ProductBuilder() {
+        }
+
+        public static Name builder() {
+            return new ProductBuilder();
+        }
+
+        @Override
+        public Maker name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public Price maker(String maker) {
+            this.maker = maker;
+            return this;
+        }
+
+        @Override
+        public OptionBuilder imageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+            return null;
+        }
+
+        @Override
+        public Product build() {
+            return new Product(this);
+        }
+
+        @Override
+        public OptionBuilder price(int price) {
+            this.price = price;
+            return this;
+        }
     }
 }

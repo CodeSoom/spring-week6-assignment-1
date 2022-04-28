@@ -124,27 +124,30 @@ public class UserSaveControllerMockMvcTest extends ControllerTest {
 
         @DisplayName("비밀번호를 입력하지 않거나, 비밀번호 형식을 지키지 않으면")
         @Nested
-        class Context_with_empty_password {
+        class Context_with_invalid_password {
+            private final String EMPTY = "";
+            private final String BLANK = " ";
+            private final String TOO_SHORT = "1234";
+            private final String TOO_LONG = "qwertyuiopasdfghjklzxcvbnm123456789";
 
-            private final UserSaveDto EMPTY_PASSWORD
-                    = new UserSaveDto("러셀 웨스트브룩", "why@not.zero", "");
-            private final UserSaveDto BLANK_PASSWORD
-                    = new UserSaveDto("김철수", "hkd@gmail.com", " ");
-            private final UserSaveDto NULL_PASSWORD
+            private final UserSaveDto INVALID_PWD_1
+                    = new UserSaveDto("러셀 웨스트브룩", "why@not.zero", EMPTY);
+            private final UserSaveDto INVALID_PWD_2
+                    = new UserSaveDto("김철수", "hkd@gmail.com", BLANK);
+            private final UserSaveDto INVALID_PWD_3
                     = new UserSaveDto("안영희", "hkd_lil@naver.com", null);
-            private final UserSaveDto TOO_SHORT_PASSWORD
-                    = new UserSaveDto("엉클 밥", "hkd423@yahoo.com", "1234");
-            private final UserSaveDto TOO_LONG_PASSWORD
-                    = new UserSaveDto("강백호", "hkd@codesoom.com"
-                    , "qwertyuiopasdfghjklzxcvbnm123456789");
-            private final List<UserSaveDto> INVALID_PASSWORDS
-                    = List.of(EMPTY_PASSWORD, BLANK_PASSWORD, NULL_PASSWORD
-                    ,TOO_SHORT_PASSWORD, TOO_LONG_PASSWORD);
+            private final UserSaveDto INVALID_PWD_4
+                    = new UserSaveDto("엉클 밥", "hkd423@yahoo.com", TOO_SHORT);
+            private final UserSaveDto INVALID_PWD_5
+                    = new UserSaveDto("강백호", "hkd@codesoom.com", TOO_LONG);
+
+            private List<UserSaveDto> INVALID_PASSWORD_DTOS
+                    = List.of(INVALID_PWD_1, INVALID_PWD_2, INVALID_PWD_3, INVALID_PWD_4, INVALID_PWD_5);
 
             @DisplayName("400 bad request를 응답한다.")
             @Test
             void it_response_bad_request() throws Exception {
-                for (UserSaveDto invalidPasswordUserDto : INVALID_PASSWORDS) {
+                for (UserSaveDto invalidPasswordUserDto : INVALID_PASSWORD_DTOS) {
                     mockMvc.perform(post("/users").accept(MediaType.APPLICATION_JSON_UTF8)
                             .content(objectMapper.writeValueAsString(invalidPasswordUserDto))
                             .contentType(MediaType.APPLICATION_JSON))

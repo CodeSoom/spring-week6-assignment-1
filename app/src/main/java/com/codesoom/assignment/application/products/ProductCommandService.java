@@ -30,9 +30,7 @@ public class ProductCommandService implements ProductSaveService, ProductUpdateS
                 .orElseThrow(() ->
                         new ProductNotFoundException(String.format("%s에 해당하는 상품을 찾을 수 없어 수정에 실패하였습니다.", id)));
 
-        product.update(productSaveRequest.product());
-
-        return product;
+        return product.update(productSaveRequest.product());
     }
 
     @Override

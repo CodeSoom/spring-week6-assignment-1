@@ -37,7 +37,7 @@ class JwtUtilTest {
 
     @Test
     void decodeWithInvalidToken() {
-        assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN)).isInstanceOf(SignatureException.class);
+        assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN)).isInstanceOf(InvalidTokenException.class);
     }
 
     @Test

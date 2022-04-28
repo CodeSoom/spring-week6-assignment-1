@@ -1,17 +1,17 @@
 package com.codesoom.assignment.controllers.product;
 
 import com.codesoom.assignment.application.product.ProductService;
-import com.codesoom.assignment.application.product.ProductServiceImpl;
 import com.codesoom.assignment.domain.product.Product;
-import com.codesoom.assignment.dto.product.ProductData;
+import com.codesoom.assignment.dto.product.CreateProductRequest;
+import com.codesoom.assignment.dto.product.RemoveProductRequest;
+import com.codesoom.assignment.dto.product.SearchOneProductRequest;
+import com.codesoom.assignment.dto.product.UpdateProductRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.codesoom.assignment.dto.product.ProductData.RemoveProductRequest;
-import static com.codesoom.assignment.dto.product.ProductData.SearchOneProductRequest;
 
 @RestController
 @RequestMapping("/products")
@@ -30,14 +30,14 @@ public class ProductController {
 
     @GetMapping("{id}")
     public Product detail(@PathVariable Long id) {
-        SearchOneProductRequest searchOneProductRequest = SearchOneProductRequest.initProductId(id);
+        SearchOneProductRequest searchOneProductRequest = SearchOneProductRequest.createSearchRequestObjectFrom(id);
         return productService.getProduct(searchOneProductRequest);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestBody @Valid ProductData.CreateProductRequest productData
+            @RequestBody @Valid CreateProductRequest productData
     ) {
         return productService.createProduct(productData);
     }
@@ -45,7 +45,7 @@ public class ProductController {
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
-            @RequestBody @Valid ProductData.UpdateProductRequest productData
+            @RequestBody @Valid UpdateProductRequest productData
     ) {
         productData.initProductId(id);
         return productService.updateProduct(productData);
@@ -56,7 +56,7 @@ public class ProductController {
     public void destroy(
             @PathVariable Long id
     ) {
-        RemoveProductRequest searchOneProductRequest = RemoveProductRequest.initProductId(id);
+        RemoveProductRequest searchOneProductRequest = RemoveProductRequest.createRemoveRequestObjectFrom(id);
         productService.deleteProduct(searchOneProductRequest);
     }
 }

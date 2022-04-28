@@ -1,12 +1,14 @@
 package com.codesoom.assignment.dto.product;
 
+import com.codesoom.assignment.common.EntityMaker;
+import com.codesoom.assignment.domain.product.Product;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class CreateProductRequest {
+public class CreateProductRequest implements EntityMaker<Product> {
     @NotBlank
     private final String name;
 
@@ -39,4 +41,13 @@ public class CreateProductRequest {
                 '}';
     }
 
+    @Override
+    public Product entityMaker() {
+        return Product.ProductBuilder.builder()
+                .name(name)
+                .maker(maker)
+                .price(price)
+                .imageUrl(imageUrl)
+                .build();
+    }
 }

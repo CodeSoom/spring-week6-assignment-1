@@ -1,6 +1,5 @@
 package com.codesoom.assignment.dto.product;
 
-
 public class SearchOneProductRequest {
     private long productId;
 

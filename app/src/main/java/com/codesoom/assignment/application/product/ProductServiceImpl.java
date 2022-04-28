@@ -2,9 +2,11 @@ package com.codesoom.assignment.application.product;
 
 import com.codesoom.assignment.domain.product.Product;
 import com.codesoom.assignment.domain.product.ProductRepository;
-import com.codesoom.assignment.dto.product.ProductData;
+import com.codesoom.assignment.dto.product.CreateProductRequest;
+import com.codesoom.assignment.dto.product.RemoveProductRequest;
+import com.codesoom.assignment.dto.product.SearchOneProductRequest;
+import com.codesoom.assignment.dto.product.UpdateProductRequest;
 import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -12,8 +14,8 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ProductServiceImpl implements ProductService  {
-     private final ProductRepository productRepository;
+public class ProductServiceImpl implements ProductService {
+    private final ProductRepository productRepository;
 
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -24,30 +26,30 @@ public class ProductServiceImpl implements ProductService  {
     }
 
     @Override
-    public Product getProduct(ProductData.SearchOneProductRequest request) {
-        long productId = request.getId();
+    public Product getProduct(SearchOneProductRequest request) {
+        long productId = request.getProductId();
         return findProduct(productId);
     }
 
     @Override
-    public Product createProduct(ProductData.CreateProductRequest request) {
-        Product product = request.toEntity();
+    public Product createProduct(CreateProductRequest request) {
+        Product product = request.entityMaker();
         return productRepository.save(product);
     }
 
     @Override
-    public Product updateProduct(ProductData.UpdateProductRequest request) {
-        long productId = request.getId();
+    public Product updateProduct(UpdateProductRequest request) {
+        long productId = request.getProductId();
         Product product = findProduct(productId);
-        Product tobeProduct = request.toEntity();
+        Product tobeProduct = request.entityMaker();
         product = product.changeWith(tobeProduct);
 
         return product;
     }
 
     @Override
-    public Product deleteProduct(ProductData.RemoveProductRequest request) {
-        Product product = findProduct(request.getId());
+    public Product deleteProduct(RemoveProductRequest request) {
+        Product product = findProduct(request.getProductId());
         productRepository.delete(product);
         return product;
     }

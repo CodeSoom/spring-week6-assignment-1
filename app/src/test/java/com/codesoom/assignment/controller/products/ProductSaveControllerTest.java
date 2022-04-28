@@ -48,7 +48,8 @@ public class ProductSaveControllerTest {
         @DisplayName("필수값을 모두 입력하면")
         @Nested
         class Context_with_valid_data {
-
+            private final String TOKEN
+                    = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ze4dJmmF4peSe1uo9-ug019VAwzhr0WO8H3iHroSOeM";
             private final ProductSaveController.ProductSaveDto VALID_PRODUCT_DTO
                     = new ProductSaveController.ProductSaveDto(
                             "쥐돌이", "냥이월드", BigDecimal.valueOf(2000), "url");
@@ -61,7 +62,7 @@ public class ProductSaveControllerTest {
             @DisplayName("상품을 성공적으로 등록한다.")
             @Test
             void it_will_save_product() {
-                Product product = controller.saveProduct(VALID_PRODUCT_DTO);
+                Product product = controller.saveProduct(TOKEN, VALID_PRODUCT_DTO);
 
                 assertThat(product.getName()).isEqualTo(VALID_PRODUCT_DTO.getName());
                 assertThat(repository.findById(product.getId())).isNotEmpty();

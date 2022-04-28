@@ -2,6 +2,7 @@ package com.codesoom.assignment.controller.products;
 
 import com.codesoom.assignment.application.products.ProductSaveRequest;
 import com.codesoom.assignment.application.products.ProductSaveService;
+import com.codesoom.assignment.config.AccessToken;
 import com.codesoom.assignment.domain.products.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,8 @@ public class ProductSaveController {
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Product saveProduct(@Valid @RequestBody ProductSaveDto productSaveDto) {
+    public Product saveProduct(@AccessToken String accessToken,
+                               @Valid @RequestBody ProductSaveDto productSaveDto) {
         return service.saveProduct(productSaveDto);
     }
 

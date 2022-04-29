@@ -3,6 +3,7 @@ package com.codesoom.assignment.utils;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
@@ -21,6 +22,7 @@ class JwtUtilTest {
     }
 
     @Test
+    @DisplayName("토큰 인코딩 테스트")
     void encode() {
         String accessToken = jwtUtil.encode(1L);
 
@@ -28,6 +30,7 @@ class JwtUtilTest {
     }
 
     @Test
+    @DisplayName("유효한 토큰으로 디코딩 테스트")
     void decodeWithValidToken() {
         Claims claims = jwtUtil.decode(VALID_TOKEN);
 
@@ -35,12 +38,14 @@ class JwtUtilTest {
     }
 
     @Test
+    @DisplayName("유효하지 않은 토큰으로 디코딩 테스트")
     void decodeWithInvalidToken() {
         assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
                 .isInstanceOf(InvalidTokenException.class);
     }
 
     @Test
+    @DisplayName("빈 토큰으로 디코딩 테스트")
     void decodeWithEmptyToken() {
         assertThatThrownBy(() -> jwtUtil.decode(null))
                 .isInstanceOf(InvalidTokenException.class);

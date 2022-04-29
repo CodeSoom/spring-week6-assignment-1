@@ -2,11 +2,10 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +29,7 @@ class SessionControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 테스트")
     void login() throws Exception {
         mockMvc.perform(post("/session")).andExpect(status().isCreated())
                 .andExpect(content().string(containsString(".")));

@@ -1,6 +1,7 @@
 package com.codesoom.assignment.config;
 
 import com.codesoom.assignment.application.auth.InvalidTokenException;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class TokenResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         final String token = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if(token == null) {
+        if(Strings.isBlank(token)) {
             throw new InvalidTokenException("토큰을 입력하세요.");
         }
         if (!token.startsWith(PREFIX)) {

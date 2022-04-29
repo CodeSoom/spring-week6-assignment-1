@@ -51,7 +51,7 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("토큰을 생성하고 토큰을 응답합니다. [Created - 201] ")
+            @DisplayName("생성된 토큰을 반환하고 HTTP 상태코드 201 을 응답한다.")
             void it_response_201() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +68,7 @@ class SessionControllerTest {
         class Context_notFoundEmail {
 
             @Test
-            @DisplayName("Bad Request 를 응답한다. [400]")
+            @DisplayName("HTTP 상태코드 400 을 응답한다.")
             void it_response_400() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("Bad Request 를 응답한다. [400]")
+            @DisplayName("HTTP 상태코드 400 을 응답한다.")
             void it_response_400() throws Exception {
                 mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)

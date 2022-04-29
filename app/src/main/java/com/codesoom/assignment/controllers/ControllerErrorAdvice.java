@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidPasswordException;
 import com.codesoom.assignment.errors.UserPasswordDoesNotMatchException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
@@ -45,4 +46,9 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("비밀번호가 일치하지 않습니다.");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ErrorResponse handleInvalidPasswordException() {
+        return new ErrorResponse("허용되지 않는 비밀번호 입니다.");
+    }
 }

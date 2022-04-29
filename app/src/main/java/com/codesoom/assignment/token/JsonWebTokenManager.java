@@ -36,7 +36,7 @@ public class JsonWebTokenManager {
                 .signWith(key)
                 .setHeader(makeHeaders())
                 .setId(String.valueOf(attribute.getJwtId()))
-                .setExpiration(makeExpiration(attribute.getExpireMinute()))
+                .setExpiration(makeExpiration(attribute.getJwtExpireMinute()))
                 .compact();
     }
 

@@ -1,11 +1,13 @@
 package com.codesoom.assignment.controller.products;
 
+import com.codesoom.assignment.application.auth.AuthorizationService;
 import com.codesoom.assignment.application.products.ProductNotFoundException;
 import com.codesoom.assignment.application.products.ProductUpdateService;
 import com.codesoom.assignment.controller.products.ProductUpdateController;
 import com.codesoom.assignment.domain.products.Product;
 import com.codesoom.assignment.domain.products.ProductDto;
 import com.codesoom.assignment.domain.products.ProductRepository;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,14 +31,23 @@ public class ProductUpdateControllerTest {
     private ProductUpdateController controller;
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private ProductUpdateService service;
+
+    @Autowired
+    private AuthorizationService authorizationService;
 
     @Autowired
     private ProductRepository repository;
 
+    private String TOKEN;
+
     @BeforeEach
     void setup() {
-        this.controller = new ProductUpdateController(service);
+        this.controller = new ProductUpdateController(service, authorizationService);
+        this.TOKEN = jwtUtil.encode(1L);
         cleanup();
     }
 
@@ -68,7 +79,7 @@ public class ProductUpdateControllerTest {
             @DisplayName("수정된 상품을 반환한다.")
             @Test
             void will_return_updated_product() {
-                Product product = controller.updateProduct(EXIST_ID, productToUpdate);
+                Product product = controller.updateProduct(TOKEN, EXIST_ID, productToUpdate);
 
                 assertThat(product.getId()).isEqualTo(EXIST_ID);
                 assertThat(product.getName()).isEqualTo(productToUpdate.getName());
@@ -90,7 +101,7 @@ public class ProductUpdateControllerTest {
             @DisplayName("예외를 던진다.")
             @Test
             void will_return_updated_product() {
-                assertThatThrownBy(() -> controller.updateProduct(NOT_EXIST_ID, productToUpdate))
+                assertThatThrownBy(() -> controller.updateProduct(TOKEN, NOT_EXIST_ID, productToUpdate))
                         .isInstanceOf(ProductNotFoundException.class);
             }
         }

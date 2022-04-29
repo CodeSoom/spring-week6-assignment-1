@@ -3,12 +3,14 @@ package com.codesoom.assignment.controller.products;
 import com.codesoom.assignment.controller.ControllerTest;
 import com.codesoom.assignment.domain.products.Product;
 import com.codesoom.assignment.domain.products.ProductRepository;
+import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -28,6 +30,16 @@ public class ProductDeleteControllerMockMvcTest extends ControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+    private static final String TOKEN_PREFIX = "Bearer ";
+    private String TOKEN;
+
+    @BeforeEach
+    void setup() {
+        this.TOKEN = jwtUtil.encode(1L);
+    }
 
     @DisplayName("delete 메서드는")
     @Nested
@@ -49,7 +61,8 @@ public class ProductDeleteControllerMockMvcTest extends ControllerTest {
             @DisplayName("해당 상품을 삭제한다.")
             @Test
             void it_delete_product() throws Exception {
-                mockMvc.perform(delete("/products/" + EXIST_ID))
+                mockMvc.perform(delete("/products/" + EXIST_ID)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + TOKEN))
                         .andExpect(status().isNoContent());
             }
         }
@@ -70,7 +83,8 @@ public class ProductDeleteControllerMockMvcTest extends ControllerTest {
             @DisplayName("404 not found를 응답한다.")
             @Test
             void will_response_404_not_found() throws Exception {
-                mockMvc.perform(delete("/products/" + NOT_EXIST_ID))
+                mockMvc.perform(delete("/products/" + NOT_EXIST_ID)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + TOKEN))
                         .andExpect(status().isNotFound());
             }
         }

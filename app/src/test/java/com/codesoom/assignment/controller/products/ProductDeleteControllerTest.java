@@ -1,10 +1,12 @@
 package com.codesoom.assignment.controller.products;
 
+import com.codesoom.assignment.application.auth.AuthorizationService;
 import com.codesoom.assignment.application.products.ProductDeleteService;
 import com.codesoom.assignment.application.products.ProductNotFoundException;
 import com.codesoom.assignment.controller.products.ProductDeleteController;
 import com.codesoom.assignment.domain.products.Product;
 import com.codesoom.assignment.domain.products.ProductRepository;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,14 +29,23 @@ public class ProductDeleteControllerTest {
     private ProductDeleteController controller;
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private ProductDeleteService service;
+
+    @Autowired
+    private AuthorizationService authorizationService;
 
     @Autowired
     private ProductRepository repository;
 
+    private String TOKEN;
+
     @BeforeEach
     void setup() {
-        this.controller = new ProductDeleteController(service);
+        this.controller = new ProductDeleteController(service, authorizationService);
+        this.TOKEN = jwtUtil.encode(1L);
         cleanup();
     }
 
@@ -63,7 +74,7 @@ public class ProductDeleteControllerTest {
             @DisplayName("해당 상품을 삭제한다.")
             @Test
             void it_delete_product() {
-                controller.deleteProduct(EXIST_ID);
+                controller.deleteProduct(TOKEN, EXIST_ID);
             }
         }
 
@@ -83,7 +94,7 @@ public class ProductDeleteControllerTest {
             @DisplayName("예외를 던진다.")
             @Test
             void will_throw_not_found_exception() {
-                assertThatThrownBy(() -> controller.deleteProduct(NOT_EXIST_ID))
+                assertThatThrownBy(() -> controller.deleteProduct(TOKEN, NOT_EXIST_ID))
                         .isInstanceOf(ProductNotFoundException.class);
             }
         }

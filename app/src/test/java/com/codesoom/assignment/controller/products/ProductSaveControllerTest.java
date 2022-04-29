@@ -1,8 +1,11 @@
 package com.codesoom.assignment.controller.products;
 
+import com.codesoom.assignment.application.auth.AuthorizationService;
 import com.codesoom.assignment.application.products.ProductSaveService;
 import com.codesoom.assignment.domain.products.Product;
 import com.codesoom.assignment.domain.products.ProductRepository;
+import com.codesoom.assignment.domain.users.UserRepository;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,14 +28,23 @@ public class ProductSaveControllerTest {
     private ProductSaveController controller;
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private ProductSaveService service;
+
+    @Autowired
+    private AuthorizationService authorizationService;
 
     @Autowired
     private ProductRepository repository;
 
+    private String TOKEN;
+
     @BeforeEach
     void setup() {
-        this.controller = new ProductSaveController(service);
+        this.controller = new ProductSaveController(service, authorizationService);
+        this.TOKEN = jwtUtil.encode(1L);
         cleanup();
     }
 
@@ -48,8 +60,6 @@ public class ProductSaveControllerTest {
         @DisplayName("필수값을 모두 입력하면")
         @Nested
         class Context_with_valid_data {
-            private final String TOKEN
-                    = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ze4dJmmF4peSe1uo9-ug019VAwzhr0WO8H3iHroSOeM";
             private final ProductSaveController.ProductSaveDto VALID_PRODUCT_DTO
                     = new ProductSaveController.ProductSaveDto(
                             "쥐돌이", "냥이월드", BigDecimal.valueOf(2000), "url");

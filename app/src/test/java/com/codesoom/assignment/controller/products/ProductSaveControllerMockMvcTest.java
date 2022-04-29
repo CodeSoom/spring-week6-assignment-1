@@ -3,14 +3,21 @@ package com.codesoom.assignment.controller.products;
 import com.codesoom.assignment.controller.ControllerTest;
 import com.codesoom.assignment.domain.products.ProductDto;
 import com.codesoom.assignment.domain.products.ProductRepository;
+import com.codesoom.assignment.domain.users.UserSaveDto;
+import com.codesoom.assignment.dto.TokenResponse;
+import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 
@@ -31,6 +38,16 @@ public class ProductSaveControllerMockMvcTest extends ControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+    private static final String TOKEN_PREFIX = "Bearer ";
+    private String TOKEN;
+
+    @BeforeEach
+    void setup() throws Exception {
+        this.TOKEN = jwtUtil.encode(1L);
+    }
 
     @AfterEach
     void cleanup() {
@@ -57,6 +74,7 @@ public class ProductSaveControllerMockMvcTest extends ControllerTest {
             @Test
             void it_will_save_product() throws Exception {
                 mockMvc.perform(post("/products").accept(MediaType.APPLICATION_JSON_UTF8)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + TOKEN)
                         .content(objectMapper.writeValueAsString(VALID_PRODUCT_DTO))
                         .contentType(MediaType.APPLICATION_JSON ))
                         .andExpect(status().isCreated())
@@ -75,6 +93,7 @@ public class ProductSaveControllerMockMvcTest extends ControllerTest {
             @Test
             void it_reponse_400_bad_request() throws Exception {
                 mockMvc.perform(post("/products")
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + TOKEN)
                         .content(objectMapper.writeValueAsString(INVALID_PRODUCT_DTO))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());

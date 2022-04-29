@@ -1,13 +1,17 @@
 package com.codesoom.assignment.token;
 
 import com.codesoom.assignment.errors.InvalidTokenException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,6 +40,7 @@ class JsonWebTokenManagerTest {
         @DisplayName("Json Web Token 을 생성한다.")
         void it_generate_jwt() {
             String jwt = tokenManager.createToken(jwtAttribute);
+            System.out.println(jwt);
             String[] tests = jwt.split("\\.");
             assertThat(tests.length).isEqualTo(3);
         }
@@ -68,17 +73,35 @@ class JsonWebTokenManagerTest {
         }
 
         @Nested
-        @DisplayName("유효하지 않는 토큰이 주어졌을 경우")
-        class Context_invalidToken {
+        @DisplayName("토큰이 올바르게 구성되어 있지 않은 경우 ")
+        class Context_notConfiguredCorrectly {
 
-            final String invalidToken = "aaaa.bbbb.cccc";
+            private List<String> provideInvalidTokens() {
+                List<String> invalidTokens = new ArrayList<>(List.of(
+                        "..",
+                        "aaaa",
+                        "aaaa.bbbb",
+                        ".aaaa.bbbb.cccc",
+                        "aaaa.bbbb.cccc.dddd"
+                ));
+                invalidTokens.add(encodeToBase64("{}") + ".aaaa.bbbb");
+                invalidTokens.add(encodeToBase64("{\"alg\": \"None\" }") + ".aaaa.bbbb");
+                invalidTokens.add(encodeToBase64("{\"alg\": \"\" }") + ".aaaa.bbbb");
+                return invalidTokens;
+            }
+
+            private String encodeToBase64(String source) {
+                return Base64.getEncoder().encodeToString(source.getBytes(StandardCharsets.UTF_8));
+            }
 
             @Test
             @DisplayName("예외를 던진다.")
             void it_throw_exception() {
-                assertThatThrownBy(
-                        () -> tokenManager.getJwtId(invalidToken)
-                ).isInstanceOf(InvalidTokenException.class);
+                for (String invalidToken : provideInvalidTokens()) {
+                    assertThatThrownBy(
+                            () -> tokenManager.getJwtId(invalidToken)
+                    ).isInstanceOf(InvalidTokenException.class);
+                }
             }
         }
 

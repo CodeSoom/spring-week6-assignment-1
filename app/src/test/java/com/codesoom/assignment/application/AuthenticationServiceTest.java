@@ -22,7 +22,7 @@ class AuthenticationServiceTest {
 
     @Test
     void login() {
-        String token = authenticationService.login();
+        String token = authenticationService.login(1L);
 
         assertThat(token).isEqualTo(VALID_TOKEN);
     }

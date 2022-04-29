@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,8 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String login() {
-        return jwtUtil.encode(1L);
+    public String login(Long userId) {
+        return jwtUtil.encode(userId);
     }
 
     public Long parseToken(String accessToken) {

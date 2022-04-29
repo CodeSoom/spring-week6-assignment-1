@@ -1,7 +1,6 @@
 package com.codesoom.assignment.config;
 
 import com.codesoom.assignment.application.auth.InvalidTokenException;
-import com.codesoom.assignment.utils.JwtUtil;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -10,15 +9,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+/** 요청 헤더에 입력된 인증 토큰을 메서드 파라미터에 바인딩 합니다. */
 @Component
 public class TokenResolver implements HandlerMethodArgumentResolver {
 
     private static final String PREFIX = "Bearer ";
-    private final JwtUtil jwtUtil;
-
-    public TokenResolver(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -38,12 +33,7 @@ public class TokenResolver implements HandlerMethodArgumentResolver {
         }
 
         String accessToken = token.substring(PREFIX.length());
-        try {
-            jwtUtil.decode(accessToken);
-            return accessToken;
-        } catch (Exception e) {
-            throw new InvalidTokenException("유효하지 않은 토큰입니다.");
-        }
+        return accessToken;
     }
 
 }

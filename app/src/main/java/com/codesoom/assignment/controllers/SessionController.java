@@ -48,7 +48,7 @@ public class SessionController {
     }
 
     @ExceptionHandler(InvalidUserEmailOrPasswordException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void handleMissingRequestHeaderException(){
 
     }

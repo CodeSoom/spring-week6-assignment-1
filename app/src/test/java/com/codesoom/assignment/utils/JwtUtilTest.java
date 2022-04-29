@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,11 +65,11 @@ public class JwtUtilTest {
         class Context_with_invalid_token {
 
             @DisplayName("예외를 던진다.")
-            @ParameterizedTest(name = "[{index}] " +
-                    "{arguments} => {displayName}")
-            @NullAndEmptySource
+            @ParameterizedTest(name = "[{index}] {arguments} => {displayName}")
+            @NullSource
             @ValueSource(strings
-                    = {"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ze4dJmmF4peSe1uo9-ug019VAwzhr0WO8H3iHroSO890"
+                    = { "", " "
+                    ,"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ze4dJmmF4peSe1uo9-ug019VAwzhr0WO8H3iHroSO890"
                     , "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9"
                     , "eyJhbGciOiJIUzI1NiJ9"
                     , "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEf.3290392!@#"})

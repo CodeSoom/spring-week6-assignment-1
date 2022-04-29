@@ -13,7 +13,6 @@ public class UserTest {
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
 
-    @DisplayName("기본 생성자는 회원 인스턴스를 리턴한다.")
     @Test
     void createNoArgsConstructor () {
         assertThat(new User()).isNotNull();

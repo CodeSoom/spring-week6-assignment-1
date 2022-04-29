@@ -35,12 +35,12 @@ class ProductRepositoryTest {
      * @return 생성된 Product를 반환
      */
     private Product createProduct() {
-        Product product = Product.builder()
-                .name(PRODUCT_NAME)
-                .maker(PRODUCT_MAKER)
-                .price(PRODUCT_PRICE)
-                .imageUrl(PRODUCT_IMAGE_URL)
-                .build();
+        Product product = Product.of(
+                PRODUCT_NAME,
+                PRODUCT_MAKER,
+                PRODUCT_PRICE,
+                PRODUCT_IMAGE_URL
+        );
 
         return productRepository.save(product);
     }
@@ -152,12 +152,12 @@ class ProductRepositoryTest {
 
             @BeforeEach
             void setUp() {
-                product = Product.builder()
-                        .name(PRODUCT_NAME)
-                        .maker(PRODUCT_MAKER)
-                        .price(PRODUCT_PRICE)
-                        .imageUrl(PRODUCT_IMAGE_URL)
-                        .build();
+                product = Product.of(
+                        PRODUCT_NAME,
+                        PRODUCT_MAKER,
+                        PRODUCT_PRICE,
+                        PRODUCT_IMAGE_URL
+                );
             }
 
             @Test

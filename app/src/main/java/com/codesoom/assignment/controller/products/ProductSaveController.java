@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controller.products;
 
+import com.codesoom.assignment.application.auth.AuthorizationService;
 import com.codesoom.assignment.application.products.ProductSaveRequest;
 import com.codesoom.assignment.application.products.ProductSaveService;
 import com.codesoom.assignment.config.AccessToken;
@@ -22,9 +23,11 @@ import java.math.BigDecimal;
 public class ProductSaveController {
 
     private final ProductSaveService service;
+    private final AuthorizationService authorizationService;
 
-    public ProductSaveController(ProductSaveService service) {
+    public ProductSaveController(ProductSaveService service, AuthorizationService authorizationService) {
         this.service = service;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -37,6 +40,7 @@ public class ProductSaveController {
     @PostMapping
     public Product saveProduct(@AccessToken String accessToken,
                                @Valid @RequestBody ProductSaveDto productSaveDto) {
+        authorizationService.parseToken(accessToken);
         return service.saveProduct(productSaveDto);
     }
 

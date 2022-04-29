@@ -1,7 +1,9 @@
 package com.codesoom.assignment.controller.products;
 
+import com.codesoom.assignment.application.auth.AuthorizationService;
 import com.codesoom.assignment.application.products.ProductSaveRequest;
 import com.codesoom.assignment.application.products.ProductUpdateService;
+import com.codesoom.assignment.config.AccessToken;
 import com.codesoom.assignment.domain.products.Product;
 import com.codesoom.assignment.domain.products.ProductDto;
 import org.springframework.http.HttpStatus;
@@ -23,9 +25,11 @@ import java.math.BigDecimal;
 public class ProductUpdateController {
 
     private final ProductUpdateService service;
+    private final AuthorizationService authorizationService;
 
-    public ProductUpdateController(ProductUpdateService service) {
+    public ProductUpdateController(ProductUpdateService service, AuthorizationService authorizationService) {
         this.service = service;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -37,8 +41,10 @@ public class ProductUpdateController {
      */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = {RequestMethod.PATCH, RequestMethod.PUT})
-    public Product updateProduct(@PathVariable Long id,
+    public Product updateProduct(@AccessToken String accessToken,
+                                 @PathVariable Long id,
                                  @Valid @RequestBody ProductUpdateDto productDto) {
+        authorizationService.parseToken(accessToken);
         return service.updateProduct(id, productDto);
     }
 

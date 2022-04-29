@@ -1,5 +1,6 @@
 package com.codesoom.assignment.token;
 
+import com.codesoom.assignment.errors.ExpiredTokenException;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -102,6 +103,31 @@ class JsonWebTokenManagerTest {
                             () -> tokenManager.getJwtId(invalidToken)
                     ).isInstanceOf(InvalidTokenException.class);
                 }
+            }
+        }
+
+        @Nested
+        @DisplayName("토큰이 만료시간이 지났을 경우")
+        class Context_expiredToken {
+
+            final JsonWebTokenAttribute attribute = JsonWebTokenAttribute.builder()
+                    .jwtId(TEST_VALID_USER_ID)
+                    .expireMinute(-1)
+                    .build();
+
+            String expiredJwt;
+
+            @BeforeEach
+            void setUp() {
+                expiredJwt = tokenManager.createToken(attribute);
+            }
+
+            @Test
+            @DisplayName("예외를 던진다.")
+            void it_throw_exception() {
+                assertThatThrownBy(() -> tokenManager.getJwtId(expiredJwt))
+                        .isInstanceOf(ExpiredTokenException.class)
+                        .hasMessageContaining("만료");
             }
         }
 

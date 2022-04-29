@@ -42,7 +42,7 @@ class JwtUtilTest {
         }
 
         @Nested
-        @DisplayName("null 아이디를 받으면")
+        @DisplayName("null을 받으면")
         class Context_with_a_invalid_id {
 
             private Long userId = null;

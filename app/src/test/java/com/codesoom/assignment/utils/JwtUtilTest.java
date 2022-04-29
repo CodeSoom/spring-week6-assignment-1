@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class JwtUtilTest {
     private static final String SECRET = "12345678901234567890123456789010";
     private final String VALID_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    private final String INVALID_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGG1";
+    private final String INVALID_ACCESS_TOKEN = VALID_ACCESS_TOKEN + "1";
 
     private JwtUtil jwtUtil;
 

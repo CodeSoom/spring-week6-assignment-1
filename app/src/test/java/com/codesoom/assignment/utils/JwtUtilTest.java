@@ -7,6 +7,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -47,13 +51,15 @@ class JwtUtilTest {
     @Test
     @DisplayName("빈 토큰으로 디코딩 테스트")
     void decodeWithEmptyToken() {
-        assertThatThrownBy(() -> jwtUtil.decode(null))
-                .isInstanceOf(InvalidTokenException.class);
+        List<String> tokens = new ArrayList<>();
+        tokens.add(null);
+        tokens.add("");
+        tokens.add("  ");
 
-        assertThatThrownBy(() -> jwtUtil.decode(""))
-                .isInstanceOf(InvalidTokenException.class);
-
-        assertThatThrownBy(() -> jwtUtil.decode("  "))
-                .isInstanceOf(InvalidTokenException.class);
+        for(int i = 0; i < tokens.size(); i++){
+            String token = tokens.get(i);
+            assertThatThrownBy(() -> jwtUtil.decode(token))
+                    .isInstanceOf(InvalidTokenException.class);
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.codesoom.assignment.token;
 
+import com.codesoom.assignment.errors.ExpiredTokenException;
 import com.codesoom.assignment.errors.InvalidTokenException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -90,6 +92,8 @@ public class JsonWebTokenManager {
             throw new InvalidTokenException("JWT가 올바르게 구성되어 있지 않습니다.");
         } catch (IllegalArgumentException e) {
             throw new InvalidTokenException("부적절한 인수가 전달되었습니다.");
+        }  catch (ExpiredJwtException e) {
+            throw new ExpiredTokenException("만료된 토큰입니다.");
         }
     }
 }

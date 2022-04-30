@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
+import com.codesoom.assignment.errors.UserLoginFailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
@@ -50,5 +51,21 @@ public class UserService {
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
+    public String loginUser(String email, String password) {
+        User user = findUserByEmail(email);
+
+        if(password.equals(user.getPassword())) {
+            // TODO: 실제 JWT 토큰 반환하게 해주기
+            return "토큰";
+        }
+
+        throw new UserLoginFailException();
     }
 }

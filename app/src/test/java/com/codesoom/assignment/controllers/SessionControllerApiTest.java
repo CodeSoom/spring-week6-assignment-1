@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,7 +77,7 @@ class SessionControllerApiTest {
                 void it_returns_jwt_token() throws Exception {
                     String validToken = jwtUtil.encode(validUser.getId());
 
-                    actions.andExpect(content().string(validToken));
+                    actions.andExpect(content().string(containsString(validToken)));
                 }
             }
         }

@@ -18,7 +18,7 @@ public interface ProductSaveRequest {
     String getImageUrl();
 
     default Product product() {
-        return new Product(getName(), getMaker(), getPrice(), getImageUrl());
+        return Product.withoutId(getName(), getMaker(), getPrice(), getImageUrl());
     }
 
 }

@@ -87,8 +87,8 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
 
             @BeforeEach
             void setup() {
-                this.EXIST_ID = repository.save(
-                        new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
+                this.EXIST_ID = repository.save(Product.withoutId(
+                        "쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
             }
 
             @DisplayName("수정된 상품을 반환한다.")
@@ -141,8 +141,8 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
 
             @BeforeEach
             void setup() {
-                this.EXIST_ID = repository.save(
-                        new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
+                this.EXIST_ID = repository.save(Product.withoutId(
+                        "쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
             }
 
             @AfterEach
@@ -173,8 +173,8 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
 
             @BeforeEach
             void setup() {
-                this.EXIST_ID = repository.save(
-                        new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
+                this.EXIST_ID = repository.save(Product.withoutId(
+                        "쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
             }
 
             @DisplayName("400 bad request를 응답한다.")
@@ -205,8 +205,8 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
 
             @BeforeEach
             void setup() {
-                this.EXIST_ID = repository.save(
-                        new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
+                this.EXIST_ID = repository.save(Product.withoutId(
+                        "쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
             }
 
             @DisplayName("401 unauthorized를 응답한다.")

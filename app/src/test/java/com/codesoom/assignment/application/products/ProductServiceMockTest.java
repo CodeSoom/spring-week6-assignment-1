@@ -67,9 +67,9 @@ public class ProductServiceMockTest {
         private final Long NOT_EXIST_ID = 100L;
 
         private final Product SAVED_PRODUCT_1
-                = new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
+                = Product.withoutId("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
         private final Product SAVED_PRODUCT_2
-                = new Product("곰돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
+                = Product.withoutId("곰돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
 
         private final List<Product> PRODUCTS = List.of(SAVED_PRODUCT_1, SAVED_PRODUCT_2);
 
@@ -121,7 +121,7 @@ public class ProductServiceMockTest {
         private final Long NOT_EXIST_ID = 100L;
 
         private final Product OLD_PRODUCT_ENTITY
-                = new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
+                = Product.withoutId("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
         private final String UPDATE_NAME = "꿈돌이";
 
         @DisplayName("장난감을 성공적으로 수정한다.")
@@ -161,7 +161,7 @@ public class ProductServiceMockTest {
         private final Long NOT_EXIST_ID = 100L;
 
         private final Product PRODUCT
-                = new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
+                = Product.withoutId("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
 
         @DisplayName("delete는 id에 해당하는 상품을 삭제한다.")
         @Test

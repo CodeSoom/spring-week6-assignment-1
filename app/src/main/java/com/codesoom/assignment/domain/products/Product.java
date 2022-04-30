@@ -32,19 +32,23 @@ public class Product {
     protected Product() {
     }
 
-    public Product(String name, String maker, BigDecimal price, String imageUrl) {
-        this.name = name;
-        this.maker = maker;
-        this.price = price;
-        this.imageUrl = imageUrl;
-    }
-
     public Product(Long id, String name, String maker, BigDecimal price, String imageUrl) {
         this.id = id;
         this.name = name;
         this.maker = maker;
         this.price = price;
         this.imageUrl = imageUrl;
+    }
+
+    private Product(String name, String maker, BigDecimal price, String imageUrl) {
+        this.name = name;
+        this.maker = maker;
+        this.price = price;
+        this.imageUrl = imageUrl;
+    }
+
+    public static Product withoutId(String name, String maker, BigDecimal price, String imageUrl) {
+        return new Product(name, maker, price, imageUrl);
     }
 
     public Product update(Product product) {

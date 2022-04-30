@@ -54,7 +54,7 @@ public class ProductDeleteControllerMockMvcTest extends ControllerTest {
             @BeforeEach
             void setup() {
                 final Product product
-                        = new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
+                        = Product.withoutId("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
                 this.EXIST_ID = repository.save(product).getId();
             }
 

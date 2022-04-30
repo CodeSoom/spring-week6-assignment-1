@@ -32,7 +32,7 @@ public class ProductReadServiceTest extends ServiceTest {
     void setup() {
         cleanup();
         this.service = new ProductReadServiceImpl(repository);
-        final Product product = new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
+        final Product product = Product.withoutId("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
         SAVED_PRODUCT = repository.save(product);
     }
 

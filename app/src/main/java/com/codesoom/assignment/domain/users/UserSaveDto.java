@@ -1,8 +1,8 @@
 package com.codesoom.assignment.domain.users;
 
 import com.codesoom.assignment.application.users.UserSaveRequest;
+import validation.Email;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -15,7 +15,8 @@ public class UserSaveDto implements UserSaveRequest {
     @NotBlank(message = "회원 이름은 필수 입력 항목입니다.")
     private String name;
 
-    @Email(message = "올바른 이메일 형식으로 입력하세요.")
+    @Email
+//    @Email(message = "올바른 이메일 형식으로 입력하세요.")
     @NotBlank(message = "이메일은 필수 입력 항목입니다.")
     private String email;
 

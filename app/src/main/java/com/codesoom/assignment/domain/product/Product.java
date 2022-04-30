@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.criteria.CriteriaBuilder;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -50,6 +50,11 @@ public class Product {
         return this;
     }
 
+    public Product initProductId(Long productId) {
+        this.id = productId;
+        return this;
+    }
+
     private Product(ProductBuilder productBuilderInfo) {
         this.name = productBuilderInfo.name;
         this.maker = productBuilderInfo.maker;
@@ -57,21 +62,20 @@ public class Product {
         this.imageUrl = productBuilderInfo.imageUrl;
     }
 
-
     public static class ProductBuilder implements Builder<Product> {
         private String name;
         private String maker;
         private Integer price;
         private String imageUrl;
 
-        public ProductBuilder(String name, String maker, Integer price){
-            this.name=name;
-            this.maker=maker;
-            this.price=price;
+        public ProductBuilder(String name, String maker, Integer price) {
+            this.name = name;
+            this.maker = maker;
+            this.price = price;
         }
 
-        public ProductBuilder imageUrl(String imageUrl){
-            this.imageUrl=imageUrl;
+        public ProductBuilder imageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
             return this;
         }
 
@@ -79,5 +83,18 @@ public class Product {
         public Product builder() {
             return new Product(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(name, product.name) && Objects.equals(maker, product.maker) && Objects.equals(price, product.price) && Objects.equals(imageUrl, product.imageUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, maker, price, imageUrl);
     }
 }

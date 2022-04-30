@@ -1,4 +1,4 @@
-package validation;
+package com.codesoom.assignment.validation;
 
 import org.apache.logging.log4j.util.Strings;
 

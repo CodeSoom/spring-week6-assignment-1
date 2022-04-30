@@ -1,7 +1,7 @@
 package com.codesoom.assignment.domain.users;
 
 import com.codesoom.assignment.application.users.UserSaveRequest;
-import validation.Email;
+import com.codesoom.assignment.validation.Email;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

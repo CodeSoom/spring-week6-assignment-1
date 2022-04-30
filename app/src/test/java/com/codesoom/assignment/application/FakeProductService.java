@@ -6,6 +6,7 @@ import com.codesoom.assignment.dto.product.CreateProductRequest;
 import com.codesoom.assignment.dto.product.RemoveProductRequest;
 import com.codesoom.assignment.dto.product.SearchOneProductRequest;
 import com.codesoom.assignment.dto.product.UpdateProductRequest;
+import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.infra.FakeProductStorage;
 
 import java.util.List;
@@ -20,7 +21,8 @@ public class FakeProductService implements ProductService {
 
     @Override
     public Product getProduct(SearchOneProductRequest request) {
-        return fakeProductStorage.findById(request.getProductId()).get();
+        return fakeProductStorage.findById(request.getProductId())
+                                 .orElse(null);
     }
 
     @Override
@@ -42,6 +44,7 @@ public class FakeProductService implements ProductService {
 
     @Override
     public Product findProduct(long productId) {
-        return fakeProductStorage.findById(productId).get();
+        return fakeProductStorage.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 }

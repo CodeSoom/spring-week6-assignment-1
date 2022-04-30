@@ -35,11 +35,14 @@ public class FakeProductStorage implements ProductRepository {
     @Override
     public void delete(Product product) {
         this.productStorage.remove(product.getId());
-
     }
 
     private Long createProductId() {
         List<Long> sortedStorageIds = sortedStorageIds();
+
+        if (sortedStorageIds.size() == 0) {
+            return 0L;
+        }
         return sortedStorageIds.get(Math.decrementExact(sortedStorageIds.size()));
     }
 

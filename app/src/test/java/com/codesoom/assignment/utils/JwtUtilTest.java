@@ -49,12 +49,9 @@ class JwtUtilTest {
     }
 
     @Test
-    @DisplayName("빈 토큰을 디코딩하면 예외를 던진다")
+    @DisplayName("null 또는 빈 토큰을 디코딩하면 예외를 던진다")
     void decodeWithEmptyToken() {
-        List<String> tokens = new ArrayList<>();
-        tokens.add(null);
-        tokens.add("");
-        tokens.add("  ");
+        List<String> tokens = Arrays.asList(null, "", "  ");
 
         for(int i = 0; i < tokens.size(); i++){
             String token = tokens.get(i);

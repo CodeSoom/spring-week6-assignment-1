@@ -32,7 +32,7 @@ class UserServiceTest {
     void setUp() {
         Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
-        userService = new UserService(mapper, userRepository);
+        userService = new UserService(mapper, userRepository, null);
 
         given(userRepository.existsByEmail(EXISTED_EMAIL_ADDRESS))
                 .willReturn(true);

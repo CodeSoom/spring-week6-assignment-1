@@ -7,6 +7,7 @@ import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserLoginFailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.utils.JwtUtil;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,12 @@ import javax.transaction.Transactional;
 public class UserService {
     private final Mapper mapper;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
-    public UserService(Mapper dozerMapper, UserRepository userRepository) {
-        this.mapper = dozerMapper;
+    public UserService(Mapper mapper, UserRepository userRepository, JwtUtil jwtUtil) {
+        this.mapper = mapper;
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     public User registerUser(UserRegistrationData registrationData) {
@@ -62,8 +65,7 @@ public class UserService {
         User user = findUserByEmail(email);
 
         if(password.equals(user.getPassword())) {
-            // TODO: 실제 JWT 토큰 반환하게 해주기
-            return "토큰";
+            return jwtUtil.encode(user.getId());
         }
 
         throw new UserLoginFailException();

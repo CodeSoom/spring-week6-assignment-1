@@ -22,7 +22,7 @@ public class UserServiceNestedTest {
 
     @Nested
     @DisplayName("login() 메서드는")
-    class Context_login_method {
+    class Describe_login_method {
 
         @Nested
         @DisplayName("유효한 회원정보를 받았을 때")

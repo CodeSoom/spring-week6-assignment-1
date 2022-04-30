@@ -33,12 +33,12 @@ class SessionControllerTest {
 
         @Nested
         @DisplayName("유효한 email 과 password 를 받는다면")
-        class Describe_valid_email_and_password {
+        class Context_valid_email_and_password {
             private final String validEmail = "abc@abc.com";
             private final String validPassword = "abcdefg";
             private final ResultActions actions;
 
-            public Describe_valid_email_and_password() throws Exception {
+            public Context_valid_email_and_password() throws Exception {
                 actions = mockMvc.perform(requestBuilder
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(String.format(

@@ -25,12 +25,8 @@ class UserCommandServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
     private UserCommandService userCommandService;
-
-    @BeforeEach
-    void setUp() {
-        this.userCommandService = new UserCommandService(userRepository);
-    }
 
     /**
      * 하나의 User 를 생성해 등록합니다

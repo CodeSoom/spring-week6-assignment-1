@@ -23,12 +23,8 @@ class ProductQueryServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
     private ProductQueryService productQueryService;
-
-    @BeforeEach
-    void setUp() {
-        this.productQueryService = new ProductQueryService(productRepository);
-    }
 
     /**
      * 하나의 Product 를 생성해 등록

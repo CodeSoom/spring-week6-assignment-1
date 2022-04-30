@@ -44,8 +44,13 @@ class JwtUtilTest {
     @Test
     @DisplayName("유효하지 않은 토큰을 디코딩하면 예외를 던진다")
     void decodeWithInvalidToken() {
-        assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
-                .isInstanceOf(InvalidTokenException.class);
+        List<String> tokens = Arrays.asList(INVALID_TOKEN, "a", "a.b", "a.b.c", "eyJhbGciOiJIUzI1NiJ9", "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9");
+
+        for(int i = 0; i < tokens.size(); i++){
+            String token = tokens.get(i);
+            assertThatThrownBy(() -> jwtUtil.decode(token))
+                    .isInstanceOf(InvalidTokenException.class);
+        }
     }
 
     @Test

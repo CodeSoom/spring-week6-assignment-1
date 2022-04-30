@@ -6,15 +6,15 @@ import com.codesoom.assignment.domain.user.UserRepository;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.security.SignatureException;
 
 @Service
 public class AuthenticationService {
     final private JwtUtil jwtUtil;
     final private UserRepository userRepository;
 
+    @Autowired
     public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;

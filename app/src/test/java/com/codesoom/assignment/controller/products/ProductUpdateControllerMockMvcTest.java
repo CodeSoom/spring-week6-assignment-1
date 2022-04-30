@@ -4,7 +4,6 @@ import com.codesoom.assignment.controller.ControllerTest;
 import com.codesoom.assignment.domain.products.Product;
 import com.codesoom.assignment.domain.products.ProductDto;
 import com.codesoom.assignment.domain.products.ProductRepository;
-import com.codesoom.assignment.domain.users.User;
 import com.codesoom.assignment.domain.users.UserRepository;
 import com.codesoom.assignment.domain.users.UserSaveDto;
 import com.codesoom.assignment.dto.TokenResponse;
@@ -45,6 +44,7 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final String TOKEN_PREFIX = "Bearer ";
     private String TOKEN;
 
     @BeforeEach
@@ -70,7 +70,7 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsByteArray();
         final TokenResponse tokenResponse = objectMapper.readValue(contentAsByteArray, TokenResponse.class);
-        return "Bearer " + tokenResponse.getAccessToken();
+        return TOKEN_PREFIX + tokenResponse.getAccessToken();
     }
 
     @DisplayName("updateProduct 메서드는")
@@ -185,6 +185,40 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
                         .content(objectMapper.writeValueAsString(INVALID_PRODUCT_DTO))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());
+            }
+        }
+
+        @DisplayName("유효하지 않은 토큰이 주어지면")
+        @Nested
+        class Context_with_empty_token {
+
+            private final String[] INVALID_TOKENS = {
+                    TOKEN_PREFIX + ""
+                    , TOKEN_PREFIX + " "
+                    , TOKEN_PREFIX + "esldkjflsoeis"
+                    , TOKEN.substring(TOKEN_PREFIX.length())};
+
+            private final ProductDto VALID_PRODUCT_DTO
+                    = new ProductDto("어쩌구", "어쩌구컴퍼니", BigDecimal.valueOf(2000), "url");
+
+            private Long EXIST_ID;
+
+            @BeforeEach
+            void setup() {
+                this.EXIST_ID = repository.save(
+                        new Product("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "")).getId();
+            }
+
+            @DisplayName("401 unauthorized를 응답한다.")
+            @Test
+            void it_thrown_exception() throws Exception {
+                for (int i = 0; i < INVALID_TOKENS.length; i++) {
+                    mockMvc.perform(patch("/products/" + EXIST_ID)
+                                    .header(HttpHeaders.AUTHORIZATION, INVALID_TOKENS[i])
+                                    .content(objectMapper.writeValueAsString(VALID_PRODUCT_DTO))
+                                    .contentType(MediaType.APPLICATION_JSON))
+                            .andExpect(status().isUnauthorized());
+                }
             }
         }
     }

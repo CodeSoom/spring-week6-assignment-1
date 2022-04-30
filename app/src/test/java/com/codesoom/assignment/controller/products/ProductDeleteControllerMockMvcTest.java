@@ -88,5 +88,35 @@ public class ProductDeleteControllerMockMvcTest extends ControllerTest {
                         .andExpect(status().isNotFound());
             }
         }
+
+        @DisplayName("유효하지 않은 토큰이 주어지면")
+        @Nested
+        class Context_with_invalid_token {
+
+            private String[] INVALID_TOKENS = {
+                    ""
+                    , " "
+                    , TOKEN + "231"
+            };
+
+            private Long EXIST_ID;
+
+            @BeforeEach
+            void setup() {
+                final Product product
+                        = Product.withoutId("쥐돌이", "캣이즈락스타", BigDecimal.valueOf(4000), "");
+                this.EXIST_ID = repository.save(product).getId();
+            }
+
+            @DisplayName("401 unauthorized를 응답한다.")
+            @Test
+            void it_delete_product() throws Exception {
+                for (int i = 0; i < INVALID_TOKENS.length; i++) {
+                    mockMvc.perform(delete("/products/" + EXIST_ID)
+                                    .header(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + INVALID_TOKENS[i]))
+                            .andExpect(status().isUnauthorized());
+                }
+            }
+        }
     }
 }

@@ -99,6 +99,60 @@ public class ProductSaveControllerMockMvcTest extends ControllerTest {
                         .andExpect(status().isBadRequest());
             }
         }
+
+        @DisplayName("토큰이 주어지지 않으면")
+        @Nested
+        class Context_with_empty_authorization_header {
+
+            private final ProductDto VALID_PRODUCT_DTO
+                    = new ProductDto("어쩌구", "어쩌구컴퍼니", BigDecimal.valueOf(2000), "url");
+
+            @AfterEach
+            void cleanup() {
+                repository.deleteAll();
+            }
+
+            @DisplayName("401 unauthorized를 응답한다.")
+            @Test
+            void it_will_save_product() throws Exception {
+                mockMvc.perform(post("/products").accept(MediaType.APPLICATION_JSON_UTF8)
+                                .content(objectMapper.writeValueAsString(VALID_PRODUCT_DTO))
+                                .contentType(MediaType.APPLICATION_JSON ))
+                        .andExpect(status().isUnauthorized());
+            }
+        }
+
+        @DisplayName("유효하지 않은 토큰이 주어지면")
+        @Nested
+        class Context_with_invalid_token {
+
+            private final String[] INVALID_TOKENS = {
+                    TOKEN_PREFIX + ""
+                    , TOKEN_PREFIX + " "
+                    , TOKEN_PREFIX + "esldkjflsoeis"
+                    , TOKEN.substring(TOKEN_PREFIX.length())};
+
+            private final ProductDto VALID_PRODUCT_DTO
+                    = new ProductDto("어쩌구", "어쩌구컴퍼니", BigDecimal.valueOf(2000), "url");
+
+            @AfterEach
+            void cleanup() {
+                repository.deleteAll();
+            }
+
+            @DisplayName("401 unauthorized를 응답한다.")
+            @Test
+            void it_will_save_product() throws Exception {
+                for (int i = 0; i < INVALID_TOKENS.length; i++) {
+                    mockMvc.perform(post("/products").accept(MediaType.APPLICATION_JSON_UTF8)
+                                    .header(HttpHeaders.AUTHORIZATION, INVALID_TOKENS[i])
+                                    .content(objectMapper.writeValueAsString(VALID_PRODUCT_DTO))
+                                    .contentType(MediaType.APPLICATION_JSON ))
+                            .andExpect(status().isUnauthorized());
+                }
+            }
+        }
+
     }
 
 }

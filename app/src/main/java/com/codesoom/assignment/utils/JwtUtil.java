@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +41,8 @@ public class JwtUtil {
                     .getBody();
             return claims;
         } catch (SignatureException e) {
+            throw new InvalidTokenException(token);
+        } catch (MalformedJwtException e) {
             throw new InvalidTokenException(token);
         }
     }

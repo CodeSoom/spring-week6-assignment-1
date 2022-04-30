@@ -7,6 +7,7 @@ import com.codesoom.assignment.dto.product.RemoveProductRequest;
 import com.codesoom.assignment.dto.product.SearchOneProductRequest;
 import com.codesoom.assignment.dto.product.UpdateProductRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +30,7 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Product detail(@PathVariable Long id) {
         SearchOneProductRequest searchOneProductRequest = SearchOneProductRequest.createSearchRequestObjectFrom(id);
         return productService.getProduct(searchOneProductRequest);
@@ -58,5 +60,11 @@ public class ProductController {
     ) {
         RemoveProductRequest searchOneProductRequest = RemoveProductRequest.createRemoveRequestObjectFrom(id);
         productService.deleteProduct(searchOneProductRequest);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void handleMissingRequestHeaderException() {
+
     }
 }

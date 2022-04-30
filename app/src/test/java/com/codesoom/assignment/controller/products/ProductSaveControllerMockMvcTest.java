@@ -3,12 +3,9 @@ package com.codesoom.assignment.controller.products;
 import com.codesoom.assignment.controller.ControllerTest;
 import com.codesoom.assignment.domain.products.ProductDto;
 import com.codesoom.assignment.domain.products.ProductRepository;
-import com.codesoom.assignment.domain.users.UserSaveDto;
-import com.codesoom.assignment.dto.TokenResponse;
 import com.codesoom.assignment.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 
@@ -130,7 +126,7 @@ public class ProductSaveControllerMockMvcTest extends ControllerTest {
                     TOKEN_PREFIX + ""
                     , TOKEN_PREFIX + " "
                     , TOKEN_PREFIX + "esldkjflsoeis"
-                    , TOKEN.substring(TOKEN_PREFIX.length())};
+                   };
 
             private final ProductDto VALID_PRODUCT_DTO
                     = new ProductDto("어쩌구", "어쩌구컴퍼니", BigDecimal.valueOf(2000), "url");

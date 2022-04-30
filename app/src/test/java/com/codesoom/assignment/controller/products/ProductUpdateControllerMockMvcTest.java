@@ -190,13 +190,13 @@ public class ProductUpdateControllerMockMvcTest extends ControllerTest {
 
         @DisplayName("유효하지 않은 토큰이 주어지면")
         @Nested
-        class Context_with_empty_token {
+        class Context_with_invalid_token {
 
             private final String[] INVALID_TOKENS = {
                     TOKEN_PREFIX + ""
                     , TOKEN_PREFIX + " "
                     , TOKEN_PREFIX + "esldkjflsoeis"
-                    , TOKEN.substring(TOKEN_PREFIX.length())};
+                    };
 
             private final ProductDto VALID_PRODUCT_DTO
                     = new ProductDto("어쩌구", "어쩌구컴퍼니", BigDecimal.valueOf(2000), "url");

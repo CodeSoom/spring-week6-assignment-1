@@ -26,7 +26,7 @@ class JwtUtilTest {
     }
 
     @Test
-    @DisplayName("토큰 인코딩 테스트")
+    @DisplayName("userId로 인코딩해서 얻은 토큰이 유효한 토큰과 일치하는지 확인한다")
     void encode() {
         String accessToken = jwtUtil.encode(1L);
 
@@ -34,7 +34,7 @@ class JwtUtilTest {
     }
 
     @Test
-    @DisplayName("유효한 토큰으로 디코딩 테스트")
+    @DisplayName("유효한 토큰을 디코딩하면 claims의 'userId'가 주어진 userId와 같은지 확인한다")
     void decodeWithValidToken() {
         Claims claims = jwtUtil.decode(VALID_TOKEN);
 
@@ -42,14 +42,14 @@ class JwtUtilTest {
     }
 
     @Test
-    @DisplayName("유효하지 않은 토큰으로 디코딩 테스트")
+    @DisplayName("유효하지 않은 토큰을 디코딩하면 예외를 던진다")
     void decodeWithInvalidToken() {
         assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
                 .isInstanceOf(InvalidTokenException.class);
     }
 
     @Test
-    @DisplayName("빈 토큰으로 디코딩 테스트")
+    @DisplayName("빈 토큰을 디코딩하면 예외를 던진다")
     void decodeWithEmptyToken() {
         List<String> tokens = new ArrayList<>();
         tokens.add(null);

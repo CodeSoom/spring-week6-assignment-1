@@ -7,6 +7,8 @@ import lombok.Getter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import static com.codesoom.assignment.domain.product.Product.ProductBuilder;
+
 @Getter
 public class UpdateProductRequest implements EntityMaker<Product> {
 
@@ -51,11 +53,9 @@ public class UpdateProductRequest implements EntityMaker<Product> {
 
     @Override
     public Product entityMaker() {
-        return Product.ProductBuilder.builder()
-                .name(name)
-                .maker(maker)
-                .price(price)
+        Product product = new ProductBuilder(name, maker, price)
                 .imageUrl(imageUrl)
-                .build();
+                .builder();
+        return product;
     }
 }

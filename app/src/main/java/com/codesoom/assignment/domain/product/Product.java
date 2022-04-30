@@ -16,15 +16,18 @@
 
 package com.codesoom.assignment.domain.product;
 
-import com.codesoom.assignment.domain.product.builder.*;
+import com.codesoom.assignment.common.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.criteria.CriteriaBuilder;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue
@@ -55,57 +58,26 @@ public class Product {
     }
 
 
-    public static class ProductBuilder implements ProductBuilderInfo {
+    public static class ProductBuilder implements Builder<Product> {
         private String name;
         private String maker;
-        private long productId;
         private Integer price;
         private String imageUrl;
 
-
-        private ProductBuilder() {
+        public ProductBuilder(String name, String maker, Integer price){
+            this.name=name;
+            this.maker=maker;
+            this.price=price;
         }
 
-        public static Name builder() {
-            return new ProductBuilder();
-        }
-        public static ProductId builderWithId(){
-            return new ProductBuilder();
-        }
-
-        @Override
-        public Maker name(String name) {
-            this.name = name;
+        public ProductBuilder imageUrl(String imageUrl){
+            this.imageUrl=imageUrl;
             return this;
         }
 
         @Override
-        public Price maker(String maker) {
-            this.maker = maker;
-            return this;
-        }
-
-        @Override
-        public OptionBuilder imageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
-            return null;
-        }
-
-        @Override
-        public Product build() {
+        public Product builder() {
             return new Product(this);
-        }
-
-        @Override
-        public OptionBuilder price(int price) {
-            this.price = price;
-            return this;
-        }
-
-        @Override
-        public Name productId(long productId) {
-            this.productId =productId;
-            return this;
         }
     }
 }

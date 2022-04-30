@@ -1,6 +1,8 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.UserService;
+import com.codesoom.assignment.config.BeanConfig;
+import com.codesoom.assignment.config.WebMvcConfig;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
+@Import({WebMvcConfig.class, BeanConfig.class})
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;

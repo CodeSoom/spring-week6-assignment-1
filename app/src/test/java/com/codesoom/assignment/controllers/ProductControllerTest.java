@@ -1,6 +1,8 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.annotations.Utf8MockMvc;
 import com.codesoom.assignment.application.ProductService;
+import com.codesoom.assignment.config.BeanConfig;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
@@ -8,7 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,15 +24,16 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ProductController.class)
+@SpringBootTest
+@Utf8MockMvc
 class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "k";
 
     @Autowired
     private MockMvc mockMvc;
@@ -100,18 +105,44 @@ class ProductControllerTest {
     }
 
     @Test
-    void createWithValidAttributes() throws Exception {
+    void createWithValidAttributesWithoutAuthorization() throws Exception {
+        mockMvc.perform(
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createWithValidAttributesWithValidAuthorization() throws Exception {
         mockMvc.perform(
                 post("/products")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("쥐돌이")));
 
         verify(productService).createProduct(any(ProductData.class));
+    }
+
+    @Test
+    void createWithValidAttributesWithInvalidAuthorization() throws Exception {
+        mockMvc.perform(
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                                .header("Authorization", "Bearer " + INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -122,6 +153,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }
@@ -134,6 +166,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐순이")));
@@ -148,6 +181,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
 
@@ -162,6 +196,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }
@@ -170,6 +205,7 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNoContent());
 
@@ -180,6 +216,7 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1000")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
 

@@ -13,6 +13,6 @@ public interface ProductService {
     Product getProduct(SearchOneProductRequest request);
     Product createProduct(CreateProductRequest request);
     Product updateProduct(UpdateProductRequest request);
-    Product deleteProduct(RemoveProductRequest request);
+    void deleteProduct(RemoveProductRequest request);
     Product findProduct(long productId);
 }

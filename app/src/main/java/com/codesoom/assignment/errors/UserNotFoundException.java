@@ -6,6 +6,6 @@ public class UserNotFoundException extends RuntimeException {
     }
 
     public UserNotFoundException(String email) {
-        super(String.format("%s 이메일로 가입된 회원이 없습니다.", email));
+        super(String.format("%s 이메일로 가입된 회원을 찾지 못했습니다.", email));
     }
 }

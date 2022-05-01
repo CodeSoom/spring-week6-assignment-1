@@ -37,7 +37,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             try {
                 claims = jwtUtil.decode(token);
             } catch (JwtException e) {
-                throw new UnauthorizedException("잘못된 인증 토큰입니다.");
+                throw new UnauthorizedException("토큰 인식에 실패했습니다.");
             }
 
             Long userId = claims.get("userId", Long.class);

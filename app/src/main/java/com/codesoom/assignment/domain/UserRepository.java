@@ -1,15 +1,23 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.dto.UserDto;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository {
-    User save(User user);
+@Primary
+public interface UserRepository extends CrudRepository<User, Long> {
 
-    boolean existsByEmail(String email);
+    List<User> findAll();
 
     Optional<User> findById(Long id);
 
-    Optional<User> findByIdAndDeletedIsFalse(Long id);
+    User save(User user);
 
-    Optional<User> findByEmail(String email);
+    default void deleteById(Long id) {
+        Optional<User> user = findById(id);
+        user.ifPresent(this::delete);
+    }
 }

@@ -1,4 +1,4 @@
-package com.codesoom.assignment.dto;
+package com.codesoom.assignment.dto.user;
 
 import com.github.dozermapper.core.Mapping;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,12 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserModificationData {
+public class UserRegistrationData {
+    @NotBlank
+    @Size(min = 3)
+    @Mapping("email")
+    private String email;
+
     @NotBlank
     @Mapping("name")
     private String name;

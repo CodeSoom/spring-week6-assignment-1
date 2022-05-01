@@ -30,8 +30,8 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
                 throw new UnauthorizedException("인증 정보가 없습니다. 인증 정보가 필요합니다.");
             }
 
-            int prefixLength = "Bearer ".length();
-            String token = authorization.substring(prefixLength);
+            final int prefixLength = "Bearer ".length();
+            final String token = authorization.substring(prefixLength);
             Claims claims;
 
             try {

@@ -3,7 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserLoginFailException;
+import com.codesoom.assignment.errors.UserLoginWrongPasswordException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -76,10 +76,10 @@ public class UserServiceNestedTest {
             }
 
             @Test
-            @DisplayName("UserLoginFailException 을 던진다.")
+            @DisplayName("UserLoginWrongPasswordException 을 던진다.")
             void it_returns_jwt() {
                 assertThatThrownBy(() -> userService.loginUser(VALID_EMAIL, INVALID_PASSWORD))
-                        .isInstanceOf(UserLoginFailException.class);
+                        .isInstanceOf(UserLoginWrongPasswordException.class);
             }
         }
     }

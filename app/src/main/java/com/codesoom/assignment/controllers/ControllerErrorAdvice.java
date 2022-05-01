@@ -23,9 +23,9 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("User not found");
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserLoginFailException.class)
-    public ErrorResponse handleUserLoginFail() {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserLoginWrongPasswordException.class)
+    public ErrorResponse handleUserLoginWrongPasswordException() {
         return new ErrorResponse("일치하는 회원정보를 찾지 못했습니다.");
     }
 

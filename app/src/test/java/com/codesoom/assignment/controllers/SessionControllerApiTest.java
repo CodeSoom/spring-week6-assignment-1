@@ -36,19 +36,20 @@ class SessionControllerApiTest {
 
     private final static String VALID_EMAIL = "validUser@google.com";
     private final static String VALID_PASSWORD = "12345678";
+    private final static String INVALID_PASSWORD = "123456789";
+
     private User validUser;
 
-
     @Nested
-    @DisplayName("/login 경로는")
-    class Describe_login_path {
+    @DisplayName("/ (root) 경로는")
+    class Describe_root_path {
         @Nested
         @DisplayName("POST 요청을 받았을 때")
         class Context_post_request {
             private final MockHttpServletRequestBuilder requestBuilder;
 
             public Context_post_request() {
-                requestBuilder = post("/session/login");
+                requestBuilder = post("/session");
             }
 
             @Nested
@@ -67,9 +68,9 @@ class SessionControllerApiTest {
                 }
 
                 @Test
-                @DisplayName("200 OK 응답을 전달한다.")
-                void it_responses_200_ok() throws Exception {
-                    actions.andExpect(status().isOk());
+                @DisplayName("201 CREATED 응답을 전달한다.")
+                void it_responses_201_ok() throws Exception {
+                    actions.andExpect(status().isCreated());
                 }
 
                 @Test
@@ -78,6 +79,28 @@ class SessionControllerApiTest {
                     String validToken = jwtUtil.encode(validUser.getId());
 
                     actions.andExpect(content().string(containsString(validToken)));
+                }
+            }
+
+            @Nested
+            @DisplayName("잘못된 password 를 받는다면")
+            class Context_invalid_password {
+                private final ResultActions actions;
+
+                public Context_invalid_password() throws Exception {
+                    setUpValidUser();
+
+                    actions = mockMvc.perform(requestBuilder
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(String.format(
+                                    "{\"email\":\"%s\",\"password\":\"%s\"}"
+                                    , VALID_EMAIL, INVALID_PASSWORD)));
+                }
+
+                @Test
+                @DisplayName("400 BAD REQUEST 응답을 전달한다.")
+                void it_responses_400_bad_request() throws Exception {
+                    actions.andExpect(status().isBadRequest());
                 }
             }
         }

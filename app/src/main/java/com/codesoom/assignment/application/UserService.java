@@ -5,7 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserLoginFailException;
+import com.codesoom.assignment.errors.UserLoginWrongPasswordException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import com.github.dozermapper.core.Mapper;
@@ -68,6 +68,6 @@ public class UserService {
             return jwtUtil.encode(user.getId());
         }
 
-        throw new UserLoginFailException();
+        throw new UserLoginWrongPasswordException();
     }
 }

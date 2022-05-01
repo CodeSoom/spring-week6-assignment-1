@@ -6,20 +6,20 @@ import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.dto.UserLoginResultData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/session")
 @RequiredArgsConstructor
+@CrossOrigin
 public class SessionController {
     private final UserService userService;
 
-    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("")
     public UserLoginResultData login(@RequestBody @Valid UserLoginData loginData) {
         String token = userService.loginUser(
                 loginData.getEmail(), loginData.getPassword()

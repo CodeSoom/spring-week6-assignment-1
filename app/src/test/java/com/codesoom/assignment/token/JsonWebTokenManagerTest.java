@@ -51,7 +51,10 @@ class JsonWebTokenManagerTest {
     @DisplayName("getJwtId 메소드는")
     class Describe_getJwtId {
 
-        final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder().jwtId(TEST_VALID_USER_ID).build();
+        final JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder()
+                .expireHour(1)
+                .jwtId(TEST_VALID_USER_ID)
+                .build();
 
         @Nested
         @DisplayName("유효한 토큰이 주어졌을 경우")

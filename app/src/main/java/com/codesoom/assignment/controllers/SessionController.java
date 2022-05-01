@@ -44,6 +44,7 @@ public class SessionController {
 
         JsonWebTokenAttribute jwtAttribute = JsonWebTokenAttribute.builder()
                 .jwtId(String.valueOf(foundUser.getId()))
+                .expireHour(1)
                 .build();
 
         return new JsonWebTokenResponse(jsonWebTokenManager.createToken(jwtAttribute));

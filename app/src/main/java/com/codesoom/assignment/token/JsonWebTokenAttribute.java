@@ -2,6 +2,8 @@ package com.codesoom.assignment.token;
 
 import lombok.Builder;
 
+import java.util.Date;
+
 /**
  * JWT 생성시 필요한 속성 정의
  */
@@ -9,19 +11,20 @@ public class JsonWebTokenAttribute {
 
     private final String jwtId;
 
-    private final JsonWebTokenExpireMinute jwtExpireMinute;
+    private final JsonWebTokenExpireDate jwtExpireDate;
 
     @Builder
-    public JsonWebTokenAttribute(String jwtId, Integer expireMinute) {
+    public JsonWebTokenAttribute(String jwtId, Integer expireHour, Integer expireMinute, Integer expireSecound) {
         this.jwtId = jwtId;
-        this.jwtExpireMinute = new JsonWebTokenExpireMinute(expireMinute);
+
+        this.jwtExpireDate = new JsonWebTokenExpireDate(expireHour, expireMinute, expireSecound);
     }
 
     public String getJwtId() {
         return jwtId;
     }
 
-    public Integer getJwtExpireMinute() {
-        return jwtExpireMinute.getExpireMinute();
+    public Date getExpireDate() {
+        return jwtExpireDate.getJwtExpireDate();
     }
 }

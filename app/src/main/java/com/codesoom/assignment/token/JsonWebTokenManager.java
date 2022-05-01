@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ public class JsonWebTokenManager {
                 .signWith(key)
                 .setHeader(makeHeaders())
                 .setId(String.valueOf(attribute.getJwtId()))
-                .setExpiration(makeExpiration(attribute.getJwtExpireMinute()))
+                .setExpiration(attribute.getExpireDate())
                 .compact();
     }
 
@@ -52,24 +51,6 @@ public class JsonWebTokenManager {
         headers.put("typ", "JWT");
         headers.put("alg", SignatureAlgorithm.HS256);
         return headers;
-    }
-
-    /**
-     * JWT 만료 시간을 리턴합니다.
-     *
-     * @param expireMinute 만료할 시간 (분)
-     * @return 만료 시간
-     */
-    private Date makeExpiration(Integer expireMinute) {
-        if (expireMinute == null) {
-            return null;
-        }
-
-        long expiredMiliSecond = 1000 * 60L * expireMinute;
-
-        Date exp = new Date();
-        exp.setTime(exp.getTime() + expiredMiliSecond);
-        return exp;
     }
 
     /**
@@ -92,7 +73,7 @@ public class JsonWebTokenManager {
             throw new InvalidTokenException("JWT가 올바르게 구성되어 있지 않습니다.");
         } catch (IllegalArgumentException e) {
             throw new InvalidTokenException("부적절한 인수가 전달되었습니다.");
-        }  catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             throw new ExpiredTokenException("만료된 토큰입니다.");
         }
     }

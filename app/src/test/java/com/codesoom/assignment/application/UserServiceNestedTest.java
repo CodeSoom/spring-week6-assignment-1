@@ -3,6 +3,8 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserLoginFailException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @DisplayName("UserService 의")
@@ -22,14 +25,19 @@ public class UserServiceNestedTest {
     private UserRepository userRepository;
     @Autowired
     private JwtUtil jwtUtil;
+
     private final static String VALID_EMAIL = "validUser@google.com";
     private final static String VALID_PASSWORD = "12345678";
+    private final static String INVALID_PASSWORD = "123456789";
+
+    private final static String NOT_FOUND_EMAIL = "mr.notfound@google.com";
+    private final static String NOT_FOUND_PASSWORD = "mr.notfound@google.com";
+
     private User validUser;
 
     @Nested
     @DisplayName("login() 메서드는")
     class Describe_login_method {
-
         @Nested
         @DisplayName("유효한 회원정보를 받았을 때")
         class Context_with_valid_user {
@@ -46,6 +54,32 @@ public class UserServiceNestedTest {
                 Claims claims = jwtUtil.decode(token);
                 Long userId = claims.get("userId", Long.class);
                 assertThat(userId).isEqualTo(validUser.getId());
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 회원정보를 받았을 때")
+        class Context_with_not_found_user {
+            @Test
+            @DisplayName("UserNotFoundException 이 발생한다.")
+            void it_returns_user_not_found_exception() {
+                assertThatThrownBy(() -> userService.loginUser(NOT_FOUND_EMAIL, NOT_FOUND_PASSWORD))
+                        .isInstanceOf(UserNotFoundException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("일치하지 않는 비밀번호를 받았을 때")
+        class Context_with_wrong_password {
+            public Context_with_wrong_password() {
+                setUpValidUser();
+            }
+
+            @Test
+            @DisplayName("UserLoginFailException 을 던진다.")
+            void it_returns_jwt() {
+                assertThatThrownBy(() -> userService.loginUser(VALID_EMAIL, INVALID_PASSWORD))
+                        .isInstanceOf(UserLoginFailException.class);
             }
         }
     }

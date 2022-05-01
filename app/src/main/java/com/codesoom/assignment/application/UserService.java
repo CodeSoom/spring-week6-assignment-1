@@ -56,7 +56,7 @@ public class UserService {
 
     public User findUserByEmailAndPassword(final String email, final String password) {
         final User foundUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserEmailNotFoundException("찾을 수 없는 이메일 입니다."));
+                .orElseThrow(() -> new UserEmailNotFoundException(email + "은 찾을 수 없는 이메일 입니다."));
         
         boolean isAuthenticate = foundUser.authenticate(password);
 

@@ -4,7 +4,9 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.UserPasswordDoesNotMatchException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
+import com.codesoom.assignment.errors.UserEmailNotFoundException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
@@ -50,5 +52,17 @@ public class UserService {
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    public User findUserByEmailAndPassword(final String email, final String password) {
+        final User foundUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserEmailNotFoundException(email + "은 찾을 수 없는 이메일 입니다."));
+        
+        boolean isAuthenticate = foundUser.authenticate(password);
+
+        if(!isAuthenticate) {
+            throw new UserPasswordDoesNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+        return foundUser;
     }
 }

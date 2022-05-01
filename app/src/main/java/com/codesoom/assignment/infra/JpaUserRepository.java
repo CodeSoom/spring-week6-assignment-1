@@ -6,8 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface JpaUserRepository
-        extends UserRepository, CrudRepository<User, Long> {
+public interface JpaUserRepository extends UserRepository, CrudRepository<User, Long> {
     User save(User user);
 
     boolean existsByEmail(String email);

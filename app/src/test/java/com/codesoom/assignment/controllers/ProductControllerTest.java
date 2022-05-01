@@ -1,16 +1,24 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.FakeProductService;
+import com.codesoom.assignment.application.authentication.AuthenticationService;
+import com.codesoom.assignment.common.JwtUtil;
 import com.codesoom.assignment.controllers.product.ProductController;
 import com.codesoom.assignment.domain.product.Product;
 import com.codesoom.assignment.domain.product.ProductRepository;
 import com.codesoom.assignment.dto.product.CreateProductRequest;
 import com.codesoom.assignment.dto.product.SearchOneProductRequest;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.interceptor.AuthenticationInterceptor;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -20,23 +28,34 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
+@ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)
+@TestPropertySource("classpath:application.yml")
 class ProductControllerTest {
 
 
     private MockMvc mockMvc;
     private FakeProductService fakeProductService;
+    private JwtUtil jwtUtil;
+    private AuthenticationService authenticationService;
+
+
 
     @MockBean
     private ProductRepository repository;
 
+    @Value("${jwt.secret}")
+    private String secret;
 
     @BeforeEach
     public void setUp() {
         fakeProductService = new FakeProductService();
-        ProductController productController = new ProductController(fakeProductService);
+        jwtUtil = new JwtUtil(secret);
+        authenticationService = new AuthenticationService(jwtUtil);
+        ProductController productController = new ProductController(fakeProductService, authenticationService);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(productController)
+                .addInterceptors(new AuthenticationInterceptor(authenticationService))
                 .setControllerAdvice(ControllerErrorAdvice.class)
                 .build();
     }

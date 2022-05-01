@@ -11,15 +11,15 @@ public class PasswordValidator {
     }
 
     /**
-     * 비밀번호가 연속되는 n 개의 숫자를 포함한다면 예외를 던집니다.
+     * 비밀번호가 연속되는 숫자를 포함한다면 예외를 던집니다.
      *
      * @param password  비밀번호
-     * @param n 기준이 되는 연속되는 숫자 길이
+     * @param standardLength 기준이 되는 연속되는 숫자 길이
      *
-     * @throws InvalidPasswordException - 연속되는 숫자를 포함한 경우
+     * @throws InvalidPasswordException  연속되는 숫자를 포함한 경우
      *
      */
-    public static void isConsecutiveNumber(String password, int n) {
+    public static void isConsecutiveNumber(String password, int standardLength) {
 
         int consecutiveNumberCount = 0;
         char beforeCharacter = 0;
@@ -36,8 +36,10 @@ public class PasswordValidator {
                 consecutiveNumberCount = consecutiveNumberCount + 1;
             }
 
-            if(consecutiveNumberCount == n) {
-                throw new InvalidPasswordException(String.format("비밀번호가 연속되는 %d개의 숫자를 가지고 있습니다", n));
+            if(consecutiveNumberCount == standardLength) {
+                throw new InvalidPasswordException(
+                        String.format("비밀번호 %s는 연속되는 %d개의 숫자를 가지고 있습니다", password, standardLength)
+                );
             }
             beforeCharacter = character;
         }

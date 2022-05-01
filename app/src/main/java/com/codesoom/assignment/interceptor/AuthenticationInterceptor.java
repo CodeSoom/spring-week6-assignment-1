@@ -18,26 +18,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
             Exception {
-        if (filterWithPathAndMethod(request)) {
-            return true;
-        }
 
         return doAuthentication(request, response);
-    }
-
-    private boolean filterWithPathAndMethod(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        String method = request.getMethod();
-
-        if (path.equals("/products")) {
-            return true;
-        }
-
-        if (method.equals("GET")) {
-            return true;
-        }
-
-        return false;
     }
 
     private boolean doAuthentication(HttpServletRequest request,

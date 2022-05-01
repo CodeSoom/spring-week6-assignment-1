@@ -8,7 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Getter
-@Setter
 public class UserLoginData {
     @NotEmpty
     @Email

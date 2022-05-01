@@ -7,7 +7,6 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +23,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String method = request.getMethod();
 
-        if (method.equals(HttpMethod.POST.name()) ||
-                method.equals(HttpMethod.PATCH.name()) ||
-                method.equals(HttpMethod.DELETE.name())
-        ) {
+        if (shouldCheckAuthorization(method)) {
             String authorization = request.getHeader("Authorization");
 
             if (!hasText(authorization)) {
@@ -49,5 +45,11 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         }
 
         return HandlerInterceptor.super.preHandle(request, response, handler);
+    }
+
+    private boolean shouldCheckAuthorization(String method) {
+        return method.equals(HttpMethod.POST.name()) ||
+                method.equals(HttpMethod.PATCH.name()) ||
+                method.equals(HttpMethod.DELETE.name());
     }
 }

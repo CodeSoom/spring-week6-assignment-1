@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResult;
+import com.codesoom.assignment.errors.UserEmailNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -38,12 +40,16 @@ class SessionControllerTest {
         @Nested
         @DisplayName("유효한 email과 password가 들어있는 LoginData가 주어지면")
         class Context_when_valid_login_data {
+            private final LoginData loginData = LoginData.builder()
+                    .email("kimchi@naver.com")
+                    .password("12345678")
+                    .build();
 
             @BeforeEach
             void setUp() {
                 LoginResult loginResult = new LoginResult(TOKEN);
 
-                given(authService.login(any(LoginData.class)))
+                given(authService.login(loginData))
                         .willReturn(loginResult);
             }
 
@@ -58,7 +64,32 @@ class SessionControllerTest {
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.accessToken").value(TOKEN));
             }
+        }
 
+        @Nested
+        @DisplayName("존재하지 않는 이메일이 주어지면")
+        class Context_when_non_existed_email {
+            private final LoginData loginData = LoginData.builder()
+                    .email("nonexistedEmail@naver.com")
+                    .password("12345678")
+                    .build();
+
+            @BeforeEach
+            void setUp() {
+                given(authService.login(loginData))
+                        .willThrow(UserEmailNotFoundException.class);
+            }
+
+            @Test
+            @DisplayName("404 status를 응답한다.")
+            void it_responses_404_status() throws Exception {
+                mockMvc.perform(
+                                post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"email\": \"nonexistedEmail@naver.com\"," +
+                                                " \"password\": \"12345678\"}"))
+                        .andExpect(status().isBadRequest());
+            }
         }
     }
 

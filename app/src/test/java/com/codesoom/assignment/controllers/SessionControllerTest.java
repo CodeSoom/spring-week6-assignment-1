@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResult;
+import com.codesoom.assignment.errors.BadPasswordException;
 import com.codesoom.assignment.errors.UserEmailNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -88,9 +89,10 @@ class SessionControllerTest {
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"email\": \"nonexistedEmail@naver.com\"," +
                                                 " \"password\": \"12345678\"}"))
-                        .andExpect(status().isBadRequest());
+                        .andExpect(status().isNotFound());
             }
         }
+
     }
 
 }

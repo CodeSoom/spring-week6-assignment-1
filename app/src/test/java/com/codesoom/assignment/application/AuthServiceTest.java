@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResult;
+import com.codesoom.assignment.errors.BadPasswordException;
 import com.codesoom.assignment.errors.UserEmailNotFoundException;
 import com.codesoom.assignment.helper.AuthJwtHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +81,33 @@ class AuthServiceTest {
             void it_throws_authentication_exception() {
                 assertThatThrownBy(() -> authService.login(loginData))
                         .isInstanceOf(UserEmailNotFoundException.class);
+            }
+        }
+
+        @DataJpaTest
+        @Nested
+        @DisplayName("잘못된 password가 주어지면")
+        class Context_with_invalid_password {
+            private final LoginData loginData = LoginData.builder()
+                    .email("kimchi@naver.com")
+                    .password("12345678")
+                    .build();
+
+            @BeforeEach
+            void setUp() {
+                User user = User.builder()
+                        .email("kimchi@naver.com")
+                        .password("1234567")
+                        .build();
+
+                userRepository.save(user);
+            }
+
+            @Test
+            @DisplayName("BadPasswordException 예외를 던진다.")
+            void it_throws_bad_password_exception() {
+                assertThatThrownBy(() -> authService.login(loginData))
+                        .isInstanceOf(BadPasswordException.class);
             }
         }
     }

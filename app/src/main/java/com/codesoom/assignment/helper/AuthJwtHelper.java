@@ -1,5 +1,6 @@
 package com.codesoom.assignment.helper;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,5 +23,13 @@ public class AuthJwtHelper {
                 .signWith(key)
                 .claim("userId", userId)
                 .compact();
+    }
+
+    public Claims decode(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

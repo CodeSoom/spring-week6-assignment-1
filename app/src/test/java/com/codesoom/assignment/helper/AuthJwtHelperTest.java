@@ -34,17 +34,17 @@ class AuthJwtHelperTest {
         @Nested
         @DisplayName("유효한 토큰이 주어지면")
         class Context_with_invalid_token {
-            private String invalidToken;
+            private String validToken;
 
             @BeforeEach
             void setUp() {
-                invalidToken = authJwtHelper.encode(1L);
+                validToken = authJwtHelper.encode(1L);
             }
 
             @Test
             @DisplayName("userId를 담은 claims을 반환한다.")
             void it_returns_claims_containing_userId() {
-                Claims claims = authJwtHelper.decode(invalidToken);
+                Claims claims = authJwtHelper.decode(validToken);
 
                 assertThat(claims.get("userId", Long.class))
                         .isEqualTo(1L);

@@ -15,11 +15,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SessionController.class)
 class SessionControllerTest {
@@ -55,8 +54,8 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("인증 토큰이 담긴 LoginResult를 반환한다.")
-            void it_returns_login_result() throws Exception {
+            @DisplayName("인증 토큰이 담긴 LoginResult를 응답한다.")
+            void it_responses_login_result() throws Exception {
                 mockMvc.perform(
                                 post("/session")
                                         .contentType(MediaType.APPLICATION_JSON)

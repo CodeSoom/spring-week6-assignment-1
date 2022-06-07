@@ -77,7 +77,7 @@ class AuthServiceTest {
                     .build();
 
             @Test
-            @DisplayName("AuthenticationException 예외를 던진다.")
+            @DisplayName("UserEmailNotFoundException 예외를 던진다.")
             void it_throws_authentication_exception() {
                 assertThatThrownBy(() -> authService.login(loginData))
                         .isInstanceOf(UserEmailNotFoundException.class);

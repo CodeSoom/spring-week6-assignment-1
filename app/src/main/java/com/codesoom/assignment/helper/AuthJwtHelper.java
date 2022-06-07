@@ -3,6 +3,7 @@ package com.codesoom.assignment.helper;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,10 @@ public class AuthJwtHelper {
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new InvalidTokenException("토큰 기한이 만료되었습니다.", e);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidTokenException("토큰이 null 이거나 빈 토큰 입니다.", e);
+        } catch (JwtException e) {
+            throw new InvalidTokenException("유효하지 못한 토큰 입니다.", e);
         }
     }
 }

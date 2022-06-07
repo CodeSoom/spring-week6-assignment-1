@@ -93,6 +93,31 @@ class SessionControllerTest {
             }
         }
 
+        @Nested
+        @DisplayName("틀린 password가 주어지면")
+        class Context_when_bad_password {
+            private final LoginData loginData = LoginData.builder()
+                    .email("kimchi@naver.com")
+                    .password("12333434")
+                    .build();
+
+            @BeforeEach
+            void setUp() {
+                given(authService.login(loginData))
+                        .willThrow(BadPasswordException.class);
+            }
+
+            @Test
+            @DisplayName("400 status를 응답한다.")
+            void it_responses_404_status() throws Exception {
+                mockMvc.perform(
+                                post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"email\": \"kimchi@naver.com\"," +
+                                                " \"password\": \"12333434\"}"))
+                        .andExpect(status().isBadRequest());
+            }
+        }
     }
 
 }

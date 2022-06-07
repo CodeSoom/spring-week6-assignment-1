@@ -2,17 +2,24 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResult;
+import com.codesoom.assignment.helper.AuthJwtHelper;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthServiceTest {
 
-    private final AuthService authService = new AuthService();
+    private AuthService authService;
+
+    @BeforeEach
+    void setUp() {
+        String secret = "12345678901234567890123456789010";
+        AuthJwtHelper authJwtHelper = new AuthJwtHelper(secret);
+
+        authService = new AuthService(authJwtHelper);
+    }
 
     @Nested
     @DisplayName("login 메소드는")

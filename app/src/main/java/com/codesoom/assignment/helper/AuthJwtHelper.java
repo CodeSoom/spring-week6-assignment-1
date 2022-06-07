@@ -1,6 +1,8 @@
 package com.codesoom.assignment.helper;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Date;
 
 @Component
 public class AuthJwtHelper {
@@ -27,12 +30,24 @@ public class AuthJwtHelper {
                 .compact();
     }
 
+    public String encode(Long userId, Date expirationDate) {
+        return Jwts.builder()
+                .signWith(key)
+                .setExpiration(expirationDate)
+                .claim("userId", userId)
+                .compact();
+    }
+
     public Claims decode(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenException("토큰 기한이 만료되었습니다.", e);
+        }
     }
 }
 

@@ -39,6 +39,11 @@ public class AuthJwtHelper {
                 .compact();
     }
 
+    /***
+     *
+     * @return Claims - userId를 담고 있는 claim set 반환
+     * @throws InvalidTokenException 유효하지 않은 토큰이 주어졌을 때 발생하는 예외
+     */
     public Claims decode(String token) {
         try {
             return Jwts.parserBuilder()

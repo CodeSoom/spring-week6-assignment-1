@@ -75,5 +75,18 @@ class AuthJwtHelperTest {
                         .hasMessageContaining("토큰 기한이 만료되었습니다.");
             }
         }
+
+        @Nested
+        @DisplayName("빈 문자열의 토큰이 주여지면")
+        class Context_with_empty_token {
+
+            @Test
+            @DisplayName("InvalidTokenException 예외를 던진다.")
+            void it_throws_InvalidTokenException() {
+                assertThatThrownBy(() -> authJwtHelper.decode(""))
+                        .isInstanceOf(InvalidTokenException.class)
+                        .hasMessageContaining("토큰이 null 이거나 빈 토큰 입니다.");
+            }
+        }
     }
 }

@@ -25,10 +25,7 @@ public class AuthJwtHelper {
      * @return userId를 담은 jwt 인증 토큰을 문자열로 반환한다.
      */
     public String encode(Long userId) {
-        return Jwts.builder()
-                .signWith(key)
-                .claim("userId", userId)
-                .compact();
+        return encode(userId, null);
     }
 
     public String encode(Long userId, Date expirationDate) {

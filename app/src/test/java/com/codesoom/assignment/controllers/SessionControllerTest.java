@@ -3,8 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResult;
-import com.codesoom.assignment.errors.BadPasswordException;
-import com.codesoom.assignment.errors.UserEmailNotFoundException;
+import com.codesoom.assignment.errors.AuthenticationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -77,7 +76,7 @@ class SessionControllerTest {
             @BeforeEach
             void setUp() {
                 given(authService.login(loginData))
-                        .willThrow(UserEmailNotFoundException.class);
+                        .willThrow(AuthenticationException.class);
             }
 
             @Test
@@ -88,7 +87,7 @@ class SessionControllerTest {
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"email\": \"nonexistedEmail@naver.com\"," +
                                                 " \"password\": \"12345678\"}"))
-                        .andExpect(status().isNotFound());
+                        .andExpect(status().isBadRequest());
             }
         }
 
@@ -103,7 +102,7 @@ class SessionControllerTest {
             @BeforeEach
             void setUp() {
                 given(authService.login(loginData))
-                        .willThrow(BadPasswordException.class);
+                        .willThrow(AuthenticationException.class);
             }
 
             @Test

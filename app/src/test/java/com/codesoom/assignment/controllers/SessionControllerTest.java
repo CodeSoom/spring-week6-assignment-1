@@ -2,10 +2,13 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
+import com.codesoom.assignment.utils.JwtUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
@@ -16,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(SessionController.class)
 class SessionControllerTest {
+    private static String SECRET = "123456789012345678901234567890123456789012";
 
     @Autowired
     private MockMvc mockMvc;
@@ -23,10 +27,19 @@ class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
+    @BeforeEach
+    void setUp() {
+        JwtUtil jwtUtil = new JwtUtil(SECRET);
+        authenticationService = new AuthenticationService(jwtUtil);
+    }
+
     @Test
     void loginTest() throws Exception {
-        given(authenticationService.login()).willReturn(SessionResponseData.builder().accessToken(".").build());
-        mockMvc.perform(post("/session"))
+        given(authenticationService.login(1L)).willReturn(SessionResponseData.builder().accessToken(".").build());
+        mockMvc.perform(post("/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("1L")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString(".")));
     }

@@ -19,8 +19,8 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login() {
-        SessionResponseData sessionResponseData = authenticationService.login();
+    public SessionResponseData login(Long userId) {
+        SessionResponseData sessionResponseData = authenticationService.login(userId);
         return sessionResponseData;
     }
 }

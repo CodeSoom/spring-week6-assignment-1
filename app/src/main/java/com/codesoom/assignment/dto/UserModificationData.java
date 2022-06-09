@@ -11,8 +11,6 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserModificationData {
     @NotBlank
     @Mapping("name")

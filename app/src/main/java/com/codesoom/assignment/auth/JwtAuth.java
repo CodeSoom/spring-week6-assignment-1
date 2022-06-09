@@ -20,6 +20,10 @@ public class JwtAuth implements ClaimTokenAuth<Claims> {
 
     @Override
     public Claims decode(String token) {
-        return null;
+        return Jwts.parserBuilder()
+                .setSigningKey(key.hashed())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

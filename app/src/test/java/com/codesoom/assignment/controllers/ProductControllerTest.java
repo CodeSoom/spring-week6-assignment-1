@@ -21,6 +21,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.DecodingInValidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 
 @WebMvcTest(ProductController.class)
@@ -74,6 +75,9 @@ class ProductControllerTest {
 
 		given(authenticationService.decode(VALID_TOKEN))
 			.willReturn(1L);
+
+		given(authenticationService.decode(INVALID_TOKEN))
+			.willThrow(DecodingInValidTokenException.class);
 	}
 
 	@Test
@@ -91,13 +95,23 @@ class ProductControllerTest {
 		mockMvc.perform(
 				get("/products/1")
 					.accept(MediaType.APPLICATION_JSON_UTF8)
-					.header("Authorization", "VALID_TOKEN")
+					.header("Authorization", VALID_TOKEN)
 
 			)
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("쥐돌이")));
 	}
 
+	@Test
+	void detailWithInValidToken() throws Exception {
+		mockMvc.perform(
+				get("/products/1")
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.header("Authorization", INVALID_TOKEN)
+
+			)
+			.andExpect(status().isBadRequest());
+	}
 	@Test
 	void detailWithExsitedProduct() throws Exception {
 		mockMvc.perform(

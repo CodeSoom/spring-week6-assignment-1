@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.codesoom.assignment.errors.DecodingInValidTokenException;
 
-public class JwtUtilTest {
+class JwtUtilTest {
 	private static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 	private static String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw1";
 	private static String SECRET = "12345678901234567890123456789010";
@@ -30,7 +30,7 @@ public class JwtUtilTest {
 
 	@Test
 	void decodeWithInValidToken() {
-		assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN).get("userId", Long.class))
+		assertThatThrownBy(() -> jwtUtil.decode(INVALID_TOKEN))
 			.isInstanceOf(DecodingInValidTokenException.class);
 	}
 }

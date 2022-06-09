@@ -6,6 +6,7 @@ import com.codesoom.assignment.dto.Authentication;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResult;
 import com.codesoom.assignment.errors.AuthenticationException;
+import com.codesoom.assignment.errors.VerificationException;
 import com.codesoom.assignment.helper.AuthJwtHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,11 +30,10 @@ class AuthServiceTest {
 
     private static final String secret = "12345678901234567890123456789010";
 
+    private final AuthJwtHelper authJwtHelper = new AuthJwtHelper(secret);
 
     @BeforeEach
     void setUp() {
-        AuthJwtHelper authJwtHelper = new AuthJwtHelper(secret);
-
         authService = new AuthService(authJwtHelper, userRepository);
     }
 
@@ -144,11 +146,52 @@ class AuthServiceTest {
             }
 
             @Test
-            @DisplayName("authentication를 반환함")
+            @DisplayName("Authentication 객체를 반환한다.")
             void it_returns_authentication() {
                 Authentication authentication = authService.verify(token);
 
                 assertThat(authentication.getId()).isEqualTo(savedUserId);
+            }
+
+        }
+
+        @DataJpaTest
+        @Nested
+        @DisplayName("유효하지 못한 토큰이 주어지면")
+        class Context_with_invalid_token {
+            private String invalidToken;
+
+            @BeforeEach
+            void setUp() {
+                Date date = new Date(System.currentTimeMillis() - 1);
+                invalidToken = authJwtHelper.encode(1L, date);
+            }
+
+            @Test
+            @DisplayName("VerificationException 예외를 던진다.")
+            void it_returns_authentication() {
+                assertThatThrownBy(() -> authService.verify(invalidToken))
+                        .isInstanceOf(VerificationException.class);
+            }
+
+        }
+
+        @DataJpaTest
+        @Nested
+        @DisplayName("존재 하지 않는 유저가 아이디가 들어있는 토큰이 주어지면")
+        class Context_with_token_containing_not_existed_user_id {
+            private String token;
+
+            @BeforeEach
+            void setUp() {
+                token = authJwtHelper.encode(100L);
+            }
+
+            @Test
+            @DisplayName("VerificationException 예외를 던진다.")
+            void it_returns_authentication() {
+                assertThatThrownBy(() -> authService.verify(token))
+                        .isInstanceOf(VerificationException.class);
             }
 
         }

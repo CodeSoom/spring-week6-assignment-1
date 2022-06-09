@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.Authentication;
 import com.codesoom.assignment.dto.LoginData;
 import com.codesoom.assignment.dto.LoginResult;
 import com.codesoom.assignment.errors.AuthenticationException;
@@ -109,6 +110,49 @@ class AuthServiceTest {
                         .isInstanceOf(AuthenticationException.class);
             }
         }
+    }
+
+    @Nested
+    @DisplayName("verify 메소드는")
+    class Describe_verify {
+
+        @DataJpaTest
+        @Nested
+        @DisplayName("유효한 토큰이 주어지면")
+        class Context_with_valid_token {
+            private String token;
+            private Long savedUserId;
+
+            @BeforeEach
+            void setUp() {
+                User user = User.builder()
+                        .email("kimchi@naver.com")
+                        .password("1234567")
+                        .build();
+
+                User savedUser = userRepository.save(user);
+                savedUserId = savedUser.getId();
+
+                final LoginData loginData = LoginData.builder()
+                        .email("kimchi@naver.com")
+                        .password("1234567")
+                        .build();
+
+                LoginResult loginResult = authService.login(loginData);
+
+                token = loginResult.getAccessToken();
+            }
+
+            @Test
+            @DisplayName("authentication를 반환함")
+            void it_returns_authentication() {
+                Authentication authentication = authService.verify(token);
+
+                assertThat(authentication.getId()).isEqualTo(savedUserId);
+            }
+
+        }
+
     }
 
 }

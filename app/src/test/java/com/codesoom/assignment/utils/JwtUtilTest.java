@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import com.codesoom.assignment.errors.DecodingInValidTokenException;
 
 public class JwtUtilTest {
-	private static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.TysUfytUgm0Kc6zzhOwJPDes3U48wtv9S3qSwnKkkvo";
-	private static String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.TysUfytUgm0Kc6zzhOwJPDes3U48wtv9S3qSwnKkkvo1";
-	private static String SECRET = "12345678912345678912345678900012";
+	private static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+	private static String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw1";
+	private static String SECRET = "12345678901234567890123456789010";
 	private JwtUtil jwtUtil;
 
 	@BeforeEach

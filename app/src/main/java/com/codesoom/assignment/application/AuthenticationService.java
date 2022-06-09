@@ -3,7 +3,6 @@ package com.codesoom.assignment.application;
 import org.springframework.stereotype.Service;
 
 import com.codesoom.assignment.dto.SessionResponseData;
-import com.codesoom.assignment.errors.DecodingInValidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 
 @Service
@@ -22,10 +21,6 @@ public class AuthenticationService {
 	}
 
 	public Long decode(String token) {
-		try {
-			return jwtUtil.decode(token).get("userId", Long.class);
-		} catch (Exception e) {
-			throw new DecodingInValidTokenException(token);
-		}
+		return jwtUtil.decode(token).get("userId", Long.class);
 	}
 }

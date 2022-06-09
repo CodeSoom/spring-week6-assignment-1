@@ -9,7 +9,9 @@ import com.codesoom.assignment.errors.DecodingInValidTokenException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 
 @Component
 public class JwtUtil {
@@ -26,7 +28,7 @@ public class JwtUtil {
 	public Claims decode(String token) {
 		try {
 			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-		} catch (Exception e) {
+		} catch (SecurityException e) {
 			throw new DecodingInValidTokenException(token);
 		}
 	}

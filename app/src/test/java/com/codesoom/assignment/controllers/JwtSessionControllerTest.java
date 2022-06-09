@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 
-import com.codesoom.assignment.application.AuthService;
+import com.codesoom.assignment.application.TokenAuthService;
 import com.codesoom.assignment.dto.LoginRequestData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ class JwtSessionControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private AuthService authService;
+    private TokenAuthService authService;
 
     private final String EMAIL = "test@gmail.com";
     private final String PASSWORD = "test0012300";

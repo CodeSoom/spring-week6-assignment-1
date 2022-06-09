@@ -1,6 +1,5 @@
 package com.codesoom.assignment.application;
 
-
-public interface AuthService {
+public interface TokenAuthService {
     String login(String email, String password);
 }

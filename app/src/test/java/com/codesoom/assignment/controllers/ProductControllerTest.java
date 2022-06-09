@@ -1,9 +1,11 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.errors.VerificationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,6 +23,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -38,12 +42,20 @@ class ProductControllerTest {
     @MockBean
     private ProductService productService;
 
+    @MockBean
+    private AuthService authService;
+
     private final Product product = Product.builder()
             .id(1L)
             .name("쥐돌이")
             .maker("냥이월드")
             .price(5000)
             .build();
+
+    @BeforeEach
+    void setUp() {
+        reset(authService);
+    }
 
     @Nested
     @DisplayName("GET /products 요청은")
@@ -129,6 +141,7 @@ class ProductControllerTest {
             void it_responses_created_product() throws Exception {
                 mockMvc.perform(
                                 post("/products")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                                         .accept(MediaType.APPLICATION_JSON_UTF8)
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
@@ -138,6 +151,7 @@ class ProductControllerTest {
                         .andExpect(content().string(containsString("쥐돌이")));
 
                 verify(productService).createProduct(any(ProductData.class));
+                verify(authService).verify(VALID_TOKEN);
             }
         }
 
@@ -156,15 +170,44 @@ class ProductControllerTest {
             void it_responses_400_status() throws Exception {
                 mockMvc.perform(
                                 post("/products")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                                         .accept(MediaType.APPLICATION_JSON_UTF8)
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                                 "\"price\":0}")
                         )
                         .andExpect(status().isBadRequest());
+
+                verify(authService).verify(VALID_TOKEN);
             }
         }
 
+        @Nested
+        @DisplayName("유효하지 않은 인증 토큰이 주어지면")
+        class Context_with_invalid_authorization_token {
+
+            @BeforeEach
+            void setUp() {
+                given(authService.verify(INVALID_TOKEN))
+                        .willThrow(VerificationException.class);
+            }
+
+            @Test
+            @DisplayName("401 status를 응답한다.")
+            void it_responses_401_status() throws Exception {
+                mockMvc.perform(
+                                post("/products")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + INVALID_TOKEN)
+                                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                                "\"price\":5000}")
+                        )
+                        .andExpect(status().isUnauthorized());
+
+                verify(authService).verify(INVALID_TOKEN);
+            }
+        }
     }
 
     @Nested
@@ -195,6 +238,7 @@ class ProductControllerTest {
             void it_responses_updated_product() throws Exception {
                 mockMvc.perform(
                                 patch("/products/1")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                                         .accept(MediaType.APPLICATION_JSON_UTF8)
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
@@ -204,6 +248,7 @@ class ProductControllerTest {
                         .andExpect(content().string(containsString("쥐순이")));
 
                 verify(productService).updateProduct(eq(1L), any(ProductData.class));
+                verify(authService).verify(VALID_TOKEN);
             }
         }
 
@@ -222,6 +267,7 @@ class ProductControllerTest {
             void it_returns_404_status() throws Exception {
                 mockMvc.perform(
                                 patch("/products/1000")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                                 "\"price\":5000}")
@@ -229,6 +275,7 @@ class ProductControllerTest {
                         .andExpect(status().isNotFound());
 
                 verify(productService).updateProduct(eq(1000L), any(ProductData.class));
+                verify(authService).verify(VALID_TOKEN);
             }
         }
 
@@ -241,12 +288,41 @@ class ProductControllerTest {
             void it_responses_400_status() throws Exception {
                 mockMvc.perform(
                                 patch("/products/1")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                                         .accept(MediaType.APPLICATION_JSON_UTF8)
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                                 "\"price\":0}")
                         )
                         .andExpect(status().isBadRequest());
+
+                verify(authService).verify(VALID_TOKEN);
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 인증 토큰이 주어지면")
+        class Context_with_invalid_authorization_token {
+
+            @BeforeEach
+            void setUp() {
+                given(authService.verify(INVALID_TOKEN))
+                        .willThrow(VerificationException.class);
+            }
+
+            @Test
+            @DisplayName("401 status를 응답한다.")
+            void it_responses_401_status() throws Exception {
+                mockMvc.perform(
+                                patch("/products/1000")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + INVALID_TOKEN)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                                "\"price\":5000}")
+                        )
+                        .andExpect(status().isUnauthorized());
+
+                verify(authService).verify(INVALID_TOKEN);
             }
         }
     }
@@ -260,14 +336,16 @@ class ProductControllerTest {
         class Context_with_existed_product {
 
             @Test
-            @DisplayName("400 status 응답한다.")
-            void it_responses_product() throws Exception {
+            @DisplayName("204 상태코드를 응답한다.")
+            void it_responses_204_status() throws Exception {
                 mockMvc.perform(
                                 delete("/products/1")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                         )
                         .andExpect(status().isNoContent());
 
                 verify(productService).deleteProduct(1L);
+                verify(authService).verify(VALID_TOKEN);
             }
         }
 
@@ -286,11 +364,37 @@ class ProductControllerTest {
             void it_returns_404_status() throws Exception {
                 mockMvc.perform(
                                 delete("/products/1000")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                         )
                         .andExpect(status().isNotFound());
 
                 verify(productService).deleteProduct(1000L);
+                verify(authService).verify(VALID_TOKEN);
             }
         }
     }
+
+    @Nested
+    @DisplayName("유효하지 않은 인증 토큰이 주어지면")
+    class Context_with_invalid_authorization_token {
+
+        @BeforeEach
+        void setUp() {
+            given(authService.verify(INVALID_TOKEN))
+                    .willThrow(VerificationException.class);
+        }
+
+        @Test
+        @DisplayName("201 상태코드를 응답한다.")
+        void it_responses_201_status() throws Exception {
+            mockMvc.perform(
+                            delete("/products/1")
+                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + INVALID_TOKEN)
+                    )
+                    .andExpect(status().isUnauthorized());
+
+            verify(authService).verify(INVALID_TOKEN);
+        }
+    }
+
 }

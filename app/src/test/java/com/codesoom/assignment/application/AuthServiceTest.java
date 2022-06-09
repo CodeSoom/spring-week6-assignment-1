@@ -86,8 +86,8 @@ class AuthServiceTest {
 
         @DataJpaTest
         @Nested
-        @DisplayName("잘못된 password가 주어지면")
-        class Context_with_invalid_password {
+        @DisplayName("일치하지 않는 password가 주어지면")
+        class Context_with_mismatched_password {
             private final LoginData loginData = LoginData.builder()
                     .email("kimchi@naver.com")
                     .password("12345678")
@@ -152,7 +152,5 @@ class AuthServiceTest {
             }
 
         }
-
     }
-
 }

@@ -1,17 +1,23 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.domain.Product;
+import com.codesoom.assignment.errors.ProductNotFoundException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JwtUtilTest {
     private static final String SECRET = "12345678901234567890123456789010";
-    private static final String TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+            "eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGe";
 
     private JwtUtil jwtUtil;
     private String token;
@@ -36,7 +42,7 @@ class JwtUtilTest {
             @Test
             @DisplayName("인코딩된 userId 문자열을 반환한다")
             void It_returns_encoded_userId_string() {
-                assertThat(token).isEqualTo(TOKEN);
+                assertThat(token).isEqualTo(VALID_TOKEN);
             }
         }
     }
@@ -45,17 +51,35 @@ class JwtUtilTest {
     @DisplayName("decode 메서드는")
     class Describe_decode_method {
         @Nested
-        @DisplayName("토큰이 주어졌을 경우")
-        class Context_if_token_given {
+        @DisplayName("유효한 토큰이 주어졌을 경우")
+        class Context_if_valid_token_given {
             @BeforeEach
             void setUp() {
-                claims = jwtUtil.decode(TOKEN);
+                claims = jwtUtil.decode(VALID_TOKEN);
             }
 
             @Test
             @DisplayName("디코딩된 토큰의 Claims를 반환한다")
             void It_returns_decoded_token_claims() {
                 assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 토큰이 주어졌을 경우")
+        class Context_if_invalid_token_given {
+            @Nested
+            @DisplayName("SignatureException 예외를 던진다")
+            class It_throws_signatureException {
+                Claims claims() {
+                    return jwtUtil.decode(INVALID_TOKEN);
+                }
+
+                @Test
+                void test() {
+                    assertThatThrownBy(() -> claims())
+                            .isInstanceOf(SignatureException.class);
+                }
             }
         }
     }

@@ -2,7 +2,9 @@ package com.codesoom.assignment.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JwtAuth implements ClaimTokenAuth<Claims> {
     private final SecretKey key;
 

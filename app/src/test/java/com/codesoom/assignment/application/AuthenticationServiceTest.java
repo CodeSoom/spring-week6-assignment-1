@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.UserAuthenticationFailException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,12 @@ class AuthenticationServiceTest {
 
     private AuthenticationService authenticationService;
     private final UserRepository userRepository = mock(UserRepository.class);
+
+    private final Long PARSED_USER_ID = 1L;
+    private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm" +
+            "lhdCI6MTY1NDg0MTM1NiwiZXhwIjoxNjU0OTI3NzU2fQ.qU12boCobw3ltksPjBcMXxE_0Lf7eSQUWJ0PwAn-z5I";
+    private final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIml" +
+            "hdCI6MTY1NDc1NzIxNSwiZXhwIjoxNjU0NzYwODE1fQ.NI_o2dC-go7A_IEJ34LOZPw5Ohg_KcVa48UUHDsKUpl";
 
     private final String EMAIL = "email@example.co";
     private final String PASSWORD = "password";
@@ -116,6 +123,35 @@ class AuthenticationServiceTest {
             void it_throws_user_authentication_fail_exception() {
                 assertThrows(UserAuthenticationFailException.class,
                         () -> authenticationService.login(wrongPasswordUserLoginData));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("parseToken")
+    class Describe_parseToken {
+
+        @Nested
+        @DisplayName("유효한 토큰이 주어지면")
+        class Context_with_valid_token {
+
+            @DisplayName("파싱한 값을 리턴한다.")
+            @Test
+            void it_returns_parsed_value() {
+                final Long userId = authenticationService.parseToken(VALID_TOKEN);
+                assertThat(userId).isEqualTo(PARSED_USER_ID);
+            }
+
+            @Nested
+            @DisplayName("유효하지 않은 토큰이 주어지면")
+            class Context_with_invalid_token {
+
+                @DisplayName("InvalidTokenException을 던진다.")
+                @Test
+                void it_throws_invalid_token_exception() {
+                    assertThrows(InvalidTokenException.class,
+                            () -> authenticationService.parseToken(INVALID_TOKEN));
+                }
             }
         }
     }

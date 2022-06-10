@@ -40,6 +40,17 @@ public class AuthenticationService {
         return jwtUtil.encode(user.getId());
     }
 
+    /**
+     * 주어진 액세스 토큰을 파싱한 값을 리턴한다.
+     *
+     * @param accessToken - 액세스 토큰
+     * @return 파싱한 값
+     */
+    public Long parseToken(String accessToken) {
+        return jwtUtil.decode(accessToken)
+                .get("userId", Long.class);
+    }
+
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserAuthenticationFailException("잘못된 이메일 주소입니다."));

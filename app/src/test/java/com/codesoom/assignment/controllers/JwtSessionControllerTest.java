@@ -5,6 +5,7 @@ import com.codesoom.assignment.application.JwtAuthService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestData;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,15 +39,13 @@ class JwtSessionControllerTest {
     private UserService userService;
 
     private final String EMAIL = "test@gmail.com";
+    private final String EMAIL_NOT_EXISTING = "notfound@gmail.com";
     private final String PASSWORD = "test0012300";
     private final Long USER_ID = 1L;
     private final String JWT =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIn0.aqbG22EmNECI69ctM6Jsas4SWOxalVlcgF05iujelq4";
 
-    private final LoginRequestData requestData = LoginRequestData.builder()
-            .email(EMAIL)
-            .password(PASSWORD)
-            .build();
+    private LoginRequestData requestData;
 
     @Nested
     @DisplayName("login 메소드는")
@@ -64,6 +63,11 @@ class JwtSessionControllerTest {
                         .email(EMAIL)
                         .password(PASSWORD)
                         .build();
+                requestData = LoginRequestData.builder()
+                        .email(EMAIL)
+                        .password(PASSWORD)
+                        .build();
+
                 given(userService.findBy(EMAIL)).willReturn(user);
                 given(authService.login(user)).willReturn(JWT);
             }
@@ -84,6 +88,31 @@ class JwtSessionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonFrom(requestData)))
                         .andExpect(jsonPath("$.accessToken").value(JWT));
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 사용자 이메일을 전달 받으면")
+        class Context_with_not_existing_email {
+
+            @BeforeEach
+            void setUp() {
+                requestData = LoginRequestData.builder()
+                        .email(EMAIL_NOT_EXISTING)
+                        .password(PASSWORD)
+                        .build();
+
+                given(userService.findBy(EMAIL_NOT_EXISTING))
+                        .willThrow(new UserNotFoundException(EMAIL_NOT_EXISTING));
+            }
+
+            @Test
+            @DisplayName("HTTP Status Code 404로 응답한다.")
+            void it_responses_404_not_found() throws Exception {
+                mockMvc.perform(post("/session")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonFrom(requestData)))
+                        .andExpect(status().isNotFound());
             }
         }
     }

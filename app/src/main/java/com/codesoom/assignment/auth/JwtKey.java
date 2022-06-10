@@ -12,7 +12,7 @@ public class JwtKey implements SecretKey{
         this.secretString = secretString;
     }
     @Override
-    public Key hashed() {
+    public Key keyEncrypted() {
         return Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
     }
 }

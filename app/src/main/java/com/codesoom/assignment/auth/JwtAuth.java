@@ -13,7 +13,7 @@ public class JwtAuth implements ClaimTokenAuth<Claims> {
     @Override
     public String encode(Long id) {
         return Jwts.builder()
-                .signWith(key.hashed())
+                .signWith(key.keyEncrypted())
                 .claim("userId", id)
                 .compact();
     }
@@ -21,7 +21,7 @@ public class JwtAuth implements ClaimTokenAuth<Claims> {
     @Override
     public Claims decode(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key.hashed())
+                .setSigningKey(key.keyEncrypted())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

@@ -11,10 +11,10 @@ import java.security.Key;
  */
 public interface SecretKey {
     /**
-     * 해쉬 알고리즘이 적용된 비밀키를 반환한다
+     * 암호화 알고리즘이 적용된 비밀키를 반환한다
      * <p>
-     * @return Key 타입의 해쉬화된 비밀키
+     * @return Key 타입의 암호화된 비밀키
      * </p>
      */
-    Key hashed();
+    Key keyEncrypted();
 }

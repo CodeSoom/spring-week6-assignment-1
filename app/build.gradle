@@ -30,6 +30,14 @@ repositories {
     jcenter()
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '7.0'
+}
+
+task prepareKotlinBuildScriptModel {
+
+}
+
 dependencies {
     // Use JUnit Jupiter API for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'

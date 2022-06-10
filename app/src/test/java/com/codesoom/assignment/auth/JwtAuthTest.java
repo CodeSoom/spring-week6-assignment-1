@@ -21,7 +21,7 @@ class JwtAuthTest {
 
         @Test
         @DisplayName(".을 포함한 문자열을 반환한다")
-        void it_returns_string_which_contains_punctuation() {
+        void it_returns_string_containing_punctuation() {
             String token = auth.encode(USER_ID);
 
             assertThat(token).contains(".");
@@ -33,19 +33,19 @@ class JwtAuthTest {
     class Describe_decode {
 
         @Nested
-        @DisplayName("유효한 토큰을 전달 받으면")
-        class Context_with_valid_token {
-            private String validToken;
+        @DisplayName("토큰을 전달 받으면")
+        class Context_with_token {
+            private String token;
 
             @BeforeEach
             void setUp() {
-                validToken = auth.encode(USER_ID);
+                token = auth.encode(USER_ID);
             }
 
             @Test
             @DisplayName("userId가 포함된 Claims 타입을 반환한다.")
             void it_returns_claims_containing_userId() {
-                Claims claims = auth.decode(validToken);
+                Claims claims = auth.decode(token);
 
                 assertThat(claims.get("userId")).isEqualTo(USER_ID.intValue());
             }

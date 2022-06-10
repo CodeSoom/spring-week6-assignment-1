@@ -13,8 +13,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
-    private static final String TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final Long EXISTING_ID = 1L;
+    private static final Long NON_EXISTING_ID = 100L;
 
     private AuthenticationService authenticationService;
 
@@ -31,15 +35,21 @@ class AuthenticationServiceTest {
     @Nested
     @DisplayName("login 메서드는")
     class Describe_login_method {
-        @BeforeEach
-        void setUp() {
-            token = authenticationService.login();
-        }
+        @Nested
+        @DisplayName("존재하는 id가 주어졌을 경우")
+        class Context_if_existing_id_given {
+            @Nested
+            @DisplayName("유효한 토큰을 반환한다")
+            class It_returns_valid_tokeng {
+                String token() {
+                    return authenticationService.login(EXISTING_ID);
+                }
 
-        @Test
-        @DisplayName("토큰을 반환한다")
-        void It_returns_encoded_userId_string() {
-            assertThat(token).isEqualTo(TOKEN);
+                @Test
+                void test() {
+                    assertThat(token()).isEqualTo(VALID_TOKEN);
+                }
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import com.codesoom.assignment.application.JwtAuthService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestData;
+import com.codesoom.assignment.errors.PasswordNotEqualException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,6 +117,33 @@ class JwtSessionControllerTest {
                         .andExpect(status().isNotFound());
             }
         }
+
+
+        @Nested
+        @DisplayName("동일하지 않은 비밀번호를 전달 받는다면")
+        class Context_without_equal_password {
+            @BeforeEach
+            void setUp() {
+                requestData = LoginRequestData.builder()
+                        .email(EMAIL)
+                        .password(PASSWORD_NOT_EQUAL)
+                        .build();
+
+                given(authService.login(requestData.getEmail(), requestData.getPassword()))
+                        .willThrow(new PasswordNotEqualException());
+
+            }
+
+            @Test
+            @DisplayName("HTTP Status Code 400으로 응답한다.")
+            void it_responses_400_bad_request() throws Exception {
+                mockMvc.perform(post("/session")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonFrom(requestData)))
+                        .andExpect(status().isBadRequest());
+            }
+        }
+
     }
 
     private String jsonFrom(LoginRequestData requestData) throws JsonProcessingException {

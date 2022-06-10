@@ -23,6 +23,7 @@ class AuthenticationServiceTest {
     private static final Long NON_EXISTING_ID = 100L;
 
     private AuthenticationService authenticationService;
+    private UserService userService;
 
     private JwtUtil jwtUtil;
     private String token;
@@ -31,7 +32,7 @@ class AuthenticationServiceTest {
     void setUp() {
         jwtUtil = new JwtUtil(SECRET);
 
-        authenticationService = new AuthenticationService(jwtUtil);
+        authenticationService = new AuthenticationService(jwtUtil, userService);
     }
 
     @Nested

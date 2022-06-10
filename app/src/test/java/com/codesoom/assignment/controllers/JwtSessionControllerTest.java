@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 
 import com.codesoom.assignment.application.TokenAuthService;
+import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,7 @@ class JwtSessionControllerTest {
 
     private final String EMAIL = "test@gmail.com";
     private final String PASSWORD = "test0012300";
+    private final Long USER_ID = 1L;
     private final String JWT =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIn0.aqbG22EmNECI69ctM6Jsas4SWOxalVlcgF05iujelq4";
 
@@ -46,6 +48,7 @@ class JwtSessionControllerTest {
     @Nested
     @DisplayName("login 메소드는")
     class Describe_login {
+        private User user;
 
         @Nested
         @DisplayName("유효한 인증정보를 전달받으면")
@@ -53,7 +56,12 @@ class JwtSessionControllerTest {
 
             @BeforeEach
             void setUp() {
-                given(authService.login(requestData.getEmail(), requestData.getPassword())).willReturn(JWT);
+                user = User.builder()
+                        .id(USER_ID)
+                        .email(EMAIL)
+                        .password(PASSWORD)
+                        .build();
+                given(authService.login(user)).willReturn(JWT);
             }
 
             @Test

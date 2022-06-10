@@ -16,6 +16,9 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * SessionController에 대한 테스트 클래스
+ */
 @WebMvcTest(SessionController.class)
 class SessionControllerTest {
     @Autowired

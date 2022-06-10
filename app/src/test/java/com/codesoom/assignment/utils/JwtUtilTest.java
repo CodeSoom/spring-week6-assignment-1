@@ -1,7 +1,5 @@
 package com.codesoom.assignment.utils;
 
-import com.codesoom.assignment.domain.Product;
-import com.codesoom.assignment.errors.ProductNotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * JwtUtil에 대한 테스트 클래스
+ */
 class JwtUtilTest {
     private static final String SECRET = "12345678901234567890123456789010";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +

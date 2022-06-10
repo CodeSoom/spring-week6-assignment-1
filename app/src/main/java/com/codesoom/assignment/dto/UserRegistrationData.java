@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+/**
+ * User 생성에 사용하는 DTO 클래스
+ */
 @Getter
 @Builder
 @NoArgsConstructor

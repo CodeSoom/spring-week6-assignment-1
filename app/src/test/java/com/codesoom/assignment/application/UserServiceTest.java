@@ -22,6 +22,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+/**
+ * UserService에 대한 테스트 클래스
+ */
 class UserServiceTest {
     private static final Long ID = 1L;
     private static final Long NON_EXISTING_ID = 1000L;

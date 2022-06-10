@@ -6,6 +6,9 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Product 정보 생성과 수정에 사용하는 DTO 클래스
+ */
 @Setter
 @Getter
 @Builder

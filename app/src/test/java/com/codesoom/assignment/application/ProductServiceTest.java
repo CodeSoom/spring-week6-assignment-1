@@ -20,6 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+/**
+ * ProductService에 대한 테스트 클래스
+ */
 class ProductServiceTest {
     private static final Long ID = 1L;
     private static final Long NON_EXISTING_ID = 1000L;

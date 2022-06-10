@@ -27,6 +27,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+/**
+ * UserController에 대한 테스트 클래스
+ */
 @WebMvcTest(UserController.class)
 class UserControllerTest {
     private static final Long ID = 1L;

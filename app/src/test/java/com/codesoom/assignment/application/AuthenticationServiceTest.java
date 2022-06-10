@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * AuthenticationService에 대한 테스트 클래스
+ */
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
     private static final String TOKEN = "eyJhbGciOiJIUzI1NiJ9." +

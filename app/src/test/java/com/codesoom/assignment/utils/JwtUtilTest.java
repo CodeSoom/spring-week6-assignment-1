@@ -56,8 +56,7 @@ class JwtUtilTest {
     @DisplayName("decode 메서드에 유효하지 않은 토큰이 주어지면 예외를 던진다.")
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {"", "  "})
-    @CsvSource(INVALID_TOKEN)
+    @ValueSource(strings = {"", "  ", INVALID_TOKEN})
     void decodeWithInvalidToken(String token) {
         assertThrows(InvalidTokenException.class, () -> jwtUtil.decode(token));
     }

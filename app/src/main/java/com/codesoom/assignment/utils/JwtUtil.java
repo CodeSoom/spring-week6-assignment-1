@@ -29,7 +29,7 @@ public class JwtUtil {
 		try {
 			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 		} catch (SecurityException e) {
-			throw new DecodingInValidTokenException(token);
+			throw new DecodingInValidTokenException(token); // when decode invalid token
 		}
 	}
 }

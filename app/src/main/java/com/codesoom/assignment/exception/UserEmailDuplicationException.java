@@ -1,4 +1,4 @@
-package com.codesoom.assignment.errors;
+package com.codesoom.assignment.exception;
 
 public class UserEmailDuplicationException extends RuntimeException {
     public UserEmailDuplicationException(String email) {

@@ -41,6 +41,7 @@ class JwtSessionControllerTest {
     private final String EMAIL = "test@gmail.com";
     private final String EMAIL_NOT_EXISTING = "notfound@gmail.com";
     private final String PASSWORD = "test0012300";
+    private final String PASSWORD_NOT_EQUAL = "no0012300";
     private final Long USER_ID = 1L;
     private final String JWT =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIn0.aqbG22EmNECI69ctM6Jsas4SWOxalVlcgF05iujelq4";
@@ -53,7 +54,7 @@ class JwtSessionControllerTest {
         private User user;
 
         @Nested
-        @DisplayName("유효한 인증정보를 전달받으면")
+        @DisplayName("동일한 비밀번호와 존재하는 이메일이 담긴 사용자 정보를 전달받으면")
         class Context_when_valid_auth_data {
 
             @BeforeEach
@@ -69,7 +70,7 @@ class JwtSessionControllerTest {
                         .build();
 
                 given(userService.findBy(EMAIL)).willReturn(user);
-                given(authService.login(user)).willReturn(JWT);
+                given(authService.login(requestData.getEmail(), requestData.getPassword())).willReturn(JWT);
             }
 
             @Test
@@ -102,7 +103,7 @@ class JwtSessionControllerTest {
                         .password(PASSWORD)
                         .build();
 
-                given(userService.findBy(EMAIL_NOT_EXISTING))
+                given(authService.login(requestData.getEmail(), requestData.getPassword()))
                         .willThrow(new UserNotFoundException(EMAIL_NOT_EXISTING));
             }
 

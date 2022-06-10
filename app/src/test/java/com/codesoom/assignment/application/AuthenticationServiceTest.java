@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * AuthenticationService에 대한 테스트 클래스
@@ -48,6 +50,24 @@ class AuthenticationServiceTest {
                 @Test
                 void test() {
                     assertThat(token()).isEqualTo(VALID_TOKEN);
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 id가 주어졌을 경우")
+        class Context_if_non_existing_id_given {
+            @Nested
+            @DisplayName("UserNotFoundException 예외를 던진다")
+            class It_throws_userNotFoundException {
+                String token() {
+                    return authenticationService.login(NON_EXISTING_ID);
+                }
+
+                @Test
+                void test() {
+                    assertThatThrownBy(() -> token())
+                            .isInstanceOf(UserNotFoundException.class);
                 }
             }
         }

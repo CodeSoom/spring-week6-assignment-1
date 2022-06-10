@@ -29,16 +29,24 @@ public class JwtAuthService implements TokenAuthService {
         return auth.encode(user.getId());
     }
 
+    /**
+    * @throws PasswordNotEqualException
+     *          source와 target이 일치하지 않은 경우
+    */
     private void validatePassword(String target, String source) {
         if (!target.equals(source)) {
             throw new PasswordNotEqualException();
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     *          email에 해당하는 User가 없는 경우,
+     *          email에 해당하는 User가 삭제된 경우
+     */
     private User findUserBy(String email) {
         return repository.findByEmailAndDeletedIsFalse(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
-
 
 }

@@ -47,31 +47,28 @@ public class ProductController {
 		} catch (SecurityException e) {
 			throw new DecodingInValidTokenException(token);
 		}
-
 		return productService.getProduct(id);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Product create(
-		@RequestBody @Valid ProductData productData
-	) {
+	public Product create(@RequestHeader("Authorization") String token, @RequestBody @Valid ProductData productData) {
+		try {
+			authenticationService.decode(token);
+		} catch (SecurityException e) {
+			throw new DecodingInValidTokenException(token);
+		}
 		return productService.createProduct(productData);
 	}
 
 	@PatchMapping("{id}")
-	public Product update(
-		@PathVariable Long id,
-		@RequestBody @Valid ProductData productData
-	) {
+	public Product update(@PathVariable Long id, @RequestBody @Valid ProductData productData) {
 		return productService.updateProduct(id, productData);
 	}
 
 	@DeleteMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void destroy(
-		@PathVariable Long id
-	) {
+	public void destroy(@PathVariable Long id) {
 		productService.deleteProduct(id);
 	}
 }

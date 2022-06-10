@@ -4,6 +4,7 @@ import com.codesoom.assignment.auth.ClaimTokenAuth;
 import com.codesoom.assignment.auth.JwtAuth;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.PasswordNotEqualException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.infra.JpaUserRepository;
 import io.jsonwebtoken.Claims;
@@ -21,9 +22,23 @@ public class JwtAuthService implements TokenAuthService {
 
     @Override
     public String login(String email, String password) {
-        User user = repository.findByEmailAndDeletedIsFalse(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+        User user = findUserBy(email);
+
+        validatePassword(password, user.getPassword());
 
         return auth.encode(user.getId());
     }
+
+    private void validatePassword(String target, String source) {
+        if (!target.equals(source)) {
+            throw new PasswordNotEqualException();
+        }
+    }
+
+    private User findUserBy(String email) {
+        return repository.findByEmailAndDeletedIsFalse(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
+
 }

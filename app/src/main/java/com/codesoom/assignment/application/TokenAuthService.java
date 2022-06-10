@@ -13,9 +13,10 @@ public interface TokenAuthService {
     /**
      * 사용자 인증에 필요한 정보를 받아서 문자열 타입의 토큰으로 반환한다
      * <p>
-     * @param user 사용자 엔티티
+     * @param email 사용자 이메일 정보
+     * @param password 사용자 비밀번호 정보
      * @return 문자열 타입의 토큰
      * </p>
      */
-    String login(User user);
+    String login(String email, String password);
 }

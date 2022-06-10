@@ -57,7 +57,7 @@ class JwtAuthServiceTest {
             @Test
             @DisplayName("문자열 타입의 토큰을 반환한다.")
             void it_returns_string_token() {
-                String token = service.login(user);
+                String token = service.login(user.getEmail(), user.getPassword());
 
                 assertThat(token).isInstanceOf(String.class);
             }

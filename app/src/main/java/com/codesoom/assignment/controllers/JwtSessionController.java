@@ -22,8 +22,7 @@ public class JwtSessionController implements SessionController {
     @PostMapping("/session")
     @Override
     public LoginResponseData login(@RequestBody LoginRequestData requestData) {
-        User user = userService.findBy(requestData.getEmail());
-        String token = service.login(user);
+        String token = service.login(requestData.getEmail(), requestData.getPassword());
         return new LoginResponseData(token);
     }
 }

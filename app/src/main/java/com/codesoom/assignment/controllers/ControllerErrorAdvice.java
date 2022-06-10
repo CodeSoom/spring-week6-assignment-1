@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.codesoom.assignment.dto.ErrorResponse;
-import com.codesoom.assignment.errors.DecodingInValidTokenException;
-import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.exception.DecodingInValidTokenException;
+import com.codesoom.assignment.exception.ProductNotFoundException;
+import com.codesoom.assignment.exception.UserEmailDuplicationException;
+import com.codesoom.assignment.exception.UserNotFoundException;
 
 @ResponseBody
 @ControllerAdvice

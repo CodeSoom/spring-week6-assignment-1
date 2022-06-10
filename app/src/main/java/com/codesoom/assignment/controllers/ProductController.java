@@ -21,7 +21,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.DecodingInValidTokenException;
+import com.codesoom.assignment.exception.DecodingInValidTokenException;
 
 @RestController
 @RequestMapping("/products")
@@ -47,6 +47,7 @@ public class ProductController {
 		} catch (SecurityException e) {
 			throw new DecodingInValidTokenException(token);
 		}
+
 		return productService.getProduct(id);
 	}
 

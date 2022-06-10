@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.codesoom.assignment.dto.SessionResponseData;
-import com.codesoom.assignment.errors.DecodingInValidTokenException;
+import com.codesoom.assignment.exception.DecodingInValidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;

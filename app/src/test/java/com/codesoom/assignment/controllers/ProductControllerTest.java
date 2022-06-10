@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -73,7 +75,7 @@ class ProductControllerTest {
 		given(productService.deleteProduct(1000L))
 			.willThrow(new ProductNotFoundException(1000L));
 
-		given(authenticationService.decode(VALID_TOKEN))
+		given(authenticationService.parseUserId(VALID_TOKEN))
 			.willReturn(1L);
 
 		given(authenticationService.decode(INVALID_TOKEN))
@@ -112,6 +114,7 @@ class ProductControllerTest {
 			)
 			.andExpect(status().isBadRequest());
 	}
+
 	@Test
 	void detailWithExsitedProduct() throws Exception {
 		mockMvc.perform(
@@ -128,6 +131,49 @@ class ProductControllerTest {
 	void detailWithNotExsitedProduct() throws Exception {
 		mockMvc.perform(get("/products/1000"))
 			.andExpect(status().isNotFound());
+	}
+
+	@Nested
+	@DisplayName("POST /products URL 은 ")
+	class Create {
+		@Nested
+		@DisplayName("유효한 token 과 상품 정보가 주어지면")
+		class WithValidToken {
+			@Test
+			@DisplayName("상태코드 200 을 응답한다.")
+			void createWithValidToken() throws Exception {
+				mockMvc.perform(
+						post("/products")
+							.accept(MediaType.APPLICATION_JSON_UTF8)
+							.contentType(MediaType.APPLICATION_JSON)
+							.header("Authorization", VALID_TOKEN)
+							.content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+								"\"price\":5000}")
+					)
+					.andExpect(status().isCreated())
+					.andExpect(content().string(containsString("쥐돌이")));
+
+				verify(productService).createProduct(any(ProductData.class));
+			}
+		}
+
+		@Nested
+		@DisplayName("유효하지 않은 token 과 상품 정보가 주어지면")
+		class WithInValidToken {
+			@Test
+			@DisplayName("상태코드 400 을 응답한다.")
+			void createWithInValidToken() throws Exception {
+				mockMvc.perform(
+						post("/products")
+							.accept(MediaType.APPLICATION_JSON_UTF8)
+							.contentType(MediaType.APPLICATION_JSON)
+							.header("Authorization", INVALID_TOKEN)
+							.content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+								"\"price\":5000}")
+					)
+					.andExpect(status().isBadRequest());
+			}
+		}
 	}
 
 	@Test

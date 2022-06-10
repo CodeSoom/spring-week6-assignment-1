@@ -7,7 +7,7 @@ import com.codesoom.assignment.dto.LoginResponseData;
  * 사용자 인증(Authentication) 요청을 받아서 처리결과를 반환한다
  * <p>
  * All Known Implementing Classes:
- * JwtSessionController
+ * @see JwtSessionController
  * </p>
  */
 public interface SessionController {

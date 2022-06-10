@@ -4,7 +4,7 @@ package com.codesoom.assignment.application;
  * 토큰 기반 사용자 인증에 대한 비지니스 로직을 처리한다
  * <p>
  * All Known Implementing Classes:
- * JwtAuthService
+ * @see JwtAuthService
  * </p>
  */
 public interface TokenAuthService {

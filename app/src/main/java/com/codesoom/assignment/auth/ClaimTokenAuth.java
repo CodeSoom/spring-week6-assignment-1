@@ -1,10 +1,10 @@
 package com.codesoom.assignment.auth;
 
 /**
- * Claim Token 기반 유효한 토큰을 생성하고, 토큰의 유효성을 검증한다
+ * Claim Token 기반 유효한 토큰을 생성하고, 전달 받은 토큰의 유효성을 검증한다
  * <p>
  * All Known Extending Classes:
- * JwtAuth
+ * @see JwtAuth
  * </p>
  */
 public interface ClaimTokenAuth <T>{

@@ -6,7 +6,7 @@ import java.security.Key;
  * 해쉬 알고리즘이 적용된 비밀키를 반환한다
  * <p>
  * All Known Extending Classes:
- * JwtKey
+ * @see JwtKey
  * </p>
  */
 public interface SecretKey {

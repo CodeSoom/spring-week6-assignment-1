@@ -15,16 +15,15 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JwtUtilTest {
 
     private final String SECRET = "12345678901234567890123456789012";
-    private final long VALID_TIME = 60 * 60 * 1000;
+    private final long VALID_TIME = 24 * 60 * 60 * 1000;
 
-    private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlh" +
-            "dCI6MTY1NDc1NzM3MywiZXhwIjoxNjU0NzYwOTczfQ.eZceGfyNpy3FlVyzaxeIZashF-CUhcwYTDsS0zBZyVk";
+    private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm" +
+            "lhdCI6MTY1NDg0MTM1NiwiZXhwIjoxNjU0OTI3NzU2fQ.qU12boCobw3ltksPjBcMXxE_0Lf7eSQUWJ0PwAn-z5I";
 
     private final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIml" +
             "hdCI6MTY1NDc1NzIxNSwiZXhwIjoxNjU0NzYwODE1fQ.NI_o2dC-go7A_IEJ34LOZPw5Ohg_KcVa48UUHDsKUpl";

@@ -3,10 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * /session URL에 대한 HTTP 요청을 처리하는 Controller 클래스
@@ -25,10 +22,10 @@ public class SessionController {
      *
      * @return 토큰이 담긴 DTO
      */
-    @PostMapping
+    @PostMapping("{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login() {
-        String token = authenticationService.login();
+    public SessionResponseData login(@PathVariable Long userId) {
+        String token = authenticationService.login(userId);
 
         return SessionResponseData.builder()
                 .token(token)

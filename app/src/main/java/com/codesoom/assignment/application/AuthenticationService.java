@@ -19,7 +19,7 @@ public class AuthenticationService {
      * 
      * @return 토큰
      */
-    public String login() {
-        return jwtUtil.encode(1L);
+    public String login(Long userId) {
+        return jwtUtil.encode(userId);
     }
 }

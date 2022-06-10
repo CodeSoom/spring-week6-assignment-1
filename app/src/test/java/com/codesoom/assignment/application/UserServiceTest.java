@@ -312,4 +312,62 @@ class UserServiceTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("getUser 메서드는")
+    class Describe_getUser_method {
+        @Nested
+        @DisplayName("존재하는 id가 주어진 경우")
+        class Context_if_existing_id_given {
+            @BeforeEach
+            void setUp() {
+                given(userRepository.findByIdAndDeletedIsFalse(ID))
+                        .willReturn(Optional.of(
+                                User.builder()
+                                        .id(ID)
+                                        .email(EXISTING_EMAIL_ADDRESS)
+                                        .name(NAME)
+                                        .password(PASSWORD)
+                                        .build()));
+            }
+
+            @Nested
+            @DisplayName("id에 해당하는 user를 반환한다")
+            class It_returns_user {
+                User user() {
+                    return userService.getUser(ID);
+                }
+
+                @Test
+                void test() {
+                    assertThat(user()).isNotNull();
+                    assertThat(user().getName()).isEqualTo(NAME);
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("존재하지 않는 id가 주어진 경우")
+        class Context_if_non_existing_id_given {
+            @BeforeEach
+            void setUp() {
+                given(userRepository.findById(NON_EXISTING_ID))
+                        .willThrow(new UserNotFoundException(NON_EXISTING_ID));
+            }
+
+            @Nested
+            @DisplayName("UserNotFoundException 예외를 던진다")
+            class It_throws_userNotFoundException {
+                User user() {
+                    return userService.getUser(NON_EXISTING_ID);
+                }
+
+                @Test
+                void test() {
+                    assertThatThrownBy(() -> user())
+                            .isInstanceOf(UserNotFoundException.class);
+                }
+            }
+        }
+    }
 }

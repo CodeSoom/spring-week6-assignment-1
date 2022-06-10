@@ -88,4 +88,14 @@ public class UserService {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
+
+    /**
+     * id로 User를 조회한 후 이를 반환한다.
+     *
+     * @param id 조회 할 User의 id
+     * @return 조회된 특정 User
+     */
+    public User getUser(Long id) {
+        return findUser(id);
+    }
 }

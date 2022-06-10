@@ -47,6 +47,11 @@ public class UserService {
         return user;
     }
 
+    public User findBy(String email) {
+        return userRepository.findByEmailAndDeletedIsFalse(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
     private User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));

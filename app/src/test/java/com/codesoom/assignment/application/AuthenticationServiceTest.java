@@ -25,8 +25,8 @@ class AuthenticationServiceTest {
     private final UserRepository userRepository = mock(UserRepository.class);
 
     private final Long PARSED_USER_ID = 1L;
-    private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIm" +
-            "lhdCI6MTY1NDg0MTM1NiwiZXhwIjoxNjU0OTI3NzU2fQ.qU12boCobw3ltksPjBcMXxE_0Lf7eSQUWJ0PwAn-z5I";
+    private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9" +
+            ".ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     private final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsIml" +
             "hdCI6MTY1NDc1NzIxNSwiZXhwIjoxNjU0NzYwODE1fQ.NI_o2dC-go7A_IEJ34LOZPw5Ohg_KcVa48UUHDsKUpl";
 
@@ -39,12 +39,15 @@ class AuthenticationServiceTest {
     private User user;
     private UserLoginData userLoginData;
 
+    private JwtUtil jwtUtil = new JwtUtil(SECRET, VALID_TIME);
+
     @BeforeEach
     void setUp() {
         JwtUtil jwtUtil = new JwtUtil(SECRET, VALID_TIME);
         authenticationService = new AuthenticationService(jwtUtil, userRepository);
 
         user = User.builder()
+                .id(1L)
                 .email(EMAIL)
                 .password(PASSWORD)
                 .build();
@@ -72,9 +75,9 @@ class AuthenticationServiceTest {
             @DisplayName("액세스 토큰을 리턴한다.")
             @Test
             void it_returns_the_access_token() {
-                final String ACCESS_TOKEN = authenticationService.login(userLoginData);
+                String ACCESS_TOKEN = authenticationService.login(userLoginData);
 
-                assertThat(ACCESS_TOKEN).contains(".");
+                assertThat(authenticationService.parseToken(ACCESS_TOKEN)).isEqualTo(PARSED_USER_ID);
             }
         }
 
@@ -111,12 +114,6 @@ class AuthenticationServiceTest {
                     .email(EMAIL)
                     .password(WRONG_PASSWORD)
                     .build();
-
-            @BeforeEach
-            void setUp() {
-                given(userRepository.findByEmail(wrongPasswordUserLoginData.getEmail()))
-                        .willReturn(Optional.empty());
-            }
 
             @DisplayName("UserAuthenticationFailException 예외를 던진다.")
             @Test

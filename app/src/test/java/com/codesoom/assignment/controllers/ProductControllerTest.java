@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,13 +26,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
-    private final static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    private final static String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw11";
+    private final static String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJNRU1CRVIifQ.X99CPxQFtgjARrg9bqR6bQkp6JFMN9a-XUo9GAdO4so";
+    private final static String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJNRU1CRVIifQ.X99CPxQFtgjARrg9bqR6bQkp6JFMN9a-XUo9GAdO4so11";
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,50 +43,25 @@ class ProductControllerTest {
 
     @MockBean
     private AuthenticationService authenticationService;
+    private Product product = Product.builder().id(1L).name("쥐돌이").maker("냥이월드").price(5000).build();
 
     @BeforeEach
-    void tokenParseSetup() {
-        given(authenticationService.parseUserId("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw")).willReturn(1L);
-        given(authenticationService.parseUserRole("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw")).willReturn(Role.MEMBER);
+    void setup() {
+        Mockito.reset(authenticationService);
+        tokenParseSetup();
     }
 
-    private Product product = Product.builder().id(1L).name("쥐돌이").maker("냥이월드").price(5000).build();
+    void tokenParseSetup() {
+        given(authenticationService.parseUserId("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJNRU1CRVIifQ.X99CPxQFtgjARrg9bqR6bQkp6JFMN9a-XUo9GAdO4so")).willReturn(1L);
+        given(authenticationService.parseUserRole("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJNRU1CRVIifQ.X99CPxQFtgjARrg9bqR6bQkp6JFMN9a-XUo9GAdO4so")).willReturn(Role.MEMBER);
+        given(authenticationService.parseUserId(INVALID_TOKEN)).willThrow(DecodingInValidTokenException.class);
+        given(authenticationService.parseUserRole(INVALID_TOKEN)).willThrow(DecodingInValidTokenException.class);
+    }
 
     @Test
     void list() throws Exception {
         given(productService.getProducts()).willReturn(Arrays.asList(product));
         mockMvc.perform(get("/products").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk()).andExpect(content().string(containsString("쥐돌이")));
-    }
-
-    @Nested
-    @DisplayName("GET /products URL 은 ")
-    class detail {
-        @Nested
-        @DisplayName("유효한 토큰이 주어지면")
-        class WithValidToken {
-            @Test
-            @DisplayName("상태코드 200 을 응답한다.")
-            void detailWithValidToken() throws Exception {
-                product = Product.builder().id(1L).name("쥐돌이").maker("냥이월드").price(5000).build();
-
-                given(productService.getProduct(1L)).willReturn(product);
-
-                mockMvc.perform(get("/products/1").accept(MediaType.APPLICATION_JSON_UTF8).header("Authorization", VALID_TOKEN)).andExpect(status().isOk()).andExpect(content().string(containsString("쥐돌이")));
-                verify(productService).getProduct(1L);
-            }
-        }
-
-        @Nested
-        @DisplayName("유효하지 않은 token 이 주어지면")
-        class WithInValidToken {
-            @Test
-            @DisplayName("상태코드 400 을 응답한다.")
-            void detailWithInValidToken() throws Exception {
-                given(authenticationService.decode(INVALID_TOKEN)).willThrow(DecodingInValidTokenException.class);
-                mockMvc.perform(get("/products/1").header("Authorization", "Bearer " + INVALID_TOKEN)).andExpect(status().isBadRequest());
-                verify(authenticationService).decode(INVALID_TOKEN);
-            }
-        }
     }
 
     @Test
@@ -102,37 +79,6 @@ class ProductControllerTest {
         given(productService.getProduct(1000L)).willThrow(new ProductNotFoundException(1000L));
 
         mockMvc.perform(get("/products/1000").header("Authorization", "Bearer " + VALID_TOKEN)).andExpect(status().isNotFound());
-    }
-
-    @Nested
-    @DisplayName("POST /products URL 은 ")
-    class Create {
-        @Nested
-        @DisplayName("유효하지 않은 token 과 상품 정보가 주어지면")
-        class WithInValidToken {
-            @Test
-            @DisplayName("상태코드 400 을 응답한다.")
-            void createWithInValidToken() throws Exception {
-
-                given(authenticationService.decode(INVALID_TOKEN)).willThrow(DecodingInValidTokenException.class);
-
-                mockMvc.perform(post("/products").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON).header("Authorization", INVALID_TOKEN).content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," + "\"price\":5000}")).andExpect(status().isBadRequest());
-            }
-        }
-
-        @Nested
-        @DisplayName("유효한 token 과 상품 정보가 주어지면")
-        class WithValidToken {
-            @Test
-            @DisplayName("상태코드 200 을 응답한다.")
-            void createWithValidToken() throws Exception {
-                given(productService.createProduct(any(ProductData.class))).willReturn(product);
-
-                mockMvc.perform(post("/products").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + VALID_TOKEN).content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," + "\"price\":5000}")).andExpect(status().isCreated()).andExpect(content().string(containsString("쥐돌이")));
-
-                verify(productService).createProduct(any(ProductData.class));
-            }
-        }
     }
 
     @Test
@@ -180,8 +126,7 @@ class ProductControllerTest {
 
     @Test
     void destroyWithExistedProduct() throws Exception {
-        mockMvc.perform(delete("/products/1").header("Authorization", "Bearer " + VALID_TOKEN))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/products/1").header("Authorization", "Bearer " + VALID_TOKEN)).andExpect(status().isNoContent());
 
         verify(productService).deleteProduct(1L);
     }
@@ -190,9 +135,37 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         given(productService.deleteProduct(1000L)).willThrow(new ProductNotFoundException(1000L));
 
-        mockMvc.perform(delete("/products/1000").header("Authorization", "Bearer " + VALID_TOKEN)
-        ).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/products/1000").header("Authorization", "Bearer " + VALID_TOKEN))
+                .andDo(print()).andExpect(status().isNotFound());
 
         verify(productService).deleteProduct(1000L);
+    }
+
+    @Nested
+    @DisplayName("POST /products URL 은 ")
+    class Create {
+        @Nested
+        @DisplayName("유효하지 않은 token 과 상품 정보가 주어지면")
+        class WithInValidToken {
+            @Test
+            @DisplayName("상태코드 400 을 응답한다.")
+            void createWithInValidToken() throws Exception {
+                mockMvc.perform(post("/products").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON).header("Authorization", INVALID_TOKEN).content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," + "\"price\":5000}")).andExpect(status().isBadRequest());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효한 token 과 상품 정보가 주어지면")
+        class WithValidToken {
+            @Test
+            @DisplayName("상태코드 200 을 응답한다.")
+            void createWithValidToken() throws Exception {
+                given(productService.createProduct(any(ProductData.class))).willReturn(product);
+
+                mockMvc.perform(post("/products").accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + VALID_TOKEN).content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," + "\"price\":5000}")).andExpect(status().isCreated()).andExpect(content().string(containsString("쥐돌이")));
+
+                verify(productService).createProduct(any(ProductData.class));
+            }
+        }
     }
 }

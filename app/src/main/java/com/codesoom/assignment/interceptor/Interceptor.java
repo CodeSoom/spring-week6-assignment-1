@@ -38,6 +38,7 @@ public class Interceptor implements HandlerInterceptor {
 
         try {
             Role role = authenticationService.parseUserRole(token);
+
             if (role != Role.MEMBER) {
                 throw new DecodingInValidTokenException(token);
             }

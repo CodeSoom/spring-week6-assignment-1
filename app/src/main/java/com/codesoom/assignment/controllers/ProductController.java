@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.codesoom.assignment.utils.Permission;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,6 +53,7 @@ public class ProductController {
 	}
 
 	@PostMapping
+	@Permission
 	@ResponseStatus(HttpStatus.CREATED)
 	public Product create(@RequestHeader("Authorization") String token, @RequestBody @Valid ProductData productData) {
 		try {
@@ -63,11 +65,13 @@ public class ProductController {
 	}
 
 	@PatchMapping("{id}")
+	@Permission
 	public Product update(@PathVariable Long id, @RequestBody @Valid ProductData productData) {
 		return productService.updateProduct(id, productData);
 	}
 
 	@DeleteMapping("{id}")
+	@Permission
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void destroy(@PathVariable Long id) {
 		productService.deleteProduct(id);

@@ -68,7 +68,7 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("201 을 응답하고 액세스 토큰을 반환한다.")
+            @DisplayName("201 을 응답하고 액세스 토큰을 응답한다.")
             void It_responses_201_and_returns_accessToken() throws Exception {
                 mockMvc.perform(
                         post("/session")

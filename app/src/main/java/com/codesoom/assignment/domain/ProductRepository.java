@@ -8,9 +8,9 @@ import java.util.Optional;
  */
 public interface ProductRepository {
     /**
-     * 저장된 모든 product 집합을 반환
+     * 저장된 모든 product 요소를 반환
      *
-     * @return 저장된 모든 product 집합
+     * @return 저장된 모든 product 요소
      */
     List<Product> findAll();
 

@@ -85,6 +85,7 @@ class AuthenticationServiceTest {
         @DisplayName("주어진 이메일에 해당하는 회원이 없다면")
         class Context_when_the_user_does_not_exist {
             private final String WRONG_EMAIL = "wrong email";
+            private final String ERROR_KEYWORD = "잘못된 이메일 주소";
 
             UserLoginData wrongEmailUserLoginData = UserLoginData.builder()
                     .email(WRONG_EMAIL)
@@ -100,8 +101,10 @@ class AuthenticationServiceTest {
             @DisplayName("UserAuthenticationFailException 예외를 던진다.")
             @Test
             void it_throws_user_authentication_fail_exception() {
-                assertThrows(UserAuthenticationFailException.class,
+                UserAuthenticationFailException e = assertThrows(UserAuthenticationFailException.class,
                         () -> authenticationService.login(wrongEmailUserLoginData));
+
+                assertThat(e.getMessage()).contains(ERROR_KEYWORD);
             }
         }
 
@@ -109,17 +112,26 @@ class AuthenticationServiceTest {
         @DisplayName("주어진 비밀번호가 잘못되었다면")
         class Context_when_the_password_is_wrong {
             private final String WRONG_PASSWORD = "wrong password";
+            private final String ERROR_KEYWORD = "잘못된 비밀번호";
 
             UserLoginData wrongPasswordUserLoginData = UserLoginData.builder()
                     .email(EMAIL)
                     .password(WRONG_PASSWORD)
                     .build();
 
+            @BeforeEach
+            void setUp() {
+                given(userRepository.findByEmail(wrongPasswordUserLoginData.getEmail()))
+                        .willReturn(Optional.of(user));
+            }
+
             @DisplayName("UserAuthenticationFailException 예외를 던진다.")
             @Test
             void it_throws_user_authentication_fail_exception() {
-                assertThrows(UserAuthenticationFailException.class,
+                UserAuthenticationFailException e = assertThrows(UserAuthenticationFailException.class,
                         () -> authenticationService.login(wrongPasswordUserLoginData));
+
+                assertThat(e.getMessage()).contains(ERROR_KEYWORD);
             }
         }
     }

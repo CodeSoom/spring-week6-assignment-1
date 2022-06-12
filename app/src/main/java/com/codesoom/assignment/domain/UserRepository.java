@@ -46,4 +46,9 @@ public interface UserRepository {
      * @return 주어진 email 과 일치하면 user, 일치하지 않으면 null
      */
     Optional<User> findByEmail(String email);
+
+    /**
+     * 등록된 모든 user 를 삭제
+     */
+    void deleteAll();
 }

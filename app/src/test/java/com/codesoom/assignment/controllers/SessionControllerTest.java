@@ -3,14 +3,13 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.Utf8WebTest;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.UserLoginData;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,7 +18,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(SessionController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @Utf8WebTest
 @DisplayName("SessionController 클래스")
 class SessionControllerTest {
@@ -29,7 +29,6 @@ class SessionControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private ObjectMapper objectMapper;
     private final String JWT_REGEX = "^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]*$";
     private final String EXIST_EMAIL = "codesoom1@gmail.com";
     private final String NOT_EXIST_EMAIL = "codesoom2@gmail.com";
@@ -43,6 +42,11 @@ class SessionControllerTest {
                 .email(EXIST_EMAIL)
                 .password(VALID_PASSWORD)
                 .build());
+    }
+
+    @AfterEach
+    void deleteAll() {
+        userRepository.deleteAll();
     }
 
     @Nested
@@ -92,11 +96,11 @@ class SessionControllerTest {
 
             @Test
             @DisplayName("404 를 응답한다.")
-            void It_responses_404() throws Exception {
+            void It_responses_400() throws Exception {
                 mockMvc.perform(
                                 post("/session")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content(toJson(userLoginData))
+                                        .content(toJson(UserLoginDataWithNotExistedEmail))
                         )
                         .andExpect(status().isNotFound());
             }
@@ -117,15 +121,19 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("404 를 응답한다.")
-            void It_responses_404() throws Exception {
+            @DisplayName("400 를 응답한다.")
+            void It_responses_400() throws Exception {
                 mockMvc.perform(
-                                post("/session")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(toJson(userLoginData))
+                        post("/session")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(toJson(userLoginDataWithInvalidPassword))
                         )
-                        .andExpect(status().isNotFound());
+                        .andExpect(status().isBadRequest());
             }
+        }
+
+        private String toJson(UserLoginData userLoginData) throws JsonProcessingException {
+            return new ObjectMapper().writeValueAsString(userLoginData);
         }
     }
 }

@@ -29,10 +29,7 @@ public class UserService {
     }
 
     /**
-     * 1) 주어진 UserRegistrationData 에 속하는 email 을 찾고
-     * 2) 만약 해당 email 이 있으면 UserEmailDuplicationException 으로 예외 처리
-     * 3) mapper 에 주어진 UserRegistrationData 값을 key 로 User.class 에 대한 값은 value 로 저장
-     * 4) 해당 값을 반환
+     * 주어진 UserRegistrationData 를 등록하여 등록된 user 를 반환
      *
      * @param registrationData 등록할 user(UserRegistrationData)
      * @return 등록된 user
@@ -48,11 +45,7 @@ public class UserService {
     }
 
     /**
-     * 1) 주어진 id 와 일치하는 user 가 없을 때 UserNotFoundException 예외 처리 반환
-     * 2) 1)에서 주어진 id 와 일치하는 user 가 있으면,
-     *      mapper 에 주어진 UserModificationData 값을 key 로 User.class 에 대한 값은 value 로 저장
-     * 3) 2)의 결과인 source 를 빌더 패턴을 이용하여 저장
-     * 4) 해당 값 반환
+     * 주어진 id 와 일치하는 user 를 수정할 UserModificationData 로 수정하여 반환
      *
      * @param id user 식별자
      * @param modificationData 수정할 user(UserModificationData)
@@ -68,9 +61,7 @@ public class UserService {
     }
 
     /**
-     * 1) 주어진 id 와 일치하는 user 가 없을 때 UserNotFoundException 예외 처리 반환
-     * 2) 1)에서 주어진 id 와 일치하는 user 가 있으면, deleted 를 true 로 변환하는 함수 호출
-     * 3) 해당 값 반환
+     * 주어진 id 와 일치하는 user 을 삭제
      *
      * @param id user 식별자
      * @return 주어진 `deleted = false` 값을 `deleted = true` 상태로 변환한 user

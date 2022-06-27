@@ -40,4 +40,8 @@ public class User {
     public boolean authenticate(String password) {
         return !deleted && password.equals(this.password);
     }
+
+    public boolean matchPassword(String password) {
+        return password.equals(this.password);
+    }
 }

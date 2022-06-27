@@ -3,12 +3,13 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
-import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.exception.ProductNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ class ProductServiceTest {
                 .price(5000)
                 .build();
 
-        given(productRepository.findAll()).willReturn(List.of(product));
+        given(productRepository.findAll()).willReturn(Arrays.asList(product));
 
         given(productRepository.findById(1L)).willReturn(Optional.of(product));
 
@@ -55,7 +56,7 @@ class ProductServiceTest {
 
     @Test
     void getProductsWithNoProduct() {
-        given(productRepository.findAll()).willReturn(List.of());
+        given(productRepository.findAll()).willReturn(Arrays.asList());
 
         assertThat(productService.getProducts()).isEmpty();
     }

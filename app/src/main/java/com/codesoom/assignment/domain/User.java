@@ -26,6 +26,9 @@ public class User {
     private String password;
 
     @Builder.Default
+    private Role role = Role.MEMBER;
+
+    @Builder.Default
     private boolean deleted = false;
 
     public void changeWith(User source) {

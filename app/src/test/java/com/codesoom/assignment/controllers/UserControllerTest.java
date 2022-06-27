@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.Utf8WebTest;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Utf8WebTest
 @WebMvcTest(UserController.class)
 class UserControllerTest {
     @Autowired

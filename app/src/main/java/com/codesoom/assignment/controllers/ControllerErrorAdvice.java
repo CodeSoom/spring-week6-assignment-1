@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * 컨트롤러에서 발생한 에러를 처리하는 Advice 클래스
+ */
 @ResponseBody
 @ControllerAdvice
 public class ControllerErrorAdvice {

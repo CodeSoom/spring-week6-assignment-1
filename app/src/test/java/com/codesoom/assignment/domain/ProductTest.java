@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Product Entity에 대한 테스트 클래스
+ */
 class ProductTest {
     @Test
     void creationWithBuilder() {

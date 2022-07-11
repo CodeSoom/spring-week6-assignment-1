@@ -7,8 +7,9 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 
 public class JsonWebToken {
+    private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
     public static String generate(JwtContents contents) {
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
         String jwt = Jwts.builder()
                 .setIssuer(contents.getIss())
@@ -18,5 +19,18 @@ public class JsonWebToken {
                 .compact();
 
         return jwt;
+    }
+
+    public static boolean verify(String jwt) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(jwt);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -5,6 +5,8 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.dto.UserResultData;
+import com.codesoom.assignment.jwt.JsonWebToken;
+import com.codesoom.assignment.jwt.JwtContents;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +27,11 @@ public class UserController {
     UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
         User user = userService.registerUser(registrationData);
         return getUserResultData(user);
+    }
+
+    @PostMapping("/auth")
+    public String jwt(@RequestBody JwtContents jwtContents) {
+        return JsonWebToken.generate(jwtContents);
     }
 
     @PatchMapping("{id}")

@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/auth")
-    public String jwt(@RequestBody JwtContents jwtContents) {
+    public String generateJwt(@RequestBody JwtContents jwtContents) {
         return JsonWebToken.generate(jwtContents);
     }
 

@@ -13,7 +13,6 @@ public class JsonWebToken {
     private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public static String generate(JwtContents contents) {
-
         String jwt = Jwts.builder()
                 .setIssuer(contents.getIss())
                 .setSubject(contents.getSub())
@@ -24,6 +23,11 @@ public class JsonWebToken {
         return jwt;
     }
 
+    /**
+     * 토큰이 유효한지 검증한다. 유효한 경우 토큰 내용물을 리턴한다.
+     * @param jwt 검사하려는 토큰
+     * @throws InvalidTokenException 토큰이 유효하지 않을 경우
+     */
     public static JwtContents verify(String jwt) {
         Jws<Claims> jws;
 

@@ -1,6 +1,8 @@
 package com.codesoom.assignment.jwt;
 
 import com.codesoom.assignment.errors.InvalidTokenException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -22,14 +24,18 @@ public class JsonWebToken {
         return jwt;
     }
 
-    public static void verify(String jwt) {
+    public static JwtContents verify(String jwt) {
+        Jws<Claims> jws;
+
         try {
-            Jwts.parserBuilder()
+            jws = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(jwt);
         } catch (Exception e) {
             throw new InvalidTokenException(jwt);
         }
+
+        return JwtContents.from(jws);
     }
 }

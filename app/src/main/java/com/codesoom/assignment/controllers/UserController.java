@@ -29,11 +29,6 @@ public class UserController {
         return getUserResultData(user);
     }
 
-    @PostMapping("/auth")
-    public String generateJwt(@RequestBody JwtContents jwtContents) {
-        return JsonWebToken.generate(jwtContents);
-    }
-
     @PatchMapping("{id}")
     UserResultData update(
             @PathVariable Long id,

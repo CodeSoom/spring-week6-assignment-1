@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JwtTokenTest {
 
-    private static final Object USER_ID = 1L;
+    private static final Long USER_ID = 1L;
     private final static String PRIVATE_KEY = "aa";
 
 
@@ -35,6 +35,4 @@ public class JwtTokenTest {
         Claims claims = jwtToken.decode(this.validToken);
         assertThat(claims.get("userId", Long.class)).isEqualTo(USER_ID);
     }
-
-
 }

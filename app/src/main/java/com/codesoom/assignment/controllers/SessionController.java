@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/session")
 @CrossOrigin
-public class AuthController {
+public class SessionController {
     @PostMapping
     public String generateJwt(@RequestBody JwtContents jwtContents) {
         return JsonWebToken.generate(jwtContents);

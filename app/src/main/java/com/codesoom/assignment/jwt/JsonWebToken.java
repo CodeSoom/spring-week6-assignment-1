@@ -12,6 +12,11 @@ import java.security.Key;
 public class JsonWebToken {
     private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
+    /**
+     * 인자로 주어진 값을 바탕으로 토큰을 생성한다.
+     * @param contents 토큰에 기록할 내용을 포함한 객체
+     * @return 생성된 토큰
+     */
     public static String generate(JwtContents contents) {
         String jwt = Jwts.builder()
                 .setIssuer(contents.getIss())

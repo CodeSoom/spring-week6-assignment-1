@@ -29,17 +29,15 @@ public class JsonWebToken {
      * @throws InvalidTokenException 토큰이 유효하지 않을 경우
      */
     public static JwtContents verify(String jwt) {
-        Jws<Claims> jws;
-
         try {
-            jws = Jwts.parserBuilder()
+            Jws<Claims> jws = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(jwt);
+
+            return JwtContents.from(jws);
         } catch (Exception e) {
             throw new InvalidTokenException(jwt);
         }
-
-        return JwtContents.from(jws);
     }
 }

@@ -1,11 +1,9 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.utils.JwtUtil;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.security.AuthProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,7 +20,7 @@ class AuthenticationServiceTest {
     @Test
     void login(){
         String accessToken = authenticationService.login();
-        assertThat(accessToken).contains(".");
+        assertThat(accessToken).contains(".xxx");
     }
 
 }

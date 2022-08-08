@@ -31,7 +31,7 @@ public class JwtUtils {
     }
 
     /**
-     * 암호화된 토큰을 해독합니다.
+     * 암호화된 토큰을 복호화합니다.
      *
      * @param inputToken 토큰
      * @return 정보

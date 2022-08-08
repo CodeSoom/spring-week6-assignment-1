@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.utils.JwtUtils;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,8 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("AuthenticationService 인터페이스의")
 public class AuthenticationServiceTest {
-    private String SECRET_KEY = "12345678901234567890123456789012";
-    private final AuthenticationService service = new JwtService();
+    private String SECRET_KEY = "12345678901234567890123456789010";
+    private final AuthenticationService service = new JwtService(new JwtUtils(SECRET_KEY));
 
     @Nested
     @DisplayName("create 메서드는")

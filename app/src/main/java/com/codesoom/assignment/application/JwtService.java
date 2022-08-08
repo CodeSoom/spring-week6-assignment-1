@@ -1,23 +1,18 @@
 package com.codesoom.assignment.application;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.codesoom.assignment.utils.JwtUtils;
 import org.springframework.stereotype.Service;
-
-import java.security.Key;
 
 @Service
 public class JwtService implements AuthenticationService {
+    private final JwtUtils jwtUtils;
 
-    public String SECRET_KEY = "12345678901234567890123456789012";
+    public JwtService(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+    }
 
     @Override
     public String create(Long userId) {
-        Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-
-        return Jwts.builder()
-                .claim("userId", userId)
-                .signWith(key)
-                .compact();
+        return jwtUtils.encode(userId);
     }
 }

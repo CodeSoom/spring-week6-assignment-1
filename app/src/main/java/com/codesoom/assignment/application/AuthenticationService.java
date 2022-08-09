@@ -12,7 +12,6 @@ public class AuthenticationService {
         this.jwtUtil = jwtUtil;
     }
     public String login() {
-
         return jwtUtil.encode(1L);
     }
 }

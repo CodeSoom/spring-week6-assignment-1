@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
-
     @BeforeEach
     void setup() {
         authenticationService = new AuthenticationService();
@@ -17,6 +16,6 @@ class AuthenticationServiceTest {
     void login() {
         String accessToken = authenticationService.login();
 
-        assertThat(accessToken).contains(".");
+        assertThat(accessToken).contains(".xxxx");
     }
 }

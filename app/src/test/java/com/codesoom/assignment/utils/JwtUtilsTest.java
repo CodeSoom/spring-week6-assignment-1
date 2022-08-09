@@ -10,9 +10,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class JwtUtilsTest {
     private static final String SECRET_KEY = "12345678901234567890123456789010";
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    public static final Long GIVEN_ID = 1L;
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGe";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InFqYXdsc3FqYWNrc0BuYXZlci5jb20ifQ.Kp42APjRQt9BsUDief7z63Oz257gC7fbh47zyWsPrjo";
+    public static final String GIVEN_EMAIL = "qjawlsqjacks@naver.com";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InFqYXdsc3FqYWNrc0BuYXZlci5jb20ifQ.Kp42APjRQt9BsUDief7z63Oz257gC7fbh47zyWsPrj";
 
     private JwtUtils utils;
 
@@ -23,7 +23,7 @@ class JwtUtilsTest {
 
     @Test
     void encodeTest() {
-        String expectToken = utils.encode(GIVEN_ID);
+        String expectToken = utils.encode(GIVEN_EMAIL);
 
         assertThat(expectToken).isEqualTo(VALID_TOKEN);
     }
@@ -32,7 +32,7 @@ class JwtUtilsTest {
     void decodeTest() {
         Claims decode = utils.decode(VALID_TOKEN);
 
-        assertThat(GIVEN_ID).isEqualTo(decode.get("userId", Long.class));
+        assertThat(GIVEN_EMAIL).isEqualTo(decode.get("email", String.class));
     }
 
     @Test

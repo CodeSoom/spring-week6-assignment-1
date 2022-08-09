@@ -20,12 +20,12 @@ public class JwtUtils {
     /**
      * 정보를 암호화하고 암호화된 토큰을 리턴합니다.
      *
-     * @param userId 정보
+     * @param email 정보
      * @return 토큰
      */
-    public String encode(Long userId) {
+    public String encode(String email) {
         return Jwts.builder()
-                .claim("userId", userId)
+                .claim("email", email)
                 .signWith(key)
                 .compact();
     }

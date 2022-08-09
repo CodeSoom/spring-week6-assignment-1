@@ -31,7 +31,7 @@ public class JwtService implements AuthenticationService {
     }
 
     private boolean unmatched(User user, UserLoginData data) {
-        return !user.getEmail().equals(data.getEmail()) ||
-                !user.getPassword().equals(data.getPassword());
+        return !data.getEmail().equals(user.getEmail()) ||
+                !data.getPassword().equals(user.getPassword());
     }
 }

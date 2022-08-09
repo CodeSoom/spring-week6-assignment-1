@@ -22,12 +22,18 @@ import static org.mockito.Mockito.mock;
 
 @DisplayName("AuthenticationService 인터페이스의")
 public class AuthenticationServiceTest {
+    public static final String VALID_NAME = "박범진";
+    private static final String VALID_EMAIL = "qjawlsqjacks@naver.com";
+    private static final String VALID_PW = "1234";
+    public static final String INVALID_EMAIL = "";
+    public static final String INVALID_PW = " ";
+    private static final UserLoginData validLoginData = new UserLoginData(VALID_EMAIL, VALID_PW);
+    private static final UserLoginData invalidLoginData = new UserLoginData(INVALID_EMAIL, INVALID_PW);
+
     private final String SECRET_KEY = "12345678901234567890123456789010";
     private final UserRepository userRepository = mock(UserRepository.class);
     private final AuthenticationService service =
             new JwtService(new JwtUtils(SECRET_KEY), userRepository);
-    private final String validEmail = "qjawlsqjacks@naver.com";
-    private final String validPassword = "1234";
 
     private Claims decodingResult(String token) {
         return Jwts.parserBuilder()
@@ -43,12 +49,12 @@ public class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효한 유저 정보가 주어지면")
         class Context_with_validUserData {
-            private final UserLoginData validLoginData = new UserLoginData(validEmail, validPassword);
+            private final UserLoginData validLoginData = new UserLoginData(VALID_EMAIL, VALID_PW);
 
             @BeforeEach
             void prepare() {
-                given(userRepository.findByEmail(validEmail))
-                        .willReturn(Optional.of(new User(validEmail, "박범진", validPassword)));
+                given(userRepository.findByEmail(VALID_EMAIL))
+                        .willReturn(Optional.of(new User(VALID_EMAIL, VALID_NAME, VALID_PW)));
             }
 
             @Test
@@ -64,11 +70,9 @@ public class AuthenticationServiceTest {
         @Nested
         @DisplayName("유효하지 않은 유저 정보가 주어지면")
         class Context_with_invalidUserData {
-            private final UserLoginData invalidLoginData = new UserLoginData("", "");
-
             @BeforeEach
             void prepare() {
-                given(userRepository.findByEmail(""))
+                given(userRepository.findByEmail(INVALID_EMAIL))
                         .willReturn(Optional.empty());
             }
 
@@ -76,6 +80,24 @@ public class AuthenticationServiceTest {
             @DisplayName("예외를 던진다")
             void It_throws_exception() {
                 assertThatThrownBy(() -> service.login(invalidLoginData))
+                        .isInstanceOf(RuntimeException.class)
+                        .isExactlyInstanceOf(InvalidInformationException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("주어진 유저가 유효하지 않은 값을 가지고 있다면")
+        class Context_with_userWithInvalidValue {
+            @BeforeEach
+            void prepare() {
+                given(userRepository.findByEmail(VALID_EMAIL))
+                        .willReturn(Optional.of(new User(null, null, null)));
+            }
+
+            @Test
+            @DisplayName("예외를 던진다")
+            void It_throws_exception() {
+                assertThatThrownBy(() -> service.login(validLoginData))
                         .isInstanceOf(RuntimeException.class)
                         .isExactlyInstanceOf(InvalidInformationException.class);
             }

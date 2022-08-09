@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidInformationException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -29,5 +30,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(UserEmailDuplicationException.class)
     public ErrorResponse handleUserEmailIsAlreadyExisted() {
         return new ErrorResponse("User's email address is already existed");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidInformationException.class)
+    public ErrorResponse handleInvalidInformation() {
+        return new ErrorResponse("잘못된 이메일 또는 패스워드입니다.");
     }
 }

@@ -28,6 +28,12 @@ public class User {
     @Builder.Default
     private boolean deleted = false;
 
+    public User(String email, String name, String password) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
+    }
+
     public void changeWith(User source) {
         name = source.name;
         password = source.password;

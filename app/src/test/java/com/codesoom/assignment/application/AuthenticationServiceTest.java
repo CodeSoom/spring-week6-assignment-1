@@ -45,6 +45,12 @@ public class AuthenticationServiceTest {
         class Context_with_validUserData {
             private final UserLoginData validLoginData = new UserLoginData(validEmail, validPassword);
 
+            @BeforeEach
+            void prepare() {
+                given(userRepository.findByEmail(validEmail))
+                        .willReturn(Optional.of(new User(validEmail, "박범진", validPassword)));
+            }
+
             @Test
             @DisplayName("토큰을 리턴한다")
             void It_returns_token() {

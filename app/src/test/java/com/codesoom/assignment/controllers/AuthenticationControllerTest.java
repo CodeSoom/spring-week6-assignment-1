@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,11 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -52,7 +55,7 @@ public class AuthenticationControllerTest {
     class Describe_login {
         @Nested
         @DisplayName("인증된 유저라면")
-        class Context_with_request {
+        class Context_with_authentication {
             private void registerUser() throws Exception {
                 postRequest(USER_PATH, registerData);
             }
@@ -68,6 +71,18 @@ public class AuthenticationControllerTest {
                 postRequest(SESSION_PATH, loginData)
                         .andExpect(status().isCreated())
                         .andExpect(content().string(containsString(".")));
+            }
+        }
+
+        @Nested
+        @DisplayName("인증되지 않은 유저라면")
+        class Context_without_authentication {
+            @Test
+            @DisplayName("예외 메시지와 상태코드 400을 응답한다")
+            void It_respond_exception() throws Exception {
+                postRequest(SESSION_PATH, loginData)
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message").isString());
             }
         }
     }

@@ -14,30 +14,29 @@ class JwtUtilTest {
     private static final String VALID_TOKEN =
             "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
-    private static final String INVALID_TOKEN =
-            "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnTTS";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "WRONG";
     private JwtUtil jwtUtill;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         jwtUtill = new JwtUtil(SECRET);
     }
 
     @Test
-    void encode(){
+    void encode() {
         String token = jwtUtill.encode(1L);
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 
     @Test
-    void decodeWithValidToken(){
+    void decodeWithValidToken() {
         Claims claims = jwtUtill.decode(VALID_TOKEN);
         assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
     }
 
     @Test
-    void decodeWithInvalidToken(){
-        assertThatThrownBy(()->jwtUtill.decode(INVALID_TOKEN))
+    void decodeWithInvalidToken() {
+        assertThatThrownBy(() -> jwtUtill.decode(INVALID_TOKEN))
                 .isInstanceOf(SignatureException.class);
     }
 }

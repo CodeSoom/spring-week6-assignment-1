@@ -1,10 +1,13 @@
 package com.codesoom.assignment.dto;
 
-public class UserLoginData {
-    private String email;
-    private String password;
+import javax.validation.constraints.NotBlank;
 
-    public UserLoginData() {}
+public class UserLoginData {
+    @NotBlank
+    private final String email;
+
+    @NotBlank
+    private final String password;
 
     public UserLoginData(String email, String password) {
         this.email = email;

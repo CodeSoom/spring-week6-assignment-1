@@ -1,5 +1,6 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.utils.JwtUtils;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ public class JwtService implements AuthenticationService {
     }
 
     @Override
-    public String create(Long userId) {
-        return jwtUtils.encode(userId);
+    public String login(UserLoginData data) {
+        return jwtUtils.encode(data.getEmail());
     }
 }

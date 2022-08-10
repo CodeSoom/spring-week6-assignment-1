@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,8 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class ProductControllerTest {
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InFqYXdsc3FqYWNrc0BuYXZlci5jb20ifQ.Kp42APjRQt9BsUDief7z63Oz257gC7fbh47zyWsPrjo";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
 
@@ -104,18 +104,24 @@ class ProductControllerTest {
     }
 
     @Test
-    void createWithValidAttributes() throws Exception {
-        mockMvc.perform(
-                        post("/products")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                        "\"price\":5000}")
+    @DisplayName("유효한 토큰과 상품 정보가 주어지면 상품을 생성하고 리턴한다")
+    void returnAndCreateWithValidTokenAndProductData() throws Exception {
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "name", "장난감",
+                                "maker", "코드숨",
+                                "price", 99999,
+                                "imageUrl", "code.com"
+                        )))
+                        .header("Authorization", VALID_TOKEN)
                 )
+                .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("쥐돌이")));
-
-        verify(productService).createProduct(any(ProductData.class));
+                .andExpect(jsonPath("$.name", Is.is("장난감")))
+                .andExpect(jsonPath("$.maker", Is.is("코드숨")))
+                .andExpect(jsonPath("$.price", Is.is(99999)))
+                .andExpect(jsonPath("$.imageUrl", Is.is("code.com")));
     }
 
     @Test

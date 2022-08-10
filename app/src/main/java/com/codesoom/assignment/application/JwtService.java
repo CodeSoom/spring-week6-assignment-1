@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.InvalidInformationException;
 import com.codesoom.assignment.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,4 +31,8 @@ public class JwtService implements AuthenticationService {
         return jwtUtils.encode(data.getEmail());
     }
 
+    @Override
+    public Claims decode(String token) {
+        return jwtUtils.decode(token);
+    }
 }

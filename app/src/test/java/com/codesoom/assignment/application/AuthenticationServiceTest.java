@@ -27,8 +27,8 @@ public class AuthenticationServiceTest {
     private static final String VALID_PW = "1234";
     public static final String INVALID_EMAIL = "";
     public static final String INVALID_PW = " ";
-    private static final UserLoginData validLoginData = new UserLoginData(VALID_EMAIL, VALID_PW);
-    private static final UserLoginData invalidLoginData = new UserLoginData(INVALID_EMAIL, INVALID_PW);
+    private static final UserLoginData VALID_LOGIN_DATA = new UserLoginData(VALID_EMAIL, VALID_PW);
+    private static final UserLoginData INVALID_LOGIN_DATA = new UserLoginData(INVALID_EMAIL, INVALID_PW);
 
     private final String SECRET_KEY = "12345678901234567890123456789010";
     private final UserRepository userRepository = mock(UserRepository.class);
@@ -79,7 +79,7 @@ public class AuthenticationServiceTest {
             @Test
             @DisplayName("예외를 던진다")
             void It_throws_exception() {
-                assertThatThrownBy(() -> service.login(invalidLoginData))
+                assertThatThrownBy(() -> service.login(INVALID_LOGIN_DATA))
                         .isInstanceOf(RuntimeException.class)
                         .isExactlyInstanceOf(InvalidInformationException.class);
             }
@@ -97,9 +97,35 @@ public class AuthenticationServiceTest {
             @Test
             @DisplayName("예외를 던진다")
             void It_throws_exception() {
-                assertThatThrownBy(() -> service.login(validLoginData))
+                assertThatThrownBy(() -> service.login(VALID_LOGIN_DATA))
                         .isInstanceOf(RuntimeException.class)
                         .isExactlyInstanceOf(InvalidInformationException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("decode 메서드는")
+    class Describe_decode {
+        @Nested
+        @DisplayName("유효한 토큰이 주어지면")
+        class Context_with_validToken {
+            String givenValidToken;
+
+            @BeforeEach
+            void prepare() {
+                given(userRepository.findByEmail(VALID_EMAIL))
+                        .willReturn(Optional.of(new User(VALID_EMAIL, VALID_NAME, VALID_PW)));
+                givenValidToken = service.login(VALID_LOGIN_DATA);
+            }
+
+            @Test
+            @DisplayName("토큰을 복호화하고 내용을 리턴한다")
+            void It_returns_body() {
+                Claims claims = service.decode(givenValidToken);
+
+                assertThat(claims.get("email"))
+                        .isEqualTo(VALID_EMAIL);
             }
         }
     }

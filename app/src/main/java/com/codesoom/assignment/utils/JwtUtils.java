@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.UnAuthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -35,12 +36,17 @@ public class JwtUtils {
      *
      * @param inputToken 토큰
      * @return 정보
+     * @throws UnAuthorizedException 토큰이 유효하지 않을 때
      */
     public Claims decode(String inputToken) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(inputToken)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(inputToken)
+                    .getBody();
+        } catch (Exception e) {
+            throw new UnAuthorizedException(e.getMessage());
+        }
     }
 }

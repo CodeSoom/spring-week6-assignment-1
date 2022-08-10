@@ -1,9 +1,13 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.UnAuthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,9 +39,12 @@ class JwtUtilsTest {
         assertThat(GIVEN_EMAIL).isEqualTo(decode.get("email", String.class));
     }
 
-    @Test
-    void invalidSignature() {
-        assertThatThrownBy(() -> utils.decode(INVALID_TOKEN))
-                .isInstanceOf(SignatureException.class);
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "  ", INVALID_TOKEN})
+    @NullSource
+    void invalidToken(String token) {
+        assertThatThrownBy(() -> utils.decode(token))
+                .isInstanceOf(RuntimeException.class)
+                .isExactlyInstanceOf(UnAuthorizedException.class);
     }
 }

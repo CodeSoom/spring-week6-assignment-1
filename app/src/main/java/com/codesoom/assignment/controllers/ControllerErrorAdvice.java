@@ -3,9 +3,11 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.errors.InvalidInformationException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.errors.UnAuthorizedException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,5 +38,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(InvalidInformationException.class)
     public ErrorResponse handleInvalidInformation() {
         return new ErrorResponse("잘못된 이메일 또는 패스워드입니다.");
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({UnAuthorizedException.class, MissingRequestHeaderException.class})
+    public ErrorResponse handleUnAuthorizedToken(Exception e) {
+        return new ErrorResponse(e.getMessage());
     }
 }

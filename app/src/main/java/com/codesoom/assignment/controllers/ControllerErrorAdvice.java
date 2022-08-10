@@ -42,7 +42,7 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({UnAuthorizedException.class, MissingRequestHeaderException.class})
-    public ErrorResponse handleUnAuthorizedToken(Exception e) {
-        return new ErrorResponse(e.getMessage());
+    public ErrorResponse handleUnAuthorizedToken() {
+        return new ErrorResponse("유효하지 않은 토큰입니다.");
     }
 }

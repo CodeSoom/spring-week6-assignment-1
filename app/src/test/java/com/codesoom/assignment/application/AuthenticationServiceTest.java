@@ -105,8 +105,8 @@ public class AuthenticationServiceTest {
     }
 
     @Nested
-    @DisplayName("decode 메서드는")
-    class Describe_decode {
+    @DisplayName("parseToken 메서드는")
+    class Describe_parseToken {
         @Nested
         @DisplayName("유효한 토큰이 주어지면")
         class Context_with_validToken {
@@ -122,7 +122,7 @@ public class AuthenticationServiceTest {
             @Test
             @DisplayName("토큰을 복호화하고 내용을 리턴한다")
             void It_returns_body() {
-                Claims claims = service.decode(givenValidToken);
+                Claims claims = service.parseToken(givenValidToken);
 
                 assertThat(claims.get("email"))
                         .isEqualTo(VALID_EMAIL);

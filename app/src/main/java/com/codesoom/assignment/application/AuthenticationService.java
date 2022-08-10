@@ -13,10 +13,10 @@ public interface AuthenticationService {
     String login(UserLoginData data);
 
     /**
-     * 복호화한 토큰을 리턴한다.
+     * 주어진 토큰을 파싱해서 리턴한다.
      *
      * @param token 토큰
      * @return 토큰 정보
      */
-    Claims decode(String token);
+    Claims parseToken(String token);
 }

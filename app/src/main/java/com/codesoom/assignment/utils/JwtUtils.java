@@ -46,7 +46,7 @@ public class JwtUtils {
                     .parseClaimsJws(inputToken)
                     .getBody();
         } catch (Exception e) {
-            throw new UnAuthorizedException(e.getMessage());
+            throw new UnAuthorizedException();
         }
     }
 }

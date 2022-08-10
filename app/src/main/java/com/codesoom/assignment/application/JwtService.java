@@ -23,15 +23,11 @@ public class JwtService implements AuthenticationService {
     public String login(UserLoginData data) {
         Optional<User> user = userRepository.findByEmail(data.getEmail());
 
-        if (user.isEmpty() || unmatched(user.get(), data)) {
+        if (user.isEmpty() || user.get().isUnMatch(data)) {
             throw new InvalidInformationException();
         }
 
         return jwtUtils.encode(data.getEmail());
     }
 
-    private boolean unmatched(User user, UserLoginData data) {
-        return !data.getEmail().equals(user.getEmail()) ||
-                !data.getPassword().equals(user.getPassword());
-    }
 }

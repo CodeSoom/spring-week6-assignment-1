@@ -44,11 +44,14 @@ public class ProductController {
         return productService.createProduct(productData);
     }
 
-    @PatchMapping("{id}")
-    public Product update(
-            @PathVariable Long id,
-            @RequestBody @Valid ProductData productData
-    ) {
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResponse update(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable("id") Long id,
+            @RequestBody @Valid ProductData productData) {
+
+        authenticationService.parseToken(authorization);
         return productService.updateProduct(id, productData);
     }
 

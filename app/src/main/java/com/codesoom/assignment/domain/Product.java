@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.dto.ProductData;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -34,11 +35,19 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public void changeWith(Product source) {
-        this.name = source.name;
-        this.maker = source.maker;
-        this.price = source.price;
-        this.imageUrl = source.imageUrl;
+    /**
+     * 상품 정보를 변경하고 리턴한다.
+     *
+     * @param productData 상품 정보
+     * @return 상품
+     */
+    public Product change(ProductData productData) {
+        this.name = productData.getName();
+        this.maker = productData.getMaker();
+        this.price = productData.getPrice();
+        this.imageUrl = productData.getImageUrl();
+
+        return this;
     }
 
     @Override

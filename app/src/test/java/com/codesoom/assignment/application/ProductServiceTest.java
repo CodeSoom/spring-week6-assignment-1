@@ -5,13 +5,10 @@ import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.dto.ProductResponse;
 import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +24,34 @@ import static org.mockito.Mockito.verify;
 class ProductServiceTest {
     private final ProductRepository productRepository = mock(ProductRepository.class);
     private final ProductService productService = new ProductService(productRepository);
+    private final ProductData GIVEN_DATA = ProductData.builder()
+            .name("장난감")
+            .maker("코드숨")
+            .price(5000)
+            .build();
+
+    private final ProductData GIVEN_DATA_TO_CHANGE = ProductData.builder()
+            .name("변경 장난감")
+            .maker("변경 코드숨")
+            .price(5555)
+            .build();
+
+    private final Product PRODUCT = Product.builder()
+            .id(1L)
+            .name("장난감")
+            .maker("코드숨")
+            .price(5000)
+            .build();
+
+    private final Product CHANGED_PRODUCT = Product.builder()
+            .id(1L)
+            .name("변경 장난감")
+            .maker("변경 코드숨")
+            .price(5555)
+            .build();
+
+    private final ProductResponse PRODUCT_RESPONSE = ProductResponse.from(PRODUCT);
+    private final ProductResponse CHANGED_PRODUCT_RESPONSE = ProductResponse.from(CHANGED_PRODUCT);
 
     @BeforeEach
     void setUp() {
@@ -80,32 +105,17 @@ class ProductServiceTest {
         @Nested
         @DisplayName("상품 정보가 주어지면")
         class Context_with_productData {
-            final ProductData productData = ProductData.builder()
-                    .name("장난감")
-                    .maker("코드숨")
-                    .price(5000)
-                    .build();
-
-            final Product expectProduct = Product.builder()
-                    .id(1L)
-                    .name("장난감")
-                    .maker("코드숨")
-                    .price(5000)
-                    .build();
-
-            final ProductResponse productResponse = ProductResponse.from(expectProduct);
-
             @BeforeEach
             void prepare() {
-                given(productRepository.save(productData.toProduct()))
-                        .willReturn(expectProduct);
+                given(productRepository.save(GIVEN_DATA.toProduct()))
+                        .willReturn(PRODUCT);
             }
 
             @Test
             @DisplayName("생성된 상품 정보를 리턴한다")
             void It_returns_createdProductData() {
-                assertThat(productService.createProduct(productData))
-                        .isEqualTo(productResponse);
+                assertThat(productService.createProduct(GIVEN_DATA))
+                        .isEqualTo(PRODUCT_RESPONSE);
 
                 verify(productRepository).save(any(Product.class));
             }
@@ -113,17 +123,17 @@ class ProductServiceTest {
     }
 
     @Test
-    void updateProductWithExistedId() {
-        ProductData productData = ProductData.builder()
-                .name("쥐순이")
-                .maker("냥이월드")
-                .price(5000)
-                .build();
+    @DisplayName("변경할 상품 정보가 주어지면 상품 정보를 수정하고 리턴한다")
+    void returnChangedProductWhenUpdateGivenData() {
+        // Given
+        given(productRepository.findById(1L)).willReturn(Optional.ofNullable(PRODUCT));
 
-        Product product = productService.updateProduct(1L, productData);
+        // When
+        ProductResponse productResponse = productService.updateProduct(1L, GIVEN_DATA_TO_CHANGE);
 
-        assertThat(product.getId()).isEqualTo(1L);
-        assertThat(product.getName()).isEqualTo("쥐순이");
+        // Then
+        assertThat(productResponse).isEqualTo(CHANGED_PRODUCT_RESPONSE);
+        verify(productRepository).findById(1L);
     }
 
     @Test

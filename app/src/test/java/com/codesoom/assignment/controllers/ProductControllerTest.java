@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,11 +35,18 @@ class ProductControllerTest {
     public static final String VALID_NAME = "장난감";
     public static final String VALID_MAKER = "코드숨";
     public static final int VALID_PRICE = 99999;
-    public static final Map<String, Object> VALID_PRODUCT = Map.of(
+    public static final Map<String, Object> GIVEN_PRODUCT = Map.of(
             "name", VALID_NAME,
             "maker", VALID_MAKER,
             "price", VALID_PRICE
     );
+    public static final String CHANGE_PREFIX = "변경";
+    public static final Map<String, Object> GIVEN_PRODUCT_TO_CHANGE = Map.of(
+            "name", CHANGE_PREFIX + VALID_NAME,
+            "maker", CHANGE_PREFIX + VALID_MAKER,
+            "price", VALID_PRICE + 1
+    );
+    public static final String PRODUCT_PATH = "/products";
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,7 +54,7 @@ class ProductControllerTest {
     private ObjectMapper objectMapper;
 
     private Map<String, Object> createProduct(Map<String, Object> product, String token) throws Exception {
-        return objectMapper.readValue(mockMvc.perform(post("/products")
+        return objectMapper.readValue(mockMvc.perform(post(PRODUCT_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(product))
                         .header("Authorization", token))
@@ -59,9 +68,9 @@ class ProductControllerTest {
     @ValueSource(strings = {"", " ", "Bearer ", INVALID_TOKEN})
     @DisplayName("상품을 생성할 때, 유효하지 않은 토큰이 주어지면 에러 메시지와 상태코드 401을 응답한다.")
     void whenCreatingProductAuthenticatedTokenRequired(String token) throws Exception {
-        mockMvc.perform(post("/products")
+        mockMvc.perform(post(PRODUCT_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(VALID_PRODUCT))
+                        .content(objectMapper.writeValueAsString(GIVEN_PRODUCT))
                         .header("Authorization", token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").isString());
@@ -70,9 +79,9 @@ class ProductControllerTest {
     @Test
     @DisplayName("유효한 토큰과 상품 정보가 주어지면 상품을 생성하고 리턴한다")
     void returnAndCreateWithValidTokenAndProductData() throws Exception {
-        mockMvc.perform(post("/products")
+        mockMvc.perform(post(PRODUCT_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(VALID_PRODUCT))
+                        .content(objectMapper.writeValueAsString(GIVEN_PRODUCT))
                         .header("Authorization", VALID_TOKEN)
                 )
                 .andExpect(status().isCreated())
@@ -82,15 +91,30 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("변경할 상품 정보가 주어지면 상품 정보를 수정하고 리턴한다")
-    void returnAndUpdateProductWithData() {
+    @DisplayName("유효한 토큰과 변경할 상품 정보가 주어지면 상품 정보를 수정하고 리턴한다")
+    void returnAndUpdateProductWithData() throws Exception {
+        // Given
+        Map<String, Object> product = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        Object productId = product.get("id");
 
+        // When
+        ResultActions changedProduct = mockMvc.perform(put(PRODUCT_PATH + "/" + productId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(GIVEN_PRODUCT_TO_CHANGE))
+                .header("Authorization", VALID_TOKEN));
+
+        // Then
+        changedProduct
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", Is.is(CHANGE_PREFIX + VALID_NAME)))
+                .andExpect(jsonPath("$.maker", Is.is(CHANGE_PREFIX + VALID_MAKER)))
+                .andExpect(jsonPath("$.price", Is.is(VALID_PRICE + 1)));
     }
 
     @Test
     void list() throws Exception {
         mockMvc.perform(
-                get("/products")
+                get(PRODUCT_PATH)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(status().isOk())
@@ -116,7 +140,7 @@ class ProductControllerTest {
     @Test
     void createWithInvalidAttributes() throws Exception {
         mockMvc.perform(
-                post("/products")
+                post(PRODUCT_PATH)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +

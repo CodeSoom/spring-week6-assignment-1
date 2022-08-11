@@ -18,7 +18,7 @@ public class ProductData {
     @NotNull
     private final Integer price;
 
-    private String imageUrl;
+    private final String imageUrl;
 
     @Builder
     public ProductData(String name, String maker, Integer price, String imageUrl) {

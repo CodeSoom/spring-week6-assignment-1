@@ -16,7 +16,7 @@ public class ProductResponse {
 
     private final Integer price;
 
-    private String imageUrl;
+    private final String imageUrl;
 
     @Builder
     public ProductResponse(Long id, String name, String maker, Integer price, String imageUrl) {

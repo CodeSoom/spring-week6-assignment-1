@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +20,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,12 +30,30 @@ class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InFqYXdsc3FqYWNrc0BuYXZlci5jb20ifQ.Kp42APjRQt9BsUDief7z63Oz257gC7fbh47zyWsPrjo";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    public static final String VALID_NAME = "장난감";
+    public static final String VALID_MAKER = "코드숨";
+    public static final int VALID_PRICE = 99999;
+    public static final Map<String, Object> VALID_PRODUCT = Map.of(
+            "name", VALID_NAME,
+            "maker", VALID_MAKER,
+            "price", VALID_PRICE
+    );
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
+
+    private Map<String, Object> createProduct(Map<String, Object> product, String token) throws Exception {
+        return objectMapper.readValue(mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(product))
+                        .header("Authorization", token))
+                .andReturn()
+                .getResponse()
+                .getContentAsString(), new TypeReference<>() {
+        });
+    }
 
     @ParameterizedTest(name = "token = ''{0}''")
     @ValueSource(strings = {"", " ", "Bearer ", INVALID_TOKEN})
@@ -43,12 +61,7 @@ class ProductControllerTest {
     void whenCreatingProductAuthenticatedTokenRequired(String token) throws Exception {
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(Map.of(
-                                "name", "장난감",
-                                "maker", "코드숨",
-                                "price", 99999,
-                                "imageUrl", "code.com"
-                        )))
+                        .content(objectMapper.writeValueAsString(VALID_PRODUCT))
                         .header("Authorization", token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").isString());
@@ -59,20 +72,19 @@ class ProductControllerTest {
     void returnAndCreateWithValidTokenAndProductData() throws Exception {
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(Map.of(
-                                "name", "장난감",
-                                "maker", "코드숨",
-                                "price", 99999,
-                                "imageUrl", "code.com"
-                        )))
+                        .content(objectMapper.writeValueAsString(VALID_PRODUCT))
                         .header("Authorization", VALID_TOKEN)
                 )
-                .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", Is.is("장난감")))
-                .andExpect(jsonPath("$.maker", Is.is("코드숨")))
-                .andExpect(jsonPath("$.price", Is.is(99999)))
-                .andExpect(jsonPath("$.imageUrl", Is.is("code.com")));
+                .andExpect(jsonPath("$.name", Is.is(VALID_NAME)))
+                .andExpect(jsonPath("$.maker", Is.is(VALID_MAKER)))
+                .andExpect(jsonPath("$.price", Is.is(VALID_PRICE)));
+    }
+
+    @Test
+    @DisplayName("변경할 상품 정보가 주어지면 상품 정보를 수정하고 리턴한다")
+    void returnAndUpdateProductWithData() {
+
     }
 
     @Test

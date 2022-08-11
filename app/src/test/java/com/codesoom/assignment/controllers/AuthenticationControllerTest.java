@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,12 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,6 +30,9 @@ public class AuthenticationControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtUtils utils;
 
     private final Map<String, Object> registerData = Map.of(
             "email", "qjawlsqjacks@naver.com",
@@ -60,6 +60,8 @@ public class AuthenticationControllerTest {
                 postRequest(USER_PATH, registerData);
             }
 
+            private final String token = utils.encode((String) registerData.get("email"));
+
             @BeforeEach
             void prepare() throws Exception {
                 registerUser();
@@ -70,7 +72,7 @@ public class AuthenticationControllerTest {
             void It_respond_token() throws Exception {
                 postRequest(SESSION_PATH, loginData)
                         .andExpect(status().isCreated())
-                        .andExpect(content().string(containsString(".")));
+                        .andExpect(jsonPath("$").value(token));
             }
         }
 

@@ -1,32 +1,31 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(SessionController.class)
-@AutoConfigureMockMvc
 class SessionControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+    private static final String SECRET = "12345678901234567890123456789012";
 
-    @MockBean
-    private AuthenticationService authenticationService;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setup() {
-        given(authenticationService.login()).willReturn("a.b.c");
+        final JwtUtil jwtUtil = new JwtUtil(SECRET);
+        final AuthenticationService authenticationService = new AuthenticationService(jwtUtil);
+        final SessionController controller = new SessionController(authenticationService);
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(controller)
+                .build();
     }
 
     @Test

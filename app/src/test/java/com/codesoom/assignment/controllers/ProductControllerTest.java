@@ -30,8 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InFqYXdsc3FqYWNrc0BuYXZlci5jb20ifQ.Kp42APjRQt9BsUDief7z63Oz257gC7fbh47zyWsPrjo";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
-            "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String INVALID_TOKEN = VALID_TOKEN + "0";
     public static final String VALID_NAME = "장난감";
     public static final String VALID_MAKER = "코드숨";
     public static final int VALID_PRICE = 99999;
@@ -91,7 +90,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("유효한 토큰과 변경할 상품 정보가 주어지면 상품 정보를 수정하고 응답한다")
+    @DisplayName("update 메서드는 유효한 토큰과 변경할 상품 정보가 주어지면 상품 정보를 수정하고 응답한다")
     void returnAndUpdateProductWithData() throws Exception {
         // Given
         Map<String, Object> product = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
@@ -112,7 +111,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("유효하지 않은 토큰과 변경할 상품 정보가 주어지면 예외 메시지를 응답한다")
+    @DisplayName("update 메서드는 유효하지 않은 토큰과 변경할 상품 정보가 주어지면 예외 메시지를 응답한다")
     void returnErrorMessageWhenUpdateGivenInvalidToken() throws Exception {
         // Given
         Map<String, Object> product = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
@@ -131,11 +130,41 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("delete 메서드는 유효한 토큰이 주어지면 상품을 삭제하고 204를 응답한다")
+    void returnNoContentWhenDeleteGivenValidToken() throws Exception {
+        // Given
+        Map<String, Object> createdProduct = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        Object productId = createdProduct.get("id");
+
+        // When
+        ResultActions response = mockMvc.perform(delete(PRODUCT_PATH + "/" + productId)
+                .header("Authorization", VALID_TOKEN));
+
+        // Then
+        response.andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("delete 메서드는 유효하지 않은 토큰이 주어지면 예외 메시지를 응답한다")
+    void returnErrorMessageWhenDeleteGivenInvalidToken() throws Exception {
+        // Given
+        Map<String, Object> createdProduct = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        Object productId = createdProduct.get("id");
+
+        // When
+        ResultActions response = mockMvc.perform(delete(PRODUCT_PATH + "/" + productId)
+                .header("Authorization", INVALID_TOKEN));
+
+        // Then
+        response.andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void list() throws Exception {
         mockMvc.perform(
-                get(PRODUCT_PATH)
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
+                        get(PRODUCT_PATH)
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐돌이")));
     }
@@ -203,23 +232,5 @@ class ProductControllerTest {
                                 "\"price\":0}")
         )
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void destroyWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1")
-        )
-                .andExpect(status().isNoContent());
-
-    }
-
-    @Test
-    void destroyWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                delete("/products/1000")
-        )
-                .andExpect(status().isNotFound());
-
     }
 }

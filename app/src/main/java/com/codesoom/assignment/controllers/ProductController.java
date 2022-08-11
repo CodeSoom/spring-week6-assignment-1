@@ -55,11 +55,13 @@ public class ProductController {
         return productService.updateProduct(id, productData);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(
-            @PathVariable Long id
-    ) {
+    public void delete(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id) {
+
+        authenticationService.parseToken(authorization);
         productService.deleteProduct(id);
     }
 }

@@ -8,18 +8,15 @@ import java.util.Objects;
 
 @Getter
 public class ProductResponse {
-    private Long id;
+    private final Long id;
 
-    private String name;
+    private final String name;
 
-    private String maker;
+    private final String maker;
 
-    private Integer price;
+    private final Integer price;
 
     private String imageUrl;
-
-    public ProductResponse() {
-    }
 
     @Builder
     public ProductResponse(Long id, String name, String maker, Integer price, String imageUrl) {

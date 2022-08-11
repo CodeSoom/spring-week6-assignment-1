@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.dto.ProductResponse;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -35,12 +36,11 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Product create(
+    public ProductResponse create(
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData) {
 
         Claims claims = authenticationService.parseToken(authorization);
-
         return productService.createProduct(productData);
     }
 

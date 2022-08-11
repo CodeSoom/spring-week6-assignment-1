@@ -77,7 +77,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("유효한 토큰과 상품 정보가 주어지면 상품을 생성하고 리턴한다")
+    @DisplayName("유효한 토큰과 상품 정보가 주어지면 상품을 생성하고 응답한다")
     void returnAndCreateWithValidTokenAndProductData() throws Exception {
         mockMvc.perform(post(PRODUCT_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +91,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("유효한 토큰과 변경할 상품 정보가 주어지면 상품 정보를 수정하고 리턴한다")
+    @DisplayName("유효한 토큰과 변경할 상품 정보가 주어지면 상품 정보를 수정하고 응답한다")
     void returnAndUpdateProductWithData() throws Exception {
         // Given
         Map<String, Object> product = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
@@ -109,6 +109,25 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.name", Is.is(CHANGE_PREFIX + VALID_NAME)))
                 .andExpect(jsonPath("$.maker", Is.is(CHANGE_PREFIX + VALID_MAKER)))
                 .andExpect(jsonPath("$.price", Is.is(VALID_PRICE + 1)));
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 토큰과 변경할 상품 정보가 주어지면 예외 메시지를 응답한다")
+    void returnErrorMessageWhenUpdateGivenInvalidToken() throws Exception {
+        // Given
+        Map<String, Object> product = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        Object productId = product.get("id");
+
+        // When
+        ResultActions changedProduct = mockMvc.perform(put(PRODUCT_PATH + "/" + productId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(GIVEN_PRODUCT_TO_CHANGE))
+                .header("Authorization", INVALID_TOKEN));
+
+        // Then
+        changedProduct
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").isString());
     }
 
     @Test

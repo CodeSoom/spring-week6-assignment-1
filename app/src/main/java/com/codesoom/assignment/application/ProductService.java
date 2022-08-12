@@ -5,7 +5,6 @@ import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.dto.ProductResponse;
 import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -14,7 +13,6 @@ import java.util.List;
 @Service
 @Transactional
 public class ProductService {
-    private Mapper mapper;
     private final ProductRepository productRepository;
 
     public ProductService(ProductRepository productRepository) {

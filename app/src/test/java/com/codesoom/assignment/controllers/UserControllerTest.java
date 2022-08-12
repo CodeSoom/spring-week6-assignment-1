@@ -1,8 +1,11 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.domain.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.Is;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 public class UserControllerTest {
     public static final String USER_PATH = "/users";
     @Autowired
@@ -48,6 +50,14 @@ public class UserControllerTest {
                         .getResponse()
                         .getContentAsString(), new TypeReference<>() {}
         );
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @AfterEach
+    void setUp() {
+        userRepository.deleteAll();
     }
 
     @Nested

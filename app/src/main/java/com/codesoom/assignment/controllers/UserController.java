@@ -22,9 +22,8 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
-        User user = userService.registerUser(registrationData);
-        return getUserResultData(user);
+    public UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
+        return userService.registerUser(registrationData);
     }
 
     @PatchMapping("{id}")
@@ -44,7 +43,6 @@ public class UserController {
 
     private UserResultData getUserResultData(User user) {
         return UserResultData.builder()
-                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .build();

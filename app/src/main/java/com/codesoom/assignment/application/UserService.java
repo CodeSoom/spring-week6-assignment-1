@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.dto.UserResultData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
@@ -22,14 +23,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User registerUser(UserRegistrationData registrationData) {
-        String email = registrationData.getEmail();
+    public UserResultData registerUser(UserRegistrationData data) {
+        String email = data.getEmail();
+
         if (userRepository.existsByEmail(email)) {
             throw new UserEmailDuplicationException(email);
         }
 
-        User user = mapper.map(registrationData, User.class);
-        return userRepository.save(user);
+        User user = userRepository.save(data.toUser());
+        return UserResultData.from(user);
     }
 
     public User updateUser(Long id, UserModificationData modificationData) {

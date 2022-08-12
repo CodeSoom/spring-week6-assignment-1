@@ -1,16 +1,24 @@
 package com.codesoom.assignment.dto;
 
-import lombok.AllArgsConstructor;
+import com.codesoom.assignment.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class UserResultData {
-    private Long id;
+    private final String email;
+    private final String name;
 
-    private String email;
+    @Builder
+    public UserResultData(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
 
-    private String name;
+    public static UserResultData from(User user) {
+        return UserResultData.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .build();
+    }
 }

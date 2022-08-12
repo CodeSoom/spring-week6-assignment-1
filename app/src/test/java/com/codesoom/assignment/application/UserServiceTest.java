@@ -4,11 +4,13 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.dto.UserResultData;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -21,6 +23,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class UserServiceTest {
+    public static final String EMAIL = "qjawlsqjacks@naver.com";
+    public static final String NAME = "BJP";
+    public static final String PASSWORD = "1234";
+    public static final UserRegistrationData REGISTRATION_DATA = UserRegistrationData.builder()
+            .email(EMAIL)
+            .name(NAME)
+            .password(PASSWORD)
+            .build();
     private static final String EXISTED_EMAIL_ADDRESS = "existed@example.com";
     private static final Long DELETED_USER_ID = 200L;
 
@@ -63,20 +73,29 @@ class UserServiceTest {
     }
 
     @Test
-    void registerUser() {
-        UserRegistrationData registrationData = UserRegistrationData.builder()
-                .email("tester@example.com")
-                .name("Tester")
-                .password("test")
-                .build();
+    @DisplayName("register 메서드는 유저 정보가 주어지면 유저를 생성하고 유저 결과 정보를 리턴한다")
+    void returnRegisteredUserWhenRegisterGivenUserData() {
+        // Given, When
+        UserResultData resultData = userService.registerUser(REGISTRATION_DATA);
 
-        User user = userService.registerUser(registrationData);
-
-        assertThat(user.getId()).isEqualTo(13L);
-        assertThat(user.getEmail()).isEqualTo("tester@example.com");
-        assertThat(user.getName()).isEqualTo("Tester");
+        // Then
+        assertThat(resultData.getEmail()).isEqualTo(EMAIL);
+        assertThat(resultData.getName()).isEqualTo(NAME);
 
         verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("register 메서드는 유저 이메일과 동일한 유저 이메일이 있으면 예외를 던진다")
+    void throwExceptionWhenExistEmail() {
+        // Given
+        given(userRepository.existsByEmail(EMAIL)).willReturn(true);
+
+        // When, Then
+        assertThatThrownBy(() -> userService.registerUser(REGISTRATION_DATA))
+                .isExactlyInstanceOf(UserEmailDuplicationException.class);
+
+        verify(userRepository).existsByEmail(EMAIL);
     }
 
     @Test

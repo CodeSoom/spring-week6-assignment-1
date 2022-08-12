@@ -17,11 +17,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,8 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InFqYXdsc3FqYWNrc0BuYXZlci5jb20ifQ.Kp42APjRQt9BsUDief7z63Oz257gC7fbh47zyWsPrjo";
     private static final String INVALID_TOKEN = VALID_TOKEN + "0";
-    public static final String VALID_NAME = "장난감";
-    public static final String VALID_MAKER = "코드숨";
+    public static final String VALID_NAME = "mouse";
+    public static final String VALID_MAKER = "codesoom";
     public static final int VALID_PRICE = 99999;
     public static final Map<String, Object> GIVEN_PRODUCT = Map.of(
             "name", VALID_NAME,
@@ -160,77 +161,45 @@ class ProductControllerTest {
     }
 
     @Test
-    void list() throws Exception {
-        mockMvc.perform(
-                        get(PRODUCT_PATH)
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
-                )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+    @DisplayName("list 메서드는 상품 목록이 주어지면 상품 목록과 200을 응답한다")
+    void returnListWhenListGivenProducts() throws Exception {
+        // Given
+        createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        createProduct(GIVEN_PRODUCT, INVALID_TOKEN);
+
+        // When
+        ResultActions response = mockMvc.perform(get(PRODUCT_PATH));
+
+        // Then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
     }
 
     @Test
-    void deatilWithExsitedProduct() throws Exception {
-        mockMvc.perform(
-                get("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+    @DisplayName("detail 메서드는 상품이 주어지면 상품과 200을 응답한다")
+    void returnProductWhenDetailGivenProduct() throws Exception {
+        // Given
+        Map<String, Object> givenProduct = createProduct(GIVEN_PRODUCT, VALID_TOKEN);
+        Object findId = givenProduct.get("id");
+
+        // When
+        ResultActions response = mockMvc.perform(get(PRODUCT_PATH + "/" + findId));
+
+        // Then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Is.is(findId)))
+                .andExpect(jsonPath("$.name", Is.is(givenProduct.get("name"))))
+                .andExpect(jsonPath("$.maker", Is.is(givenProduct.get("maker"))))
+                .andExpect(jsonPath("$.price", Is.is(givenProduct.get("price"))))
+                .andExpect(jsonPath("$.imageUrl", Is.is(givenProduct.get("imageUrl"))));
     }
 
     @Test
-    void deatilWithNotExsitedProduct() throws Exception {
-        mockMvc.perform(get("/products/1000"))
+    @DisplayName("detail 메서드는 상품을 찾지 못하면 예외 메시지를 응답한다")
+    void returnErrorMessageWhenDetailNotGivenProduct() throws Exception {
+        mockMvc.perform(get(PRODUCT_PATH + "/" + -1))
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void createWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                post(PRODUCT_PATH)
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void updateWithExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐순이")));
-    }
-
-    @Test
-    void updateWithNotExistedProduct() throws Exception {
-        mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
-                .andExpect(status().isNotFound());
-
-    }
-
-    @Test
-    void updateWithInvalidAttributes() throws Exception {
-        mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
-                .andExpect(status().isBadRequest());
     }
 }

@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
+import com.codesoom.assignment.dto.BearerAuthorization;
 import com.codesoom.assignment.dto.ProductData;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> list(@RequestHeader(HttpHeaders.AUTHORIZATION) String authentication) {
-        System.out.println("[authentication]" + authentication);
-        authenticationService.isAuthorized(authentication);
+    public List<Product> list(@RequestHeader(HttpHeaders.AUTHORIZATION) BearerAuthorization authorization) {
+        authenticationService.isAuthorized(authorization);
         return productService.getProducts();
     }
 

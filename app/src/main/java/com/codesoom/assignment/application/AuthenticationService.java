@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.BearerAuthorization;
 import com.codesoom.assignment.dto.SessionRegistrationData;
 import com.codesoom.assignment.errors.SessionValidationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -34,7 +35,7 @@ public class AuthenticationService {
         return jwtUtil.encode(user.getId());
     }
 
-    public boolean isAuthorized(String token) {
+    public boolean isAuthorized(BearerAuthorization authorization) {
         return true; // TODO: jwtUtil 사용하도록 변경
     }
 }

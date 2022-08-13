@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SessionControllerTest {
     private static final String SECRET = "12345678901234567890123456789012";
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
+    private static final String WRONG_PASSWORD = "wrong password";
 
     private static final User TEST_USER = User.builder()
             .email("tester@test.com")
@@ -52,8 +53,8 @@ class SessionControllerTest {
     @DisplayName("POST /session은")
     class Describe_postSession {
         @Nested
-        @DisplayName("등록되어 있는 유저 정보를 담아서 요청하면")
-        class Context_withExistingUser {
+        @DisplayName("등록되어 있는 유저 정보로 요청하면")
+        class Context_withRegisteredUser {
             private SessionRegistrationData sessionRegistrationData;
 
             @BeforeEach
@@ -64,7 +65,7 @@ class SessionControllerTest {
 
             @Test
             @DisplayName("Created Status, 유저 정보에 대한 토큰을 반환한다")
-            void login() throws Exception {
+            void it_returnsCreatedStatusAndUser() throws Exception {
                 SessionResponseData expected = new SessionResponseData(VALID_TOKEN);
 
                 mockMvc.perform(
@@ -74,6 +75,29 @@ class SessionControllerTest {
                         )
                         .andExpect(status().isCreated())
                         .andExpect(content().json(jsonContent(expected)));
+            }
+        }
+
+        @Nested
+        @DisplayName("등록되어 있는 유저 email과 잘못된 password로 요청하면")
+        class Context_withRegisteredUserEmailAndWrongPassword {
+            private SessionRegistrationData sessionRegistrationData;
+
+            @BeforeEach
+            void prepare() {
+                userRepository.save(TEST_USER);
+                sessionRegistrationData = new SessionRegistrationData(TEST_USER.getEmail(), WRONG_PASSWORD);
+            }
+
+            @Test
+            @DisplayName("Bad Request Status를 반환한다")
+            void it_returnsBadRequest() throws Exception {
+                mockMvc.perform(
+                                post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(jsonContent(sessionRegistrationData))
+                        )
+                        .andExpect(status().isBadRequest());
             }
         }
     }

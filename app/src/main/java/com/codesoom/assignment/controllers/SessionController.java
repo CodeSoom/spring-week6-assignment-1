@@ -8,9 +8,13 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
+import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.dto.SessionRegistrationData;
 import com.codesoom.assignment.dto.SessionResponseData;
+import com.codesoom.assignment.errors.SessionValidationException;
+import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/session")
 public class SessionController {
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     public SessionController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
@@ -36,5 +40,11 @@ public class SessionController {
         return SessionResponseData.builder()
                 .accessToken(accessToken)
                 .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(SessionValidationException.class)
+    public ErrorResponse handleSessionValidationException(SessionValidationException exception) {
+        return new ErrorResponse(exception.getMessage());
     }
 }

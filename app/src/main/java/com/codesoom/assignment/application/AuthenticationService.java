@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.SessionRegistrationData;
+import com.codesoom.assignment.errors.SessionValidationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Jwts;
@@ -25,6 +26,10 @@ public class AuthenticationService {
     public String login(SessionRegistrationData registrationData) {
         User user = userRepository.findByEmail(registrationData.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(registrationData.getEmail()));
+
+        if (!user.getPassword().equals(registrationData.getPassword())) {
+            throw new SessionValidationException();
+        }
 
         return jwtUtil.encode(user.getId());
     }

@@ -3,6 +3,7 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.SessionRegistrationData;
+import com.codesoom.assignment.errors.SessionValidationException;
 import com.codesoom.assignment.infra.InMemoryUserRepository;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AuthenticationServiceTest {
     private static final String SECRET = "12345678901234567890123456789012";
@@ -35,8 +37,8 @@ class AuthenticationServiceTest {
     @DisplayName("login 메소드는")
     class Describe_login {
         @Nested
-        @DisplayName("등록된 유저의 정보를 전달했을 때")
-        class Context_withRegisteredUserInfo {
+        @DisplayName("등록된 유저의 email과 password를 전달했을 때")
+        class Context_withRegisteredUserEmailAndPassword {
             SessionRegistrationData registrationData;
 
             @BeforeEach
@@ -46,9 +48,29 @@ class AuthenticationServiceTest {
             }
 
             @Test
+            @DisplayName("유요한 토큰을 반환한다")
             void it_returnsValidToken() {
                 String result = authenticationService.login(registrationData);
                 assertThat(result).isEqualTo(VALID_TOKEN);
+            }
+        }
+
+        @Nested
+        @DisplayName("등록된 유저의 email와 잘못된 password를 전달했을 때")
+        class Context_withRegisteredUserEmailAndWrongPassword {
+            SessionRegistrationData registrationData;
+
+            @BeforeEach
+            void prepare() {
+                userRepository.save(TEST_USER);
+                registrationData = new SessionRegistrationData(TEST_USER.getEmail(), "wrong password");
+            }
+
+            @Test
+            @DisplayName("세션 인증에 실패했다는 예외를 던진다")
+            void it_throwsSessionValidationException() {
+                assertThatThrownBy(()-> { authenticationService.login(registrationData); })
+                        .isInstanceOf(SessionValidationException.class);
             }
         }
     }

@@ -33,4 +33,8 @@ public class AuthenticationService {
 
         return jwtUtil.encode(user.getId());
     }
+
+    public boolean isAuthorized(String token) {
+        return true; // TODO: jwtUtil 사용하도록 변경
+    }
 }

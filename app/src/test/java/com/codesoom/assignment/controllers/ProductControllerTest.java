@@ -1,14 +1,22 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
+import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.infra.InMemoryUserRepository;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,15 +31,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import({ProductControllerTestConfig.class})
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
     private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
+    private static final String BEARER_VALID_TOKEN = "Bearer " + VALID_TOKEN;
+    private static final String BEARER_INVALID_TOKEN = "Bearer " + INVALID_TOKEN;
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @MockBean
     private ProductService productService;
@@ -74,13 +88,24 @@ class ProductControllerTest {
     }
 
     @Test
-    void list() throws Exception {
+    void listWithVaildToken() throws Exception {
+        mockMvc.perform(
+                        get("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", BEARER_VALID_TOKEN)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("쥐돌이")));
+    }
+
+    @Test
+    void listWithInvalidToken() throws Exception {
         mockMvc.perform(
                 get("/products")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+                        .header("Authorization", BEARER_INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

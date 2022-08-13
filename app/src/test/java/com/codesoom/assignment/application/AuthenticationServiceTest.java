@@ -6,6 +6,8 @@ import com.codesoom.assignment.dto.SessionRegistrationData;
 import com.codesoom.assignment.infra.InMemoryUserRepository;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,12 +31,25 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(jwtUtil, userRepository);
     }
 
-    @Test
-    void login() {
-        userRepository.save(TEST_USER);
-        SessionRegistrationData registrationData = new SessionRegistrationData(TEST_USER.getEmail(), TEST_USER.getPassword());
-        String accessToken = authenticationService.login(registrationData);
+    @Nested
+    @DisplayName("login 메소드는")
+    class Describe_login {
+        @Nested
+        @DisplayName("등록된 유저의 정보를 전달했을 때")
+        class Context_withRegisteredUserInfo {
+            SessionRegistrationData registrationData;
 
-        assertThat(accessToken).isEqualTo(VALID_TOKEN);
+            @BeforeEach
+            void prepare() {
+                userRepository.save(TEST_USER);
+                registrationData = new SessionRegistrationData(TEST_USER.getEmail(), TEST_USER.getPassword());
+            }
+
+            @Test
+            void it_returnsValidToken() {
+                String result = authenticationService.login(registrationData);
+                assertThat(result).isEqualTo(VALID_TOKEN);
+            }
+        }
     }
 }

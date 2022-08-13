@@ -1,5 +1,6 @@
 package com.codesoom.assignment.infra;
 
+import com.codesoom.assignment.TestOnly;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class InMemoryUserRepository implements UserRepository {
+public class InMemoryUserRepository implements UserRepository, TestOnly {
 
     private final List<User> users = new ArrayList<>();
     private Long newId = 1L;

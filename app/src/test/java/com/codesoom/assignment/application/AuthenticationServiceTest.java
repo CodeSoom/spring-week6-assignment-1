@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.SessionRegistrationData;
 import com.codesoom.assignment.errors.SessionValidationException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.infra.InMemoryUserRepository;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +72,24 @@ class AuthenticationServiceTest {
             void it_throwsSessionValidationException() {
                 assertThatThrownBy(()-> { authenticationService.login(registrationData); })
                         .isInstanceOf(SessionValidationException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("등록되지 않은 유저의 email과 password를 전달했을 때")
+        class Context_withUnregisteredUserEmailAndPassword {
+            SessionRegistrationData registrationData;
+
+            @BeforeEach
+            void prepare() {
+                registrationData = new SessionRegistrationData(TEST_USER.getEmail(), TEST_USER.getPassword());
+            }
+
+            @Test
+            @DisplayName("유저를 찾을 수 없다는 예외를 던진다")
+            void it_returnsValidToken() {
+                assertThatThrownBy(()-> { authenticationService.login(registrationData); })
+                        .isInstanceOf(UserNotFoundException.class);
             }
         }
     }

@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:data/demo
+
+jwt:
+  secret: "12345678901234567890123456789010"

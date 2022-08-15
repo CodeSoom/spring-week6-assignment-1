@@ -3,10 +3,11 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.dto.ProductResponse;
 import com.codesoom.assignment.errors.ProductNotFoundException;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -19,18 +20,41 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@DisplayName("ProductService 클래스의")
 class ProductServiceTest {
-    private ProductService productService;
+    private final ProductRepository productRepository = mock(ProductRepository.class);
+    private final ProductService productService = new ProductService(productRepository);
+    private final ProductData GIVEN_DATA = ProductData.builder()
+            .name("장난감")
+            .maker("코드숨")
+            .price(5000)
+            .build();
 
-    private final ProductRepository productRepository =
-            mock(ProductRepository.class);
+    private final ProductData GIVEN_DATA_TO_CHANGE = ProductData.builder()
+            .name("변경 장난감")
+            .maker("변경 코드숨")
+            .price(5555)
+            .build();
+
+    private final Product PRODUCT = Product.builder()
+            .id(1L)
+            .name("장난감")
+            .maker("코드숨")
+            .price(5000)
+            .build();
+
+    private final Product CHANGED_PRODUCT = Product.builder()
+            .id(1L)
+            .name("변경 장난감")
+            .maker("변경 코드숨")
+            .price(5555)
+            .build();
+
+    private final ProductResponse PRODUCT_RESPONSE = ProductResponse.from(PRODUCT);
+    private final ProductResponse CHANGED_PRODUCT_RESPONSE = ProductResponse.from(CHANGED_PRODUCT);
 
     @BeforeEach
     void setUp() {
-        Mapper mapper = DozerBeanMapperBuilder.buildDefault();
-
-        productService = new ProductService(mapper, productRepository);
-
         Product product = Product.builder()
                 .id(1L)
                 .name("쥐돌이")
@@ -41,16 +65,6 @@ class ProductServiceTest {
         given(productRepository.findAll()).willReturn(List.of(product));
 
         given(productRepository.findById(1L)).willReturn(Optional.of(product));
-
-        given(productRepository.save(any(Product.class))).will(invocation -> {
-            Product source = invocation.getArgument(0);
-            return Product.builder()
-                    .id(2L)
-                    .name(source.getName())
-                    .maker(source.getMaker())
-                    .price(source.getPrice())
-                    .build();
-        });
     }
 
     @Test
@@ -85,35 +99,41 @@ class ProductServiceTest {
                 .isInstanceOf(ProductNotFoundException.class);
     }
 
-    @Test
-    void createProduct() {
-        ProductData productData = ProductData.builder()
-                .name("쥐돌이")
-                .maker("냥이월드")
-                .price(5000)
-                .build();
+    @Nested
+    @DisplayName("createProduct 메서드는")
+    class Describe_createProduct {
+        @Nested
+        @DisplayName("상품 정보가 주어지면")
+        class Context_with_productData {
+            @BeforeEach
+            void prepare() {
+                given(productRepository.save(GIVEN_DATA.toProduct()))
+                        .willReturn(PRODUCT);
+            }
 
-        Product product = productService.createProduct(productData);
+            @Test
+            @DisplayName("생성된 상품 정보를 리턴한다")
+            void It_returns_createdProductData() {
+                assertThat(productService.createProduct(GIVEN_DATA))
+                        .isEqualTo(PRODUCT_RESPONSE);
 
-        verify(productRepository).save(any(Product.class));
-
-        assertThat(product.getId()).isEqualTo(2L);
-        assertThat(product.getName()).isEqualTo("쥐돌이");
-        assertThat(product.getMaker()).isEqualTo("냥이월드");
+                verify(productRepository).save(any(Product.class));
+            }
+        }
     }
 
     @Test
-    void updateProductWithExistedId() {
-        ProductData productData = ProductData.builder()
-                .name("쥐순이")
-                .maker("냥이월드")
-                .price(5000)
-                .build();
+    @DisplayName("변경할 상품 정보가 주어지면 상품 정보를 수정하고 리턴한다")
+    void returnChangedProductWhenUpdateGivenData() {
+        // Given
+        given(productRepository.findById(1L)).willReturn(Optional.ofNullable(PRODUCT));
 
-        Product product = productService.updateProduct(1L, productData);
+        // When
+        ProductResponse productResponse = productService.updateProduct(1L, GIVEN_DATA_TO_CHANGE);
 
-        assertThat(product.getId()).isEqualTo(1L);
-        assertThat(product.getName()).isEqualTo("쥐순이");
+        // Then
+        assertThat(productResponse).isEqualTo(CHANGED_PRODUCT_RESPONSE);
+        verify(productRepository).findById(1L);
     }
 
     @Test

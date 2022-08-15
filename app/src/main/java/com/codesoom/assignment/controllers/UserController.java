@@ -22,31 +22,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
-        User user = userService.registerUser(registrationData);
-        return getUserResultData(user);
-    }
-
-    @PatchMapping("{id}")
-    UserResultData update(
-            @PathVariable Long id,
-            @RequestBody @Valid UserModificationData modificationData
-    ) {
-        User user = userService.updateUser(id, modificationData);
-        return getUserResultData(user);
-    }
-
-    @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void destroy(@PathVariable Long id) {
-        userService.deleteUser(id);
-    }
-
-    private UserResultData getUserResultData(User user) {
-        return UserResultData.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .build();
+    public UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
+        return userService.registerUser(registrationData);
     }
 }

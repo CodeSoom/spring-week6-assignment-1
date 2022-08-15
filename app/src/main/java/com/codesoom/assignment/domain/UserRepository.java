@@ -7,9 +7,9 @@ public interface UserRepository {
 
     boolean existsByEmail(String email);
 
-    Optional<User> findById(Long id);
-
-    Optional<User> findByIdAndDeletedIsFalse(Long id);
-
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByEmailAndDeletedIsFalse(String email);
+
+    void deleteAll();
 }

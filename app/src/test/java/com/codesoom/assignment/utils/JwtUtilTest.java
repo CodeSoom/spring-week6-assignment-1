@@ -27,11 +27,11 @@ class JwtUtilTest {
     class Describe_Decode{
 
         @Nested
-        @DisplayName("토큰이 공백, null또는 토큰이 조작되었다면")
+        @DisplayName("토큰이 공백, null또는 유효하지 않은 토큰이라면")
         class Context_BlankOrNullToken{
 
             @Test
-            @DisplayName("유효하지 않은 토큰이라는 예외를 던진다.")
+            @DisplayName("예외를 던진다.")
             void It_ThrowException(){
                 assertThatThrownBy(() -> jwtUtil.decode(""))
                         .isInstanceOf(InvalidTokenException.class);

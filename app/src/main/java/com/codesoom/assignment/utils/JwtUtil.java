@@ -40,6 +40,7 @@ public class JwtUtil {
      * @return Claims JWT의 페이로드 부분을 반환
      */
     public Claims decode(String token) {
+        token = token.replace("Bearer " , "");
         if(!StringUtils.hasText(token)){
             throw new InvalidTokenException(token);
         }

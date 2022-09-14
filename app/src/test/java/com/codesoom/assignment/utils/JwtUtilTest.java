@@ -23,6 +23,23 @@ class JwtUtilTest {
     }
 
     @Nested
+    @DisplayName("encode()")
+    class Describe_Encode{
+
+        @Nested
+        @DisplayName("파라미터가 null이라면")
+        class Context_NullParameter{
+
+            @Test
+            @DisplayName("페이로드 부분은 비어있다.")
+            void It_EmptyPayload(){
+                String payload = jwtUtil.encode(null).split("\\.")[1];
+                assertThat(payload).isEqualTo("");
+            }
+        }
+    }
+
+    @Nested
     @DisplayName("decode()")
     class Describe_Decode{
 
@@ -51,7 +68,7 @@ class JwtUtilTest {
             @Test
             @DisplayName("페이로드를 반환한다.")
             void It_ReturnPayload(){
-                Claims claims = jwtUtil.decode(VALID_TOKEN);
+                Claims claims = jwtUtil.decode("Bearer " + VALID_TOKEN);
 
                 assertThat(claims.get("userId" , Long.class)).isEqualTo(1L);
             }

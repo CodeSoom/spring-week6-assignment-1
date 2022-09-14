@@ -53,6 +53,17 @@ public class JwtUtil {
         }catch(SignatureException e){
             throw new InvalidTokenException(token);
         }
+    }
 
+    /**
+     * JWT에서 사용자 식별자를 반환한다.
+     *
+     * @param token 추출할 토큰 정보
+     * @throws InvalidTokenException 토큰 정보가 null 또는 사이즈가 0이거나 첫 글자가 공백 , 유효하지 않은 토큰이라면 예외를 던진다.
+     * @return Long 사용자 식별자
+     */
+    public Long getUserIdFromToken(String token){
+        Claims payload = decode(token);
+        return payload.get("userId" , Long.class);
     }
 }

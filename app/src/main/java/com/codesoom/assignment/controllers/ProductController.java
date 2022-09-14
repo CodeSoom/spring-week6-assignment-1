@@ -32,12 +32,10 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
-    private final UserService userService;
     private final AuthenticationService authenticationService;
 
-    public ProductController(ProductService productService, UserService userService, AuthenticationService authenticationService) {
+    public ProductController(ProductService productService, AuthenticationService authenticationService) {
         this.productService = productService;
-        this.userService = userService;
         this.authenticationService = authenticationService;
     }
 
@@ -82,8 +80,7 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        Claims claims = authenticationService.parseToken(authorization);
-        userService.findUser(claims.get("userId" , Long.class));
+        authenticationService.tokenValidation(authorization);
         return productService.createProduct(productData);
     }
 

@@ -7,6 +7,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -72,6 +73,7 @@ public class ProductController {
      * @param productData 상품 저장 정보
      * @param authorization Json Web Token
      * @throws InvalidTokenException 유효하지 않은 토큰일 경우
+     * @throws UserNotFoundException 사용자가 존재하지 않을 경우
      * @return 저장된 상품의 정보
      */
     @PostMapping

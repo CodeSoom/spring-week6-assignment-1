@@ -5,6 +5,7 @@ import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.WrongPasswordException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,5 +37,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(InvalidTokenException.class)
     public ErrorResponse handleInvalidToken(InvalidTokenException e){
         return new ErrorResponse("Invalid Token Exception" + e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(WrongPasswordException.class)
+    public ErrorResponse handleWrongPassword(){
+        return new ErrorResponse("Wrong Password Exception");
     }
 }

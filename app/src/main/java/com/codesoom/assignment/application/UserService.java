@@ -80,4 +80,16 @@ public class UserService {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
+
+    /**
+     * 사용자를 조회한다.
+     *
+     * @param email 조회할 사용자의 이메일
+     * @throws UserNotFoundException 이메일에 해당하는 사용자가 존재하지 않을 경우
+     * @return 이메일에 해당하는 사용자
+     */
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
 }

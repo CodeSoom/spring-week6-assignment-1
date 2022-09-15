@@ -2,8 +2,9 @@ package com.codesoom.assignment.applcation;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
-import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.utils.JwtUtil;
+import com.github.dozermapper.core.DozerBeanMapper;
+import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,29 +17,31 @@ class AuthenticationServiceTest {
 
     private AuthenticationService service;
     private UserService userService;
-    private final String SECRET = "12345678901234567890123456789012";
+    private Mapper mapper;
+    private final String SECRET = "12345678901234567890123456789010";
 
     @BeforeEach
     void setUp() {
         JwtUtil jwtUtil = new JwtUtil(SECRET);
         userService = mock(UserService.class);
-        service = new AuthenticationService(jwtUtil, userService);
+        mapper = mock(Mapper.class);
+        service = new AuthenticationService(jwtUtil, userService , mapper);
     }
 
     @Nested
-    @DisplayName("")
-    class Describe_{
+    @DisplayName("login()")
+    class Describe_Login{
 
         @Nested
-        @DisplayName("")
+        @DisplayName("파라미터에 해당하는 사용자가 존재한다면")
         class Context_{
+
+            private final Long userId = 1L;
 
             @Test
             @DisplayName("")
             void It_(){
-                String accessToken = service.login();
-
-                assertThat(accessToken).contains(".xxxx");
+                fail("작성 필요");
             }
         }
     }

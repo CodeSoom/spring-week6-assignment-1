@@ -2,11 +2,15 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
+import com.codesoom.assignment.dto.UserLoginData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /**
  * 1. Create -> 로그인 , 토큰 반환
@@ -26,8 +30,8 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseData login(){
-        String accessToken = authenticationService.login();
+    public SessionResponseData login(@RequestBody @Valid UserLoginData loginData){
+        String accessToken = authenticationService.login(loginData);
         return SessionResponseData.builder()
                 .accessToken(accessToken)
                 .build();

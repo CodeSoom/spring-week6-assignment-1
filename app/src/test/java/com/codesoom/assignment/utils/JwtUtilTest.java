@@ -16,12 +16,6 @@ class JwtUtilTest {
     private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
     private final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWTESTQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
 
-    @Test
-    void encode() {
-        String token = jwtUtil.encode(1L);
-        assertThat(token).isEqualTo(VALID_TOKEN);
-    }
-
     @Nested
     @DisplayName("encode()")
     class Describe_Encode{
@@ -35,6 +29,19 @@ class JwtUtilTest {
             void It_EmptyPayload(){
                 String payload = jwtUtil.encode(null).split("\\.")[1];
                 assertThat(payload).isEqualTo("");
+            }
+        }
+
+        @Nested
+        @DisplayName("파라미터가 존재한다면")
+        class Context_ExistedParameter{
+
+            private final Long userId = 1L;
+
+            @Test
+            @DisplayName("Json Web Token을 반환한다.")
+            void It_ReturnJWT(){
+                assertThat(jwtUtil.encode(userId)).isEqualTo(VALID_TOKEN);
             }
         }
     }

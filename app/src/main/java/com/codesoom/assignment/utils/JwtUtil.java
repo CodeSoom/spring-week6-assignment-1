@@ -36,15 +36,15 @@ public class JwtUtil {
      * JWT를 디코딩한다.
      *
      * @param token 디코딩할 토큰 정보
-     * @throws InvalidTokenException 토큰 정보가 null 또는 사이즈가 0이거나 첫 글자가 공백 , 유효하지 않은 토큰이라면 예외를 던진다.
+     * @throws InvalidTokenException 토큰 정보가 사이즈가 0이거나 공백 또는 유효하지 않은 토큰이라면 예외를 던진다.
      * @return Claims JWT의 페이로드 부분을 반환
      */
     public Claims decode(String token) {
-        token = token.replace("Bearer " , "");
-        if(!StringUtils.hasText(token)){
+        if(StringUtils.isEmpty(token) || token.isBlank()){
             throw new InvalidTokenException(token);
         }
         try{
+            token = token.replace("Bearer " , "");
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()

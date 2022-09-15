@@ -11,11 +11,10 @@ describe('Session', () => {
 
   beforeEach(async () => {
     const mockUser = {
-      email: `${new Date().getTime()}@test.com`,
-      name: 'testuser',
-      password: 'password',
+      email: `test@test.com`,
+      name: 'test',
+      password: 'test',
     };
-
     const { json } = await frisby.post('/users', mockUser);
     user = { id: json.id, ...mockUser };
   });

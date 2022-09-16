@@ -105,26 +105,25 @@ class SessionControllerTest {
             class Context_ExistedUser{
 
                 private String loginContent;
-                private User registerUser;
                 private final String name = "user1";
                 private final String email = "email1@email.com";
                 private final String password = "password1";
-                private String token;
 
                 @BeforeEach
                 void setUp() throws JsonProcessingException {
-                    registerUser = userRepository.save((User.builder()
-                                                            .name(name)
-                                                            .email(email))
-                                                            .password(password)
-                                                            .build());
                     loginContent = mapper.writeValueAsString(new UserLoginData(email , password));
-                    token = jwtUtil.encode(registerUser.getId());
                 }
 
                 @Test
                 @DisplayName("JWT를 반환한다.")
                 void It_ReturnJWT() throws Exception {
+                    final User registerUser = userRepository.save((User.builder()
+                                                                        .name(name)
+                                                                        .email(email))
+                                                                        .password(password)
+                                                                        .build());
+                    final String token = jwtUtil.encode(registerUser.getId());
+
                     mockMvc.perform(post("/session")
                                 .content(loginContent)
                                 .contentType(MediaType.APPLICATION_JSON))

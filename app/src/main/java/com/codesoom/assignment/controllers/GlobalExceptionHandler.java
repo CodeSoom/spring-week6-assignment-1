@@ -27,6 +27,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                 .status(HttpStatus.BAD_REQUEST)
                                                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, response.getStatus());
     }
 }

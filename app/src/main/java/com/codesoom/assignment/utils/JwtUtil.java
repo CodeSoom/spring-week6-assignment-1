@@ -40,7 +40,7 @@ public class JwtUtil {
      * @return Claims JWT의 페이로드 부분을 반환
      */
     public Claims decode(String token) {
-        if(StringUtils.isEmpty(token) || token.isBlank()){
+        if(token.isBlank()){
             throw new InvalidTokenException(token);
         }
         try{

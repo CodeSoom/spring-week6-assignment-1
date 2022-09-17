@@ -32,11 +32,9 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
-    private final AuthenticationService authenticationService;
 
-    public ProductController(ProductService productService, AuthenticationService authenticationService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.authenticationService = authenticationService;
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
@@ -50,6 +48,7 @@ public class ProductController {
      */
     @GetMapping
     public List<Product> list() {
+        System.out.println("test");
         return productService.getProducts();
     }
 
@@ -80,7 +79,6 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        authenticationService.tokenValidation(authorization);
         return productService.createProduct(productData);
     }
 
@@ -94,6 +92,7 @@ public class ProductController {
      */
     @PatchMapping("{id}")
     public Product update(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {

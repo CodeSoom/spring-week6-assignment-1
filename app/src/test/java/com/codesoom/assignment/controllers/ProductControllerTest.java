@@ -1,8 +1,13 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.application.UserService;
+import com.codesoom.assignment.domain.Product;
+import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.utils.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +19,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@WebMvcTest(ProductController.class)
@@ -30,9 +38,13 @@ class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private UserService service;
+    private UserService userService;
+    @Autowired
+    private ProductService productService;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
@@ -45,11 +57,11 @@ class ProductControllerTest {
                 .email("test@test.com")
                 .password("test")
                 .build();
-        return service.registerUser(user).getId();
+        return userService.registerUser(user).getId();
     }
 
     void deleteUser(Long userId){
-        service.deleteUser(userId);
+        userService.deleteUser(userId);
     }
 
     @Nested
@@ -152,6 +164,49 @@ class ProductControllerTest {
                             )
                             .andExpect(status().isCreated());
                 }
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("update()")
+    class Describe_Update{
+
+        @Nested
+        @DisplayName("사용자와 상품이 존재하고 토큰이 정상이라면")
+        class Context_ExistedUserAndProductAndValidToken{
+
+            private final String UPDATE_CONTENT = "{\"name\":\"쥐돌이수정\",\"maker\":\"코드숨수정\",\"price\":2000}";
+
+            private Long userId;
+            private String token;
+
+            @BeforeEach
+            void setUp() {
+                userId = addUser();
+                token = jwtUtil.encode(userId);
+
+            }
+
+            @AfterEach
+            void tearDown() {
+//                deleteUser(userId);
+            }
+
+            @Test
+            @DisplayName("상품의 정보를 수정한다.")
+            void It_Update() throws Exception {
+                final Product createProduct = productService.createProduct(mapper.readValue(CONTENT , ProductData.class));
+                mockMvc.perform(
+                                patch("/products/" + createProduct.getId())
+                                        .header("Authorization" , "Bearer " + token)
+                                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(UPDATE_CONTENT)
+                        )
+                        .andExpect(status().isOk())
+                        .andExpect(content().string(containsString("수정")))
+                        .andDo(print());
             }
         }
     }

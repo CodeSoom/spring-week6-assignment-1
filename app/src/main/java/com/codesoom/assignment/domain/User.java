@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain;
 
+import com.codesoom.assignment.dto.UserLoginData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class User {
         deleted = true;
     }
 
-    public boolean authenticate(String password) {
-        return !deleted && password.equals(this.password);
+    public boolean authenticate(UserLoginData user) {
+        return !deleted && this.password.equals(user.getPassword());
     }
 }

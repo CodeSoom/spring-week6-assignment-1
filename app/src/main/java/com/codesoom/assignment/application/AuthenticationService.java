@@ -35,7 +35,7 @@ public class AuthenticationService {
      */
     public String login(UserLoginData loginData){
         User findUser = userService.findByEmail(emailFrom(loginData));
-        if(!findUser.authenticate(user.getPassword())){
+        if(!findUser.authenticate(loginData)){
             throw new WrongPasswordException();
         }
         return jwtUtil.encode(findUser.getId());
@@ -51,5 +51,9 @@ public class AuthenticationService {
     public void tokenValidation(String token){
         Long id = jwtUtil.getUserIdFromToken(token);
         userService.findUser(id);
+    }
+
+    private String emailFrom(UserLoginData loginData){
+        return loginData.getEmail();
     }
 }

@@ -34,8 +34,7 @@ public class AuthenticationService {
      * @return JWT 반환
      */
     public String login(UserLoginData loginData){
-        User user = mapper.map(loginData , User.class);
-        User findUser = userService.findByEmail(user.getEmail());
+        User findUser = userService.findByEmail(emailFrom(loginData));
         if(!findUser.authenticate(user.getPassword())){
             throw new WrongPasswordException();
         }

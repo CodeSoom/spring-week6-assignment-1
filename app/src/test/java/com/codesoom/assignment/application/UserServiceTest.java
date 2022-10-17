@@ -2,10 +2,10 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.UserModificationData;
-import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.dto.request.UserModificationData;
+import com.codesoom.assignment.dto.request.UserRegistrationData;
+import com.codesoom.assignment.exception.UserEmailDuplicationException;
+import com.codesoom.assignment.exception.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;

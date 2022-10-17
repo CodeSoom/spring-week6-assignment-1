@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  */
 public class JwtTestHelper {
     private static final String SECRET = "12345678901234567890123456789010";
-    private static final String TOKEN_PATTERN = "[a-zA-Z0-9]+\\.[a-zA-Z0-9]+\\.[a-zA-Z0-9]+";
+    private static final String TOKEN_PATTERN = "^[\\w-]+\\.[\\w-]+\\.[\\w-]+$";
 
     public static String getSecret() {
         return SECRET;

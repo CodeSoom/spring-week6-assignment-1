@@ -163,4 +163,27 @@ class UserServiceTest {
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
     }
+
+    @Test
+    void findByEmail() {
+        User saved = User.builder()
+                .id(1L)
+                .email(EXISTED_EMAIL_ADDRESS)
+                .password("my_password")
+                .build();
+
+        given(userRepository.findByEmail(EXISTED_EMAIL_ADDRESS)).willReturn(Optional.of(saved));
+
+        User found = userService.findUserByEmail(EXISTED_EMAIL_ADDRESS);
+
+        assertThat(found.getId()).isEqualTo(saved.getId());
+        assertThat(found.getEmail()).isEqualTo(saved.getEmail());
+        assertThat(found.getPassword()).isEqualTo(saved.getPassword());
+    }
+
+    @Test
+    void findByEmailWithInvalidEmail() {
+        assertThatThrownBy(() -> userService.findUserByEmail("not_exist@example.com"))
+                .isInstanceOf(UserNotFoundException.class);
+    }
 }

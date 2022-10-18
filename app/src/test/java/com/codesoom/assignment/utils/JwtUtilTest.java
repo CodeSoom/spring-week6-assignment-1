@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @AutoConfigureMockMvc
 class JwtUtilTest {
@@ -44,6 +46,20 @@ class JwtUtilTest {
                 Long userId = claims.get("userId", Long.class);
 
                 assertThat(userId).isEqualTo(1L);
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 토큰이 주어지면")
+        class Context_with_invalid_token {
+            private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGwz";
+
+            @Test
+            @DisplayName("유효하지 않은 토큰이라는 예외를 던진다")
+            void it_throws_exception() {
+                assertThatThrownBy(
+                        () -> jwtUtil.decode(INVALID_TOKEN)
+                ).isExactlyInstanceOf(InvalidTokenException.class);
             }
         }
     }

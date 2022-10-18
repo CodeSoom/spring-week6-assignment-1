@@ -27,9 +27,9 @@ public class AuthenticationService {
      * @throws WrongUserPasswordException 입력한 비밀번호가 저장된 비밀번호와 다른 경우
      */
     public String login(LoginRequest loginRequest) {
-        User user = userService.findUserByEmail(loginRequest.getEmail());
+        final User user = userService.findUserByEmail(loginRequest.getEmail());
 
-        String password = user.getPassword();
+        final String password = user.getPassword();
         if (!password.equals(loginRequest.getPassword())) {
             throw new WrongUserPasswordException("로그인에 실패하였습니다.");
         }

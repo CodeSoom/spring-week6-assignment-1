@@ -2,7 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestDTO;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.infra.JpaUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,12 +76,12 @@ class SessionServiceTest {
             void it_returns_token() {
                 assertThatThrownBy(
                         () -> sessionService.login(loginRequestDTOWithIncorrectEmail)
-                ).isExactlyInstanceOf(UserNotFoundException.class)
+                ).isExactlyInstanceOf(LoginFailException.class)
                         .hasMessage("잘못된 email 입니다");
 
                 assertThatThrownBy(
                         () -> sessionService.login(loginRequestDTOWithIncorrectPassword)
-                ).isExactlyInstanceOf(UserNotFoundException.class)
+                ).isExactlyInstanceOf(LoginFailException.class)
                         .hasMessage("잘못된 password 입니다");
             }
         }

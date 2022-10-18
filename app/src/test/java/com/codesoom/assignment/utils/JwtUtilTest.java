@@ -34,5 +34,17 @@ class JwtUtilTest {
                 assertThat(JwtTestHelper.hasPattern(token)).isTrue();
             }
         }
+
+        @Nested
+        @DisplayName("아이디가 주어지지 않으면")
+        class Context_without_id {
+
+            @Test
+            @DisplayName("예외를 던진다")
+            void it_returns_token() {
+                assertThatThrownBy(() -> jwtUtil.createToken(null))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+        }
     }
 }

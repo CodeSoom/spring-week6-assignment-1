@@ -27,6 +27,10 @@ public class JwtUtil {
     }
 
     public Claims decode(String token) {
+        if (token == null || token.isBlank()) {
+            throw new InvalidTokenException("토큰이 비어 있습니다");
+        }
+
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)

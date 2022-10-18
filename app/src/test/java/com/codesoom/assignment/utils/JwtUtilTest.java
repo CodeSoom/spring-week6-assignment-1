@@ -1,5 +1,6 @@
 package com.codesoom.assignment.utils;
 
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,9 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureMockMvc
 class JwtUtilTest {
-
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
     private static final String SECRET = "12345678901234567890123456789010";
+
     private final JwtUtil jwtUtil = new JwtUtil(SECRET);
 
     @Nested
@@ -25,7 +26,24 @@ class JwtUtilTest {
             void it_returns_token() {
                 String encode = jwtUtil.encode(1L);
 
-                assertThat(encode).isEqualTo(INVALID_TOKEN);
+                assertThat(encode).isEqualTo(VALID_TOKEN);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("decode 메서드는")
+    class Describe_decode {
+        @Nested
+        @DisplayName("유효한 토큰이 주어지면")
+        class Context_with_valid_token {
+            @Test
+            @DisplayName("userId를 리턴한다")
+            void it_returns_userId() {
+                Claims claims = jwtUtil.decode(VALID_TOKEN);
+                Long userId = claims.get("userId", Long.class);
+
+                assertThat(userId).isEqualTo(1L);
             }
         }
     }

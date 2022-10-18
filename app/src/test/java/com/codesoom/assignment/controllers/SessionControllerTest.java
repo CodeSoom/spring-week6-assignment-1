@@ -64,6 +64,44 @@ class SessionControllerTest {
                         .andExpect(content().string(containsString(VALID_TOKEN_BY_USER_ID_1L)));
             }
         }
-    }
 
+        @Nested
+        @DisplayName("알맞지 않은 email 과 password 가 주어지면")
+        class Context_with_incorrect_email_and_password {
+            private String requestBodyWithIncorrectEmail;
+            private String requestBodyWithIncorrectPassword;
+
+            @BeforeEach
+            void setUp() throws JsonProcessingException {
+                User savedUser = jpaUserRepository.save(
+                        User.builder()
+                                .id(1L)
+                                .email("a@a.com")
+                                .password("123456")
+                                .build()
+                );
+                requestBodyWithIncorrectEmail = objectMapper.writeValueAsString(
+                        new LoginRequestDTO("b@b.com", savedUser.getPassword())
+                );
+                requestBodyWithIncorrectPassword = objectMapper.writeValueAsString(
+                        new LoginRequestDTO(savedUser.getEmail(), "9999999")
+                );
+
+            }
+
+            @Test
+            @DisplayName("사용자를 찾을 수 없다는 예외를 리턴한다")
+            void it_returns_token() throws Exception {
+                mockMvc.perform(post("/sessions")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBodyWithIncorrectEmail))
+                        .andExpect(status().isBadRequest());
+
+                mockMvc.perform(post("/sessions")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBodyWithIncorrectPassword))
+                        .andExpect(status().isBadRequest());
+            }
+        }
+    }
 }

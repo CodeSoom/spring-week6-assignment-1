@@ -5,9 +5,10 @@ import com.codesoom.assignment.application.product.ProductCommand.Register;
 import com.codesoom.assignment.application.product.ProductCommand.UpdateRequest;
 import com.codesoom.assignment.application.product.ProductCommandService;
 import com.codesoom.assignment.application.product.ProductQueryService;
+import com.codesoom.assignment.common.response.ErrorCode;
 import com.codesoom.assignment.utils.ProductSampleFactory;
 import com.codesoom.assignment.common.exception.InvalidParamException;
-import com.codesoom.assignment.common.exception.ProductNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.common.mapper.ProductMapper;
 import com.codesoom.assignment.dto.ProductDto;
 import com.codesoom.assignment.dto.ProductDto.RequestParam;
@@ -31,6 +32,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codesoom.assignment.common.response.ErrorCode.PRODUCT_NOT_FOUND;
 import static com.codesoom.assignment.utils.ProductSampleFactory.FieldName.MAKER;
 import static com.codesoom.assignment.utils.ProductSampleFactory.FieldName.NAME;
 import static com.codesoom.assignment.utils.ProductSampleFactory.FieldName.PRICE;
@@ -172,7 +174,7 @@ class ProductControllerTest {
 
             @BeforeEach
             void prepare() {
-                given(productQueryService.getProduct(PRODUCT_ID)).willThrow(new ProductNotFoundException(PRODUCT_ID));
+                given(productQueryService.getProduct(PRODUCT_ID)).willThrow(new EntityNotFoundException(PRODUCT_NOT_FOUND));
             }
 
             @Test
@@ -343,7 +345,7 @@ class ProductControllerTest {
 
             @BeforeEach
             void prepare() {
-                given(productCommandService.updateProduct(any(UpdateRequest.class))).willThrow(new ProductNotFoundException(PRODUCT_ID));
+                given(productCommandService.updateProduct(any(UpdateRequest.class))).willThrow(new EntityNotFoundException(PRODUCT_NOT_FOUND));
             }
 
             @Test
@@ -452,7 +454,7 @@ class ProductControllerTest {
             private final Long PRODUCT_ID = 100L;
             @BeforeEach
             void prepare() {
-                doThrow(new ProductNotFoundException(PRODUCT_ID)).when(productCommandService).deleteProduct(PRODUCT_ID);
+                doThrow(new EntityNotFoundException(PRODUCT_NOT_FOUND)).when(productCommandService).deleteProduct(PRODUCT_ID);
             }
 
             @Test

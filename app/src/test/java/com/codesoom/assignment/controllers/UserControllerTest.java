@@ -3,9 +3,10 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.application.user.UserCommand;
 import com.codesoom.assignment.application.user.UserCommand.UpdateRequest;
 import com.codesoom.assignment.application.user.UserCommandService;
+import com.codesoom.assignment.common.response.ErrorCode;
 import com.codesoom.assignment.utils.UserSampleFactory;
 import com.codesoom.assignment.common.exception.InvalidParamException;
-import com.codesoom.assignment.common.exception.UserNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.common.mapper.UserMapper;
 import com.codesoom.assignment.dto.UserDto;
 import com.codesoom.assignment.dto.UserDto.RequestParam;
@@ -30,6 +31,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codesoom.assignment.common.response.ErrorCode.USER_NOT_FOUND;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -228,7 +230,7 @@ class UserControllerTest {
 
             @BeforeEach
             void prepare() {
-                given(userCommandService.updateUser(any(UserCommand.UpdateRequest.class))).willThrow(new UserNotFoundException(USER_ID));
+                given(userCommandService.updateUser(any(UserCommand.UpdateRequest.class))).willThrow(new EntityNotFoundException(USER_NOT_FOUND));
             }
 
             @Test
@@ -312,7 +314,7 @@ class UserControllerTest {
             private final Long USER_ID = 100L;
             @BeforeEach
             void prepare() {
-                doThrow(new UserNotFoundException(USER_ID)).when(userCommandService).deleteUser(USER_ID);
+                doThrow(new EntityNotFoundException(USER_NOT_FOUND)).when(userCommandService).deleteUser(USER_ID);
             }
 
             @Test

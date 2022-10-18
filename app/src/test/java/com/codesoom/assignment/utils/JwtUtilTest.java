@@ -60,6 +60,18 @@ class JwtUtilTest {
                 assertThatThrownBy(
                         () -> jwtUtil.decode(INVALID_TOKEN)
                 ).isExactlyInstanceOf(InvalidTokenException.class);
+
+                assertThatThrownBy(
+                        () -> jwtUtil.decode("")
+                ).isExactlyInstanceOf(InvalidTokenException.class);
+
+                assertThatThrownBy(
+                        () -> jwtUtil.decode("  ")
+                ).isExactlyInstanceOf(InvalidTokenException.class);
+
+                assertThatThrownBy(
+                        () -> jwtUtil.decode(null)
+                ).isExactlyInstanceOf(InvalidTokenException.class);
             }
         }
     }

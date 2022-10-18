@@ -2,7 +2,7 @@ package com.codesoom.assignment.application.product;
 
 import com.codesoom.assignment.application.product.implement.ProductQueryServiceImpl;
 import com.codesoom.assignment.utils.ProductSampleFactory;
-import com.codesoom.assignment.common.exception.ProductNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.domain.product.Product;
 import com.codesoom.assignment.domain.product.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,7 +109,7 @@ class ProductQueryServiceTest {
             @Test
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
-                assertThatThrownBy(() -> getProductService().getProduct(PRODUCT_ID)).isInstanceOf(ProductNotFoundException.class);
+                assertThatThrownBy(() -> getProductService().getProduct(PRODUCT_ID)).isInstanceOf(EntityNotFoundException.class);
             }
         }
     }

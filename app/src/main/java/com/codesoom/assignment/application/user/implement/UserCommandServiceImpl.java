@@ -2,12 +2,15 @@ package com.codesoom.assignment.application.user.implement;
 
 import com.codesoom.assignment.application.user.UserCommand;
 import com.codesoom.assignment.application.user.UserCommandService;
-import com.codesoom.assignment.common.exception.UserNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.common.mapper.UserMapper;
+import com.codesoom.assignment.common.response.ErrorCode;
 import com.codesoom.assignment.domain.user.User;
 import com.codesoom.assignment.domain.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.codesoom.assignment.common.response.ErrorCode.USER_NOT_FOUND;
 
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
@@ -27,7 +30,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     /**
-     * @throws UserNotFoundException 회원정보가 없을 경우
+     * @throws EntityNotFoundException 회원정보가 없을 경우
      */
     @Transactional
     @Override
@@ -41,7 +44,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     /**
-     * @throws UserNotFoundException 회원정보가 없을 경우
+     * @throws EntityNotFoundException 회원정보가 없을 경우
      */
     @Transactional
     @Override
@@ -53,6 +56,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     private User getFindUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
     }
 }

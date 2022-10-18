@@ -3,7 +3,7 @@ package com.codesoom.assignment.application.user;
 import com.codesoom.assignment.application.user.UserCommand.Register;
 import com.codesoom.assignment.application.user.implement.UserCommandServiceImpl;
 import com.codesoom.assignment.utils.UserSampleFactory;
-import com.codesoom.assignment.common.exception.UserNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.common.mapper.UserMapper;
 import com.codesoom.assignment.domain.user.User;
 import com.codesoom.assignment.domain.user.UserRepository;
@@ -111,7 +111,7 @@ class UserCommandServiceTest {
             @Test
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
-                assertThatThrownBy(() -> getUserService().updateUser(command)).isInstanceOf(UserNotFoundException.class);
+                assertThatThrownBy(() -> getUserService().updateUser(command)).isInstanceOf(EntityNotFoundException.class);
             }
         }
     }
@@ -150,7 +150,7 @@ class UserCommandServiceTest {
             @Test
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
-                assertThatThrownBy(() -> getUserService().deleteUser(-1L)).isInstanceOf(UserNotFoundException.class);
+                assertThatThrownBy(() -> getUserService().deleteUser(-1L)).isInstanceOf(EntityNotFoundException.class);
             }
         }
     }

@@ -2,7 +2,7 @@ package com.codesoom.assignment.application.user;
 
 import com.codesoom.assignment.application.user.implement.UserQueryServiceImpl;
 import com.codesoom.assignment.utils.UserSampleFactory;
-import com.codesoom.assignment.common.exception.UserNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.domain.user.User;
 import com.codesoom.assignment.domain.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,7 +91,7 @@ class UserQueryServiceTest {
             @Test
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
-                assertThatThrownBy(() -> getUserService().getUser(-1L)).isInstanceOf(UserNotFoundException.class);
+                assertThatThrownBy(() -> getUserService().getUser(-1L)).isInstanceOf(EntityNotFoundException.class);
             }
         }
     }

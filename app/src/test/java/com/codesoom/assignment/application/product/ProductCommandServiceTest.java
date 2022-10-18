@@ -2,7 +2,7 @@ package com.codesoom.assignment.application.product;
 
 import com.codesoom.assignment.application.product.implement.ProductCommandServiceImpl;
 import com.codesoom.assignment.utils.ProductSampleFactory;
-import com.codesoom.assignment.common.exception.ProductNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.domain.product.Product;
 import com.codesoom.assignment.domain.product.ProductRepository;
 import com.codesoom.assignment.common.mapper.ProductMapper;
@@ -110,7 +110,7 @@ class ProductCommandServiceTest {
             void it_throws_exception() {
                 final ProductCommand.UpdateRequest command = ProductSampleFactory.of(PRODUCT_ID, givenProduct);
 
-                assertThatThrownBy(() -> getProductService().updateProduct(command)).isInstanceOf(ProductNotFoundException.class);
+                assertThatThrownBy(() -> getProductService().updateProduct(command)).isInstanceOf(EntityNotFoundException.class);
             }
         }
     }
@@ -141,7 +141,7 @@ class ProductCommandServiceTest {
             @Test
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
-                assertThatThrownBy(() -> getProductService().deleteProduct(-1L)).isInstanceOf(ProductNotFoundException.class);
+                assertThatThrownBy(() -> getProductService().deleteProduct(-1L)).isInstanceOf(EntityNotFoundException.class);
             }
         }
     }

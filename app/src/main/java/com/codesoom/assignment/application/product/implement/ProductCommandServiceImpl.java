@@ -2,12 +2,15 @@ package com.codesoom.assignment.application.product.implement;
 
 import com.codesoom.assignment.application.product.ProductCommand;
 import com.codesoom.assignment.application.product.ProductCommandService;
-import com.codesoom.assignment.common.exception.ProductNotFoundException;
+import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.common.mapper.ProductMapper;
+import com.codesoom.assignment.common.response.ErrorCode;
 import com.codesoom.assignment.domain.product.Product;
 import com.codesoom.assignment.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.codesoom.assignment.common.response.ErrorCode.PRODUCT_NOT_FOUND;
 
 @Service
 public class ProductCommandServiceImpl implements ProductCommandService {
@@ -28,26 +31,26 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     }
 
     /**
-     * @throws ProductNotFoundException 상품이 없을 경우
+     * @throws EntityNotFoundException 상품이 없을 경우
      */
     @Transactional
     @Override
     public Product updateProduct(ProductCommand.UpdateRequest command) {
         Product product = productMapper.toEntity(command);
         Product findProduct = productRepository.findById(product.getId())
-                .orElseThrow(() -> new ProductNotFoundException(product.getId()));
+                .orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
 
         return findProduct.modifyProduct(product);
     }
 
     /**
-     * @throws ProductNotFoundException 상품이 없을 경우
+     * @throws EntityNotFoundException 상품이 없을 경우
      */
     @Transactional
     @Override
     public void deleteProduct(Long id) {
         Product findProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+                .orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
 
         productRepository.delete(findProduct);
     }

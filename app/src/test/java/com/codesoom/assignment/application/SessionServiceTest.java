@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestDTO;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.infra.JpaUserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 class SessionServiceTest {
     private static final String VALID_TOKEN_BY_USER_ID_1L = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw123";
 
     @Autowired
     private SessionService sessionService;
@@ -83,6 +85,47 @@ class SessionServiceTest {
                         () -> sessionService.login(loginRequestDTOWithIncorrectPassword)
                 ).isExactlyInstanceOf(LoginFailException.class)
                         .hasMessage("잘못된 password 입니다");
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("parseToken 메서드는")
+    class Describe_parseToken {
+        @Nested
+        @DisplayName("유효한 token 이 주어진다면")
+        class Context_with_valid_token {
+            private User savedUser;
+
+            @BeforeEach
+            void setUp() {
+                savedUser = jpaUserRepository.save(
+                        User.builder()
+                                .id(1L)
+                                .email("a@a.com")
+                                .password("123456")
+                                .build()
+                );
+            }
+
+            @Test
+            @DisplayName("userId를 리턴한다")
+            void it_returns_userId() {
+                Long userId = sessionService.parseToken(VALID_TOKEN_BY_USER_ID_1L);
+
+                assertThat(userId).isEqualTo(savedUser.getId());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 token 이 주어진다면")
+        class Context_with_invalid_token {
+            @Test
+            @DisplayName("유효하지 않은 토큰이라는 예외를 던진다")
+            void it_throws_exception() {
+                assertThatThrownBy(
+                        () -> sessionService.parseToken(INVALID_TOKEN)
+                ).isExactlyInstanceOf(InvalidTokenException.class);
             }
         }
     }

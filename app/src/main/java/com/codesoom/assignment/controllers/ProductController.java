@@ -4,6 +4,8 @@ import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.application.SessionService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidTokenException;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,23 +47,21 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String token = authorization.substring("Bearer ".length());
-        sessionService.parseToken(token);
+        validateToken(authorization);
 
         return productService.createProduct(productData);
     }
 
     @PatchMapping("{id}")
     public Product update(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        String token = authorization.substring("Bearer ".length());
-        sessionService.parseToken(token);
+        validateToken(authorization);
 
         return productService.updateProduct(id, productData);
     }
@@ -69,12 +69,20 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable Long id
     ) {
-        String token = authorization.substring("Bearer ".length());
-        sessionService.parseToken(token);
+        validateToken(authorization);
 
         productService.deleteProduct(id);
+    }
+
+    private void validateToken(String authorization) {
+        if (Strings.isBlank(authorization)) {
+            throw new InvalidTokenException("Authorization 헤더 값이 없습니다");
+        }
+
+        String token = authorization.substring("Bearer ".length());
+        sessionService.parseToken(token);
     }
 }

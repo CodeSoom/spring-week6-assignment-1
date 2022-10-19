@@ -1,7 +1,9 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.exception.InvalidTokenException;
 import com.codesoom.assignment.exception.ProductNotFoundException;
+import com.codesoom.assignment.exception.UnAuthorizedAccessException;
 import com.codesoom.assignment.exception.UserEmailDuplicationException;
 import com.codesoom.assignment.exception.UserNotFoundException;
 import com.codesoom.assignment.exception.WrongUserPasswordException;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class CommonControllerAdvice {
@@ -34,6 +37,18 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongUserPasswordException.class)
     public ErrorResponse handleWrongPassword(Exception e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ErrorResponse handleValidError(Exception e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({UnAuthorizedAccessException.class, InvalidTokenException.class})
+    public ErrorResponse handleUnAuthorizedRequest(Exception e) {
         return new ErrorResponse(e.getMessage());
     }
 }

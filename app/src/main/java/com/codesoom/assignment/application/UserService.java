@@ -72,7 +72,7 @@ public class UserService {
      * @return 조회된 회원
      * @throws UserNotFoundException 회원을 찾지 못한 경우
      */
-    private User findUser(Long id) {
+    public User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }

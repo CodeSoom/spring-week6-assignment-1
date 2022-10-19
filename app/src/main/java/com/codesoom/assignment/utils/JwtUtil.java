@@ -20,6 +20,9 @@ public class JwtUtil {
     }
 
     public String encode(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId 가 필요합니다");
+        }
         return Jwts.builder()
                 .claim("userId", userId)
                 .signWith(key)

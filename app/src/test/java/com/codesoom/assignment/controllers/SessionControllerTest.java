@@ -57,7 +57,7 @@ class SessionControllerTest {
             @Test
             @DisplayName("token 을 리턴한다")
             void it_returns_token() throws Exception {
-                mockMvc.perform(post("/sessions")
+                mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBody))
                         .andExpect(status().isCreated())
@@ -90,14 +90,14 @@ class SessionControllerTest {
             }
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 예외를 리턴한다")
+            @DisplayName("400 응답을 리턴한다")
             void it_returns_token() throws Exception {
-                mockMvc.perform(post("/sessions")
+                mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBodyWithIncorrectEmail))
-                        .andExpect(status().isBadRequest());
+                        .andExpect(status().isNotFound());
 
-                mockMvc.perform(post("/sessions")
+                mockMvc.perform(post("/session")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBodyWithIncorrectPassword))
                         .andExpect(status().isBadRequest());

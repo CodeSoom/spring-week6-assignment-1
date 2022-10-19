@@ -23,7 +23,7 @@ public class SessionService {
 
     public String login(LoginRequestDTO loginRequestDTO) {
         User findUser = userRepository.findByEmail(loginRequestDTO.getEmail())
-                .orElseThrow(() -> new LoginFailException("잘못된 email 입니다"));
+                .orElseThrow(() -> new UserNotFoundException("찾을 수 없는 email 입니다"));
 
         if (!findUser.getPassword().equals(loginRequestDTO.getPassword())) {
             throw new LoginFailException("잘못된 password 입니다");

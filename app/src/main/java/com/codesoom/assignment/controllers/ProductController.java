@@ -56,9 +56,13 @@ public class ProductController {
 
     @PatchMapping("{id}")
     public Product update(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
+        String token = authorization.substring("Bearer ".length());
+        sessionService.parseToken(token);
+
         return productService.updateProduct(id, productData);
     }
 

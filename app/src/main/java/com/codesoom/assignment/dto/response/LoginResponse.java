@@ -4,13 +4,13 @@ package com.codesoom.assignment.dto.response;
  * 로그인 응답.
  */
 public class LoginResponse {
-    private final String token;
+    private final String accessToken;
 
-    public LoginResponse(String token) {
-        this.token = token;
+    public LoginResponse(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    public String getToken() {
-        return token;
+    public String getAccessToken() {
+        return accessToken;
     }
 }

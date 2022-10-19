@@ -76,13 +76,13 @@ class SessionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isCreated())
-                        .andExpect(jsonPath("$.token").value(jwtUtil.createToken(userId)))
+                        .andExpect(jsonPath("$.accessToken").value(jwtUtil.createToken(userId)))
                         .andDo(print());
             }
         }
 
         @Nested
-        @DisplayName("존재하지 않는 이메일로 요청이 오면")
+        @DisplayName("찾을 수 없는 이메일로 요청이 오면")
         class Context_with_wrong_email {
             private final LoginRequest request = new LoginRequest(EMAIL, PASSWORD);
 

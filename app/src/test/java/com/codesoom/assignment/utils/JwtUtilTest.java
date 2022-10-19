@@ -59,7 +59,12 @@ class JwtUtilTest {
         @Nested
         @DisplayName("유효한 토큰이 주어지면")
         class Context_with_valid_token {
-            private String token = jwtUtil.createToken(1L);
+            private String token;
+
+            @BeforeEach
+            void setUp() {
+                token = jwtUtil.createToken(1L);
+            }
 
             @Test
             @DisplayName("문제없이 수행된다")
@@ -109,7 +114,12 @@ class JwtUtilTest {
         @DisplayName("회원을 찾을 수 있는 토큰이 주어지면")
         class Context_with_valid_token {
             private final Long id = 1L;
-            private String token = jwtUtil.createToken(id);
+            private String token;
+
+            @BeforeEach
+            void setUp() {
+                token = jwtUtil.createToken(id);
+            }
 
             @Test
             @DisplayName("회원 아이디를 반환한다")

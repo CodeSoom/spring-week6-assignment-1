@@ -129,5 +129,19 @@ class JwtUtilTest {
                 assertThat(userId).isEqualTo(id);
             }
         }
+        @Nested
+        @DisplayName("숫자 타입이 아닌 userId를 갖는 토큰이 주어지면")
+        class Context_with_invalid_token {
+            // 문자열 6e로 생성
+            private final String invalidToken
+                    = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2ZSJ9.cY1UxHDo6l1DXbpObHRglju00QH0JUVzW8L0shtWBNM";
+
+            @Test
+            @DisplayName("예외를 던진다")
+            void it_returns_user_id() {
+                assertThatThrownBy(() -> jwtUtil.getUserId(this.invalidToken))
+                        .isInstanceOf(InvalidTokenException.class);
+            }
+        }
     }
 }

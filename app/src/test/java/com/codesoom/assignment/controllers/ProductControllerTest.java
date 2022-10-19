@@ -153,6 +153,7 @@ class ProductControllerTest {
         mockMvc.perform(
                         patch("/products/1")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
@@ -167,6 +168,7 @@ class ProductControllerTest {
     void updateWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                         patch("/products/1000")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
@@ -181,11 +183,25 @@ class ProductControllerTest {
         mockMvc.perform(
                         patch("/products/1")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateWithInvalidAuthorization() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer " + INVALID_TOKEN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

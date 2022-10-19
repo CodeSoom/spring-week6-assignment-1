@@ -25,11 +25,15 @@ public class SessionService {
         User findUser = userRepository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("찾을 수 없는 email 입니다"));
 
-        if (!findUser.getPassword().equals(loginRequestDTO.getPassword())) {
+        if (isIncorrectPassword(loginRequestDTO.getPassword(), findUser.getPassword())) {
             throw new LoginFailException("잘못된 password 입니다");
         }
 
         return jwtUtil.encode(findUser.getId());
+    }
+
+    private boolean isIncorrectPassword(String requestPassword, String findUserPassword) {
+        return !findUserPassword.equals(requestPassword);
     }
 
     public Long parseToken(String token) {

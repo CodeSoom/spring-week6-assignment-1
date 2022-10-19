@@ -149,6 +149,17 @@ class ProductControllerTest {
     }
 
     @Test
+    void createWithoutAuthentication() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void updateWithExistedProduct() throws Exception {
         mockMvc.perform(
                         patch("/products/1")
@@ -205,6 +216,18 @@ class ProductControllerTest {
     }
 
     @Test
+    void updateWithoutAuthentication() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                         delete("/products/1")
@@ -236,4 +259,13 @@ class ProductControllerTest {
                 )
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void destroyWithoutAuthentication() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
 }

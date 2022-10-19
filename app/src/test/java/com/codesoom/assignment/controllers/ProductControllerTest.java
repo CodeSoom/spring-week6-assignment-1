@@ -208,6 +208,8 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                         delete("/products/1")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+
                 )
                 .andExpect(status().isNoContent());
 
@@ -218,9 +220,20 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                         delete("/products/1000")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+
                 )
                 .andExpect(status().isNotFound());
 
         verify(productService).deleteProduct(1000L);
+    }
+
+    @Test
+    void destroyWithInvalidAuthorization() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                                .header("Authorization", "Bearer " + INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized());
     }
 }

@@ -31,6 +31,18 @@ class JwtUtilTest {
                 assertThat(encode).isEqualTo(VALID_TOKEN);
             }
         }
+
+        @Nested
+        @DisplayName("userId가 주어지지 않으면")
+        class Context_without_userId {
+            @Test
+            @DisplayName("예외를 던진다")
+            void it_throws_exception() {
+                assertThatThrownBy(
+                        () -> jwtUtil.encode(null)
+                ).isExactlyInstanceOf(IllegalArgumentException.class);
+            }
+        }
     }
 
     @Nested

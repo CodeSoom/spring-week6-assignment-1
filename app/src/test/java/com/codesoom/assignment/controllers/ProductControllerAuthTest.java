@@ -91,7 +91,7 @@ public class ProductControllerAuthTest {
             }
 
             @Test
-            @DisplayName("생성된 회원 정보와 201 응답을 생성한다")
+            @DisplayName("생성된 상품 정보와 201 응답을 생성한다")
             void it_responds_created() throws Exception {
                 mockMvc.perform(post("/products")
                                 .accept(MediaType.APPLICATION_JSON)

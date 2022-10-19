@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.request.UserModificationData;
 import com.codesoom.assignment.dto.request.UserRegistrationData;
 import com.codesoom.assignment.exception.UserNotFoundException;
+import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @MockBean
     private UserService userService;

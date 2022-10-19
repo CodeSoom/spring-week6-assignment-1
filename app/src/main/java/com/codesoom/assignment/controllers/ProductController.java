@@ -69,8 +69,12 @@ public class ProductController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
+        String token = authorization.substring("Bearer ".length());
+        sessionService.parseToken(token);
+
         productService.deleteProduct(id);
     }
 }

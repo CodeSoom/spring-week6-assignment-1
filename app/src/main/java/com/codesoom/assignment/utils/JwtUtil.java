@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ public class JwtUtil {
     }
 
     public Claims decode(String token) {
-        if (token == null || token.isBlank()) {
+        if (Strings.isBlank(token)) {
             throw new InvalidTokenException("토큰이 비어 있습니다");
         }
 

@@ -36,14 +36,17 @@ class SessionServiceTest {
 
             @BeforeEach
             void setUp() {
-                User savedUser = jpaUserRepository.save(
+                String correctEmail = "a@a.com";
+                String correctPassword = "123456";
+
+                jpaUserRepository.save(
                         User.builder()
                                 .id(1L)
                                 .email("a@a.com")
                                 .password("123456")
                                 .build()
                 );
-                loginRequestDTO = new LoginRequestDTO(savedUser.getEmail(), savedUser.getPassword());
+                loginRequestDTO = new LoginRequestDTO(correctEmail, correctPassword);
             }
 
             @Test
@@ -63,15 +66,18 @@ class SessionServiceTest {
 
             @BeforeEach
             void setUp() {
-                User savedUser = jpaUserRepository.save(
+                String correctEmail = "a@a.com";
+                String correctPassword = "123456";
+
+                jpaUserRepository.save(
                         User.builder()
                                 .id(1L)
-                                .email("a@a.com")
-                                .password("123456")
+                                .email(correctEmail)
+                                .password(correctPassword)
                                 .build()
                 );
-                loginRequestDTOWithIncorrectEmail = new LoginRequestDTO("b@b.com", savedUser.getPassword());
-                loginRequestDTOWithIncorrectPassword = new LoginRequestDTO(savedUser.getEmail(), "9999999");
+                loginRequestDTOWithIncorrectEmail = new LoginRequestDTO("b@b.com", correctPassword);
+                loginRequestDTOWithIncorrectPassword = new LoginRequestDTO(correctEmail, "9999999");
             }
 
             @Test
@@ -96,13 +102,14 @@ class SessionServiceTest {
         @Nested
         @DisplayName("유효한 token 이 주어진다면")
         class Context_with_valid_token {
-            private User savedUser;
+            private Long userId;
 
             @BeforeEach
             void setUp() {
-                savedUser = jpaUserRepository.save(
+                userId = 1L;
+                jpaUserRepository.save(
                         User.builder()
-                                .id(1L)
+                                .id(userId)
                                 .email("a@a.com")
                                 .password("123456")
                                 .build()
@@ -114,7 +121,7 @@ class SessionServiceTest {
             void it_returns_userId() {
                 Long userId = sessionService.parseToken(VALID_TOKEN_BY_USER_ID_1L);
 
-                assertThat(userId).isEqualTo(savedUser.getId());
+                assertThat(userId).isEqualTo(userId);
             }
         }
 

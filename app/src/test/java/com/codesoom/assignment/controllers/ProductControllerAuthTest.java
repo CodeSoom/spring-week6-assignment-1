@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -286,7 +287,109 @@ public class ProductControllerAuthTest {
     }
 
     @Nested
+    @DisplayName("destroy 메소드는")
     class Describe_destroy {
-        // TODO
+
+        @Nested
+        @DisplayName("회원을 찾을 수 있는 토큰이 주어지면")
+        class Context_with_valid_token {
+            private String accessToken;
+            private Long productId;
+
+            @BeforeEach
+            void setUp() {
+                User user = userService.registerUser(USER);
+                accessToken = jwtUtil.createToken(user.getId());
+
+                Product product = productService.createProduct(PRODUCT);
+                productId = product.getId();
+            }
+
+            @Test
+            @DisplayName("204 응답을 생성한다")
+            void it_responds_no_content() throws Exception {
+                mockMvc.perform(delete("/products/{id}", productId)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .header(AUTHORIZATION_HEADER, BEARER + accessToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(PRODUCT)))
+                        .andExpect(status().isNoContent());
+            }
+        }
+
+        @Nested
+        @DisplayName("회원 정보를 찾을 수 없는 토큰이 주어지면")
+        class Context_with_invalid_token {
+            private String invalidToken;
+            private Long productId;
+
+            @BeforeEach
+            void setUp() {
+                User user = userService.registerUser(USER);
+                invalidToken = jwtUtil.createToken(user.getId());
+
+                userService.deleteUser(user.getId());
+
+                Product product = productService.createProduct(PRODUCT);
+                productId = product.getId();
+            }
+
+            @Test
+            @DisplayName("404 응답을 생성한다")
+            void it_responds_not_found() throws Exception {
+                mockMvc.perform(delete("/products/{id}", productId)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .header(AUTHORIZATION_HEADER, BEARER + invalidToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(PRODUCT)))
+                        .andExpect(status().isNotFound());
+            }
+        }
+
+        @Nested
+        @DisplayName("토큰이 공백으로 주어지면")
+        class Context_with_blank_token {
+            private Long productId;
+
+            @BeforeEach
+            void setUp() {
+                Product product = productService.createProduct(PRODUCT);
+                productId = product.getId();
+            }
+
+            @ParameterizedTest
+            @ValueSource(strings = {"", " ", "\t", "\n"})
+            @DisplayName("401 응답을 생성한다")
+            void it_responds_unAuthorized(String token) throws Exception {
+                mockMvc.perform(delete("/products/{id}", productId)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .header(AUTHORIZATION_HEADER, BEARER + token)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(PRODUCT)))
+                        .andExpect(status().isUnauthorized());
+            }
+        }
+
+        @Nested
+        @DisplayName("토큰이 주어지지 않으면")
+        class Context_without_token {
+            private Long productId;
+
+            @BeforeEach
+            void setUp() {
+                Product product = productService.createProduct(PRODUCT);
+                productId = product.getId();
+            }
+
+            @Test
+            @DisplayName("401 응답을 생성한다")
+            void it_responds_unauthorized() throws Exception {
+                mockMvc.perform(delete("/products/{id}", productId)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(PRODUCT)))
+                        .andExpect(status().isUnauthorized());
+            }
+        }
     }
 }

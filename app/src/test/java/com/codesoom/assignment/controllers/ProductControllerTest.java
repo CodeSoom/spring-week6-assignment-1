@@ -1,18 +1,15 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.application.product.ProductCommand;
-import com.codesoom.assignment.application.product.ProductCommand.Register;
-import com.codesoom.assignment.application.product.ProductCommand.UpdateRequest;
-import com.codesoom.assignment.application.product.ProductCommandService;
-import com.codesoom.assignment.application.product.ProductQueryService;
-import com.codesoom.assignment.common.response.ErrorCode;
-import com.codesoom.assignment.utils.ProductSampleFactory;
-import com.codesoom.assignment.common.exception.InvalidParamException;
-import com.codesoom.assignment.common.exception.EntityNotFoundException;
 import com.codesoom.assignment.common.mapper.ProductMapper;
+import com.codesoom.assignment.common.utils.JwtUtil;
+import com.codesoom.assignment.domain.product.ProductRepository;
+import com.codesoom.assignment.domain.user.User;
+import com.codesoom.assignment.domain.user.UserRepository;
 import com.codesoom.assignment.dto.ProductDto;
+import com.codesoom.assignment.utils.ProductSampleFactory;
 import com.codesoom.assignment.dto.ProductDto.RequestParam;
 import com.codesoom.assignment.domain.product.Product;
+import com.codesoom.assignment.utils.UserSampleFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -32,7 +28,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codesoom.assignment.common.response.ErrorCode.PRODUCT_NOT_FOUND;
 import static com.codesoom.assignment.utils.ProductSampleFactory.FieldName.MAKER;
 import static com.codesoom.assignment.utils.ProductSampleFactory.FieldName.NAME;
 import static com.codesoom.assignment.utils.ProductSampleFactory.FieldName.PRICE;
@@ -42,9 +37,8 @@ import static com.codesoom.assignment.utils.ProductSampleFactory.ValueType.NULL;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -58,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DisplayName("ProductController 클래스")
 class ProductControllerTest {
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaD0";
     @Autowired
     private WebApplicationContext ctx;
 
@@ -66,12 +61,17 @@ class ProductControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    @MockBean
-    private ProductCommandService productCommandService;
+    @Autowired
+    private ProductMapper productMapper;
 
-    @MockBean
-    private ProductQueryService productQueryService;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @BeforeEach
     void setup() {
@@ -91,14 +91,14 @@ class ProductControllerTest {
         @Nested
         @DisplayName("상품이 존재하면")
         class Context_with_products {
-            private final List<Product> givenProducts = new ArrayList<>();
+            private List<Product> givenProducts = new ArrayList<>();
 
             @BeforeEach
             void prepare() {
-                givenProducts.add(ProductSampleFactory.createProduct(1L));
-                givenProducts.add(ProductSampleFactory.createProduct(2L));
+                productRepository.save(ProductSampleFactory.createProduct());
+                productRepository.save(ProductSampleFactory.createProduct());
 
-                given(productQueryService.getProducts()).willReturn(givenProducts);
+                givenProducts = productRepository.findAll();
             }
 
             @Test
@@ -118,7 +118,9 @@ class ProductControllerTest {
         class Context_with_empty_db {
             @BeforeEach
             void prepare() {
-                given(productQueryService.getProducts()).willReturn(new ArrayList<>());
+                List<Product> products = productRepository.findAll();
+
+                products.forEach(product -> productRepository.delete(product));
             }
 
             @Test
@@ -144,13 +146,8 @@ class ProductControllerTest {
         @Nested
         @DisplayName("유효한 ID가 주어지면")
         class Context_with_valid_id {
-            private final Long PRODUCT_ID = 1L;
-            private final Product givenProduct = ProductSampleFactory.createProduct(1L);
-
-            @BeforeEach
-            void prepare() {
-                given(productQueryService.getProduct(PRODUCT_ID)).willReturn(givenProduct);
-            }
+            private final Product givenProduct = productRepository.save(ProductSampleFactory.createProduct());
+            private final Long PRODUCT_ID = givenProduct.getId();
 
             @Test
             @DisplayName("OK(200)와 요청한 상품을 리턴한다")
@@ -166,21 +163,15 @@ class ProductControllerTest {
 
             }
         }
-
         @Nested
         @DisplayName("유효하지않은 ID가 주어지면")
         class Context_with_invalid_id {
-            private final Long PRODUCT_ID = 100L;
-
-            @BeforeEach
-            void prepare() {
-                given(productQueryService.getProduct(PRODUCT_ID)).willThrow(new EntityNotFoundException(PRODUCT_NOT_FOUND));
-            }
+            private final Long INVALID_PRODUCT_ID = 9999L;
 
             @Test
             @DisplayName("NOT_FOUND(404)와 예외 메시지를 리턴한다")
             void it_returns_404_and_message() throws Exception {
-                final ResultActions resultActions = subject(PRODUCT_ID);
+                final ResultActions resultActions = subject(INVALID_PRODUCT_ID);
 
                 resultActions.andExpect(status().isNotFound())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -195,30 +186,45 @@ class ProductControllerTest {
     @Nested
     @DisplayName("registerProduct[/products::POST] 메소드는")
     class Describe_registerProduct {
-        ResultActions subject(RequestParam request) throws Exception {
+        private final User givenUser = userRepository.save(UserSampleFactory.createUser());
+        private final Long EXIST_USER_ID = givenUser.getId();
+        private final String VALID_TOKEN = jwtUtil.encode(EXIST_USER_ID);
+
+        ResultActions subject(RequestParam request, String accessToken) throws Exception {
             return mockMvc.perform(post("/products")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+                    .content(objectMapper.writeValueAsString(request))
+                    .header("Authorization", "Bearer " + accessToken));
         }
-        @Nested
-        @DisplayName("새로운 상품을 등록하면")
-        class Context_with_new_product {
-            private final RequestParam givenRequest = ProductSampleFactory.createRequestParam();
 
-            @BeforeEach
-            void prepare() {
-                given(productCommandService.createProduct(any(Register.class)))
-                        .willReturn(ProductMapper.INSTANCE.toEntity(ProductMapper.INSTANCE.of(1L, givenRequest)));
-            }
+        @Nested
+        @DisplayName("유효한 토큰으로 새로운 상품을 등록하면")
+        class Context_with_valid_token_and_new_product {
+            private final RequestParam givenRequest = ProductSampleFactory.createRequestParam();
 
             @Test
             @DisplayName("CREATED(201)와 등록된 상품을 리턴한다")
             void it_returns_201_and_registered_product() throws Exception {
-                final ResultActions resultActions = subject(givenRequest);
+                final ResultActions resultActions = subject(givenRequest, VALID_TOKEN);
 
                 resultActions.andExpect(status().isCreated())
                         .andExpect(jsonPath("name").value(equalTo(givenRequest.getName())))
                         .andExpect(jsonPath("maker").value(equalTo(givenRequest.getMaker())))
+                        .andDo(print());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지않은 토큰으로 새로운 상품을 등록하면")
+        class Context_with_invalid_token_and_new_product {
+            private final RequestParam givenRequest = ProductSampleFactory.createRequestParam();
+
+            @Test
+            @DisplayName("UNAUTHORIZED(401)을 리턴한다")
+            void it_returns_401() throws Exception {
+                final ResultActions resultActions = subject(givenRequest, INVALID_TOKEN);
+
+                resultActions.andExpect(status().isUnauthorized())
                         .andDo(print());
             }
         }
@@ -247,7 +253,7 @@ class ProductControllerTest {
 
             private void test(ProductDto.RequestParam request) {
                 try {
-                    ResultActions resultActions = subject(request);
+                    ResultActions resultActions = subject(request, VALID_TOKEN);
 
                     resultActions.andExpect(status().isBadRequest())
                             .andDo(print());
@@ -256,62 +262,27 @@ class ProductControllerTest {
                 }
             }
         }
-
-        @Nested
-        @DisplayName("금액 범위가 벗어나면")
-        class Context_with_invalid_range_price {
-            private final ProductDto.RequestParam givenRequest = new ProductDto.RequestParam();
-
-            @BeforeEach
-            void prepare() {
-                givenRequest.setName("뉴 고양이 장난감");
-                givenRequest.setMaker("애플");
-                givenRequest.setPrice(100L);
-            }
-
-            @Test
-            @DisplayName("BAD_REQUEST(400)와 에러메시지를 리턴한다")
-            void it_returns_400_and_error_message() throws Exception {
-                ResultActions resultActions = subject(givenRequest);
-
-                resultActions.andExpect(status().isBadRequest())
-                        .andDo(print());
-            }
-        }
-
-        @Nested
-        @DisplayName("InvalidParamException이 발생하면")
-        class Context_with_illegal_argument_exception {
-            @BeforeEach
-            void prepare() {
-                given(productCommandService.createProduct(any(ProductCommand.Register.class)))
-                        .willThrow(new InvalidParamException("입력값이 비어있습니다."));
-            }
-            @Test
-            @DisplayName("BAD_REQUEST(400)과 에러 메시지를 리턴한다")
-            void it_returns_400_and_error_message() throws Exception {
-                ResultActions resultActions = subject(ProductSampleFactory.createRequestParam());
-
-                resultActions.andExpect(status().isBadRequest())
-                        .andDo(print());
-            }
-        }
     }
 
     @Nested
     @DisplayName("updateProduct[/products/id::PATCH] 메소드는")
     class Describe_updateProduct {
-        ResultActions subject(Long id, RequestParam request) throws Exception {
-            return mockMvc.perform(patch("/products/" + id)
+        private final User givenUser = userRepository.save(UserSampleFactory.createUser());
+        private final Long EXIST_USER_ID = givenUser.getId();
+        private final String VALID_TOKEN = jwtUtil.encode(EXIST_USER_ID);
+
+        ResultActions subject(Long id, RequestParam request, String accessToken) throws Exception {
+            return mockMvc.perform(patch("/products/{id}", id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+                    .content(objectMapper.writeValueAsString(request))
+                    .header("Authorization", "Bearer " + accessToken));
         }
 
         @Nested
-        @DisplayName("유효한 ID가 주어지면")
+        @DisplayName("유효한 토큰과 ID가 주어지면")
         class Context_with_valid_id {
-            private final Long PRODUCT_ID = 1L;
-            private final Product savedProduct = ProductSampleFactory.createProduct(PRODUCT_ID);
+            private final Product savedProduct = productRepository.save(ProductSampleFactory.createProduct());
+            private final Long PRODUCT_ID = savedProduct.getId();
             private final RequestParam givenRequest = new RequestParam();
 
             @BeforeEach
@@ -319,15 +290,12 @@ class ProductControllerTest {
                 givenRequest.setName("수정_" + savedProduct.getName());
                 givenRequest.setMaker("수정_" + savedProduct.getMaker());
                 givenRequest.setPrice(savedProduct.getPrice() + 5000);
-
-                given(productCommandService.updateProduct(any(UpdateRequest.class)))
-                        .willReturn(ProductMapper.INSTANCE.toEntity(ProductMapper.INSTANCE.of(PRODUCT_ID, givenRequest)));
             }
 
             @Test
             @DisplayName("상품을 수정하고 OK(200)와 수정된 상품을 리턴한다")
             void it_returns_200_and_modified_product() throws Exception {
-                final ResultActions resultActions = subject(PRODUCT_ID, givenRequest);
+                final ResultActions resultActions = subject(PRODUCT_ID, givenRequest, VALID_TOKEN);
 
                 resultActions.andExpect(status().isOk())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -338,20 +306,39 @@ class ProductControllerTest {
         }
 
         @Nested
-        @DisplayName("유효하지않은 ID가 주어지면")
-        class Context_with_invalid_id {
-            private final Long PRODUCT_ID = 100L;
-            private final RequestParam givenRequest = ProductSampleFactory.createRequestParam();
+        @DisplayName("유효하지않은 토큰과 유효한 ID가 주어지면")
+        class Context_with_invalid_token_and_valid_id {
+            private final RequestParam givenRequest = new RequestParam();
 
             @BeforeEach
             void prepare() {
-                given(productCommandService.updateProduct(any(UpdateRequest.class))).willThrow(new EntityNotFoundException(PRODUCT_NOT_FOUND));
+                final Product savedProduct = ProductSampleFactory.createProduct();
+
+                givenRequest.setName("수정_" + savedProduct.getName());
+                givenRequest.setMaker("수정_" + savedProduct.getMaker());
+                givenRequest.setPrice(savedProduct.getPrice() + 5000);
             }
+
+            @Test
+            @DisplayName("상품을 수정하고 OK(200)와 수정된 상품을 리턴한다")
+            void it_returns_200_and_modified_product() throws Exception {
+                final ResultActions resultActions = subject(1L, givenRequest, INVALID_TOKEN);
+
+                resultActions.andExpect(status().isUnauthorized())
+                        .andDo(print());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지않은 ID가 주어지면")
+        class Context_with_invalid_id {
+            private final Long INVALID_PRODUCT_ID = -1L;
+            private final RequestParam givenRequest = ProductSampleFactory.createRequestParam();
 
             @Test
             @DisplayName("NOT_FOUND(404)와 예외 메시지를 리턴한다")
             void it_returns_404_and_message() throws Exception {
-                ResultActions resultActions = subject(PRODUCT_ID, givenRequest);
+                ResultActions resultActions = subject(INVALID_PRODUCT_ID, givenRequest, VALID_TOKEN);
 
                 resultActions.andExpect(status().isNotFound())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -385,7 +372,7 @@ class ProductControllerTest {
 
             private void test(ProductDto.RequestParam request) {
                 try {
-                    ResultActions resultActions = subject(PRODUCT_ID, request);
+                    ResultActions resultActions = subject(PRODUCT_ID, request, VALID_TOKEN);
 
                     resultActions.andExpect(status().isBadRequest())
                             .andDo(print());
@@ -394,54 +381,31 @@ class ProductControllerTest {
                 }
             }
         }
-
-        @Nested
-        @DisplayName("금액 범위가 벗어나면")
-        class Context_with_invalid_range_price {
-            private final Long PRODUCT_ID = 1L;
-            private final ProductDto.RequestParam givenRequest = new ProductDto.RequestParam();
-
-            @BeforeEach
-            void prepare() {
-                givenRequest.setName("뉴 고양이 장난감");
-                givenRequest.setMaker("애플");
-                givenRequest.setPrice(100L);
-            }
-
-            @Test
-            @DisplayName("BAD_REQUEST(400)와 에러메시지를 리턴한다")
-            void it_returns_400_and_error_message() throws Exception {
-                ResultActions resultActions = subject(PRODUCT_ID, givenRequest);
-
-                resultActions.andExpect(status().isBadRequest())
-                        .andDo(print());
-            }
-        }
-
     }
 
     @Nested
     @DisplayName("deleteProduct[/products/id::DELETE] 메소드는")
     class Describe_deleteProduct {
-        ResultActions subject(Long id) throws Exception {
+        private final User givenUser = userRepository.save(UserSampleFactory.createUser());
+        private final Long EXIST_USER_ID = givenUser.getId();
+        private final String VALID_TOKEN = jwtUtil.encode(EXIST_USER_ID);
+
+        ResultActions subject(Long id, String accessToken) throws Exception {
             return mockMvc.perform(delete("/products/" + id)
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
         }
 
         @Nested
-        @DisplayName("유효한 ID가 주어지면")
+        @DisplayName("유효한 토근과 ID가 주어지면")
         class Context_with_valid_id {
-            private final Long PRODUCT_ID = 1L;
-
-            @BeforeEach
-            void prepare() {
-                doNothing().when(productCommandService).deleteProduct(PRODUCT_ID);
-            }
+            private final Product savedProduct = productRepository.save(ProductSampleFactory.createProduct());
+            private final Long PRODUCT_ID = savedProduct.getId();
 
             @Test
             @DisplayName("상품을 삭제하고 NO_CONTENT(204)를 리턴한다")
             void it_returns_204() throws Exception {
-                final ResultActions resultActions = subject(PRODUCT_ID);
+                final ResultActions resultActions = subject(PRODUCT_ID, VALID_TOKEN);
 
                 resultActions.andExpect(status().isNoContent())
                         .andDo(print());
@@ -449,18 +413,30 @@ class ProductControllerTest {
         }
 
         @Nested
+        @DisplayName("유효하지않은 토근이 주어지면")
+        class Context_with_invalid_token {
+            private final Product savedProduct = productRepository.save(ProductSampleFactory.createProduct());
+            private final Long PRODUCT_ID = savedProduct.getId();
+
+            @Test
+            @DisplayName("상품을 삭제하고 UNAUTHORIZED(401)를 리턴한다")
+            void it_returns_401() throws Exception {
+                final ResultActions resultActions = subject(PRODUCT_ID, INVALID_TOKEN);
+
+                resultActions.andExpect(status().isUnauthorized())
+                        .andDo(print());
+            }
+        }
+
+        @Nested
         @DisplayName("유효하지않은 ID가 주어지면")
         class Context_with_invalid_id {
-            private final Long PRODUCT_ID = 100L;
-            @BeforeEach
-            void prepare() {
-                doThrow(new EntityNotFoundException(PRODUCT_NOT_FOUND)).when(productCommandService).deleteProduct(PRODUCT_ID);
-            }
+            private final Long INVALID_PRODUCT_ID = -1L;
 
             @Test
             @DisplayName("NOT_FOUND(404)와 예외 메시지를 리턴한다")
             void it_returns_404_and_message() throws Exception {
-                final ResultActions resultActions = subject(PRODUCT_ID);
+                final ResultActions resultActions = subject(INVALID_PRODUCT_ID, VALID_TOKEN);
 
                 resultActions.andExpect(status().isNotFound())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))

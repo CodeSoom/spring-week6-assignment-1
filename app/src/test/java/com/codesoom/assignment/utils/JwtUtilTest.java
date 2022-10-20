@@ -67,14 +67,14 @@ class JwtUtilTest {
             }
 
             @Test
-            @DisplayName("문제없이 수행된다")
-            void it_happens_nothing() {
+            @DisplayName("토큰 검증이 수행된다")
+            void it_validate_token() {
                 jwtUtil.validateToken(token);
             }
         }
 
         @Nested
-        @DisplayName("null이나 화이트 스페이스가 주어지면")
+        @DisplayName("null이나 공백이 주어지면")
         class Context_with_null_or_white_space {
 
             @ParameterizedTest
@@ -89,7 +89,7 @@ class JwtUtilTest {
 
         @Nested
         @DisplayName("파싱할 수 없는 값이 주어지면")
-        class Context_with_wrong_format {
+        class Context_with_wrong_token {
 
             @ParameterizedTest
             @ValueSource(strings = {
@@ -129,17 +129,18 @@ class JwtUtilTest {
                 assertThat(userId).isEqualTo(id);
             }
         }
+
         @Nested
         @DisplayName("숫자 타입이 아닌 userId를 갖는 토큰이 주어지면")
-        class Context_with_invalid_token {
+        class Context_with_token_of_wrong_user_id {
             // 문자열 6e로 생성
             private final String invalidToken
                     = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2ZSJ9.cY1UxHDo6l1DXbpObHRglju00QH0JUVzW8L0shtWBNM";
 
             @Test
             @DisplayName("예외를 던진다")
-            void it_returns_user_id() {
-                assertThatThrownBy(() -> jwtUtil.getUserId(this.invalidToken))
+            void it_throws_exception() {
+                assertThatThrownBy(() -> jwtUtil.getUserId(invalidToken))
                         .isInstanceOf(InvalidTokenException.class);
             }
         }

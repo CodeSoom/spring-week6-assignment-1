@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -131,15 +133,16 @@ public class ProductControllerAuthTest {
         }
 
         @Nested
-        @DisplayName("빈 토큰이 주어지면")
-        class Context_with_empty_token {
+        @DisplayName("토큰이 공백으로 주어지면")
+        class Context_with_blank_token {
 
-            @Test
+            @ParameterizedTest
+            @ValueSource(strings = {"", " ", "\t", "\n"})
             @DisplayName("401 응답을 생성한다")
-            void it_responds_unAuthorized() throws Exception {
+            void it_responds_unAuthorized(String token) throws Exception {
                 mockMvc.perform(post("/products")
                                 .accept(MediaType.APPLICATION_JSON)
-                                .header(AUTHORIZATION_HEADER, BEARER + "")
+                                .header(AUTHORIZATION_HEADER, BEARER + token)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(PRODUCT)))
                         .andExpect(status().isUnauthorized());
@@ -236,8 +239,8 @@ public class ProductControllerAuthTest {
         }
 
         @Nested
-        @DisplayName("빈 토큰이 주어지면")
-        class Context_with_empty_token {
+        @DisplayName("토큰이 공백으로 주어지면")
+        class Context_with_blank_token {
             private Long productId;
 
             @BeforeEach
@@ -246,12 +249,13 @@ public class ProductControllerAuthTest {
                 productId = product.getId();
             }
 
-            @Test
+            @ParameterizedTest
+            @ValueSource(strings = {"", " ", "\t", "\n"})
             @DisplayName("401 응답을 생성한다")
-            void it_responds_unAuthorized() throws Exception {
+            void it_responds_unAuthorized(String token) throws Exception {
                 mockMvc.perform(patch("/products/{id}", productId)
                                 .accept(MediaType.APPLICATION_JSON)
-                                .header(AUTHORIZATION_HEADER, BEARER + "")
+                                .header(AUTHORIZATION_HEADER, BEARER + token)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(PRODUCT)))
                         .andExpect(status().isUnauthorized());

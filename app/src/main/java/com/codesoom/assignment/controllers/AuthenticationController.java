@@ -21,12 +21,12 @@ import javax.validation.Valid;
 @RequestMapping("/session")
 public class AuthenticationController {
 
-    private final AuthenticationService authService;
+    private final AuthenticationService authenticationService;
 
     private final AuthMapper authMapper;
 
-    public AuthenticationController(AuthenticationService authService, AuthMapper authMapper) {
-        this.authService = authService;
+    public AuthenticationController(AuthenticationService authenticationService, AuthMapper authMapper) {
+        this.authenticationService = authenticationService;
         this.authMapper = authMapper;
     }
 
@@ -34,8 +34,7 @@ public class AuthenticationController {
     @ResponseStatus(HttpStatus.CREATED)
     public AuthDto.SessionInfo login(@RequestBody @Valid AuthDto.LoginParam loginParam) {
         AuthCommand.Login command = authMapper.of(loginParam);
-
-        return new AuthDto.SessionInfo(authService.login(command));
+        return new AuthDto.SessionInfo(authenticationService.login(command));
     }
 
 }

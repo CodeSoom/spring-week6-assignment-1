@@ -4,6 +4,8 @@ import com.codesoom.assignment.application.product.ProductCommand;
 import com.codesoom.assignment.application.product.ProductCommandService;
 import com.codesoom.assignment.application.product.ProductQueryService;
 import com.codesoom.assignment.common.mapper.ProductMapper;
+import com.codesoom.assignment.common.resolver.AccessToken;
+import com.codesoom.assignment.common.resolver.AuthUser;
 import com.codesoom.assignment.dto.ProductDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -56,21 +58,26 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductDto.ProductInfo registerProduct(@RequestBody @Valid ProductDto.RequestParam request) {
+    public ProductDto.ProductInfo registerProduct(@RequestBody @Valid ProductDto.RequestParam request,
+                                                  @AccessToken AuthUser authUser) {
+        System.out.println(authUser);
         final ProductCommand.Register command = productMapper.of(request);
         return new ProductDto.ProductInfo(productCommandService.createProduct(command));
     }
 
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductDto.ProductInfo updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDto.RequestParam request) {
+    public ProductDto.ProductInfo updateProduct(@PathVariable Long id,
+                                                @RequestBody @Valid ProductDto.RequestParam request,
+                                                @AccessToken AuthUser authUser) {
         final ProductCommand.UpdateRequest command = productMapper.of(id, request);
         return new ProductDto.ProductInfo(productCommandService.updateProduct(command));
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable Long id) {
+    public void deleteProduct(@PathVariable Long id,
+                              @AccessToken AuthUser authUser) {
         productCommandService.deleteProduct(id);
     }
 }

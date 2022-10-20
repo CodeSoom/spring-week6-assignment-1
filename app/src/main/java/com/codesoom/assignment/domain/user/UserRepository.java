@@ -27,6 +27,13 @@ public interface UserRepository {
     Optional<User> findByEmailAndPassword(String email, String password);
 
     /**
+     * 회원 ID로 회원을 조회하고 이메일 존재여부를 리턴한다.
+     * @param id 회원 ID
+     * @return ID 존재여부
+     */
+    boolean existsById(Long id);
+
+    /**
      * 회원 이메일로 회원을 조회하고 이메일 존재여부를 리턴한다.
      * @param email 회원 이메일
      * @return 이메일 존재여부

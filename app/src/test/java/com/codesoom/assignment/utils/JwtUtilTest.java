@@ -5,6 +5,10 @@ import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,23 +70,14 @@ class JwtUtilTest {
         class Context_with_invalid_token {
             private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGwz";
 
-            @Test
+            @ParameterizedTest
             @DisplayName("유효하지 않은 토큰이라는 예외를 던진다")
-            void it_throws_exception() {
+            @NullSource
+            @EmptySource
+            @ValueSource(strings = {INVALID_TOKEN, "   "})
+            void it_throws_exception(String invalidToken) {
                 assertThatThrownBy(
-                        () -> jwtUtil.decode(INVALID_TOKEN)
-                ).isExactlyInstanceOf(InvalidTokenException.class);
-
-                assertThatThrownBy(
-                        () -> jwtUtil.decode("")
-                ).isExactlyInstanceOf(InvalidTokenException.class);
-
-                assertThatThrownBy(
-                        () -> jwtUtil.decode("  ")
-                ).isExactlyInstanceOf(InvalidTokenException.class);
-
-                assertThatThrownBy(
-                        () -> jwtUtil.decode(null)
+                        () -> jwtUtil.decode(invalidToken)
                 ).isExactlyInstanceOf(InvalidTokenException.class);
             }
         }

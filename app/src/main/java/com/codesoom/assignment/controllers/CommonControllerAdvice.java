@@ -3,7 +3,6 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.dto.ErrorResponse;
 import com.codesoom.assignment.exception.InvalidTokenException;
 import com.codesoom.assignment.exception.ProductNotFoundException;
-import com.codesoom.assignment.exception.UnAuthorizedAccessException;
 import com.codesoom.assignment.exception.UserEmailDuplicationException;
 import com.codesoom.assignment.exception.UserNotFoundException;
 import com.codesoom.assignment.exception.PasswordMismatchException;
@@ -47,7 +46,7 @@ public class CommonControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler({UnAuthorizedAccessException.class, InvalidTokenException.class})
+    @ExceptionHandler(InvalidTokenException.class)
     public ErrorResponse handleUnAuthorizedRequest(Exception e) {
         return new ErrorResponse(e.getMessage());
     }

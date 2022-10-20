@@ -15,7 +15,7 @@ public class LoginRequestDTO {
     @NotBlank
     private String password;
 
-    public LoginRequestDTO() {
+    private LoginRequestDTO() {
     }
 
     public LoginRequestDTO(String email, String password) {

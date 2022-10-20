@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+
 @Service
 @Transactional
 public class UserService {
@@ -28,16 +29,7 @@ public class UserService {
             throw new UserEmailDuplicationException(email);
         }
 
-        User user = User.builder()
-                .id(1L)
-                .deleted(false)
-                .email(registrationData.getEmail())
-                .name(registrationData.getName())
-                .password(registrationData.getPassword())
-                .build();
-        System.out.println("--------------------------------");
-        System.out.println(user.toString());
-        System.out.println("--------------------------------");
+        User user = mapper.map(registrationData, User.class);
 
         return userRepository.save(user);
     }

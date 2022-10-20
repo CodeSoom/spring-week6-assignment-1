@@ -10,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor
 public class UserRegistrationData {
     @NotBlank
     @Size(min = 3)
@@ -31,5 +30,8 @@ public class UserRegistrationData {
         this.email = email;
         this.name = name;
         this.password = password;
+    }
+
+    public UserRegistrationData() {
     }
 }

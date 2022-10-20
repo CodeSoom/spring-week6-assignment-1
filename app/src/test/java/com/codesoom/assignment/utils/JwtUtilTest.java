@@ -131,6 +131,20 @@ class JwtUtilTest {
         }
 
         @Nested
+        @DisplayName("null이나 공백이 주어지면")
+        class Context_with_null_or_white_space {
+
+            @ParameterizedTest
+            @NullAndEmptySource
+            @ValueSource(strings = {"\n", "\t", " "})
+            @DisplayName("예외를 던진다")
+            void it_throws_exception(String token) {
+                assertThatThrownBy(() -> jwtUtil.getUserId(token))
+                        .isInstanceOf(InvalidTokenException.class);
+            }
+        }
+
+        @Nested
         @DisplayName("숫자 타입이 아닌 userId를 갖는 토큰이 주어지면")
         class Context_with_token_of_wrong_user_id {
             // 문자열 6e로 생성

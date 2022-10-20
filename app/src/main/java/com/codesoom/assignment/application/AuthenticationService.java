@@ -5,6 +5,7 @@ import com.codesoom.assignment.common.response.ErrorCode;
 import com.codesoom.assignment.common.utils.JwtUtil;
 import com.codesoom.assignment.domain.user.User;
 import com.codesoom.assignment.domain.user.UserRepository;
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Supplier;
@@ -24,10 +25,18 @@ public class AuthenticationService {
         if (isNotExistEmail(command.getEmail())) {
             throw new InvalidParamException(ErrorCode.INVALID_EMAIL);
         }
-
         final User loginUser = findUser(command);
-        
+
         return jwtUtil.encode(loginUser.getId());
+    }
+
+    public Long parseToken(String accessToken) {
+        Claims claims = jwtUtil.decode(accessToken);
+        return claims.get("userId", Long.class);
+    }
+
+    public boolean isNotExistId(Long id) {
+        return !userRepository.existsById(id);
     }
 
     private User findUser(AuthCommand.Login command) {
@@ -38,7 +47,6 @@ public class AuthenticationService {
     private static Supplier<InvalidParamException> throwIncorrectPasswordException() {
         return () -> new InvalidParamException(ErrorCode.INVALID_PASSWORD);
     }
-
     private boolean isNotExistEmail(String email) {
         return !userRepository.existsByEmail(email);
     }

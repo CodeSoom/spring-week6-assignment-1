@@ -28,7 +28,17 @@ public class UserService {
             throw new UserEmailDuplicationException(email);
         }
 
-        User user = mapper.map(registrationData, User.class);
+        User user = User.builder()
+                .id(1L)
+                .deleted(false)
+                .email(registrationData.getEmail())
+                .name(registrationData.getName())
+                .password(registrationData.getPassword())
+                .build();
+        System.out.println("--------------------------------");
+        System.out.println(user.toString());
+        System.out.println("--------------------------------");
+
         return userRepository.save(user);
     }
 
@@ -37,7 +47,6 @@ public class UserService {
 
         User source = mapper.map(modificationData, User.class);
         user.changeWith(source);
-
         return user;
     }
 

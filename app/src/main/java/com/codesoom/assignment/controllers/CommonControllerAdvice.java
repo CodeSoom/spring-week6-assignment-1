@@ -6,7 +6,7 @@ import com.codesoom.assignment.exception.ProductNotFoundException;
 import com.codesoom.assignment.exception.UnAuthorizedAccessException;
 import com.codesoom.assignment.exception.UserEmailDuplicationException;
 import com.codesoom.assignment.exception.UserNotFoundException;
-import com.codesoom.assignment.exception.WrongUserPasswordException;
+import com.codesoom.assignment.exception.PasswordMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,7 +35,7 @@ public class CommonControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(WrongUserPasswordException.class)
+    @ExceptionHandler(PasswordMismatchException.class)
     public ErrorResponse handleWrongPassword(Exception e) {
         return new ErrorResponse(e.getMessage());
     }

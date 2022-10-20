@@ -4,7 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.request.LoginRequest;
 import com.codesoom.assignment.exception.UserNotFoundException;
-import com.codesoom.assignment.exception.WrongUserPasswordException;
+import com.codesoom.assignment.exception.PasswordMismatchException;
 import com.codesoom.assignment.utils.JwtTestHelper;
 import com.codesoom.assignment.utils.JwtUtil;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
@@ -91,7 +91,7 @@ class AuthenticationServiceTest {
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
                 assertThatThrownBy(() -> authenticationService.login(loginRequest))
-                        .isInstanceOf(WrongUserPasswordException.class);
+                        .isInstanceOf(PasswordMismatchException.class);
             }
         }
     }

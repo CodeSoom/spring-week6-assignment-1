@@ -19,15 +19,23 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    /**
+     * userId를 받아서 jwtToken을 생성한다.
+     * @param userId 사용자 ID
+     * @return 생성된 토큰
+     */
     public String encode(Long userId) {
-
-
         return Jwts.builder()
                 .claim("userId", userId)
                 .signWith(key)
                 .compact();
     }
 
+    /**
+     * token을 받아서 복호화한다.
+     * @param token 토큰
+     * @return 복호화된 Body
+     */
     public Claims decode(String token) {
         if (token == null || token.isBlank()) {
             throw new InvalidParamException(ErrorCode.INVALID_TOKEN);

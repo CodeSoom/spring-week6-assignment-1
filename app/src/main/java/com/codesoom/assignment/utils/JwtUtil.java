@@ -12,6 +12,7 @@ import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.security.Key;
 
@@ -53,6 +54,10 @@ public class JwtUtil {
      * @throws InvalidTokenException 토큰이 유효하지 않은 경우
      */
     public void validateToken(String token) {
+        if (!StringUtils.hasText(token)) {
+            throw new InvalidTokenException("토큰에 값이 없어 유효성 검사에 실패했습니다.");
+        }
+
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -76,6 +81,10 @@ public class JwtUtil {
      * @throws InvalidTokenException 토큰에서 회원 정보를 찾지 못한 경우
      */
     public Long getUserId(String token) {
+        if (!StringUtils.hasText(token)) {
+            throw new InvalidTokenException("토큰에 값이 없어 회원 정보를 찾을 수 없습니다.");
+        }
+
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

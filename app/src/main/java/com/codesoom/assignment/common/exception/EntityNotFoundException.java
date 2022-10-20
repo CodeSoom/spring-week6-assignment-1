@@ -1,10 +1,12 @@
 package com.codesoom.assignment.common.exception;
 
 import com.codesoom.assignment.common.response.ErrorCode;
+import lombok.Generated;
 
 /**
  * 엔티티에 데이터를 찾을수 없을때 던집니다.
  */
+@Generated
 public class EntityNotFoundException extends BaseException {
 
     public EntityNotFoundException() {

@@ -1,8 +1,10 @@
 package com.codesoom.assignment.common.exception;
 
 import com.codesoom.assignment.common.response.ErrorCode;
+import lombok.Generated;
 import lombok.Getter;
 
+@Generated
 @Getter
 public class BaseException extends RuntimeException{
 

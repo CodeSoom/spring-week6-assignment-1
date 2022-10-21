@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.codesoom.assignment.common.response.ErrorCode.USER_NOT_FOUND;
 
 @Service
+@Transactional
 public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
 
@@ -23,7 +24,6 @@ public class UserCommandServiceImpl implements UserCommandService {
         this.userMapper = userMapper;
     }
 
-    @Transactional
     @Override
     public User createUser(UserCommand.Register command) {
         return userRepository.save(userMapper.toEntity(command));
@@ -32,7 +32,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     /**
      * @throws EntityNotFoundException 회원정보가 없을 경우
      */
-    @Transactional
     @Override
     public User updateUser(UserCommand.UpdateRequest command) {
         User source = userMapper.toEntity(command);
@@ -46,7 +45,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     /**
      * @throws EntityNotFoundException 회원정보가 없을 경우
      */
-    @Transactional
     @Override
     public void deleteUser(Long id) {
         User findUser = getFindUser(id);

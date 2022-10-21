@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.codesoom.assignment.common.response.ErrorCode.PRODUCT_NOT_FOUND;
 
 @Service
+@Transactional
 public class ProductCommandServiceImpl implements ProductCommandService {
 
     private final ProductRepository productRepository;
@@ -24,7 +25,6 @@ public class ProductCommandServiceImpl implements ProductCommandService {
         this.productMapper = productMapper;
     }
 
-    @Transactional
     @Override
     public Product createProduct(ProductCommand.Register command) {
         return productRepository.save(ProductMapper.INSTANCE.toEntity(command));
@@ -33,7 +33,6 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     /**
      * @throws EntityNotFoundException 상품이 없을 경우
      */
-    @Transactional
     @Override
     public Product updateProduct(ProductCommand.UpdateRequest command) {
         Product product = productMapper.toEntity(command);
@@ -46,7 +45,6 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     /**
      * @throws EntityNotFoundException 상품이 없을 경우
      */
-    @Transactional
     @Override
     public void deleteProduct(Long id) {
         Product findProduct = productRepository.findById(id)

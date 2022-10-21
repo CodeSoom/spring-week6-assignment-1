@@ -36,7 +36,7 @@ public class TokenDecodeResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
         String authorization = request.getHeader("Authorization");
 
-        if (isBlankToken(authorization)) {
+        if (Strings.isBlank(authorization)) {
             throw new InvalidParamException(ErrorCode.INVALID_TOKEN);
         }
 
@@ -55,9 +55,6 @@ public class TokenDecodeResolver implements HandlerMethodArgumentResolver {
         return new AuthUser(userId);
     }
 
-    private boolean isBlankToken(String authorization) {
-        return Strings.isBlank(authorization);
-    }
     private boolean isNotExistToken(String authorization) {
         return !Pattern.matches("^Bearer .*", authorization);
     }

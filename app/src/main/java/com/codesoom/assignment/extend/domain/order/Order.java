@@ -3,10 +3,12 @@ package com.codesoom.assignment.extend.domain.order;
 import com.codesoom.assignment.extend.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,7 +17,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Table(name = "orders")
@@ -28,31 +32,59 @@ public class Order {
     private Long orderId;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany
-    @JoinColumn(name = "order_item_id")
-    private List<OrderItem> orderItems = new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private Set<OrderItem> orderItems = new HashSet<>();
 
-    @CreatedDate
     private LocalDateTime createdAt;
 
     protected Order() {
     }
 
-    @Builder
-    private Order(Long orderId, String status, User user, LocalDateTime createdAt) {
-        this.orderId = orderId;
-        this.status = status;
-        this.user = user;
-        this.createdAt = createdAt;
-    }
-
+    /**
+     * 주문 상품을 추가합니다.
+     * @param item 주문한 상품
+     */
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
+        item.setOrder(this);
     }
+
+    /**
+     * 주문을 생성합니다.
+     * @param user 주문한 회원
+     * @param orderItems 주문한 상품들
+     * @return 생성된 주문
+     */
+    public static Order create(User user, OrderItem... orderItems) {
+        Order order = new Order();
+
+        order.status = OrderStatus.ORDER;
+        order.createdAt = LocalDateTime.now();
+        order.user = user;
+
+        for (OrderItem item : orderItems) {
+            order.addOrderItem(item);
+        }
+
+        return order;
+    }
+
+    /**
+     * 주문을 취소합니다.
+     */
+    public void cancel() {
+        this.status = OrderStatus.CANCEL;
+
+        for (OrderItem item : orderItems) {
+            item.restock();
+        }
+    }
+
 }

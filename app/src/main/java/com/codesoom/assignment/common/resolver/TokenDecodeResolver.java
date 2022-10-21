@@ -5,6 +5,7 @@ import com.codesoom.assignment.common.exception.InvalidParamException;
 import com.codesoom.assignment.common.response.ErrorCode;
 import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -33,21 +34,21 @@ public class TokenDecodeResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
-        String accessToken = request.getHeader("Authorization");
+        String authorization = request.getHeader("Authorization");
 
-        if (isBlankToken(accessToken)) {
+        if (isBlankToken(authorization)) {
             throw new InvalidParamException(ErrorCode.INVALID_TOKEN);
         }
 
-        if (isNotExistToken(accessToken)) {
+        if (isNotExistToken(authorization)) {
             throw new InvalidParamException(ErrorCode.INVALID_TOKEN);
         }
 
-        accessToken = accessToken.replaceAll("^Bearer( )*", "");
+        String accessToken = authorization.replaceAll("^Bearer( )*", "");
 
         Long userId = authenticationService.parseToken(accessToken);
 
-        if (isNullUserId(userId) || isNotExistId(userId)) {
+        if (isNotExistUserId(userId)) {
             throw new InvalidParamException(ErrorCode.INVALID_TOKEN);
         }
 
@@ -55,18 +56,13 @@ public class TokenDecodeResolver implements HandlerMethodArgumentResolver {
     }
 
     private boolean isBlankToken(String authorization) {
-        return authorization == null || authorization.isBlank();
+        return Strings.isBlank(authorization);
     }
-
     private boolean isNotExistToken(String authorization) {
         return !Pattern.matches("^Bearer .*", authorization);
     }
 
-    private static boolean isNullUserId(Long userId) {
-        return userId == null;
-    }
-
-    private boolean isNotExistId(Long userId) {
-        return authenticationService.isNotExistId(userId);
+    private boolean isNotExistUserId(Long userId) {
+        return userId == null || authenticationService.isNotExistId(userId);
     }
 }

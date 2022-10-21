@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.dto.LoginRequestDTO;
+import com.codesoom.assignment.dto.LoginRequest;
 import com.codesoom.assignment.infra.JpaUserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +50,7 @@ class SessionControllerTest {
                                 .build()
                 );
                 requestBody = objectMapper.writeValueAsString(
-                        new LoginRequestDTO(savedUser.getEmail(), savedUser.getPassword())
+                        new LoginRequest(savedUser.getEmail(), savedUser.getPassword())
                 );
             }
 
@@ -81,10 +81,10 @@ class SessionControllerTest {
                                 .build()
                 );
                 requestBodyWithIncorrectEmail = objectMapper.writeValueAsString(
-                        new LoginRequestDTO("b@b.com", savedUser.getPassword())
+                        new LoginRequest("b@b.com", savedUser.getPassword())
                 );
                 requestBodyWithIncorrectPassword = objectMapper.writeValueAsString(
-                        new LoginRequestDTO(savedUser.getEmail(), "9999999")
+                        new LoginRequest(savedUser.getEmail(), "9999999")
                 );
 
             }

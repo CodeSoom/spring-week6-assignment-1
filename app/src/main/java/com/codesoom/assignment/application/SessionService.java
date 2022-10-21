@@ -2,7 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.LoginRequestDTO;
+import com.codesoom.assignment.dto.LoginRequest;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -21,11 +21,11 @@ public class SessionService {
         this.userRepository = userRepository;
     }
 
-    public String login(LoginRequestDTO loginRequestDTO) {
-        User findUser = userRepository.findByEmail(loginRequestDTO.getEmail())
+    public String login(LoginRequest loginRequest) {
+        User findUser = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("찾을 수 없는 email 입니다"));
 
-        if (isIncorrectPassword(loginRequestDTO.getPassword(), findUser.getPassword())) {
+        if (isIncorrectPassword(loginRequest.getPassword(), findUser.getPassword())) {
             throw new LoginFailException("잘못된 password 입니다");
         }
 

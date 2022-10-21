@@ -1,7 +1,7 @@
 package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.dto.LoginRequestDTO;
+import com.codesoom.assignment.dto.LoginRequest;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -32,7 +32,7 @@ class SessionServiceTest {
         @Nested
         @DisplayName("알맞은 email 과 password 가 주어지면")
         class Context_with_correct_email_and_password {
-            private LoginRequestDTO loginRequestDTO;
+            private LoginRequest loginRequest;
 
             @BeforeEach
             void setUp() {
@@ -46,13 +46,13 @@ class SessionServiceTest {
                                 .password("123456")
                                 .build()
                 );
-                loginRequestDTO = new LoginRequestDTO(correctEmail, correctPassword);
+                loginRequest = new LoginRequest(correctEmail, correctPassword);
             }
 
             @Test
             @DisplayName("token 을 리턴한다")
             void it_returns_token() {
-                String token = sessionService.login(loginRequestDTO);
+                String token = sessionService.login(loginRequest);
 
                 assertThat(token).isEqualTo(VALID_TOKEN_BY_USER_ID_1L);
             }
@@ -61,8 +61,8 @@ class SessionServiceTest {
         @Nested
         @DisplayName("알맞지 않은 email 과 password 가 주어지면")
         class Context_with_incorrect_email_and_password {
-            private LoginRequestDTO loginRequestDTOWithIncorrectEmail;
-            private LoginRequestDTO loginRequestDTOWithIncorrectPassword;
+            private LoginRequest loginRequestWithIncorrectEmail;
+            private LoginRequest loginRequestWithIncorrectPassword;
 
             @BeforeEach
             void setUp() {
@@ -76,20 +76,20 @@ class SessionServiceTest {
                                 .password(correctPassword)
                                 .build()
                 );
-                loginRequestDTOWithIncorrectEmail = new LoginRequestDTO("b@b.com", correctPassword);
-                loginRequestDTOWithIncorrectPassword = new LoginRequestDTO(correctEmail, "9999999");
+                loginRequestWithIncorrectEmail = new LoginRequest("b@b.com", correctPassword);
+                loginRequestWithIncorrectPassword = new LoginRequest(correctEmail, "9999999");
             }
 
             @Test
             @DisplayName("사용자를 찾을 수 없다는 예외를 리턴한다")
             void it_returns_token() {
                 assertThatThrownBy(
-                        () -> sessionService.login(loginRequestDTOWithIncorrectEmail)
+                        () -> sessionService.login(loginRequestWithIncorrectEmail)
                 ).isExactlyInstanceOf(UserNotFoundException.class)
                         .hasMessage("찾을 수 없는 email 입니다");
 
                 assertThatThrownBy(
-                        () -> sessionService.login(loginRequestDTOWithIncorrectPassword)
+                        () -> sessionService.login(loginRequestWithIncorrectPassword)
                 ).isExactlyInstanceOf(LoginFailException.class)
                         .hasMessage("잘못된 password 입니다");
             }

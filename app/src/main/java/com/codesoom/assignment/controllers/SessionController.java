@@ -1,7 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.SessionService;
-import com.codesoom.assignment.dto.LoginRequestDTO;
+import com.codesoom.assignment.dto.LoginRequest;
 import com.codesoom.assignment.dto.TokenResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,8 +25,8 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TokenResponse login(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
-        String token = sessionService.login(loginRequestDTO);
+    public TokenResponse login(@RequestBody @Valid LoginRequest loginRequest) {
+        String token = sessionService.login(loginRequest);
         return new TokenResponse(token);
     }
 }

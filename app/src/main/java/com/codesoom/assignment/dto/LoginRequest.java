@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-public class LoginRequestDTO {
+public class LoginRequest {
     @NotNull
     @NotBlank
     private String email;
@@ -15,10 +15,10 @@ public class LoginRequestDTO {
     @NotBlank
     private String password;
 
-    private LoginRequestDTO() {
+    private LoginRequest() {
     }
 
-    public LoginRequestDTO(String email, String password) {
+    public LoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }

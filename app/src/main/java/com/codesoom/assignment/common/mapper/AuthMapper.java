@@ -16,6 +16,11 @@ public interface AuthMapper {
 
     AuthMapper INSTANCE = Mappers.getMapper(AuthMapper.class);
 
+    /**
+     * 로그인 Dto 객체를 로그인 커맨드 객체로 변환한다.
+     * @param request 로그인 Dto
+     * @return 로그인 커맨드
+     */
     AuthCommand.Login of(AuthDto.LoginParam request);
 
 }

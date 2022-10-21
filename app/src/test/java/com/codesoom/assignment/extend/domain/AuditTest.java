@@ -30,6 +30,6 @@ class AuditTest {
         productRepository.save(product);
 
         assertNotNull(product.getCreatedAt());
-        assertNotNull(product.getModifiedAt());
+        assertNotNull(product.getUpdatedAt());
     }
 }

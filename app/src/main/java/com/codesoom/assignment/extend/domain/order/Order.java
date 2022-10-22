@@ -1,7 +1,7 @@
 package com.codesoom.assignment.extend.domain.order;
 
 import com.codesoom.assignment.extend.domain.user.User;
-import lombok.Builder;
+import io.jsonwebtoken.lang.Assert;
 import lombok.Getter;
 
 import javax.persistence.CascadeType;
@@ -17,9 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Table(name = "orders")
@@ -40,7 +38,7 @@ public class Order {
     private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private Set<OrderItem> orderItems = new HashSet<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
@@ -63,6 +61,8 @@ public class Order {
      * @return 생성된 주문
      */
     public static Order create(User user, OrderItem... orderItems) {
+        Assert.notNull(orderItems, "주문을 위해 주문 상품은 필수입니다.");
+
         Order order = new Order();
 
         order.status = OrderStatus.ORDER;

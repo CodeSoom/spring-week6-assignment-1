@@ -29,6 +29,23 @@ class SessionServiceTest {
     @Nested
     @DisplayName("login 메서드는")
     class Describe_login {
+        private String correctEmail;
+        private String correctPassword;
+
+        @BeforeEach
+        void setUp() {
+            correctEmail = "a@a.com";
+            correctPassword = "123456";
+
+            jpaUserRepository.save(
+                    User.builder()
+                            .id(1L)
+                            .email(correctEmail)
+                            .password(correctPassword)
+                            .build()
+            );
+        }
+
         @Nested
         @DisplayName("알맞은 email 과 password 가 주어지면")
         class Context_with_correct_email_and_password {
@@ -36,16 +53,6 @@ class SessionServiceTest {
 
             @BeforeEach
             void setUp() {
-                String correctEmail = "a@a.com";
-                String correctPassword = "123456";
-
-                jpaUserRepository.save(
-                        User.builder()
-                                .id(1L)
-                                .email("a@a.com")
-                                .password("123456")
-                                .build()
-                );
                 loginRequest = new LoginRequest(correctEmail, correctPassword);
             }
 
@@ -59,35 +66,38 @@ class SessionServiceTest {
         }
 
         @Nested
-        @DisplayName("알맞지 않은 email 과 password 가 주어지면")
-        class Context_with_incorrect_email_and_password {
+        @DisplayName("알맞지 않은 email 이 주어지면")
+        class Context_with_incorrect_email {
             private LoginRequest loginRequestWithIncorrectEmail;
-            private LoginRequest loginRequestWithIncorrectPassword;
 
             @BeforeEach
             void setUp() {
-                String correctEmail = "a@a.com";
-                String correctPassword = "123456";
-
-                jpaUserRepository.save(
-                        User.builder()
-                                .id(1L)
-                                .email(correctEmail)
-                                .password(correctPassword)
-                                .build()
-                );
                 loginRequestWithIncorrectEmail = new LoginRequest("b@b.com", correctPassword);
-                loginRequestWithIncorrectPassword = new LoginRequest(correctEmail, "9999999");
             }
 
             @Test
-            @DisplayName("사용자를 찾을 수 없다는 예외를 리턴한다")
+            @DisplayName("사용자를 찾을 수 없다는 예외를 던진다")
             void it_returns_token() {
                 assertThatThrownBy(
                         () -> sessionService.login(loginRequestWithIncorrectEmail)
                 ).isExactlyInstanceOf(UserNotFoundException.class)
                         .hasMessage("찾을 수 없는 email 입니다");
+            }
+        }
 
+        @Nested
+        @DisplayName("알맞지 않은 password 가 주어지면")
+        class Context_with_incorrect_password {
+            private LoginRequest loginRequestWithIncorrectPassword;
+
+            @BeforeEach
+            void setUp() {
+                loginRequestWithIncorrectPassword = new LoginRequest(correctEmail, "9999999");
+            }
+
+            @Test
+            @DisplayName("로그인이 실패했다는 예외를 던진다")
+            void it_returns_token() {
                 assertThatThrownBy(
                         () -> sessionService.login(loginRequestWithIncorrectPassword)
                 ).isExactlyInstanceOf(LoginFailException.class)

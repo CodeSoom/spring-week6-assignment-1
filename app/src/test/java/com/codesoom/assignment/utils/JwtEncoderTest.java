@@ -15,11 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @AutoConfigureMockMvc
-class JwtUtilTest {
+class JwtEncoderTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
     private static final String SECRET = "12345678901234567890123456789010";
 
-    private final JwtUtil jwtUtil = new JwtUtil(SECRET);
+    private final JwtEncoder jwtEncoder = new JwtEncoder(SECRET);
 
     @Nested
     @DisplayName("encode 메서드는")
@@ -30,7 +30,7 @@ class JwtUtilTest {
             @Test
             @DisplayName("token 을 리턴한다")
             void it_returns_token() {
-                String encode = jwtUtil.encode(1L);
+                String encode = jwtEncoder.encode(1L);
 
                 assertThat(encode).isEqualTo(VALID_TOKEN);
             }
@@ -43,7 +43,7 @@ class JwtUtilTest {
             @DisplayName("예외를 던진다")
             void it_throws_exception() {
                 assertThatThrownBy(
-                        () -> jwtUtil.encode(null)
+                        () -> jwtEncoder.encode(null)
                 ).isExactlyInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -58,7 +58,7 @@ class JwtUtilTest {
             @Test
             @DisplayName("userId를 리턴한다")
             void it_returns_userId() {
-                Claims claims = jwtUtil.decode(VALID_TOKEN);
+                Claims claims = jwtEncoder.decode(VALID_TOKEN);
                 Long userId = claims.get("userId", Long.class);
 
                 assertThat(userId).isEqualTo(1L);
@@ -77,7 +77,7 @@ class JwtUtilTest {
             @ValueSource(strings = {INVALID_TOKEN, "   "})
             void it_throws_exception(String invalidToken) {
                 assertThatThrownBy(
-                        () -> jwtUtil.decode(invalidToken)
+                        () -> jwtEncoder.decode(invalidToken)
                 ).isExactlyInstanceOf(InvalidTokenException.class);
             }
         }

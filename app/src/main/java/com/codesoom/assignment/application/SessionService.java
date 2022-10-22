@@ -6,18 +6,18 @@ import com.codesoom.assignment.dto.LoginRequest;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
-import com.codesoom.assignment.utils.JwtUtil;
+import com.codesoom.assignment.utils.JwtEncoder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SessionService {
-    private final JwtUtil jwtUtil;
+    private final JwtEncoder jwtEncoder;
     private final UserRepository userRepository;
 
-    public SessionService(JwtUtil jwtUtil, UserRepository userRepository) {
-        this.jwtUtil = jwtUtil;
+    public SessionService(JwtEncoder jwtEncoder, UserRepository userRepository) {
+        this.jwtEncoder = jwtEncoder;
         this.userRepository = userRepository;
     }
 
@@ -29,7 +29,7 @@ public class SessionService {
             throw new LoginFailException("잘못된 password 입니다");
         }
 
-        return jwtUtil.encode(findUser.getId());
+        return jwtEncoder.encode(findUser.getId());
     }
 
     private boolean isIncorrectPassword(String requestPassword, String findUserPassword) {
@@ -37,7 +37,7 @@ public class SessionService {
     }
 
     public Long parseToken(String token) {
-        Claims claims = jwtUtil.decode(token);
+        Claims claims = jwtEncoder.decode(token);
 
         Long userId = getUserId(claims);
 

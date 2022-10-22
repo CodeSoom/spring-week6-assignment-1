@@ -36,27 +36,24 @@ public class SessionService {
         return !findUserPassword.equals(requestPassword);
     }
 
-    public Long parseToken(String token) {
+    public User getUserFromToken(String token) {
         Claims claims = jwtEncoder.decode(token);
 
         Long userId = getUserId(claims);
 
-        isExistUser(userId);
-
-        return userId;
+        return findUser(userId);
     }
 
     private Long getUserId(Claims claims) {
         try {
             return claims.get("userId", Long.class);
         } catch (SignatureException e) {
-            throw new InvalidTokenException("userId 가 존재하지 않습니다");
+            throw new InvalidTokenException("token 에 userId 가 존재하지 않습니다");
         }
     }
 
-    private void isExistUser(Long userId) {
-        userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(userId)
-        );
+    private User findUser(Long userId) {
+        return userRepository.findByIdAndDeletedIsFalse(userId)
+                .orElseThrow(() -> new InvalidTokenException("token 에 userId가 저장되어 있지 않습니다"));
     }
 }

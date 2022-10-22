@@ -127,11 +127,11 @@ class SessionServiceTest {
             }
 
             @Test
-            @DisplayName("userId를 리턴한다")
-            void it_returns_userId() {
-                Long userId = sessionService.parseToken(VALID_TOKEN_BY_USER_ID_1L);
+            @DisplayName("user 를 리턴한다")
+            void it_returns_user() {
+                User user = sessionService.getUserFromToken(VALID_TOKEN_BY_USER_ID_1L);
 
-                assertThat(userId).isEqualTo(userId);
+                assertThat(user.getId()).isEqualTo(this.userId);
             }
         }
 
@@ -142,7 +142,7 @@ class SessionServiceTest {
             @DisplayName("유효하지 않은 토큰이라는 예외를 던진다")
             void it_throws_exception() {
                 assertThatThrownBy(
-                        () -> sessionService.parseToken(INVALID_TOKEN)
+                        () -> sessionService.getUserFromToken(INVALID_TOKEN)
                 ).isExactlyInstanceOf(InvalidTokenException.class);
             }
         }

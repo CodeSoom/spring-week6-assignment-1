@@ -79,7 +79,7 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
 
-        given(sessionService.parseToken(INVALID_TOKEN)).willThrow(new InvalidTokenException("a"));
+        given(sessionService.getUserFromToken(INVALID_TOKEN)).willThrow(new InvalidTokenException("a"));
     }
 
     @Test

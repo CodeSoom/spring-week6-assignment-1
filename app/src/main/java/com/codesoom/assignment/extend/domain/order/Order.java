@@ -1,8 +1,8 @@
 package com.codesoom.assignment.extend.domain.order;
 
 import com.codesoom.assignment.extend.domain.user.User;
-import io.jsonwebtoken.lang.Assert;
 import lombok.Getter;
+import org.springframework.util.Assert;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

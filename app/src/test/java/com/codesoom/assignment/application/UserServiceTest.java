@@ -2,10 +2,10 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
-import com.codesoom.assignment.dto.UserModificationData;
-import com.codesoom.assignment.dto.UserRegistrationData;
-import com.codesoom.assignment.errors.UserEmailDuplicationException;
-import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.dto.request.UserModificationData;
+import com.codesoom.assignment.dto.request.UserRegistrationData;
+import com.codesoom.assignment.exception.UserEmailDuplicationException;
+import com.codesoom.assignment.exception.UserNotFoundException;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -162,5 +162,28 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
 
         verify(userRepository).findByIdAndDeletedIsFalse(DELETED_USER_ID);
+    }
+
+    @Test
+    void findByEmail() {
+        User saved = User.builder()
+                .id(1L)
+                .email(EXISTED_EMAIL_ADDRESS)
+                .password("my_password")
+                .build();
+
+        given(userRepository.findByEmail(EXISTED_EMAIL_ADDRESS)).willReturn(Optional.of(saved));
+
+        User found = userService.findUserByEmail(EXISTED_EMAIL_ADDRESS);
+
+        assertThat(found.getId()).isEqualTo(saved.getId());
+        assertThat(found.getEmail()).isEqualTo(saved.getEmail());
+        assertThat(found.getPassword()).isEqualTo(saved.getPassword());
+    }
+
+    @Test
+    void findByEmailWithInvalidEmail() {
+        assertThatThrownBy(() -> userService.findUserByEmail("not_exist@example.com"))
+                .isInstanceOf(UserNotFoundException.class);
     }
 }

@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:demotest
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+jwt:
+  secret: "12345678901234567890123456789010"

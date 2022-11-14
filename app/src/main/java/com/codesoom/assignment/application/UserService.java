@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+
 @Service
 @Transactional
 public class UserService {
@@ -29,6 +30,7 @@ public class UserService {
         }
 
         User user = mapper.map(registrationData, User.class);
+
         return userRepository.save(user);
     }
 
@@ -37,7 +39,6 @@ public class UserService {
 
         User source = mapper.map(modificationData, User.class);
         user.changeWith(source);
-
         return user;
     }
 

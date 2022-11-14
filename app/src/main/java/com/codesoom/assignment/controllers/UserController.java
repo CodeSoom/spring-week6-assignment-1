@@ -24,6 +24,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
         User user = userService.registerUser(registrationData);
+
         return getUserResultData(user);
     }
 
@@ -43,6 +44,7 @@ public class UserController {
     }
 
     private UserResultData getUserResultData(User user) {
+
         return UserResultData.builder()
                 .id(user.getId())
                 .email(user.getEmail())

@@ -47,12 +47,16 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.11.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
 
-    // Lombok
+    // Lombok: 보일러플레이트 코드를 어노테이션을 통해 줄여주는 라이브러리
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
     // DozerMapper
     implementation 'com.github.dozermapper:dozer-core:6.4.0'
+
+    // Mapstruct: 어노테이션 프로세서를 사용하여 객체 간 Mapping을 도와주는 라이브러리
+    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'

@@ -37,14 +37,14 @@ class SessionControllerTest {
     /*
         로그인 API는
         - 유효한 회원 정보가 주어지면
-            - 세션 토큰을 헤더로 반환한다. 201
+            - 201 코드로 반환한다 (세션 토큰)
         - 유효하지 않는 회원 정보가 주어지면
             - 빈 값이 주어질 경우
-                - 예외를 던진다 (@Valid : 400)
+                - 400 코드를 반환한다 (@Valid)
             - 찾을 수 없는 Email일 경우
-                - 예외를 던진다 (UserNotFoundException : 404)
+                - 404 코드를 반환한다 (UserNotFoundException)
             - 비밀번호가 틀렸을 경우
-                - 예외를 던진다 (InvalidUserPasswordException : 400)
+                - 400 코드를 반환한다 (InvalidUserPasswordException)
      */
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -53,7 +53,7 @@ class SessionControllerTest {
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 유효한_회원_정보가_주어지면 {
             @Test
-            @DisplayName("세션 토큰을 헤더로 반환한다.")
+            @DisplayName("201 코드로 반환한다.")
             void it_returns_session() throws Exception {
                 mockMvc.perform(
                         post("/session")

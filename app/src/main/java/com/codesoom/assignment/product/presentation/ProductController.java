@@ -25,7 +25,11 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public Product detail(@PathVariable Long id) {
+    public Product detail(@PathVariable Long id) throws Exception {
+        if (id == 3L) {
+            throw new Exception();
+        }
+
         return productService.getProduct(id);
     }
 

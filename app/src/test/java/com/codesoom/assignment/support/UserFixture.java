@@ -1,7 +1,7 @@
 package com.codesoom.assignment.support;
 
-import com.codesoom.assignment.session.dto.SessionRequestDto;
-import com.codesoom.assignment.user.domain.User;
+import com.codesoom.assignment.domain.session.controller.dto.SessionRequestDto;
+import com.codesoom.assignment.domain.user.domain.User;
 
 public enum UserFixture {
     USER_1("기범", "dev.gibeom@gmail.com", "비밀번호486"),

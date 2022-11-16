@@ -15,7 +15,6 @@ import static com.codesoom.assignment.support.IdFixture.ID_MIN;
 import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_VALID;
 import static com.codesoom.assignment.support.UserFixture.USER_1;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -48,24 +47,28 @@ class AuthenticationServiceTest {
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 유효한_회원_정보가_주어지면 {
-            @Test
-            @DisplayName("토큰을 반환한다")
-            void it_returns_token() {
+            @BeforeEach
+            void setUpGiven() {
                 given(userRepository.findByEmail(USER_1.EMAIL()))
                         .willReturn(
                                 Optional.of(USER_1.회원_엔티티_생성(ID_MIN.value()))
                         );
 
-                given(jwtUtil.encode(any(Long.class)))
+                given(jwtUtil.encode(ID_MIN.value()))
                         .willReturn(ACCESS_TOKEN_1_VALID.토큰());
+            }
 
+            @Test
+            @DisplayName("토큰을 반환한다")
+            void it_returns_token() {
                 String accessToken = authenticationService.login(USER_1.로그인_요청_데이터_생성());
+
 
                 assertThat(accessToken).isNotBlank()
                         .contains(".");
 
                 verify(userRepository).findByEmail(USER_1.EMAIL());
-                verify(jwtUtil).encode(any(Long.class));
+                verify(jwtUtil).encode(ID_MIN.value());
             }
         }
     }

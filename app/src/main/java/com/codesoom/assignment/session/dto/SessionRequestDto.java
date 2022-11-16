@@ -1,11 +1,13 @@
 package com.codesoom.assignment.session.dto;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
+@EqualsAndHashCode
 public class SessionRequestDto {
     @NotBlank(message = "이메일을 입력하세요")
     private final String email;

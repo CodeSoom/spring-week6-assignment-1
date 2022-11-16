@@ -1,7 +1,7 @@
 package com.codesoom.assignment.session;
 
 import com.codesoom.assignment.common.util.JsonUtil;
-import com.codesoom.assignment.session.dto.SessionRequestDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_VALID;
 import static com.codesoom.assignment.support.UserFixture.USER_1;
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,19 +54,24 @@ class SessionControllerTest {
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 유효한_회원_정보가_주어지면 {
+            @BeforeEach
+            void setUpGiven() {
+                given(authenticationService.login(USER_1.로그인_요청_데이터_생성()))
+                        .willReturn(ACCESS_TOKEN_1_VALID.토큰());
+            }
+
             @Test
             @DisplayName("201 코드로 응답한다")
             void it_returns_session() throws Exception {
-                given(authenticationService.login(any(SessionRequestDto.class)))
-                        .willReturn(ACCESS_TOKEN_1_VALID.토큰());
-
                 mockMvc.perform(
-                        post("/session")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(JsonUtil.writeValue(USER_1.로그인_요청_데이터_생성()))
-                )
+                                post("/session")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(JsonUtil.writeValue(USER_1.로그인_요청_데이터_생성()))
+                        )
                         .andExpect(status().isCreated())
                         .andExpect(content().string(containsString(".")));
+
+                verify(authenticationService).login(USER_1.로그인_요청_데이터_생성());
             }
         }
     }

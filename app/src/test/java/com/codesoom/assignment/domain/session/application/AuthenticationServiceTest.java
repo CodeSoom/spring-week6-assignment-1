@@ -77,7 +77,7 @@ class AuthenticationServiceTest {
                 @BeforeEach
                 void setUpGiven() {
                     given(userRepository.findByEmail(USER_NOT_REGISTER.EMAIL()))
-                            .willThrow(new UserNotFoundException(USER_NOT_REGISTER.EMAIL()));
+                            .willReturn(Optional.empty());
                 }
 
                 @Test

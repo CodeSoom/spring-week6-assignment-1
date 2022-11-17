@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/session")
 public class SessionController {
@@ -21,7 +23,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseDto login(@RequestBody final SessionRequestDto sessionRequestDto) {
+    public SessionResponseDto login(@RequestBody @Valid final SessionRequestDto sessionRequestDto) {
         return SessionResponseDto.builder()
                 .accessToken(authenticationService.login(sessionRequestDto))
                 .build();

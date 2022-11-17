@@ -7,8 +7,8 @@ public enum UserFixture {
     USER_1("기범", "dev.gibeom@gmail.com", "비밀번호486"),
     USER_2("Alex", "dev.gibeom@gmail.com", "password486"),
     USER_INVALID_NAME("", "alex@gmail.com", "코드숨6주차"),
-    USER_INVALID_EMAIL("이메일에 골뱅이가 없어요", "alexgmail.com", "코드숨6주차"),
-    USER_INVALID_PASSWORD("이메일에 골뱅이가 없어요", "alexgmail.com", ""),
+    USER_INVALID_BLANK_EMAIL("이메일에 골뱅이가 없어요", "     ", "코드숨6주차"),
+    USER_INVALID_BLANK_PASSWORD("이메일에 골뱅이가 없어요", "alexgmail.com", "    "),
     ;
 
     private String name;

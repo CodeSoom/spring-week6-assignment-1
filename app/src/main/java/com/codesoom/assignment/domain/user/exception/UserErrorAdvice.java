@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain.user.exception;
 
+import com.codesoom.assignment.domain.session.controller.SessionController;
 import com.codesoom.assignment.domain.user.presentation.UserController;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -13,7 +14,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @RestControllerAdvice(basePackageClasses = {
-        UserController.class
+        UserController.class,
+        SessionController.class
 })
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public @interface UserErrorAdvice {

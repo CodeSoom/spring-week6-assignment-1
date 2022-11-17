@@ -19,4 +19,10 @@ public class UserExceptionHandler {
     public ErrorResponse handleUserEmailIsAlreadyExisted() {
         return new ErrorResponse("User's email address is already existed");
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(UserInvalidPasswordException.class)
+    public ErrorResponse handleUserInvalidPassword(UserInvalidPasswordException exception) {
+        return new ErrorResponse(exception.getMessage());
+    }
 }

@@ -4,6 +4,7 @@ import com.codesoom.assignment.common.util.JwtUtil;
 import com.codesoom.assignment.domain.session.controller.dto.SessionRequestDto;
 import com.codesoom.assignment.domain.user.domain.User;
 import com.codesoom.assignment.domain.user.domain.UserRepository;
+import com.codesoom.assignment.domain.user.exception.UserInvalidPasswordException;
 import com.codesoom.assignment.domain.user.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,14 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(sessionRequestDto.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(sessionRequestDto.getEmail()));
 
+        if (isIncorrectPassword(sessionRequestDto, user)) {
+            throw new UserInvalidPasswordException(sessionRequestDto.getEmail());
+        }
+
         return jwtUtil.encode(user.getId());
+    }
+
+    private boolean isIncorrectPassword(final SessionRequestDto sessionRequestDto, final User user) {
+        return !sessionRequestDto.getPassword().equals(user.getPassword());
     }
 }

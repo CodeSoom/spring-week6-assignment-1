@@ -6,6 +6,7 @@ import com.codesoom.assignment.domain.user.domain.User;
 public enum UserFixture {
     USER_1("기범", "dev.gibeom@gmail.com", "비밀번호486"),
     USER_2("Alex", "dev.gibeom@gmail.com", "password486"),
+    USER_2_DIFFERENT_PASSWORD("Alex", "dev.gibeom@gmail.com", "비밀번호 틀렸지롱"),
     USER_NOT_REGISTER("등록되지 않은 회원이에요", "not_register@gmail.com", "password486"),
     USER_INVALID_NAME("", "name_invalid@gmail.com", "name.invalid"),
     USER_INVALID_BLANK_EMAIL("이메일이 유효하지 않아요", "     ", "email.invalid"),

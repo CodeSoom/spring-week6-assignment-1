@@ -2,6 +2,7 @@ package com.codesoom.assignment.domain.session.application;
 
 import com.codesoom.assignment.common.util.JwtUtil;
 import com.codesoom.assignment.domain.user.domain.UserRepository;
+import com.codesoom.assignment.domain.user.exception.UserInvalidPasswordException;
 import com.codesoom.assignment.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,8 @@ import java.util.Optional;
 import static com.codesoom.assignment.support.IdFixture.ID_MIN;
 import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_VALID;
 import static com.codesoom.assignment.support.UserFixture.USER_1;
+import static com.codesoom.assignment.support.UserFixture.USER_2;
+import static com.codesoom.assignment.support.UserFixture.USER_2_DIFFERENT_PASSWORD;
 import static com.codesoom.assignment.support.UserFixture.USER_NOT_REGISTER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,14 +68,6 @@ class AuthenticationServiceTest {
             }
         }
 
-        /*
-            - login 메서드는
-                - 유효하지 않는 회원 정보가 주어지면
-                    - 찾을 수 없는 Email일 경우
-                        - 예외를 던진다 (UserNotFoundException)
-                    - 비밀번호가 틀렸을 경우
-                        - 예외를 던진다 (UserInvalidPasswordException)
-        */
         @Nested
         @DisplayName("유효하지 않는 회원 정보가 주어지면")
         class Context_with_invalid_user {
@@ -90,6 +85,25 @@ class AuthenticationServiceTest {
                 void it_returns_exception() {
                     assertThatThrownBy(() -> authenticationService.login(USER_NOT_REGISTER.로그인_요청_데이터_생성()))
                             .isInstanceOf(UserNotFoundException.class);
+                }
+            }
+
+            @Nested
+            @DisplayName("비밀번호가 틀렸을 경우")
+            class Context_with_wrong_password {
+                @BeforeEach
+                void setUpGiven() {
+                    given(userRepository.findByEmail(USER_2.EMAIL()))
+                            .willReturn(Optional.of(USER_2_DIFFERENT_PASSWORD.회원_엔티티_생성(ID_MIN.value())));
+                }
+
+                @Test
+                @DisplayName("예외를 던진다")
+                void it_returns_exception() {
+                    assertThatThrownBy(() -> authenticationService.login(USER_2.로그인_요청_데이터_생성()))
+                            .isInstanceOf(UserInvalidPasswordException.class);
+
+                    verify(userRepository).findByEmail(USER_2.EMAIL());
                 }
             }
         }

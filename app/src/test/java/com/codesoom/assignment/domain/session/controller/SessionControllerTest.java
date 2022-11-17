@@ -2,6 +2,7 @@ package com.codesoom.assignment.domain.session.controller;
 
 import com.codesoom.assignment.common.util.JsonUtil;
 import com.codesoom.assignment.domain.session.application.AuthenticationService;
+import com.codesoom.assignment.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -19,6 +20,7 @@ import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_VALID;
 import static com.codesoom.assignment.support.UserFixture.USER_1;
 import static com.codesoom.assignment.support.UserFixture.USER_INVALID_BLANK_EMAIL;
 import static com.codesoom.assignment.support.UserFixture.USER_INVALID_BLANK_PASSWORD;
+import static com.codesoom.assignment.support.UserFixture.USER_NOT_REGISTER;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -106,6 +108,26 @@ class Session_Controller_웹_테스트 {
                                             .content(JsonUtil.writeValue(USER_INVALID_BLANK_PASSWORD.로그인_요청_데이터_생성()))
                             )
                             .andExpect(status().isBadRequest());
+                }
+            }
+
+            @Nested
+            @DisplayName("찾을 수 없는 계정일 경우")
+            class Context_with_not_found_user {
+                @Test
+                @DisplayName("404 코드로 응답한다")
+                void it_responses_404() throws Exception {
+                    given(authenticationService.login(USER_NOT_REGISTER.로그인_요청_데이터_생성()))
+                            .willThrow(new UserNotFoundException(USER_NOT_REGISTER.EMAIL()));
+
+                    mockMvc.perform(
+                                    post("/session")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(JsonUtil.writeValue(USER_NOT_REGISTER.로그인_요청_데이터_생성()))
+                            )
+                            .andExpect(status().isNotFound());
+
+                    verify(authenticationService).login(USER_NOT_REGISTER.로그인_요청_데이터_생성());
                 }
             }
         }

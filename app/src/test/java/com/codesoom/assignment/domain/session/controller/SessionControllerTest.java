@@ -2,6 +2,7 @@ package com.codesoom.assignment.domain.session.controller;
 
 import com.codesoom.assignment.common.util.JsonUtil;
 import com.codesoom.assignment.domain.session.application.AuthenticationService;
+import com.codesoom.assignment.domain.user.exception.UserInvalidPasswordException;
 import com.codesoom.assignment.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_VALID;
 import static com.codesoom.assignment.support.UserFixture.USER_1;
+import static com.codesoom.assignment.support.UserFixture.USER_2;
 import static com.codesoom.assignment.support.UserFixture.USER_INVALID_BLANK_EMAIL;
 import static com.codesoom.assignment.support.UserFixture.USER_INVALID_BLANK_PASSWORD;
 import static com.codesoom.assignment.support.UserFixture.USER_NOT_REGISTER;
@@ -28,9 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/*
-   세션 등록 -> POST /session
-*/
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -68,16 +67,6 @@ class Session_Controller_웹_테스트 {
             }
         }
 
-        /*
-            로그인 API는
-            - 유효하지 않는 회원 정보가 주어지면
-                - 빈 값이 주어질 경우
-                    - 400 코드를 응답한다 (@Valid)
-                - 찾을 수 없는 계정일 경우
-                    - 404 코드를 응답한다 (UserNotFoundException)
-                - 비밀번호가 틀렸을 경우
-                    - 400 코드를 응답한다 (InvalidUserPasswordException)
-         */
         @Nested
         @DisplayName("유효하지 않는 회원 정보가 주어지면")
         class Context_with_invalid_user {
@@ -114,12 +103,15 @@ class Session_Controller_웹_테스트 {
             @Nested
             @DisplayName("찾을 수 없는 계정일 경우")
             class Context_with_not_found_user {
+                @BeforeEach
+                void setUpGiven() {
+                    given(authenticationService.login(USER_NOT_REGISTER.로그인_요청_데이터_생성()))
+                            .willThrow(new UserNotFoundException(USER_NOT_REGISTER.EMAIL()));
+                }
+
                 @Test
                 @DisplayName("404 코드로 응답한다")
                 void it_responses_404() throws Exception {
-                    given(authenticationService.login(USER_NOT_REGISTER.로그인_요청_데이터_생성()))
-                            .willThrow(new UserNotFoundException(USER_NOT_REGISTER.EMAIL()));
-
                     mockMvc.perform(
                                     post("/session")
                                             .contentType(MediaType.APPLICATION_JSON)
@@ -128,6 +120,29 @@ class Session_Controller_웹_테스트 {
                             .andExpect(status().isNotFound());
 
                     verify(authenticationService).login(USER_NOT_REGISTER.로그인_요청_데이터_생성());
+                }
+            }
+
+            @Nested
+            @DisplayName("비밀번호가 틀렸을 경우")
+            class Context_with_wrong_password {
+                @BeforeEach
+                void setUpGiven() {
+                    given(authenticationService.login(USER_2.로그인_요청_데이터_생성()))
+                            .willThrow(new UserInvalidPasswordException(USER_2.EMAIL()));
+                }
+
+                @Test
+                @DisplayName("403 코드로 응답한다")
+                void it_responses_403() throws Exception {
+                    mockMvc.perform(
+                                    post("/session")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(JsonUtil.writeValue(USER_2.로그인_요청_데이터_생성()))
+                            )
+                            .andExpect(status().isForbidden());
+
+                    verify(authenticationService).login(USER_2.로그인_요청_데이터_생성());
                 }
             }
         }

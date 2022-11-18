@@ -1,6 +1,7 @@
 package com.codesoom.assignment.common.util;
 
 import com.codesoom.assignment.domain.session.exception.InvalidTokenException;
+import com.codesoom.assignment.domain.session.exception.TokenNotExistException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -12,6 +13,7 @@ import java.security.Key;
 
 @Component
 public class JwtUtil {
+    private static final String ACCESS_TOKEN_TYPE = "Bearer";
     private final Key secretKey;
 
     public JwtUtil(@Value("${jwt.secret}") String secretKey) {
@@ -39,5 +41,17 @@ public class JwtUtil {
         } catch (SignatureException exception) {
             throw new InvalidTokenException(token);
         }
+    }
+
+    public void validateAccessToken(String authHeader) {
+        if (authHeader == null) {
+            throw new TokenNotExistException();
+        }
+
+        if (!authHeader.startsWith(ACCESS_TOKEN_TYPE)) {
+            throw new InvalidTokenException();
+        }
+
+        decode(authHeader.substring(ACCESS_TOKEN_TYPE.length()));
     }
 }

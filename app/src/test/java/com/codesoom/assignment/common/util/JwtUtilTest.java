@@ -1,6 +1,7 @@
 package com.codesoom.assignment.common.util;
 
 import com.codesoom.assignment.domain.session.exception.InvalidTokenException;
+import com.codesoom.assignment.domain.session.exception.TokenNotExistException;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
+import static com.codesoom.assignment.support.AuthHeaderFixture.INVALID_TOKEN_TYPE;
+import static com.codesoom.assignment.support.AuthHeaderFixture.INVALID_TOKEN_VALUE;
 import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_INVALID;
 import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_INVALID_BLANK;
 import static com.codesoom.assignment.support.TokenFixture.ACCESS_TOKEN_1_VALID;
@@ -67,6 +70,48 @@ class JwtUtilTest {
             void it_returns_exception() {
                 assertThatThrownBy(() -> jwtUtil.decode(ACCESS_TOKEN_1_INVALID_BLANK.토큰()))
                         .isInstanceOf(InvalidTokenException.class);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+    class validateAccessToken_메서드는 {
+
+        @Nested
+        @DisplayName("null이 주어질 경우")
+        class Context_with_null {
+            @Test
+            @DisplayName("TokenNotExistException 예외를 던진다")
+            void it_returns_exception() {
+                assertThatThrownBy(() -> jwtUtil.validateAccessToken(null))
+                        .isInstanceOf(TokenNotExistException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("토큰 타입이 Bearer가 아닐 경우")
+        class Context_with_no_start_bearer {
+            @Test
+            @DisplayName("InvalidTokenException 예외를 던진다")
+            void it_returns_exception() {
+                assertThatThrownBy(() -> jwtUtil.validateAccessToken(INVALID_TOKEN_TYPE.인증_헤더값()))
+                        .isInstanceOf(InvalidTokenException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("토큰 타입이 Bearer일 경우")
+        class Context_with_start_bearer {
+            @Nested
+            @DisplayName("유효하지 않은 토큰이 주어지면")
+            class Context_with_valid_token {
+                @Test
+                @DisplayName("InvalidTokenException 예외를 던진다")
+                void it_returns_exception() {
+                    assertThatThrownBy(() -> jwtUtil.validateAccessToken(INVALID_TOKEN_VALUE.인증_헤더값()))
+                            .isInstanceOf(InvalidTokenException.class);
+                }
             }
         }
     }

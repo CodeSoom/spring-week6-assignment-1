@@ -1,5 +1,6 @@
 package com.codesoom.assignment.domain.user.presentation;
 
+import com.codesoom.assignment.common.auth.Login;
 import com.codesoom.assignment.domain.user.application.UserService;
 import com.codesoom.assignment.domain.user.domain.User;
 import com.codesoom.assignment.domain.user.presentation.dto.UserModificationData;
@@ -30,12 +31,14 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Login(required = false)
     UserResultData create(@RequestBody @Valid UserRegistrationData registrationData) {
         User user = userService.registerUser(registrationData);
         return getUserResultData(user);
     }
 
     @PatchMapping("{id}")
+    @Login(required = false)
     UserResultData update(
             @PathVariable Long id,
             @RequestBody @Valid UserModificationData modificationData
@@ -46,6 +49,7 @@ public class UserController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Login(required = false)
     void destroy(@PathVariable Long id) {
         userService.deleteUser(id);
     }

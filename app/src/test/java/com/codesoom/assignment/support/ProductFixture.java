@@ -1,7 +1,7 @@
 package com.codesoom.assignment.support;
 
-import com.codesoom.assignment.domain.product.domain.Product;
-import com.codesoom.assignment.domain.product.presentation.dto.ProductData;
+import com.codesoom.assignment.product.domain.Product;
+import com.codesoom.assignment.product.presentation.dto.ProductData;
 
 public enum ProductFixture {
     TOY_1("범냐옹", "메이드인 코리아", 2000000, "https://avatars.githubusercontent.com/u/59248326"),

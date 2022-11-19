@@ -1,7 +1,7 @@
 package com.codesoom.assignment.common.auth;
 
 import com.codesoom.assignment.common.util.JwtUtil;
-import com.codesoom.assignment.domain.session.exception.TokenNotExistException;
+import com.codesoom.assignment.session.exception.TokenNotExistException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;

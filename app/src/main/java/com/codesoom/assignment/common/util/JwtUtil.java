@@ -1,7 +1,7 @@
 package com.codesoom.assignment.common.util;
 
-import com.codesoom.assignment.domain.session.exception.InvalidTokenException;
-import com.codesoom.assignment.domain.session.exception.TokenNotExistException;
+import com.codesoom.assignment.session.exception.InvalidTokenException;
+import com.codesoom.assignment.session.exception.TokenNotExistException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -18,6 +18,18 @@ public class JwtUtil {
 
     public JwtUtil(@Value("${jwt.secret}") String secretKey) {
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
+
+    public void validateAccessToken(String authHeader) {
+        if (authHeader == null) {
+            throw new TokenNotExistException();
+        }
+
+        if (!authHeader.startsWith(ACCESS_TOKEN_TYPE)) {
+            throw new InvalidTokenException();
+        }
+
+        decode(authHeader.substring(ACCESS_TOKEN_TYPE.length()));
     }
 
     public String encode(Long id) {
@@ -41,17 +53,5 @@ public class JwtUtil {
         } catch (SignatureException exception) {
             throw new InvalidTokenException(token);
         }
-    }
-
-    public void validateAccessToken(String authHeader) {
-        if (authHeader == null) {
-            throw new TokenNotExistException();
-        }
-
-        if (!authHeader.startsWith(ACCESS_TOKEN_TYPE)) {
-            throw new InvalidTokenException();
-        }
-
-        decode(authHeader.substring(ACCESS_TOKEN_TYPE.length()));
     }
 }

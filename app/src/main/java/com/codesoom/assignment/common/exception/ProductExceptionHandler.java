@@ -1,4 +1,4 @@
-package com.codesoom.assignment.common.error;
+package com.codesoom.assignment.common.exception;
 
 import com.codesoom.assignment.product.exception.ProductNotFoundException;
 import com.codesoom.assignment.product.presentation.ProductController;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
         ProductController.class
 })
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class ProductErrorAdvice {
+public class ProductExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ProductNotFoundException.class)

@@ -1,4 +1,4 @@
-package com.codesoom.assignment.common.error;
+package com.codesoom.assignment.common.exception;
 
 import com.codesoom.assignment.product.presentation.ProductController;
 import com.codesoom.assignment.session.exception.InvalidTokenException;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
         ProductController.class
 })
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class SessionErrorAdvice {
+public class SessionExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)

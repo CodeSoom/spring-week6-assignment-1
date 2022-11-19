@@ -1,4 +1,4 @@
-package com.codesoom.assignment.common.error;
+package com.codesoom.assignment.common.exception;
 
 import com.codesoom.assignment.session.controller.SessionController;
 import com.codesoom.assignment.user.exception.UserEmailDuplicationException;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
         SessionController.class
 })
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class UserErrorAdvice {
+public class UserExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)

@@ -1,4 +1,4 @@
-package com.codesoom.assignment.common.error;
+package com.codesoom.assignment.common.exception;
 
 import lombok.Getter;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

@@ -1,6 +1,6 @@
 package com.codesoom.assignment.product.presentation;
 
-import com.codesoom.assignment.common.auth.Login;
+import com.codesoom.assignment.common.auth.LoginRequired;
 import com.codesoom.assignment.product.application.ProductService;
 import com.codesoom.assignment.product.domain.Product;
 import com.codesoom.assignment.product.presentation.dto.ProductData;
@@ -30,13 +30,13 @@ public class ProductController {
     }
 
     @GetMapping
-    @Login(required = false)
+    @LoginRequired(allowGuest = true)
     public List<Product> list() {
         return productService.getProducts();
     }
 
     @GetMapping("{id}")
-    @Login(required = false)
+    @LoginRequired(allowGuest = true)
     public Product detail(@PathVariable Long id) throws Exception {
         if (id == 3L) {
             throw new Exception();
@@ -47,7 +47,7 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Login
+    @LoginRequired
     public Product create(
             @RequestBody @Valid ProductData productData
     ) {
@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @PatchMapping("{id}")
-    @Login
+    @LoginRequired
     public Product update(
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
@@ -65,7 +65,7 @@ public class ProductController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Login
+    @LoginRequired
     public void destroy(
             @PathVariable Long id
     ) {

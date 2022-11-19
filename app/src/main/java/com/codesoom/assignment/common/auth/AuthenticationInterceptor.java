@@ -23,7 +23,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
-        if (isNotHandlerMethod(handler) || isNotRequiredAuth(handler)) {
+        if (isNotHandlerMethod(handler) || isNotLoginRequired(handler)) {
             return true;
         }
 
@@ -48,10 +48,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         return !(handler instanceof HandlerMethod);
     }
 
-    private boolean isNotRequiredAuth(Object handler) {
+    private boolean isNotLoginRequired(Object handler) {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Login auth = handlerMethod.getMethodAnnotation(Login.class);
+        LoginRequired loginRequired = handlerMethod.getMethodAnnotation(LoginRequired.class);
 
-        return auth == null || !auth.required();
+        return loginRequired == null || loginRequired.allowGuest();
     }
 }

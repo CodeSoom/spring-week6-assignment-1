@@ -1,6 +1,6 @@
 package com.codesoom.assignment.session.controller;
 
-import com.codesoom.assignment.common.auth.Login;
+import com.codesoom.assignment.common.auth.LoginRequired;
 import com.codesoom.assignment.session.application.AuthenticationService;
 import com.codesoom.assignment.session.controller.dto.SessionRequestDto;
 import com.codesoom.assignment.session.controller.dto.SessionResponseDto;
@@ -24,7 +24,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Login(required = false)
+    @LoginRequired(allowGuest = true)
     public SessionResponseDto login(@RequestBody @Valid final SessionRequestDto sessionRequestDto) {
         return SessionResponseDto.builder()
                 .accessToken(authenticationService.login(sessionRequestDto))

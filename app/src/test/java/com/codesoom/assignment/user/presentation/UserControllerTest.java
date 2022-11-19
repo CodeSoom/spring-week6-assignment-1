@@ -1,5 +1,8 @@
 package com.codesoom.assignment.user.presentation;
 
+import com.codesoom.assignment.MockMvcCharacterEncodingCustomizer;
+import com.codesoom.assignment.common.auth.AuthenticationInterceptor;
+import com.codesoom.assignment.common.util.JwtUtil;
 import com.codesoom.assignment.user.application.UserService;
 import com.codesoom.assignment.user.domain.User;
 import com.codesoom.assignment.user.exception.UserNotFoundException;
@@ -24,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
+@WebMvcTest({UserController.class, AuthenticationInterceptor.class, JwtUtil.class, MockMvcCharacterEncodingCustomizer.class})
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;

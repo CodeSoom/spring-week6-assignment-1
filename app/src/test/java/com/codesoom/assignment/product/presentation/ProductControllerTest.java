@@ -1,5 +1,8 @@
 package com.codesoom.assignment.product.presentation;
 
+import com.codesoom.assignment.MockMvcCharacterEncodingCustomizer;
+import com.codesoom.assignment.common.auth.AuthenticationInterceptor;
+import com.codesoom.assignment.common.util.JwtUtil;
 import com.codesoom.assignment.product.application.ProductService;
 import com.codesoom.assignment.product.domain.Product;
 import com.codesoom.assignment.product.exception.ProductNotFoundException;
@@ -9,11 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.codesoom.assignment.support.AuthHeaderFixture.VALID_TOKEN_VALUE;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ProductController.class)
+@WebMvcTest({ProductController.class, AuthenticationInterceptor.class, JwtUtil.class, MockMvcCharacterEncodingCustomizer.class})
 class ProductControllerTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
             "eyJ1c2VySWQiOjF9.ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
@@ -80,7 +85,6 @@ class ProductControllerTest {
     void list() throws Exception {
         mockMvc.perform(
                         get("/products")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -90,7 +94,6 @@ class ProductControllerTest {
     void deatilWithExsitedProduct() throws Exception {
         mockMvc.perform(
                         get("/products/1")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -98,7 +101,9 @@ class ProductControllerTest {
 
     @Test
     void deatilWithNotExsitedProduct() throws Exception {
-        mockMvc.perform(get("/products/1000"))
+        mockMvc.perform(
+                        get("/products/1000")
+                )
                 .andExpect(status().isNotFound());
     }
 
@@ -106,7 +111,7 @@ class ProductControllerTest {
     void createWithValidAttributes() throws Exception {
         mockMvc.perform(
                         post("/products")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header(HttpHeaders.AUTHORIZATION, VALID_TOKEN_VALUE.인증_헤더값())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
@@ -121,7 +126,7 @@ class ProductControllerTest {
     void createWithInvalidAttributes() throws Exception {
         mockMvc.perform(
                         post("/products")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header(HttpHeaders.AUTHORIZATION, VALID_TOKEN_VALUE.인증_헤더값())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
@@ -133,7 +138,7 @@ class ProductControllerTest {
     void updateWithExistedProduct() throws Exception {
         mockMvc.perform(
                         patch("/products/1")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header(HttpHeaders.AUTHORIZATION, VALID_TOKEN_VALUE.인증_헤더값())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
@@ -148,6 +153,7 @@ class ProductControllerTest {
     void updateWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                         patch("/products/1000")
+                                .header(HttpHeaders.AUTHORIZATION, VALID_TOKEN_VALUE.인증_헤더값())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
@@ -161,7 +167,7 @@ class ProductControllerTest {
     void updateWithInvalidAttributes() throws Exception {
         mockMvc.perform(
                         patch("/products/1")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header(HttpHeaders.AUTHORIZATION, VALID_TOKEN_VALUE.인증_헤더값())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
@@ -173,6 +179,7 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                         delete("/products/1")
+                                .header(HttpHeaders.AUTHORIZATION, VALID_TOKEN_VALUE.인증_헤더값())
                 )
                 .andExpect(status().isNoContent());
 
@@ -183,6 +190,7 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                         delete("/products/1000")
+                                .header(HttpHeaders.AUTHORIZATION, VALID_TOKEN_VALUE.인증_헤더값())
                 )
                 .andExpect(status().isNotFound());
 

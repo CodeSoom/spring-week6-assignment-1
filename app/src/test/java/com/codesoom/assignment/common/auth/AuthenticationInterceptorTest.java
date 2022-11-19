@@ -1,8 +1,8 @@
 package com.codesoom.assignment.common.auth;
 
 import com.codesoom.assignment.common.util.JsonUtil;
-import com.codesoom.assignment.domain.product.domain.Product;
-import com.codesoom.assignment.domain.product.presentation.ProductController;
+import com.codesoom.assignment.product.domain.Product;
+import com.codesoom.assignment.product.presentation.ProductController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

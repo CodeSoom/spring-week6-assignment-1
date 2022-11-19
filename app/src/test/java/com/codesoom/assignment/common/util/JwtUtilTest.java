@@ -1,7 +1,7 @@
 package com.codesoom.assignment.common.util;
 
-import com.codesoom.assignment.domain.session.exception.InvalidTokenException;
-import com.codesoom.assignment.domain.session.exception.TokenNotExistException;
+import com.codesoom.assignment.session.exception.InvalidTokenException;
+import com.codesoom.assignment.session.exception.TokenNotExistException;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

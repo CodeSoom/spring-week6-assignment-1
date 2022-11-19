@@ -1,9 +1,9 @@
 package com.codesoom.assignment.domain.session.controller;
 
 import com.codesoom.assignment.common.util.JsonUtil;
-import com.codesoom.assignment.domain.session.application.AuthenticationService;
-import com.codesoom.assignment.domain.user.exception.UserInvalidPasswordException;
-import com.codesoom.assignment.domain.user.exception.UserNotFoundException;
+import com.codesoom.assignment.session.application.AuthenticationService;
+import com.codesoom.assignment.user.exception.UserInvalidPasswordException;
+import com.codesoom.assignment.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.errors.LoginFailedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +72,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void loginWithNotExistedEmail() {
+    void loginWithNotExistedEmailThrowsUserNotFoundException() {
         given(userRepository.existsByEmail(NOT_EXISTED_EMAIL_ADDRESS))
                 .willThrow(UserNotFoundException.class);
 
@@ -82,14 +83,14 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void loginWithExistedEmailButWrongPassword() {
+    void loginWithWrongPasswordThrowsLoginFailedException() {
         String wrongPassword = "wrongPassword";
 
         given(userRepository.findByEmailAndPassword(EXISTED_EMAIL_ADDRESS, wrongPassword))
-                .willThrow(UserNotFoundException.class);
+                .willThrow(new LoginFailedException(EXISTED_EMAIL_ADDRESS));
 
         assertThatThrownBy(() -> userRepository.findByEmailAndPassword(EXISTED_EMAIL_ADDRESS, wrongPassword))
-                .isInstanceOf(UserNotFoundException.class);
+                .isInstanceOf(LoginFailedException.class);
 
         verify(userRepository).findByEmailAndPassword(EXISTED_EMAIL_ADDRESS, wrongPassword);
     }

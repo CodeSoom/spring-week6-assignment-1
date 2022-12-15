@@ -1,6 +1,7 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.LoginFailedException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
@@ -36,5 +37,11 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(LoginFailedException.class)
     public ErrorResponse handleWrongPassword() {
         return new ErrorResponse("You have entered an incorrect username or password");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidTokenException.class)
+    public ErrorResponse handleInvalidToken() {
+        return new ErrorResponse("To [register, modify, delete] a product, you need to log in. Please try again after logging in.");
     }
 }

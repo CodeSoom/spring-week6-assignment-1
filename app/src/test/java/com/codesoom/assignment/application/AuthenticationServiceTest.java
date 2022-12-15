@@ -68,7 +68,6 @@ class AuthenticationServiceTest {
 
         verify(userRepository).findByEmailAndPassword(EXISTED_EMAIL_ADDRESS, "abc1234");
 
-        assertThat(token).isNotBlank();
         assertThat(token).isEqualTo(VALID_TOKEN);
     }
 

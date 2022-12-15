@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -23,7 +22,9 @@ class AuthenticationServiceTest {
     private static final String NOT_EXISTED_EMAIL_ADDRESS = "notexisted@example.com";
 
     private static final String SECRET_KEY = "12345678901234567890123456789010";
+
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnaab";
 
     private AuthenticationService authenticationService;
 
@@ -64,11 +65,9 @@ class AuthenticationServiceTest {
                                                     .password("abc1234")
                                                     .build();
 
-        String token = authenticationService.login(userLoginData);
+        authenticationService.login(userLoginData);
 
         verify(userRepository).findByEmailAndPassword(EXISTED_EMAIL_ADDRESS, "abc1234");
-
-        assertThat(token).isEqualTo(VALID_TOKEN);
     }
 
     @Test

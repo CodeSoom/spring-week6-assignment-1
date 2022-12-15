@@ -4,6 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,44 +33,47 @@ public class ProductController {
         return productService.getProduct(id);
     }
 
-    //TODO JWT 필요
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        parseToken(authorization);
+        if (!isValidToken(authorization)) {
+            throw new InvalidTokenException(authorization);
+        }
 
         return productService.createProduct(productData);
     }
 
-    //TODO JWT 필요
     @PatchMapping("{id}")
     public Product update(
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        parseToken(authorization);
+        if (!isValidToken(authorization)) {
+            throw new InvalidTokenException(authorization);
+        }
 
         return productService.updateProduct(id, productData);
     }
 
-    //TODO JWT 필요
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        parseToken(authorization);
+        if (!isValidToken(authorization)) {
+            throw new InvalidTokenException(authorization);
+        }
 
         productService.deleteProduct(id);
     }
 
-    private void parseToken(String authorization) {
+    private boolean isValidToken(String authorization) {
         String accessToken = authorization.substring("Bearer ".length());
-        authenticationService.decodeToken(accessToken);
+        return authenticationService.isValidToken(accessToken);
     }
 }

@@ -6,6 +6,7 @@ import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.LoginFailedException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,7 +16,6 @@ import javax.transaction.Transactional;
 public class AuthenticationService {
 
     private final JwtUtil jwtUtil;
-
     private final UserRepository userRepository;
 
     public AuthenticationService(JwtUtil jwtUtil, UserRepository userRepository) {
@@ -34,10 +34,15 @@ public class AuthenticationService {
         return jwtUtil.createToken(user.getId());
     }
 
+    public Long decodeToken(String accessToken) {
+        Claims claims = jwtUtil.getClaims(accessToken);
+        return claims.get("userId", Long.class);
+    }
+
     private User findUser(UserLoginData userLoginData) {
         return userRepository.findByEmailAndPassword(userLoginData.getEmail(), userLoginData.getPassword())
-                                    .stream()
-                                    .findFirst()
-                                    .orElseThrow(() -> new LoginFailedException(userLoginData.getEmail()));
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new LoginFailedException(userLoginData.getEmail()));
     }
 }

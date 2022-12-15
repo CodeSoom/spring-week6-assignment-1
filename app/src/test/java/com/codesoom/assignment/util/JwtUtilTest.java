@@ -11,6 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class JwtUtilTest {
     private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnaab";
+
 
     private JwtUtil jwtUtil;
 
@@ -35,5 +37,19 @@ class JwtUtilTest {
 
         assertThat(claims.get("userId", Long.class))
                 .isEqualTo(1L);
+    }
+
+    @Test
+    void checkTokenIsTrue() {
+        boolean valid = jwtUtil.validateToken(VALID_TOKEN);
+
+        assertThat(valid).isTrue();
+    }
+
+    @Test
+    void checkTokenIsFalse() {
+        boolean valid = jwtUtil.validateToken(INVALID_TOKEN);
+
+        assertThat(valid).isFalse();
     }
 }

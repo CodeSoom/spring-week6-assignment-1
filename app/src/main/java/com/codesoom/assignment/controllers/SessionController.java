@@ -23,7 +23,7 @@ public class SessionController {
     }
 
     /**
-     * login시 JWT을 생성해주는 메소드
+     * 이메일과 비밀번호를 입력받고 존재하는 회원일 경우 JWT를 생성받아 리턴해준다.
      * @param userLoginData - email, password
      * @return jwt
      */
@@ -31,7 +31,6 @@ public class SessionController {
     @ResponseStatus(HttpStatus.CREATED)
     public SessionResponseData login(@RequestBody @Valid UserLoginData userLoginData) {
         String accessToken = authenticationService.login(userLoginData);
-        System.out.println("accessToken = " + accessToken);
 
         return SessionResponseData.builder()
                 .accessToken(accessToken)

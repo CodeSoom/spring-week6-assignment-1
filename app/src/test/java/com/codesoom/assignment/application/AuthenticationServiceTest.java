@@ -23,9 +23,6 @@ class AuthenticationServiceTest {
 
     private static final String SECRET_KEY = "12345678901234567890123456789010";
 
-    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    private static final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnaab";
-
     private AuthenticationService authenticationService;
 
     private final UserRepository userRepository = mock(UserRepository.class);

@@ -14,7 +14,7 @@ import java.util.Date;
 @Slf4j
 @Component
 public class JwtUtil {
-    private static final Integer VALIDITY_PERIOD = 1800000; //30분
+    private static final Integer VALIDITY_PERIOD_MS = 1800000;
     private final Key key;
 
     public JwtUtil(@Value("${jwt.secret}") String secret) {
@@ -24,7 +24,7 @@ public class JwtUtil {
     public String createToken(Long userId) {
         return Jwts.builder()
                 .claim("userId", userId)
-                .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_PERIOD))
+                .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_PERIOD_MS))
                 .signWith(key)
                 .compact();
     }

@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.interceptor.AuthenticationInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    //@WebMvcTest 애노테이션은 @Componenet를 스캔하지 못하므로 webConfig bean을 찾을 수 없다는 에러를 던진다.
+    //따라서 아래와 같이 인터셉터를 @MockBean을 사용해 추가해주었다.
+    @MockBean
+    private AuthenticationInterceptor authenticationInterceptor;
 
     @BeforeEach
     void setUp() {

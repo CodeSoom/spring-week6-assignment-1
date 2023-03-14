@@ -1,14 +1,10 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
-
-import java.security.Key;
-import java.security.PrivilegedAction;
 
 @Service
 public class AuthenticationService {
@@ -24,4 +20,8 @@ public class AuthenticationService {
         return jwtUtil.enCode(1L);
     }
 
+    public Long parseToken(String accessToken) {
+        Claims claims = jwtUtil.decode(accessToken);
+        return claims.get("userId", Long.class);
+    }
 }

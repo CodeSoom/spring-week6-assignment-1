@@ -1,10 +1,12 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.dto.ErrorResponse;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +19,18 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(ProductNotFoundException.class)
     public ErrorResponse handleProductNotFound() {
         return new ErrorResponse("Product not found");
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse missingRequestHeaderException(){
+        return new ErrorResponse("MissingRequestHeaderException");
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse invalidAccessTokenException(){
+        return new ErrorResponse("Invalid Access Token accessToken");
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

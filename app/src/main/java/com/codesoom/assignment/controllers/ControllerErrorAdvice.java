@@ -42,10 +42,10 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("");
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(LoginFailException.class)
-    public ErrorResponse handleLoginFailException() {
-        return new ErrorResponse("Login is Fail");
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ErrorResponse handlePasswordMismatchException() {
+        return new ErrorResponse("Password mismatch");
     }
 
 

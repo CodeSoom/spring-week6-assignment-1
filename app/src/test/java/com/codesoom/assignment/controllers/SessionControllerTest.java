@@ -1,10 +1,8 @@
 package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
-import com.codesoom.assignment.domain.User;
-import com.codesoom.assignment.dto.SessionResponseData;
 import com.codesoom.assignment.dto.UserLoginData;
-import com.codesoom.assignment.errors.LoginFailException;
+import com.codesoom.assignment.errors.PasswordMismatchException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,10 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.security.auth.login.LoginException;
-
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -63,14 +58,14 @@ class SessionControllerTest {
         @BeforeEach
         void setUp(){
             given(authenticationService.login(any(UserLoginData.class)))
-                    .willThrow(new LoginFailException());
+                    .willThrow(new PasswordMismatchException());
         }
         @Test
         void failLogin() throws Exception {
             mockMvc.perform(post("/session")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{\"email\":\"test@naver.com\",\"password\":\"1234\"}"))
-                    .andExpect(status().isUnauthorized());
+                    .andExpect(status().isBadRequest());
         }
 
     }

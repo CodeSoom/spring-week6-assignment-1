@@ -3,8 +3,8 @@ package com.codesoom.assignment.application;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
-import com.codesoom.assignment.errors.InvalidTokenException;
-import com.codesoom.assignment.errors.LoginFailException;
+import com.codesoom.assignment.errors.PasswordMismatchException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
@@ -28,10 +28,10 @@ public class AuthenticationService {
         String inputPassword = userLoginData.getPassword();
 
         User user = userRepository.findByEmailAndDeletedIsFalse(inputEmail)
-                .orElseThrow(() -> new LoginFailException());
+                .orElseThrow(() -> new UserNotFoundException(inputEmail));
 
         if(!user.getPassword().equals(inputPassword)){
-            throw new LoginFailException();
+            throw new PasswordMismatchException();
         }
         return jwtUtil.encode(user.getId());
     }

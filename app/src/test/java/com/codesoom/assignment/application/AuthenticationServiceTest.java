@@ -1,11 +1,11 @@
 package com.codesoom.assignment.application;
 
-import com.codesoom.assignment.domain.ProductRepository;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.InvalidTokenException;
-import com.codesoom.assignment.errors.LoginFailException;
+import com.codesoom.assignment.errors.PasswordMismatchException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,14 +62,14 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void loginWithNoMatchEmailAndPassword(){
+    void loginWithMismatchPassword(){
         UserLoginData userLoginData = UserLoginData.builder()
                 .email(VALID_EMAIL)
                 .password(NO_MATCH_PASSWORD)
                 .build();
 
         assertThatThrownBy(() -> authenticationService.login(userLoginData))
-                .isInstanceOf(LoginFailException.class);
+                .isInstanceOf(PasswordMismatchException.class);
 
     }
 
@@ -82,7 +82,7 @@ class AuthenticationServiceTest {
                 .build();
 
         assertThatThrownBy(() -> authenticationService.login(userLoginData))
-                .isInstanceOf(LoginFailException.class);
+                .isInstanceOf(UserNotFoundException.class);
     }
     @Test
     void parseTokenWithValidToken(){

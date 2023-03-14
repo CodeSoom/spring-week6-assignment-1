@@ -20,6 +20,7 @@ public class AuthenticationService {
         return jwtUtil.enCode(1L);
     }
 
+
     public Long parseToken(String accessToken) {
         Claims claims = jwtUtil.decode(accessToken);
         return claims.get("userId", Long.class);

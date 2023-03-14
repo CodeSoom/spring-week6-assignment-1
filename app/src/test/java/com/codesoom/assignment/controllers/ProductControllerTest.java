@@ -188,6 +188,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer "+VALID_TOKEN)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐순이")));
@@ -202,6 +203,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
+                        .header("Authorization", "Bearer "+VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
 
@@ -216,14 +218,42 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
                                 "\"price\":0}")
+                        .header("Authorization", "Bearer "+VALID_TOKEN)
         )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void destroyWithExistedProduct() throws Exception {
+    void updateWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                                .header("Authorization", "Bearer "+INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    void destroyWithExistedProductAndValidAccessToken() throws Exception {
         mockMvc.perform(
                 delete("/products/1")
+                        .header("Authorization", "Bearer "+VALID_TOKEN)
         )
                 .andExpect(status().isNoContent());
 
@@ -231,9 +261,30 @@ class ProductControllerTest {
     }
 
     @Test
+    void destroyWithInvalidAccessToken() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                                .header("Authorization", "Bearer "+INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
+    void destroyWithoutAccessToken() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                )
+                .andExpect(status().isUnauthorized());
+
+    }
+
+
+    @Test
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1000")
+                        .header("Authorization", "Bearer "+VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
 

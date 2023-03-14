@@ -22,7 +22,16 @@ class AuthenticationServiceTest {
         authenticationService = new AuthenticationService(jwtUtil);
     }
     @Test
-    void login(){
+    void loginSuccess(){
+        //TODO. 로그인 구현 -ID/PW 검증, 성공 시 토큰 발급
+        String accessToken = authenticationService.login();
+
+        assertThat(accessToken).isEqualTo(VALID_TOKEN);
+    }
+
+    @Test
+    void loginFail(){
+        //TODO. 로그인 구현 -ID/PW 검증, 실패 시 로그인 실패 예외 처리
         String accessToken = authenticationService.login();
 
         assertThat(accessToken).isEqualTo(VALID_TOKEN);
@@ -46,4 +55,5 @@ class AuthenticationServiceTest {
         assertThatThrownBy(() -> authenticationService.parseToken(""))
                 .isInstanceOf(InvalidTokenException.class);
     }
+
 }

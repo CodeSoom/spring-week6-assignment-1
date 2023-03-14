@@ -1,4 +1,4 @@
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import ProductsPage from './pages/ProductsPage';
 import ProductRegisterPage from './pages/ProductRegisterPage';
@@ -12,14 +12,14 @@ export default function App() {
       <header>
         <h1>고양이 장난감 가게</h1>
       </header>
-      <Switch>
-        <Route exact path="/products" component={ProductsPage} />
-        <Route path="/products/product" component={ProductRegisterPage} />
-        <Route path="/products/:id" component={ProductDetailPage} />
-        <Route path="/signup" component={SignUpPage} />
-        <Route path="/signin" component={SignInPage} />
-        <Redirect to="/products" />
-      </Switch>
+      <Routes>
+        <Route exact path="/products" element={<ProductsPage />} />
+        <Route path="/products/product" element={<ProductRegisterPage />} />
+        <Route path="/products/:id" element={<ProductDetailPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="*" element={<Navigate to="/products" />} />
+      </Routes>
     </>
   );
 }

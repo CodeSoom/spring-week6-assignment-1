@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,14 +11,14 @@ import FormContainer from '../components/containers/FormContainer';
 import { initializeStatus } from '../redux/slice';
 
 export default function ProductRegisterPage() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state);
 
   useEffect(() => {
     if (status?.type === 'SUCCESS') {
-      history.push('/products');
+      navigate('/products');
       dispatch(initializeStatus());
     }
   }, [status]);

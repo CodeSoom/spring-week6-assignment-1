@@ -2,14 +2,20 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.domain.User;
+import com.codesoom.assignment.dto.SessionResponseData;
 import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.LoginFailException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.security.auth.login.LoginException;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(SessionController.class)
 class SessionControllerTest {
+    private static final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9." +
+            "ZZ3CUl0jxeLGvQ1Js5nG2Ty5qGTlqai5ubDMXZOdaDk";
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,17 +37,42 @@ class SessionControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
-    @BeforeEach
-    void setUp(){
-        given(authenticationService.login(any(UserLoginData.class))).willReturn("a.b.c");
-    }
-    @Test
-    void login() throws Exception {
+    @Nested
+    @DisplayName("유효한 Email과 Password를 입력하면")
+    class ValidEmailAndPassword{
 
-        mockMvc.perform(post("/session")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"test@naver.com\",\"password\":\"1234\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString(".")));
+        @BeforeEach
+        void setUp(){
+            given(authenticationService.login(any(UserLoginData.class))).willReturn(VALID_TOKEN);
+        }
+        @Test
+        void successLogin() throws Exception {
+            mockMvc.perform(post("/session")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"email\":\"test@naver.com\",\"password\":\"1234\"}"))
+                    .andExpect(status().isCreated())
+                    .andExpect(content().string(containsString(VALID_TOKEN)));
+        }
+
     }
+
+    @Nested
+    @DisplayName("유효하지 않은 Email과 Password를 입력하면")
+    class InvalidEmailAndPassword{
+
+        @BeforeEach
+        void setUp(){
+            given(authenticationService.login(any(UserLoginData.class)))
+                    .willThrow(new LoginFailException());
+        }
+        @Test
+        void failLogin() throws Exception {
+            mockMvc.perform(post("/session")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"email\":\"test@naver.com\",\"password\":\"1234\"}"))
+                    .andExpect(status().isUnauthorized());
+        }
+
+    }
+    
 }

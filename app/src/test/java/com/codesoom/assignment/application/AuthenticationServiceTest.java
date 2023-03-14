@@ -50,7 +50,7 @@ class AuthenticationServiceTest {
     }
     @Test
     void loginWithMatchEmailAndPassword(){
-        //TODO. 로그인 구현 -ID/PW 검증, 성공 시 토큰 발급
+
         UserLoginData userLoginData = UserLoginData.builder()
                 .email(VALID_EMAIL)
                 .password(MATCH_PASSWORD)
@@ -75,7 +75,7 @@ class AuthenticationServiceTest {
 
     @Test
     void loginWithInvalidEmailAndPassword(){
-        //TODO. 로그인 구현 -ID/PW 검증, 성공 시 토큰 발급
+
         UserLoginData userLoginData = UserLoginData.builder()
                 .email(INVALID_EMAIL)
                 .password(NO_MATCH_PASSWORD)

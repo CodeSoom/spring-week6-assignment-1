@@ -40,16 +40,5 @@ public class JwtUtil {
             throw new InvalidTokenException(token);
         }
     }
-
-//    public String login(){
-//        String secret = "12345678901234567890123456789010";
-//        Key key = Keys.hmacShaKeyFor(secret.getBytes());
-////        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);//jjwt ->keys //Hmac +SHA256
-//
-//        return Jwts.builder().setSubject("Joe")
-//                .claim("userId",1L)
-//                .signWith(key)
-//                .compact();
-//    }
-
 }
+

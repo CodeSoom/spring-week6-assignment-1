@@ -41,30 +41,32 @@ public class ProductController {
             @RequestHeader(value = "Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        Long userId = authenticationService.parseToken(accessToken);
-
-
-        System.out.println("claims.get(\"userId\") = " + userId);
-
+        authenticationService.parseToken(getAccessToken(authorization));
         return productService.createProduct(productData);
     }
+
 
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
+            @RequestHeader(value = "Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
+        authenticationService.parseToken(getAccessToken(authorization));
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authorization
     ) {
+        authenticationService.parseToken(getAccessToken(authorization));
         productService.deleteProduct(id);
     }
 
-
+    private  String getAccessToken(String authorization) {
+        return authorization.substring("Bearer ".length());
+    }
 }

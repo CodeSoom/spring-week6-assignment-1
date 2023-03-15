@@ -25,13 +25,15 @@ class JwtUtilTest {
     }
 
     @Test
-    @DisplayName("encode")
+    @DisplayName("encode는 토큰을 반환한다")
     public void encode() throws Exception{
+        // when
         String accessToken = jwtUtil.enCode(1L);
-        //when
-        assertThat(accessToken).isEqualTo(VALID_TOKEN);
-    }
 
+        // then
+        assertThat(accessToken).isEqualTo(VALID_TOKEN);
+        System.out.println(accessToken+"====================");
+    }
     @Test
     @DisplayName("Valid_Token")
     public void decodeWithValidToken() throws Exception{

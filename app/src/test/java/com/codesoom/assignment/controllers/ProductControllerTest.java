@@ -136,6 +136,7 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+
                                 .header("Authorization", "Bearer " + VALID_TOKEN)
 
                 )
@@ -153,6 +154,7 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"));
@@ -209,6 +211,7 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐순이")));
@@ -230,6 +233,48 @@ class ProductControllerTest {
     }
 
     @Test
+    void updateWithValidToken() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(productService).updateProduct(eq(1L), any(ProductData.class));
+    }
+
+    @Test
+    void updateWithInvalidToken() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                                .header("Authorization", "Bearer " + INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    void updateWithBlankInValidToken() throws Exception {
+        mockMvc.perform(
+                        patch("/products/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"))
+                .andDo(print());
+    }
+
+
+    @Test
     void updateWithInvalidAttributes() throws Exception {
         mockMvc.perform(
                         patch("/products/1")
@@ -249,6 +294,46 @@ class ProductControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(productService).deleteProduct(1L);
+    }
+
+    @Test
+    void destroyWithValidToken() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+                )
+                .andExpect(status().isNoContent());
+
+        verify(productService).deleteProduct(1L);
+    }
+
+    @Test
+    void destroyWithInValidToken() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                                .header("Authorization", "Bearer " + INVALID_TOKEN)
+                )
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
+    void destroyWithValidValues() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                                .header("Authorization", "test " + VALID_TOKEN)
+                )
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void destroyWithBlackToken() throws Exception {
+        mockMvc.perform(
+                        delete("/products/1")
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"))
+                .andDo(print());
     }
 
     @Test

@@ -38,10 +38,9 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(value = "Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        System.out.println(authorization + "====================");
         String accessToken = authorization.substring("Bearer ".length());
         Long userId = authenticationService.parseToken(accessToken);
 

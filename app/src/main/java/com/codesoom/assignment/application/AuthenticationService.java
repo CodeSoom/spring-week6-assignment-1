@@ -4,20 +4,18 @@ import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
     String secret = "12345678901234567890123456789010";
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    public AuthenticationService(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
-
-    public String login() {
-        JwtUtil jwtUtil = new JwtUtil(secret);
-        return jwtUtil.enCode(1L);
+    public String login(Long id) {
+//        JwtUtil jwtUtil = new JwtUtil(secret);
+        return jwtUtil.enCode(id);
     }
 
 

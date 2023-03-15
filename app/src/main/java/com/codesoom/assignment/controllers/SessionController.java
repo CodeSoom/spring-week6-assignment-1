@@ -4,10 +4,7 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /*
 1. Create -> 로그인->토큰
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 4. Delete
  */
 @RestController
+@CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("/session")
 public class SessionController {
@@ -25,8 +23,8 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public SessionResponseData login() {
-        authenticationService.login();
+    public SessionResponseData login(Long id) {
+        authenticationService.login(id);
         return SessionResponseData.builder()
                 .accessToken("a.b.c")
                 .build();

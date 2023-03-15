@@ -25,7 +25,7 @@ class AuthenticationServiceTest {
     @Test
     @DisplayName("login")
     public void login() throws Exception {
-        String accessToken = authenticationService.login();
+        String accessToken = authenticationService.login(1L);
         assertThat(accessToken).isEqualTo(VALID_TOKEN);
     }
 

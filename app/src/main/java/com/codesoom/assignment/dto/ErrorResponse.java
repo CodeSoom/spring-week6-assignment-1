@@ -1,13 +1,21 @@
 package com.codesoom.assignment.dto;
 
-public class ErrorResponse {
-    private String message;
+import lombok.Builder;
+import lombok.Getter;
 
-    public ErrorResponse(String message) {
+import java.util.HashMap;
+import java.util.Map;
+
+@Getter
+public class ErrorResponse {
+    private final String code;
+    private final String message;
+
+    @Builder
+    public ErrorResponse(String code, String message) {
+        this.code = code;
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
+
 }

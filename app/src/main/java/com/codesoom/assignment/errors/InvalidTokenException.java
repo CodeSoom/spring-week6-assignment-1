@@ -1,7 +1,17 @@
 package com.codesoom.assignment.errors;
 
-public class InvalidTokenException extends RuntimeException{
-    public InvalidTokenException(String accessToken){
-        super("Invalid Access Token "+accessToken);
+import com.codesoom.assignment.errors.ExceptionEnum.ExceptionMessage;
+
+public class InvalidTokenException extends MyException{
+    private static final String MESSAGE = ExceptionMessage.InValidToken.getMessage();
+
+
+    public InvalidTokenException() {
+        super(MESSAGE);
+    }
+
+    @Override
+    public int getStatusCode() {
+        return 401;
     }
 }

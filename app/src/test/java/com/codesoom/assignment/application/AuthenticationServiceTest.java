@@ -43,7 +43,8 @@ class AuthenticationServiceTest {
     @DisplayName("parseTokenWithInvalidToken")
     public void parseTokenWithInvalidToken() throws Exception{
         assertThatThrownBy(()->authenticationService.parseToken(INVALID_TOKEN))
-                .isInstanceOf(InvalidTokenException.class);
+                .isInstanceOf(InvalidTokenException.class)
+                .hasMessage("Invalid Access Token");
     }
 
     @Test

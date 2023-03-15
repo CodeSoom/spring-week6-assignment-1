@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.annotation.CheckJwtToken;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
@@ -38,36 +39,30 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @CheckJwtToken
     public Product create(
-            @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        authenticationService.parseToken(accessToken);
 
         return productService.createProduct(productData);
     }
 
     @PatchMapping("{id}")
+    @CheckJwtToken
     public Product update(
-            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        authenticationService.parseToken(accessToken);
 
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CheckJwtToken
     public void destroy(
-            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        String accessToken = authorization.substring("Bearer ".length());
-        authenticationService.parseToken(accessToken);
 
         productService.deleteProduct(id);
     }

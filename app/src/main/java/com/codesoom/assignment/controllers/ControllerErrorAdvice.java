@@ -39,7 +39,7 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidTokenException.class)
     public ErrorResponse handleInvalidAccessTokenException() {
-        return new ErrorResponse("");
+        return new ErrorResponse("Invalid Token");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -47,7 +47,6 @@ public class ControllerErrorAdvice {
     public ErrorResponse handlePasswordMismatchException() {
         return new ErrorResponse("Password mismatch");
     }
-
 
 
 }

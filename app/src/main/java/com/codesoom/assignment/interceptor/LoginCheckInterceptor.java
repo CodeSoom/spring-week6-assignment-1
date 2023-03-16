@@ -43,11 +43,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
                 String accessToken = getAccessToken(request);
                 authenticationService.parseToken(accessToken);
             }
+            return true;
+
         }catch(InvalidTokenException e){
             request.getRequestDispatcher("/session/error").forward(request, response);
             return false;
         }
-        return true;
     }
 
     // CheckJwtToken 어노테이션 존재여부 체크
@@ -55,11 +56,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        if(handlerMethod.getMethodAnnotation(authClass) != null){
-            return true;
-        }
-
-        return false;
+        return handlerMethod.getMethodAnnotation(authClass) != null;
     }
 
     // Header에서 AccessToken 추출

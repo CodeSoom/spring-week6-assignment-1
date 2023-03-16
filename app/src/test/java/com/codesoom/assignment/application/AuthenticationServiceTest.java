@@ -1,7 +1,9 @@
 package com.codesoom.assignment.application;
 
+import com.codesoom.assignment.controllers.SessionController;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
+import com.codesoom.assignment.dto.SessionResponseData;
 import com.codesoom.assignment.dto.UserLoginRequest;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.LoginNotMatchException;
@@ -11,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
@@ -31,6 +34,8 @@ class AuthenticationServiceTest {
     private UserRepository userRepository = mock(UserRepository.class);
 
     private UserLoginRequest userLoginRequest , request;
+
+
 
     @BeforeEach
     void setUp() {
@@ -72,10 +77,10 @@ class AuthenticationServiceTest {
     @Test
     @DisplayName("login")
     public void laaogin() throws Exception {
-
         Assertions.assertThatThrownBy(() -> authenticationService.login(request))
                 .isInstanceOf(LoginNotMatchException.class)
                 .hasMessage("NOT MATCH LOGIN DATA");
+
 
     }
 

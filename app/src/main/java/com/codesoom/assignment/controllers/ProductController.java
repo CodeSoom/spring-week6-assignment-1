@@ -38,10 +38,8 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
-            @RequestHeader(value = "Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        authenticationService.parseToken(getAccessToken(authorization));
         return productService.createProduct(productData);
     }
 
@@ -49,24 +47,18 @@ public class ProductController {
     @PatchMapping("{id}")
     public Product update(
             @PathVariable Long id,
-            @RequestHeader(value = "Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        authenticationService.parseToken(getAccessToken(authorization));
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
-            @PathVariable Long id,
-            @RequestHeader("Authorization") String authorization
+            @PathVariable Long id
     ) {
-        authenticationService.parseToken(getAccessToken(authorization));
         productService.deleteProduct(id);
     }
 
-    private  String getAccessToken(String authorization) {
-        return authorization.substring("Bearer ".length());
-    }
+
 }

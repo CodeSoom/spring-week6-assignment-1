@@ -7,6 +7,7 @@ import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -88,9 +89,10 @@ class ProductControllerTest {
 
     @Test
     void list() throws Exception {
-        mockMvc.perform(
-                        get("/products")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
+        mockMvc.perform(get("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
+
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -101,6 +103,8 @@ class ProductControllerTest {
         mockMvc.perform(
                         get("/products/1")
                                 .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐돌이")));
@@ -108,18 +112,21 @@ class ProductControllerTest {
 
     @Test
     void deatilWithNotExsitedProduct() throws Exception {
-        mockMvc.perform(get("/products/1000"))
+        mockMvc.perform(get("/products/1000")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
+
+                )
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void createWithValidAttributes() throws Exception {
-        mockMvc.perform(
-                        post("/products")
-                                .accept(MediaType.APPLICATION_JSON_UTF8)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                        "\"price\":5000}")
+        mockMvc.perform(post("/products")
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+                        .header("Authorization", "Bearer " + VALID_TOKEN)
 
                 )
                 .andExpect(status().isCreated())
@@ -127,6 +134,7 @@ class ProductControllerTest {
 
         verify(productService).createProduct(any(ProductData.class));
     }
+
 
     @Test
     void createWithAccessToken() throws Exception {
@@ -154,10 +162,9 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
-                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"));
+                .andExpect(jsonPath("$.message").value("Invalid Access Token"));
     }
 
     @Test
@@ -170,7 +177,7 @@ class ProductControllerTest {
                                         "\"price\":5000}")
                 )
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"))
+                .andExpect(jsonPath("$.message").value("Invalid Access Token"))
                 .andDo(print());
     }
 
@@ -185,7 +192,7 @@ class ProductControllerTest {
                                 .header("Authorization", "Bearer " + INVALID_TOKEN)
                 )
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("Invalid Access Token accessToken"))
+                .andExpect(jsonPath("$.message").value("Invalid Access Token"))
                 .andDo(print());
 
     }
@@ -199,6 +206,7 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -226,6 +234,8 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+
                 )
                 .andExpect(status().isNotFound());
 
@@ -269,7 +279,7 @@ class ProductControllerTest {
                                         "\"price\":5000}")
                 )
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"))
+                .andExpect(jsonPath("$.message").value("Invalid Access Token"))
                 .andDo(print());
     }
 
@@ -282,6 +292,8 @@ class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"name\":\"\",\"maker\":\"\"," +
                                         "\"price\":0}")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+
                 )
                 .andExpect(status().isBadRequest());
     }
@@ -290,6 +302,8 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                         delete("/products/1")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+
                 )
                 .andExpect(status().isNoContent());
 
@@ -321,7 +335,7 @@ class ProductControllerTest {
     void destroyWithValidValues() throws Exception {
         mockMvc.perform(
                         delete("/products/1")
-                                .header("Authorization", "test " + VALID_TOKEN)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                 .andExpect(status().isNoContent());
     }
@@ -332,7 +346,7 @@ class ProductControllerTest {
                         delete("/products/1")
                 )
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("MissingRequestHeaderException"))
+                .andExpect(jsonPath("$.message").value("Invalid Access Token"))
                 .andDo(print());
     }
 
@@ -340,6 +354,7 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                         delete("/products/1000")
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
                 )
                 .andExpect(status().isNotFound());
 

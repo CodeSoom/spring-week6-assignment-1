@@ -22,14 +22,12 @@ import javax.validation.Valid;
 public class SessionController {
 
     private final AuthenticationService authenticationService;
-
-
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public SessionResponseData login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
-        authenticationService.login(userLoginRequest);
+        String token = authenticationService.login(userLoginRequest);
         return SessionResponseData.builder()
-                .accessToken("a.b.c")
+                .accessToken(token)
                 .build();
     }
 

@@ -33,7 +33,6 @@ public class ControllerErrorAdvice {
                         .build());
     }
 
-
     @ExceptionHandler(UserNotFoundException.class)
     public ErrorResponse handleUserNotFound() {
         return new ErrorResponse("404", "User not found");

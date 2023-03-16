@@ -2,9 +2,12 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.SessionResponseData;
+import com.codesoom.assignment.dto.UserLoginRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /*
 1. Create -> 로그인->토큰
@@ -23,8 +26,8 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public SessionResponseData login(Long id) {
-        authenticationService.login(id);
+    public SessionResponseData login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        authenticationService.login(userLoginRequest);
         return SessionResponseData.builder()
                 .accessToken("a.b.c")
                 .build();

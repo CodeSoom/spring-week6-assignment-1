@@ -2,6 +2,7 @@ package com.codesoom.assignment.errors.ExceptionEnum;
 
 public enum ExceptionMessage {
     InValidToken("Invalid Access Token"),
+    LOGINMESSAGE("NOT MATCH LOGIN DATA"),
     ERROR("Error"),
     WARNING("Warning");
 

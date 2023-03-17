@@ -21,18 +21,17 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String authorization = request.getHeader("Authorization");
         log.info(">>>{}" + authorization);
-        if (authorization != null && authorization.startsWith("Bearer ")) {
-            log.info(">>>{}" + authorization.startsWith("Bearer "));
-            String token = authorization.substring("Bearer ".length());
-            log.info(">>>{}", token);
-            try {
-                authenticationService.parseToken(token);
-                return true;
-            } catch (InvalidTokenException e) {
-                throw new InvalidTokenException();
-            }
-
-        } else {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            throw new InvalidTokenException();
+        }
+        
+        log.info(">>>{}" + authorization.startsWith("Bearer "));
+        String token = authorization.substring("Bearer ".length());
+        log.info(">>>{}", token);
+        try {
+            authenticationService.parseToken(token);
+            return true;
+        } catch (InvalidTokenException e) {
             throw new InvalidTokenException();
         }
     }

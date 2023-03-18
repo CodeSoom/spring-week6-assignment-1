@@ -9,6 +9,8 @@ import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Optional;
 
@@ -90,16 +92,11 @@ class AuthenticationServiceTest {
 
         assertThat(userId).isEqualTo(1L);
     }
-
-    @Test
-    void parseTokenWithInvalidToken(){
-        assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
-                .isInstanceOf(InvalidTokenException.class);
-    }
-
-    @Test
-    void parseTokenWithBlankToken(){
-        assertThatThrownBy(() -> authenticationService.parseToken(""))
+    
+    @ParameterizedTest
+    @ValueSource(strings = { INVALID_TOKEN, "" })
+    void parseTokenWithInvalidTokens(String token){
+        assertThatThrownBy(() -> authenticationService.parseToken(token))
                 .isInstanceOf(InvalidTokenException.class);
     }
 

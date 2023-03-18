@@ -55,9 +55,10 @@ class ProductControllerTest {
 
         LoginCheckInterceptor loginCheckInterceptor = new LoginCheckInterceptor(authenticationService);
         ProductController productController = new ProductController(productService, authenticationService);
-        SessionController sessionController = new SessionController(authenticationService);
+
+
         mockMvc = MockMvcBuilders
-                .standaloneSetup(productController,sessionController) // Controllers Setup
+                .standaloneSetup(productController) // Controllers Setup
                 .addInterceptors(loginCheckInterceptor)
                 .setControllerAdvice(new ControllerErrorAdvice())
                 .build();

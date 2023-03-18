@@ -24,13 +24,13 @@ public class AuthenticationService {
 
     public String login(UserLoginData userLoginData) {
 
-        String inputEmail = userLoginData.getEmail();
-        String inputPassword = userLoginData.getPassword();
+        String email = userLoginData.getEmail();
+        String password = userLoginData.getPassword();
 
-        User user = userRepository.findByEmailAndDeletedIsFalse(inputEmail)
-                .orElseThrow(() -> new UserNotFoundException(inputEmail));
+        User user = userRepository.findByEmailAndDeletedIsFalse(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
 
-        if(!user.getPassword().equals(inputPassword)){
+        if(!user.getPassword().equals(password)){
             throw new PasswordMismatchException();
         }
         return jwtUtil.encode(user.getId());

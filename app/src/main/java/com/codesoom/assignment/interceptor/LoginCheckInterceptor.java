@@ -18,7 +18,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
     private AuthenticationService authenticationService;
 
-    LoginCheckInterceptor(AuthenticationService authenticationService){
+    public LoginCheckInterceptor(AuthenticationService authenticationService){
         this.authenticationService = authenticationService;
     }
 

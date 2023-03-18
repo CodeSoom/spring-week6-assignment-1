@@ -92,7 +92,7 @@ class AuthenticationServiceTest {
 
         assertThat(userId).isEqualTo(1L);
     }
-    
+
     @ParameterizedTest
     @ValueSource(strings = { INVALID_TOKEN, "" })
     void parseTokenWithInvalidTokens(String token){

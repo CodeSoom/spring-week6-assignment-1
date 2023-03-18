@@ -2,14 +2,17 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
+import com.codesoom.assignment.config.WebMvcConfig;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import com.codesoom.assignment.interceptor.LoginCheckInterceptor;
+import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
@@ -45,8 +49,18 @@ class ProductControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
+
     @BeforeEach
     void setUp() {
+
+        LoginCheckInterceptor loginCheckInterceptor = new LoginCheckInterceptor(authenticationService);
+        ProductController productController = new ProductController(productService, authenticationService);
+        SessionController sessionController = new SessionController(authenticationService);
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(productController,sessionController) // Controllers Setup
+                .addInterceptors(loginCheckInterceptor)
+                .setControllerAdvice(new ControllerErrorAdvice())
+                .build();
 
         Product product = Product.builder()
                 .id(1L)
@@ -140,8 +154,7 @@ class ProductControllerTest {
                                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                                         "\"price\":5000}")
                                 .header("Authorization", "Bearer "+INVALID_TOKEN)
-                )
-                .andExpect(status().isUnauthorized());
+        ).andExpect(status().isUnauthorized());
     }
 
     @Test

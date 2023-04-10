@@ -3,6 +3,7 @@ package com.codesoom.assignment.controllers;
 import com.codesoom.assignment.errors.PasswordNotMatchedException;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.LoginRequestData;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -89,6 +90,22 @@ class AuthenticationControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(invalidLoginRequestData.toString()))
                         .andExpect(status().isBadRequest());
+            }
+        }
+
+        @Nested
+        @DisplayName("아이디가 존재하지 않는 경우")
+        class context_with_not_exist_user {
+
+            @Test
+            @DisplayName("응답코드 400을 응답한다.")
+            void it_returns_notFound() throws Exception {
+                given(authenticationService.login(any())).willThrow(UserNotFoundException.class);
+
+                mockMvc.perform(post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginRequestData.toString()))
+                        .andExpect(status().isNotFound());
             }
         }
     }

@@ -1,21 +1,20 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.LoginRequestData;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Key;
-
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 @RestController
 public class AuthenticationController {
 
+    private final AuthenticationService authenticationService;
 
     /**
      * 상태코드 테스트
@@ -27,9 +26,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)
     public String login(LoginRequestData loginRequestData) {
-
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        return Jwts.builder().signWith(key).compact();
+        return authenticationService.login(loginRequestData);
     }
 
 }

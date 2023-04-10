@@ -52,5 +52,27 @@ class AuthenticationControllerTest {
                         .andExpect(status().isCreated());
             }
         }
+
+        @Nested
+        @DisplayName("패스워드가 일치하지 않는 경우")
+        class context_with_not_match_password {
+
+            @Test
+            @DisplayName("응답코드 400을 응답한다.")
+            void it_returns_badRequest() throws Exception {
+                LoginRequestData loginRequestData = LoginRequestData.builder()
+                        .email("test123@naver.com")
+                        .password("test123")
+                        .build();
+
+                given(authenticationService.login(any())).willReturn(".");
+
+                mockMvc.perform(post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginRequestData.toString()))
+                        .andExpect(content().string(containsString(".")))
+                        .andExpect(status().isBadRequest());
+            }
+        }
     }
 }

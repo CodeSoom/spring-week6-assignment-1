@@ -4,10 +4,9 @@ import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.LoginRequestData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -25,7 +24,7 @@ public class AuthenticationController {
      */
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)
-    public String login(LoginRequestData loginRequestData) {
+    public String login(@RequestBody @Valid LoginRequestData loginRequestData) {
         return authenticationService.login(loginRequestData);
     }
 

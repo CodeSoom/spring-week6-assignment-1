@@ -85,8 +85,6 @@ class AuthenticationControllerTest {
             void it_returns_badRequest() throws Exception {
                 LoginRequestData invalidLoginRequestData = LoginRequestData.builder().email("test123").password("").build();
 
-                given(authenticationService.login(any())).willThrow(PasswordNotMatchedException.class);
-
                 mockMvc.perform(post("/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(invalidLoginRequestData.toString()))

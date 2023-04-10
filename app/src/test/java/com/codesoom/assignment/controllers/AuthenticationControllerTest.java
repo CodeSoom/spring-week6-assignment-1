@@ -75,5 +75,23 @@ class AuthenticationControllerTest {
                         .andExpect(status().isBadRequest());
             }
         }
+
+        @Nested
+        @DisplayName("유효성 검증을 실패했을 경우")
+        class context_with_invalid_parameter {
+
+            @Test
+            @DisplayName("응답코드 400을 응답한다.")
+            void it_returns_badRequest() throws Exception {
+                LoginRequestData invalidLoginRequestData = LoginRequestData.builder().email("test123").password("").build();
+
+                given(authenticationService.login(any())).willThrow(PasswordNotMatchedException.class);
+
+                mockMvc.perform(post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(invalidLoginRequestData.toString()))
+                        .andExpect(status().isBadRequest());
+            }
+        }
     }
 }

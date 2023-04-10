@@ -1,7 +1,9 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.errors.PasswordNotMatchedException;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.LoginRequestData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,16 @@ class AuthenticationControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
 
+    LoginRequestData loginRequestData;
+
+    @BeforeEach
+    public void init() {
+        loginRequestData = LoginRequestData.builder()
+                .email("test123@naver.com")
+                .password("test123")
+                .build();
+    }
+
     @Nested
     @DisplayName("login 메소드는")
     class describe_Login {
@@ -38,11 +50,6 @@ class AuthenticationControllerTest {
             @Test
             @DisplayName("accessToken 과 201을 응답한다. ")
             void it_returns_accessToken() throws Exception {
-                LoginRequestData loginRequestData = LoginRequestData.builder()
-                        .email("test123@naver.com")
-                        .password("test123")
-                        .build();
-
                 given(authenticationService.login(any())).willReturn(".");
 
                 mockMvc.perform(post("/auth/login")
@@ -60,17 +67,11 @@ class AuthenticationControllerTest {
             @Test
             @DisplayName("응답코드 400을 응답한다.")
             void it_returns_badRequest() throws Exception {
-                LoginRequestData loginRequestData = LoginRequestData.builder()
-                        .email("test123@naver.com")
-                        .password("test123")
-                        .build();
-
-                given(authenticationService.login(any())).willReturn(".");
+                given(authenticationService.login(any())).willThrow(PasswordNotMatchedException.class);
 
                 mockMvc.perform(post("/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(loginRequestData.toString()))
-                        .andExpect(content().string(containsString(".")))
                         .andExpect(status().isBadRequest());
             }
         }

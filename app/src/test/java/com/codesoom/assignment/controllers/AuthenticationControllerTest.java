@@ -10,9 +10,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("AuthController ")
-@WebMvcTest(AuthController.class)
-class AuthControllerTest {
+@DisplayName("AuthenticationController ")
+@WebMvcTest(AuthenticationController.class)
+class AuthenticationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -27,7 +27,7 @@ class AuthControllerTest {
             @Test
             @DisplayName("accessToken 과 201을 응답한다. ")
             void it_returns_accessToken() throws Exception {
-                mockMvc.perform(post("/login"))
+                mockMvc.perform(post("/auth/login"))
                         .andExpect(status().isCreated());
             }
         }

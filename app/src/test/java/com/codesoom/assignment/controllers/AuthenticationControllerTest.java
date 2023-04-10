@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("AuthenticationController ")
@@ -28,6 +30,7 @@ class AuthenticationControllerTest {
             @DisplayName("accessToken 과 201을 응답한다. ")
             void it_returns_accessToken() throws Exception {
                 mockMvc.perform(post("/auth/login"))
+                        .andExpect(content().string(containsString(".")))
                         .andExpect(status().isCreated());
             }
         }

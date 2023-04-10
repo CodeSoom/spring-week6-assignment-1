@@ -1,10 +1,12 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.dto.LoginRequestData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
@@ -29,7 +31,13 @@ class AuthenticationControllerTest {
             @Test
             @DisplayName("accessToken 과 201을 응답한다. ")
             void it_returns_accessToken() throws Exception {
-                mockMvc.perform(post("/auth/login"))
+                LoginRequestData loginRequestData = LoginRequestData.Builder()
+                                .email("test123@naver.com")
+                                        .password("test123");
+
+                mockMvc.perform(post("/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginRequestData))
                         .andExpect(content().string(containsString(".")))
                         .andExpect(status().isCreated());
             }

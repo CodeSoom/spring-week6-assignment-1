@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.dto.LoginRequestData;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -25,9 +26,9 @@ public class AuthenticationController {
      */
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)
-    public String login() {
+    public String login(LoginRequestData loginRequestData) {
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        return Jwts.builder().setSubject("Joe").signWith(key).compact();
+        return Jwts.builder().signWith(key).compact();
     }
 
 }

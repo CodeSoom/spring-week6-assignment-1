@@ -31,13 +31,14 @@ class AuthenticationControllerTest {
             @Test
             @DisplayName("accessToken 과 201을 응답한다. ")
             void it_returns_accessToken() throws Exception {
-                LoginRequestData loginRequestData = LoginRequestData.Builder()
-                                .email("test123@naver.com")
-                                        .password("test123");
+                LoginRequestData loginRequestData = LoginRequestData.builder()
+                        .email("test123@naver.com")
+                        .password("test123")
+                        .build();
 
                 mockMvc.perform(post("/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(loginRequestData))
+                                .content(loginRequestData.toString()))
                         .andExpect(content().string(containsString(".")))
                         .andExpect(status().isCreated());
             }

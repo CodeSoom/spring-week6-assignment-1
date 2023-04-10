@@ -27,6 +27,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)
     public String login(LoginRequestData loginRequestData) {
+
         Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         return Jwts.builder().signWith(key).compact();
     }

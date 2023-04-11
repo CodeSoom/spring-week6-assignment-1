@@ -5,12 +5,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("JwtUtils")
 class JwtUtilsTest {
 
-    JwtUtils jwtUtils = new JwtUtils();
+    JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
 
     @Nested
     @DisplayName("createToken 메소드는")
@@ -23,10 +26,12 @@ class JwtUtilsTest {
             @Test
             @DisplayName("엑세스토큰을 리턴한다. ")
             void it_returns_valid_accessToken() {
+                Map<String, Object> claim = new HashMap<>();
+                claim.put("test","123");
+                claim.put("id","test123");
 
-                String accessToken = jwtUtils.createToken();
+                String accessToken = jwtUtils.createToken(claim);
                 Assertions.assertThat(accessToken).contains(".");
-
             }
         }
     }

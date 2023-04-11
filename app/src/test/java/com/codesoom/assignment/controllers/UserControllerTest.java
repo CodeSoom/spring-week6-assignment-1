@@ -1,17 +1,21 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.UserService;
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
 import com.codesoom.assignment.errors.UserNotFoundException;
+import com.codesoom.assignment.interceptor.LoginCheckInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,16 +26,31 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
+@WebMvcTest(value = UserController.class)
 class UserControllerTest {
-    @Autowired
+
     private MockMvc mockMvc;
 
     @MockBean
     private UserService userService;
 
+    @MockBean
+    LoginCheckInterceptor loginCheckInterceptor;
+
+    @MockBean
+    AuthenticationService authenticationService;
+
     @BeforeEach
     void setUp() {
+
+        LoginCheckInterceptor loginCheckInterceptor = new LoginCheckInterceptor(authenticationService);
+        UserController userController = new UserController(userService);
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(userController) // Controllers Setup
+                .addInterceptors(loginCheckInterceptor)
+                .setControllerAdvice(new ControllerErrorAdvice())
+                .build();
+
         given(userService.registerUser(any(UserRegistrationData.class)))
                 .will(invocation -> {
                     UserRegistrationData registrationData = invocation.getArgument(0);

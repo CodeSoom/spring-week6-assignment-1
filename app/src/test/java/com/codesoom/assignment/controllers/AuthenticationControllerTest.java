@@ -4,10 +4,7 @@ import com.codesoom.assignment.errors.PasswordNotMatchedException;
 import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.dto.LoginRequestData;
 import com.codesoom.assignment.errors.UserNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +38,11 @@ class AuthenticationControllerTest {
                 .build();
     }
 
+    @AfterEach
+    public void afterInit() {
+        reset(authenticationService);
+    }
+
     @Nested
     @DisplayName("login 메소드는")
     class describe_Login {
@@ -51,6 +54,13 @@ class AuthenticationControllerTest {
             @Test
             @DisplayName("accessToken 과 201을 응답한다. ")
             void it_returns_accessToken() throws Exception {
+
+                loginRequestData = LoginRequestData.builder()
+                        .email("test123@naver.com")
+                        .password("test123")
+                        .build();
+
+                System.out.println(loginRequestData.toString());
                 given(authenticationService.login(any())).willReturn(".");
 
                 mockMvc.perform(post("/auth/login")

@@ -12,7 +12,7 @@ public class LoginRequestData {
     @Email
     @NotBlank
     private String email;
-    
+
     @NotBlank
     private String password;
 
@@ -24,6 +24,6 @@ public class LoginRequestData {
 
     @Override
     public String toString() {
-        return "{ \"email\": \""+email+"\", \"password\": \""+password+"\" }";
+        return String.format("{ \"email\": \"%s\", \"password\": \"%s\" }", email, password);
     }
 }

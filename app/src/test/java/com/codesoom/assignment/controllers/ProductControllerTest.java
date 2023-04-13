@@ -145,7 +145,6 @@ class ProductControllerTest {
                 )
                 .andExpect(status().isUnauthorized());
 
-        verify(productService).createProduct(any(ProductData.class));
     }
 
     @Test

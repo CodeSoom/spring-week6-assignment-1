@@ -24,4 +24,8 @@ public class AuthenticationService {
 
         return jwtUtils.encode(user.getId());
     }
+
+    public Long parseToken(String token) {
+        return null;
+    }
 }

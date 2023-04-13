@@ -15,6 +15,7 @@ class JwtUtilsTest {
     JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
     String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
     String inValidToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGV";
+    String blankToken = "";
 
     @Nested
     @DisplayName("encode 메소드는")
@@ -54,9 +55,20 @@ class JwtUtilsTest {
         class context_with_invalid_token {
 
             @Test
-            @DisplayName("예외를 던진다.")
+            @DisplayName("SignatureException 예외를 던진다.")
             void it_returns_exception() {
                 assertThatThrownBy(()-> jwtUtils.decode(inValidToken)).isInstanceOf(SignatureException.class);
+            }
+        }
+
+        @Nested
+        @DisplayName("빈문자열이 들어올 경우")
+        class context_with_blank_token {
+
+            @Test
+            @DisplayName("IllegalArgumentException 예외를 던진다.")
+            void it_returns_exception() {
+                assertThatThrownBy(()-> jwtUtils.decode(blankToken)).isInstanceOf(IllegalArgumentException.class);
             }
         }
     }

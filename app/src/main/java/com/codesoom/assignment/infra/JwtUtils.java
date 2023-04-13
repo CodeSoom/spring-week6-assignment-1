@@ -17,18 +17,26 @@ public class JwtUtils {
         this.keyValue = keyValue;
     }
 
+    public Long decodeThenGetUserId(String token) {
+        Object userId = Jwts.parserBuilder()
+                .setSigningKey(createKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId");
+
+        return Long.valueOf(String.valueOf(userId));
+    }
+
     public String encode(Long id) {
         Key key = createKey();
 
         Map<String, Object> claim = createClaim(id);
 
-        String accessToken = Jwts.builder()
+        return Jwts.builder()
                 .addClaims(claim)
                 .signWith(key)
                 .compact();
-
-        return accessToken;
-
     }
 
     private Key createKey() {

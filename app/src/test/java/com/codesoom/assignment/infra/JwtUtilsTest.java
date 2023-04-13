@@ -1,11 +1,10 @@
 package com.codesoom.assignment.infra;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("JwtUtils")
 class JwtUtilsTest {
@@ -41,7 +40,7 @@ class JwtUtilsTest {
             @DisplayName("userId를 반환한다. ")
             void it_returns_userId() {
                 String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-                Long userId = JwtUtils.decodeThenGetUserId(token);
+                Long userId = jwtUtils.decodeThenGetUserId(token);
                 assertThat(userId).isEqualTo(1L);
             }
         }

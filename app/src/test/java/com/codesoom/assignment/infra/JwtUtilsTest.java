@@ -1,18 +1,20 @@
 package com.codesoom.assignment.infra;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("JwtUtils")
 class JwtUtilsTest {
 
     JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
     String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    String inValidToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    String inValidToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGV";
 
     @Nested
     @DisplayName("encode 메소드는")
@@ -54,7 +56,7 @@ class JwtUtilsTest {
             @Test
             @DisplayName("예외를 던진다.")
             void it_returns_exception() {
-
+                assertThatThrownBy(()-> jwtUtils.decode(inValidToken)).isInstanceOf(SignatureException.class);
             }
         }
     }

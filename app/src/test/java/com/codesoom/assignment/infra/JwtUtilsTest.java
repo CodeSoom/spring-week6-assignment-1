@@ -1,5 +1,6 @@
 package com.codesoom.assignment.infra;
 
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JwtUtilsTest {
 
     JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
+    String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    String inValidToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
     @Nested
     @DisplayName("encode 메소드는")
@@ -39,9 +42,19 @@ class JwtUtilsTest {
             @Test
             @DisplayName("userId를 반환한다. ")
             void it_returns_userId() {
-                String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-                Long userId = jwtUtils.decodeThenGetUserId(token);
-                assertThat(userId).isEqualTo(1L);
+                Claims claims = jwtUtils.decode(token);
+                assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
+            }
+        }
+
+        @Nested
+        @DisplayName("비정상적인 토큰이 들어올 경우")
+        class context_with_invalid_token {
+
+            @Test
+            @DisplayName("예외를 던진다.")
+            void it_returns_exception() {
+
             }
         }
     }

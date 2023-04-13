@@ -1,5 +1,6 @@
 package com.codesoom.assignment.infra;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,15 +18,12 @@ public class JwtUtils {
         this.keyValue = keyValue;
     }
 
-    public Long decodeThenGetUserId(String token) {
-        Object userId = Jwts.parserBuilder()
+    public Claims decode(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(createKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .get("userId");
-
-        return Long.valueOf(String.valueOf(userId));
+                .getBody();
     }
 
     public String encode(Long id) {

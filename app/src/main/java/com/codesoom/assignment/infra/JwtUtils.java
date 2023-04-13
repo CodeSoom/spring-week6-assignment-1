@@ -48,6 +48,4 @@ public class JwtUtils {
         claim.put("userId", id);
         return claim;
     }
-
-
 }

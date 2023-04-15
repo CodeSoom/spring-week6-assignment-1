@@ -1,10 +1,13 @@
 package com.codesoom.assignment.infra;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class JwtUtilsTest {
 
     JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
-    String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    String inValidToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGV";
-    String blankToken = "";
+    final String TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGV";
+    final String BLANK_TOKEN = " ";
 
     @Nested
     @DisplayName("encode 메소드는")
@@ -45,7 +48,7 @@ class JwtUtilsTest {
             @Test
             @DisplayName("userId를 반환한다. ")
             void it_returns_userId() {
-                Claims claims = jwtUtils.decode(token);
+                Claims claims = jwtUtils.decode(TOKEN);
                 assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
             }
         }
@@ -54,21 +57,12 @@ class JwtUtilsTest {
         @DisplayName("비정상적인 토큰이 들어올 경우")
         class context_with_invalid_token {
 
-            @Test
-            @DisplayName("SignatureException 예외를 던진다.")
-            void it_returns_exception() {
-                assertThatThrownBy(()-> jwtUtils.decode(inValidToken)).isInstanceOf(SignatureException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("빈문자열이 들어올 경우")
-        class context_with_blank_token {
-
-            @Test
-            @DisplayName("IllegalArgumentException 예외를 던진다.")
-            void it_returns_exception() {
-                assertThatThrownBy(()-> jwtUtils.decode(blankToken)).isInstanceOf(IllegalArgumentException.class);
+            @ParameterizedTest
+            @ValueSource(strings = {BLANK_TOKEN, INVALID_TOKEN})
+            @NullAndEmptySource
+            @DisplayName("InvalidTokenException 예외를 던진다.")
+            void it_returns_InvalidTokenException(String text) {
+                assertThatThrownBy(()-> jwtUtils.decode(text)).isInstanceOf(InvalidTokenException.class);
             }
         }
     }

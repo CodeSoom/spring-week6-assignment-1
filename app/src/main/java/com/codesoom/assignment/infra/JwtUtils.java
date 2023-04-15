@@ -1,5 +1,6 @@
 package com.codesoom.assignment.infra;
 
+import com.codesoom.assignment.errors.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -19,11 +20,19 @@ public class JwtUtils {
     }
 
     public Claims decode(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(createKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        if (token == null || token.isBlank()) {
+            throw new InvalidTokenException();
+        }
+
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(createKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new InvalidTokenException();
+        }
     }
 
     public String encode(Long id) {

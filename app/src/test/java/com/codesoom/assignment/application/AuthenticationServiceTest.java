@@ -2,16 +2,20 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestData;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.PasswordNotMatchedException;
 import com.codesoom.assignment.infra.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -56,7 +60,7 @@ class AuthenticationServiceTest {
             void it_returns_PasswordNotMatchedException() {
                 given(userService.findByEmail(any())).willReturn(user);
 
-                assertThrows(PasswordNotMatchedException.class, () -> authenticationService.login(requestData));
+                assertThatThrownBy(() -> authenticationService.login(requestData)).isInstanceOf(PasswordNotMatchedException.class);
             }
         }
     }
@@ -79,6 +83,25 @@ class AuthenticationServiceTest {
                 });
 
                 assertThat(authenticationService.parseToken(TOKEN)).isEqualTo(1L);
+            }
+        }
+
+        @Nested
+        @DisplayName("유효하지 않은 토큰이 들어왔을 경우")
+        class context_with_invalid_token {
+
+            @DisplayName("InvalidTokenException 예외를 던진다 ")
+            @ParameterizedTest
+            @NullAndEmptySource
+            @ValueSource(strings = {BLANK_TOKEN, INVALID_TOKEN})
+            void it_retur외ns_InvalidTokenException(String invalidToken) {
+                given(jwtUtils.decode(invalidToken)).will(invocation -> {
+                    JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
+                    String token = invocation.getArgument(0);
+                    return jwtUtils.decode(token);
+                });
+
+                assertThatThrownBy(() -> authenticationService.parseToken(invalidToken)).isInstanceOf(InvalidTokenException.class);
             }
         }
     }

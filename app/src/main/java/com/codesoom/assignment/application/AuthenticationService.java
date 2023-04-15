@@ -18,7 +18,7 @@ public class AuthenticationService {
 
         User user = userService.findByEmail(email);
 
-        if (!user.getPassword().equals(loginRequestData.getPassword())) {
+        if (user.authenticate(loginRequestData.getPassword())) {
             throw new PasswordNotMatchedException(email);
         }
 

@@ -38,7 +38,7 @@ class JwtUtilsTest {
     }
 
     @Nested
-    @DisplayName("decodeThenGetUserId 메소드는")
+    @DisplayName("decode 메소드는")
     class Describe_decodeThenGetUserId {
 
         @Nested
@@ -46,7 +46,7 @@ class JwtUtilsTest {
         class context_with_valid_token {
 
             @Test
-            @DisplayName("userId를 반환한다. ")
+            @DisplayName("userId가 들어있는 claims를 반환한다. ")
             void it_returns_userId() {
                 Claims claims = jwtUtils.decode(TOKEN);
                 assertThat(claims.get("userId", Long.class)).isEqualTo(1L);
@@ -62,7 +62,7 @@ class JwtUtilsTest {
             @NullAndEmptySource
             @DisplayName("InvalidTokenException 예외를 던진다.")
             void it_returns_InvalidTokenException(String text) {
-                assertThatThrownBy(()-> jwtUtils.decode(text)).isInstanceOf(InvalidTokenException.class);
+                assertThatThrownBy(() -> jwtUtils.decode(text)).isInstanceOf(InvalidTokenException.class);
             }
         }
     }

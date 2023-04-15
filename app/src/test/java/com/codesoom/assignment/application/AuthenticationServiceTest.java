@@ -94,7 +94,7 @@ class AuthenticationServiceTest {
             @ParameterizedTest
             @NullAndEmptySource
             @ValueSource(strings = {BLANK_TOKEN, INVALID_TOKEN})
-            void it_retur외ns_InvalidTokenException(String invalidToken) {
+            void it_returns_InvalidTokenException(String invalidToken) {
                 given(jwtUtils.decode(invalidToken)).will(invocation -> {
                     JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
                     String token = invocation.getArgument(0);

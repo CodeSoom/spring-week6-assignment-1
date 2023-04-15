@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginRequestData;
 import com.codesoom.assignment.errors.PasswordNotMatchedException;
 import com.codesoom.assignment.infra.JwtUtils;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class AuthenticationService {
     }
 
     public Long parseToken(String token) {
-        return null;
+        Claims claims = jwtUtils.decode(token);
+        return claims.get("userId", Long.class);
     }
 }

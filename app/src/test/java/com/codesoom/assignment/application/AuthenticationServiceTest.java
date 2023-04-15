@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -21,6 +22,9 @@ class AuthenticationServiceTest {
     UserService userService = Mockito.mock(UserService.class);
     JwtUtils jwtUtils = Mockito.mock(JwtUtils.class);
 
+    final String TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+    final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGV";
+    final String BLANK_TOKEN = " ";
     LoginRequestData requestData;
     User user;
 
@@ -53,6 +57,28 @@ class AuthenticationServiceTest {
                 given(userService.findByEmail(any())).willReturn(user);
 
                 assertThrows(PasswordNotMatchedException.class, () -> authenticationService.login(requestData));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("parseToken 메소드는")
+    class Describe_parseToken {
+
+        @Nested
+        @DisplayName("유효한 토큰이 들어왔을 경우")
+        class context_with_valid_token {
+
+            @Test
+            @DisplayName("토큰에서 유저아이디를 반환한다.")
+            void it_returns_userId() {
+                given(jwtUtils.decode(TOKEN)).will(invocation -> {
+                    JwtUtils jwtUtils = new JwtUtils("12345678901234567890123456789010");
+                    String token = invocation.getArgument(0);
+                    return jwtUtils.decode(token);
+                });
+
+                assertThat(authenticationService.parseToken(TOKEN)).isEqualTo(1L);
             }
         }
     }

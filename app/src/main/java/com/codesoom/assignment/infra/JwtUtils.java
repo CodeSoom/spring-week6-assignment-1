@@ -19,22 +19,6 @@ public class JwtUtils {
         this.keyValue = keyValue;
     }
 
-    public Claims decode(String token) {
-        if (token == null || token.isBlank()) {
-            throw new InvalidTokenException();
-        }
-
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(createKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            throw new InvalidTokenException();
-        }
-    }
-
     public String encode(Long id) {
         Key key = createKey();
 
@@ -55,4 +39,21 @@ public class JwtUtils {
         claim.put("userId", id);
         return claim;
     }
+
+    public Claims decode(String token) {
+        if (token == null || token.isBlank()) {
+            throw new InvalidTokenException();
+        }
+
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(createKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new InvalidTokenException();
+        }
+    }
+
 }

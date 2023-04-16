@@ -52,6 +52,20 @@ class AuthenticationServiceTest {
     class Describe_login {
 
         @Nested
+        @DisplayName("비밀번호가 일치할 경우")
+        class context_with_valid_password {
+
+            @Test
+            @DisplayName("Token 을 반환한다. ")
+            void its_returns_Token() {
+                given(userService.findByEmail(any())).willReturn(user);
+                given(jwtUtils.encode(user.getId())).willReturn(TOKEN);
+
+                assertThat(authenticationService.login(requestData)).isEqualTo(TOKEN);
+            }
+        }
+
+        @Nested
         @DisplayName("유저의 비밀번호가 일치하지 않는 경우")
         class context_with_invalid_password {
 

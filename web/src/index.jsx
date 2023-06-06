@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 import { BrowserRouter } from 'react-router-dom';
 
@@ -8,10 +8,12 @@ import App from './App';
 
 import store from './redux/store';
 
-ReactDOM.render((
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
-), document.getElementById('app'));
+ReactDOM.createRoot(document.getElementById('app')).render(
+  (
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  ),
+);

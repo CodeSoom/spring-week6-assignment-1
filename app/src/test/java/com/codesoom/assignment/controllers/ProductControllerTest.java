@@ -1,10 +1,13 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,6 +38,9 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService productService;
+
+    @MockBean
+    private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
@@ -76,38 +82,48 @@ class ProductControllerTest {
     @Test
     void list() throws Exception {
         mockMvc.perform(
-                get("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
+                        get("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐돌이")));
     }
 
     @Test
-    void deatilWithExsitedProduct() throws Exception {
+    void detailWithExistedProduct() throws Exception {
         mockMvc.perform(
-                get("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
+                        get("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐돌이")));
     }
 
     @Test
-    void deatilWithNotExsitedProduct() throws Exception {
+    void detailWithNotExistedProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
                 .andExpect(status().isNotFound());
     }
 
+    /**
+     * 토큰인증
+     * 고양이 생성 요청
+     *
+     * @throws Exception
+     */
     @Test
+    @DisplayName("유효한 토큰과 유효한 요청이 들어왔을 경우 고양이를 생성한다.")
     void createWithValidAttributes() throws Exception {
+        given(authenticationService.parseToken(any())).willReturn(1L);
+
         mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("쥐돌이")));
 
@@ -115,26 +131,43 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("유효하지 않은 토큰이 들어왔을 경우 401을 응답한다.")
+    void createWithInvalidToken() throws Exception {
+        given(authenticationService.parseToken(any())).willThrow(InvalidTokenException.class);
+
+        mockMvc.perform(
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .header("Authorization", "Bearer " + VALID_TOKEN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
     void createWithInvalidAttributes() throws Exception {
         mockMvc.perform(
-                post("/products")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
+                        post("/products")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"\",\"maker\":\"\"," +
+                                        "\"price\":0}")
+                )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void updateWithExistedProduct() throws Exception {
         mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("쥐순이")));
 
@@ -144,11 +177,11 @@ class ProductControllerTest {
     @Test
     void updateWithNotExistedProduct() throws Exception {
         mockMvc.perform(
-                patch("/products/1000")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
-                                "\"price\":5000}")
-        )
+                        patch("/products/1000")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
+                                        "\"price\":5000}")
+                )
                 .andExpect(status().isNotFound());
 
         verify(productService).updateProduct(eq(1000L), any(ProductData.class));
@@ -157,20 +190,20 @@ class ProductControllerTest {
     @Test
     void updateWithInvalidAttributes() throws Exception {
         mockMvc.perform(
-                patch("/products/1")
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"maker\":\"\"," +
-                                "\"price\":0}")
-        )
+                        patch("/products/1")
+                                .accept(MediaType.APPLICATION_JSON_UTF8)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"name\":\"\",\"maker\":\"\"," +
+                                        "\"price\":0}")
+                )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
-                delete("/products/1")
-        )
+                        delete("/products/1")
+                )
                 .andExpect(status().isNoContent());
 
         verify(productService).deleteProduct(1L);
@@ -179,8 +212,8 @@ class ProductControllerTest {
     @Test
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
-                delete("/products/1000")
-        )
+                        delete("/products/1000")
+                )
                 .andExpect(status().isNotFound());
 
         verify(productService).deleteProduct(1000L);

@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthenticationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
@@ -13,9 +14,12 @@ import java.util.List;
 @RequestMapping("/products")
 @CrossOrigin
 public class ProductController {
+
+    private final AuthenticationService authenticationService;
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(AuthenticationService authenticationService, ProductService productService) {
+        this.authenticationService = authenticationService;
         this.productService = productService;
     }
 
@@ -32,8 +36,10 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(
+            @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
+        authenticationService.parseToken(authorization.substring("Bearer ".length()));
         return productService.createProduct(productData);
     }
 

@@ -22,8 +22,8 @@ jest.mock('react-redux');
 jest.mock('../api/products');
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useHistory() {
-    return { push: mockPush };
+  useNavigate() {
+    return mockPush;
   },
 }));
 

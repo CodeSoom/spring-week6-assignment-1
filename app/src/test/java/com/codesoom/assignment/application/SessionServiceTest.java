@@ -28,14 +28,15 @@ class SessionServiceTest {
 
 	@BeforeEach
 	public void setUp() {
-		sessionService = new SessionService(userService);
+		sessionService = new SessionService(userService, authorizationService);
 		VALID_LOGIN = new LoginData("jinny@mail.com", "1234");
 		INVALID_LOGIN = new LoginData("jinny@mail.com", "0000");
 
-		given(userService.findUserByEmailByPassword(VALID_LOGIN.getEmail(), VALID_LOGIN.getPassword()))
+		given(userService.findUserByEmail(VALID_LOGIN.getEmail()))
 				.willReturn(new User());
-		given(userService.findUserByEmailByPassword(INVALID_LOGIN.getEmail(), INVALID_LOGIN.getPassword()))
+		given(userService.findUserByEmail(INVALID_LOGIN.getEmail()))
 				.willThrow(new LoginFailException(INVALID_LOGIN.getEmail()));
+
 
 	}
 
@@ -46,7 +47,7 @@ class SessionServiceTest {
 
 		assertThat(token).contains(".");
 
-		verify(userService).findUserByEmailByPassword(any(), any());
+		verify(userService).findUserByEmail(any(), any());
 	}
 
 	@Test

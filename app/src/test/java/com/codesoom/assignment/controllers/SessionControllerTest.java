@@ -1,6 +1,6 @@
 package com.codesoom.assignment.controllers;
 
-import com.codesoom.assignment.application.SessionService;
+import com.codesoom.assignment.application.AuthorizationService;
 import com.codesoom.assignment.dto.LoginData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,7 +25,7 @@ class SessionControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private SessionService sessionService;
+	private AuthorizationService authorizationService;
 
 	private ObjectMapper objectMapper;
 
@@ -34,7 +33,7 @@ class SessionControllerTest {
 	public void setUp() {
 		objectMapper = new ObjectMapper();
 
-		given(sessionService.login(any())).willReturn("a.b.c");
+		given(authorizationService.login(any())).willReturn("a.b.c");
 	}
 
 	@Test

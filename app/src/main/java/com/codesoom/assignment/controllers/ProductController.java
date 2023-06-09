@@ -1,5 +1,6 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthorizationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
@@ -14,9 +15,12 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
+    private final AuthorizationService authorizationService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService,
+        AuthorizationService authorizationService) {
         this.productService = productService;
+        this.authorizationService = authorizationService;
     }
 
     @GetMapping
@@ -35,22 +39,30 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
+        authorizationService.parseToken(authorization);
+
         return productService.createProduct(productData);
     }
 
     @PatchMapping("{id}")
     public Product update(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
+        authorizationService.parseToken(authorization);
+
         return productService.updateProduct(id, productData);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
+        authorizationService.parseToken(authorization);
+
         productService.deleteProduct(id);
     }
 }

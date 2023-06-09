@@ -2,14 +2,16 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
+import io.jsonwebtoken.security.SignatureException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Description;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -20,10 +22,12 @@ class AuthorizationServiceTest {
 	private final UserService userService = mock(UserService.class);
 	private AuthorizationService authorizationService;
 
-
 	private final String SECRET = "12345678901234567890123456789010";
 	private LoginData VALID_LOGIN;
 	private LoginData INVALID_LOGIN;
+	String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+	String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjn000";
+
 
 	@BeforeEach
 	public void setUp() {
@@ -61,5 +65,37 @@ class AuthorizationServiceTest {
 				.isInstanceOf(LoginFailException.class);
 	}
 
+	@Test
+	public void validAuthorization() {
+		String authorization = "Bearer " + VALID_TOKEN;
+
+		Long id = authorizationService.parseToken(authorization);
+
+		assertThat(id).isEqualTo(1L);
+	}
+
+	@Test
+	public void invalidAuthorization() {
+		String authorization = "Bearer " + INVALID_TOKEN;
+
+		assertThatThrownBy(() -> authorizationService.parseToken(authorization)).isInstanceOf(
+			SignatureException.class);
+	}
+
+	@Test
+	public void blankAuthorizationToken() {
+		String authorization = "Bearer ";
+
+		assertThatThrownBy(() -> authorizationService.parseToken(authorization)).isInstanceOf(
+			InvalidAccessTokenException.class);
+	}
+
+	@Test
+	public void blankAuthorization() {
+		String authorization = "";
+
+		assertThatThrownBy(() -> authorizationService.parseToken(authorization)).isInstanceOf(
+			InvalidAccessTokenException.class);
+	}
 
 }

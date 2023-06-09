@@ -1,14 +1,19 @@
 package com.codesoom.assignment.controllers;
 
+import com.codesoom.assignment.application.AuthorizationService;
 import com.codesoom.assignment.application.ProductService;
 import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
+import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Description;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,6 +26,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,6 +42,9 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService productService;
+
+    @MockBean
+    private AuthorizationService authorizationService;
 
     @BeforeEach
     void setUp() {
@@ -72,6 +81,12 @@ class ProductControllerTest {
 
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
+
+        given(authorizationService.parseToken("Bearer " + VALID_TOKEN)).willReturn(1L);
+        given(authorizationService.parseToken("Bearer " + INVALID_TOKEN)).willThrow(
+            new InvalidAccessTokenException(INVALID_TOKEN));
+        given(authorizationService.parseToken("Bearer ")).willThrow(
+            new InvalidAccessTokenException(INVALID_TOKEN));
     }
 
     @Test
@@ -85,7 +100,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithExsitedProduct() throws Exception {
+    void detailWithExitedProduct() throws Exception {
         mockMvc.perform(
                 get("/products/1")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -95,9 +110,60 @@ class ProductControllerTest {
     }
 
     @Test
-    void deatilWithNotExsitedProduct() throws Exception {
+    void detailWithNotExitedProduct() throws Exception {
         mockMvc.perform(get("/products/1000"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Description("header에 authoirization 없으면_isUnauthorized")
+    void createWithoutAuthorization() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                    .accept(MediaType.APPLICATION_JSON_UTF8)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                        "\"price\":5000}")
+            ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Description("빈 authorization token_isUnauthorized")
+    void createWithBlankAuthorization() throws Exception {
+        mockMvc.perform(
+            post("/products")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer ")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+        ).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Description("정상 authoirization_isCreated")
+    void createWithValidAuthrization() throws Exception {
+        mockMvc.perform(
+            post("/products")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+        ).andExpect(status().isCreated());
+    }
+
+    @Test
+    @Description("비정상 authoirization_isUnauthorized")
+    void createWithInvalidAuthorization() throws Exception {
+        mockMvc.perform(
+            post("/products")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + INVALID_TOKEN)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                    "\"price\":5000}")
+        ).andExpect(status().isUnauthorized());
     }
 
     @Test

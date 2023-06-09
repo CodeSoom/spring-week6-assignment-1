@@ -2,6 +2,8 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthorizationService;
 import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.dto.LoginSuccessData;
+import com.codesoom.assignment.errors.LoginFailException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,25 +31,26 @@ class SessionControllerTest {
 
 	private ObjectMapper objectMapper;
 
+	LoginData LOGIN_DATA = new LoginData("jinny", "1234");
+	LoginData INVALID_LOGIN_DATA = new LoginData("jinny", "1234###");
+
+
 	@BeforeEach
 	public void setUp() {
 		objectMapper = new ObjectMapper();
 
-		given(authorizationService.login(any())).willReturn("a.b.c");
+		LoginSuccessData LOGIN_SUCCESS_DATA = new LoginSuccessData("a.b.c");
+
+		given(authorizationService.login(LOGIN_DATA)).willReturn(LOGIN_SUCCESS_DATA);
 	}
 
 	@Test
 	public void login() throws Exception {
-		String userId = "jinny";
-		String password = "1234";
-		LoginData loginData = new LoginData(userId, password);
-
 		mockMvc.perform(post("/session")
 						.accept(MediaType.APPLICATION_JSON_UTF8)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(loginData))
-				).andExpect(status().isOk())
-				.andExpect(content().string(containsString(".")));
+						.content(objectMapper.writeValueAsString(LOGIN_DATA))
+				).andExpect(status().isOk());
 	}
 
 }

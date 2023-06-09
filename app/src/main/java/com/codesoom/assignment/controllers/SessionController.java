@@ -2,6 +2,7 @@ package com.codesoom.assignment.controllers;
 
 import com.codesoom.assignment.application.AuthorizationService;
 import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.dto.LoginSuccessData;
 import java.util.HashMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +20,8 @@ public class SessionController {
 	}
 
 	@PostMapping
-	public HashMap login(@RequestBody @Valid LoginData login) {
-		String accessToken = authorizationService.login(login);
-		HashMap result = new HashMap();
-		result.put("accessToken", accessToken);
-
-		return result;
+	public LoginSuccessData login(@RequestBody @Valid LoginData login) {
+		return authorizationService.login(login);
 	}
 
 }

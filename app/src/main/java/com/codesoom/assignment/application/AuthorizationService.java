@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.dto.LoginSuccessData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
@@ -22,22 +23,23 @@ public class AuthorizationService {
 		this.secretKey = secretKey;
 	}
 
-	public String login(LoginData login) {
-		try {
-			User user = userService.findUserByEmail(login.getEmail());
-			if (!user.getPassword().equals(login.getPassword())) {
-				throw new LoginFailException(login.getEmail());
-			}
+	public LoginSuccessData login(LoginData login) {
+		User user = getLoginUser(login);
+		String accessToken = JwtUtil.createToken(user, secretKey);
 
-			return JwtUtil.createToken(user, secretKey);
-		} catch (UserNotFoundException e) {
-			e.printStackTrace();
-			throw new UserNotFoundException(login.getEmail());
+		return new LoginSuccessData(accessToken);
+	}
+
+	private User getLoginUser(LoginData login) {
+		User user = userService.findUserByEmail(login.getEmail());
+		if (!user.getPassword().equals(login.getPassword())) {
+			throw new LoginFailException(login.getEmail());
 		}
+
+		return user;
 	}
 
 	public Long parseToken(String authorization) {
-		System.out.println("authorization : " + authorization);
 		Claims claims = JwtUtil.decode(extractTokenWithBearer(authorization), secretKey);
 
 		return claims.get("userId", Long.class);

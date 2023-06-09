@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.LoginData;
+import com.codesoom.assignment.dto.LoginSuccessData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import io.jsonwebtoken.security.SignatureException;
@@ -51,9 +52,9 @@ class AuthorizationServiceTest {
 	@Test
 	@Description("유효한 유저 로그인")
 	public void loginWithValidUser() {
-		String token = authorizationService.login(VALID_LOGIN);
+		LoginSuccessData loginSuccessData = authorizationService.login(VALID_LOGIN);
 
-		assertThat(token).contains(".");
+		assertThat(loginSuccessData.getAccessToken()).contains(".");
 
 		verify(userService).findUserByEmail(any());
 	}

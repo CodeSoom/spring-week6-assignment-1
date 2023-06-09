@@ -170,6 +170,7 @@ class ProductControllerTest {
     void createWithValidAttributes() throws Exception {
         mockMvc.perform(
                 post("/products")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
@@ -185,6 +186,7 @@ class ProductControllerTest {
     void createWithInvalidAttributes() throws Exception {
         mockMvc.perform(
                 post("/products")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
@@ -197,6 +199,7 @@ class ProductControllerTest {
     void updateWithExistedProduct() throws Exception {
         mockMvc.perform(
                 patch("/products/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
@@ -212,6 +215,7 @@ class ProductControllerTest {
     void updateWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                 patch("/products/1000")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"쥐순이\",\"maker\":\"냥이월드\"," +
                                 "\"price\":5000}")
@@ -225,6 +229,7 @@ class ProductControllerTest {
     void updateWithInvalidAttributes() throws Exception {
         mockMvc.perform(
                 patch("/products/1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\",\"maker\":\"\"," +
@@ -237,6 +242,7 @@ class ProductControllerTest {
     void destroyWithExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNoContent());
 
@@ -247,6 +253,7 @@ class ProductControllerTest {
     void destroyWithNotExistedProduct() throws Exception {
         mockMvc.perform(
                 delete("/products/1000")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
         )
                 .andExpect(status().isNotFound());
 

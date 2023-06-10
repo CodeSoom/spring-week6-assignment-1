@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -82,11 +82,9 @@ class ProductControllerTest {
         given(productService.deleteProduct(1000L))
                 .willThrow(new ProductNotFoundException(1000L));
 
-        given(authorizationService.parseToken("Bearer " + VALID_TOKEN)).willReturn(1L);
-        given(authorizationService.parseToken("Bearer " + INVALID_TOKEN)).willThrow(
-            new InvalidAccessTokenException(INVALID_TOKEN));
-        given(authorizationService.parseToken("Bearer ")).willThrow(
-            new InvalidAccessTokenException(INVALID_TOKEN));
+        doNothing().when(authorizationService).checkUserAuthorization("Bearer " + VALID_TOKEN);
+        doThrow(new InvalidAccessTokenException(INVALID_TOKEN)).when(authorizationService).checkUserAuthorization("Bearer " + INVALID_TOKEN);
+        doThrow(new InvalidAccessTokenException(INVALID_TOKEN)).when(authorizationService).checkUserAuthorization("Bearer ");
     }
 
     @Test
@@ -141,8 +139,8 @@ class ProductControllerTest {
     }
 
     @Test
-    @Description("정상 authoirization_isCreated")
-    void createWithValidAuthrization() throws Exception {
+    @Description("정상 authorization_isCreated")
+    void createWithValidAuthorization() throws Exception {
         mockMvc.perform(
             post("/products")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
@@ -151,10 +149,12 @@ class ProductControllerTest {
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
         ).andExpect(status().isCreated());
+
+        verify(authorizationService).checkUserAuthorization(any());
     }
 
     @Test
-    @Description("비정상 authoirization_isUnauthorized")
+    @Description("비정상 authorization_isUnauthorized")
     void createWithInvalidAuthorization() throws Exception {
         mockMvc.perform(
             post("/products")
@@ -164,6 +164,8 @@ class ProductControllerTest {
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
                     "\"price\":5000}")
         ).andExpect(status().isUnauthorized());
+
+        verify(authorizationService).checkUserAuthorization(any());
     }
 
     @Test
@@ -179,6 +181,7 @@ class ProductControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("쥐돌이")));
 
+        verify(authorizationService).checkUserAuthorization(any());
         verify(productService).createProduct(any(ProductData.class));
     }
 
@@ -193,6 +196,8 @@ class ProductControllerTest {
                                 "\"price\":0}")
         )
                 .andExpect(status().isBadRequest());
+
+        verify(authorizationService, never()).checkUserAuthorization(any());
     }
 
     @Test

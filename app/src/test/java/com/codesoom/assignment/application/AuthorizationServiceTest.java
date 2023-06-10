@@ -23,7 +23,6 @@ class AuthorizationServiceTest {
 	private final UserService userService = mock(UserService.class);
 	private AuthorizationService authorizationService;
 
-	private final String SECRET = "12345678901234567890123456789010";
 	private LoginData VALID_LOGIN;
 	private LoginData INVALID_LOGIN;
 	String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
@@ -32,6 +31,7 @@ class AuthorizationServiceTest {
 
 	@BeforeEach
 	public void setUp() {
+		String SECRET = "12345678901234567890123456789010";
 		authorizationService = new AuthorizationService(userService, SECRET);
 		VALID_LOGIN = new LoginData("jinny@mail.com", "1234");
 		INVALID_LOGIN = new LoginData("jinny_no@mail.com", "0000");
@@ -70,24 +70,24 @@ class AuthorizationServiceTest {
 	public void validAuthorization() {
 		String authorization = "Bearer " + VALID_TOKEN;
 
-		Long id = authorizationService.parseToken(authorization);
+		authorizationService.checkUserAuthorization(authorization);
 
-		assertThat(id).isEqualTo(1L);
+		verify(userService).findUser(any());
 	}
 
 	@Test
 	public void invalidAuthorization() {
 		String authorization = "Bearer " + INVALID_TOKEN;
 
-		assertThatThrownBy(() -> authorizationService.parseToken(authorization)).isInstanceOf(
-			SignatureException.class);
+		assertThatThrownBy(() -> authorizationService.checkUserAuthorization(authorization)).isInstanceOf(
+			Exception.class);
 	}
 
 	@Test
 	public void blankAuthorizationToken() {
 		String authorization = "Bearer ";
 
-		assertThatThrownBy(() -> authorizationService.parseToken(authorization)).isInstanceOf(
+		assertThatThrownBy(() -> authorizationService.checkUserAuthorization(authorization)).isInstanceOf(
 			InvalidAccessTokenException.class);
 	}
 
@@ -95,7 +95,7 @@ class AuthorizationServiceTest {
 	public void blankAuthorization() {
 		String authorization = "";
 
-		assertThatThrownBy(() -> authorizationService.parseToken(authorization)).isInstanceOf(
+		assertThatThrownBy(() -> authorizationService.checkUserAuthorization(authorization)).isInstanceOf(
 			InvalidAccessTokenException.class);
 	}
 

@@ -3,6 +3,7 @@ package com.codesoom.assignment.util;
 import com.codesoom.assignment.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;

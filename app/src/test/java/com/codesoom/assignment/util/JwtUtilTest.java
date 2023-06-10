@@ -7,19 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class JwtUtilTest {
 
-	String SECRET = "12345678901234567890123456789010";
-	String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-	String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjn000";
+	final String SECRET = "12345678901234567890123456789010";
+	final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
+	final String INVALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjn000";
 
 	@Test
 	public void createToke() {
 		User user = User.builder().id(1L).build();
-		String secretKey = SECRET;
-		String token = JwtUtil.createToken(user, secretKey);
+		String token = JwtUtil.createToken(user, SECRET);
 
 		assertThat(token).isEqualTo(VALID_TOKEN);
 	}

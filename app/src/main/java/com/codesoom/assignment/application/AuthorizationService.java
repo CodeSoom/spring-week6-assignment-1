@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthorizationService {
-	String secretKey;
+	private final String secretKey;
 
 	private final UserService userService;
 
@@ -39,8 +39,18 @@ public class AuthorizationService {
 		return user;
 	}
 
-	public Long parseToken(String authorization) {
-		Claims claims = JwtUtil.decode(extractTokenWithBearer(authorization), secretKey);
+	public void checkUserAuthorization(String authorization) {
+		String token = extractTokenWithBearer(authorization);
+		Long userId = parseToken(token);
+		try {
+			userService.findUser(userId);
+		} catch (UserNotFoundException e) {
+			throw new InvalidAccessTokenException(token);
+		}
+	}
+
+	private Long parseToken(String token) {
+		Claims claims = JwtUtil.decode(token, secretKey);
 
 		return claims.get("userId", Long.class);
 	}

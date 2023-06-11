@@ -65,7 +65,7 @@ class SessionControllerTest {
 				.accept(MediaType.APPLICATION_JSON_UTF8)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(LOGIN_PW_FAIL))
-		).andExpect(content().string(containsString("a.b.c")));
+		).andExpect(status().isBadRequest());
 
 		verify(authorizationService).login(any());
 	}

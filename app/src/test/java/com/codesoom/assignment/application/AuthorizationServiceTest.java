@@ -7,10 +7,11 @@ import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.fixture.FixtureData;
-import io.jsonwebtoken.security.SignatureException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.Description;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,8 +29,11 @@ class AuthorizationServiceTest {
 	private final LoginData VALID_LOGIN = FixtureData.LOGIN_VALID;
 	private final LoginData LOGIN_NOT_EXIST = FixtureData.LOGIN_NOT_EXIST;
 	private final LoginData LOGIN_PW_FAIL = FixtureData.LOGIN_PW_FAIL;
-	private final String VALID_TOKEN = FixtureData.VALID_TOKEN;
-	private final String INVALID_TOKEN = FixtureData.INVALID_TOKEN;
+	private final String VALID_TOKEN = FixtureData.AccessTokenFixture.VALID_TOKEN.getToken();
+	private final String SIGNATURE_FAIL_TOKEN = FixtureData.AccessTokenFixture.SIGNATURE_FAIL_TOKEN.getToken();
+	public final String USER_NOT_EXISTS_TOKEN = FixtureData.AccessTokenFixture.USER_NOT_EXISTS_TOKEN.getToken();
+	public final Long NOT_EXISTS_USER_ID = FixtureData.AccessTokenFixture.USER_NOT_EXISTS_TOKEN.getUserId();
+
 
 
 
@@ -47,6 +51,7 @@ class AuthorizationServiceTest {
 		given(userService.findUserByEmail(LOGIN_NOT_EXIST.getEmail()))
 				.willThrow(new UserNotFoundException(LOGIN_NOT_EXIST.getEmail()));
 
+		given(userService.findUser(NOT_EXISTS_USER_ID)).willThrow(new UserNotFoundException(NOT_EXISTS_USER_ID));
 	}
 
 	@Test
@@ -86,28 +91,27 @@ class AuthorizationServiceTest {
 	@Test
 	@Description("토큰검증_잘못된시그니처_SignatureException")
 	public void invalidAuthorization() {
-		String authorization = "Bearer " + INVALID_TOKEN;
+		String authorization = "Bearer " + SIGNATURE_FAIL_TOKEN;
 
 		assertThatThrownBy(() -> authorizationService.checkUserAuthorization(authorization)).isInstanceOf(
-				SignatureException.class);
+				InvalidAccessTokenException.class);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = { "", "Bearer "})
+	@Description("토큰검증_빈토큰_InvalidAccessTokenException")
+	void palindromes(String candidate) {
+		assertThatThrownBy(() -> authorizationService.checkUserAuthorization(candidate)).isInstanceOf(
+				InvalidAccessTokenException.class);
 	}
 
 	@Test
-	@Description("토큰검증_빈토큰_InvalidAccessTokenException")
-	public void blankAuthorizationToken() {
-		String authorization = "Bearer ";
+	@Description("토큰검증_존재하지않는유저_InvalidAccessTokenException")
+	public void notExistUserAuthorization() {
+		String authorization = "Bearer " + USER_NOT_EXISTS_TOKEN;
 
 		assertThatThrownBy(() -> authorizationService.checkUserAuthorization(authorization)).isInstanceOf(
-			InvalidAccessTokenException.class);
-	}
-
-	@Test
-	@Description("토큰검증_빈토큰_InvalidAccessTokenException")
-	public void blankAuthorization() {
-		String authorization = "";
-
-		assertThatThrownBy(() -> authorizationService.checkUserAuthorization(authorization)).isInstanceOf(
-			InvalidAccessTokenException.class);
+				InvalidAccessTokenException.class);
 	}
 
 }

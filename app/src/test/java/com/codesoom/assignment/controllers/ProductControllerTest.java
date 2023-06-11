@@ -6,6 +6,7 @@ import com.codesoom.assignment.domain.Product;
 import com.codesoom.assignment.dto.ProductData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.ProductNotFoundException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.fixture.FixtureData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,8 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
-    private static final String VALID_TOKEN = FixtureData.VALID_TOKEN;
-    private static final String INVALID_TOKEN = FixtureData.INVALID_TOKEN;
+    private static final String VALID_TOKEN = FixtureData.AccessTokenFixture.VALID_TOKEN.getToken();
+    private static final String SIGNATURE_FAIL_TOKEN = FixtureData.AccessTokenFixture.SIGNATURE_FAIL_TOKEN.getToken();
+    public final String USER_NOT_EXISTS_TOKEN = FixtureData.AccessTokenFixture.USER_NOT_EXISTS_TOKEN.getToken();
+    public Long INVALID_TOKEN_USER_ID = FixtureData.AccessTokenFixture.USER_NOT_EXISTS_TOKEN.getUserId();
 
     @Autowired
     private MockMvc mockMvc;
@@ -79,8 +82,9 @@ class ProductControllerTest {
                 .willThrow(new ProductNotFoundException(1000L));
 
         doNothing().when(authorizationService).checkUserAuthorization("Bearer " + VALID_TOKEN);
-        doThrow(new InvalidAccessTokenException(INVALID_TOKEN)).when(authorizationService).checkUserAuthorization("Bearer " + INVALID_TOKEN);
-        doThrow(new InvalidAccessTokenException(INVALID_TOKEN)).when(authorizationService).checkUserAuthorization("Bearer ");
+        doThrow(new InvalidAccessTokenException("Bearer " + SIGNATURE_FAIL_TOKEN)).when(authorizationService).checkUserAuthorization("Bearer " + SIGNATURE_FAIL_TOKEN);
+        doThrow(new InvalidAccessTokenException("")).when(authorizationService).checkUserAuthorization("Bearer ");
+        doThrow(new InvalidAccessTokenException(USER_NOT_EXISTS_TOKEN, new UserNotFoundException(INVALID_TOKEN_USER_ID))).when(authorizationService).checkUserAuthorization("Bearer " + USER_NOT_EXISTS_TOKEN);
     }
 
     @Test
@@ -150,11 +154,26 @@ class ProductControllerTest {
     }
 
     @Test
+    @Description("없는유저authorization_401")
+    void createWithInvalidUserAuthorization() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + USER_NOT_EXISTS_TOKEN)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +
+                                "\"price\":5000}")
+        ).andExpect(status().isUnauthorized());
+
+        verify(authorizationService).checkUserAuthorization(any());
+    }
+
+    @Test
     @Description("비정상 authorization_isUnauthorized")
     void createWithInvalidAuthorization() throws Exception {
         mockMvc.perform(
             post("/products")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + INVALID_TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + SIGNATURE_FAIL_TOKEN)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"쥐돌이\",\"maker\":\"냥이월드\"," +

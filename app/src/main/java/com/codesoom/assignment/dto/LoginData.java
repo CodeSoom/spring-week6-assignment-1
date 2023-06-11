@@ -1,9 +1,11 @@
 package com.codesoom.assignment.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
+@EqualsAndHashCode
 @Getter
 public class LoginData {
 

@@ -211,8 +211,6 @@ class ProductControllerTest {
                                 "\"price\":0}")
         )
                 .andExpect(status().isBadRequest());
-
-        verify(authorizationService, never()).checkUserAuthorization(any());
     }
 
     @Test

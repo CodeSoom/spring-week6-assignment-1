@@ -40,8 +40,6 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody @Valid ProductData productData
     ) {
-        authorizationService.checkUserAuthorization(authorization);
-
         return productService.createProduct(productData);
     }
 
@@ -51,8 +49,6 @@ public class ProductController {
             @PathVariable Long id,
             @RequestBody @Valid ProductData productData
     ) {
-        authorizationService.checkUserAuthorization(authorization);
-
         return productService.updateProduct(id, productData);
     }
 
@@ -62,8 +58,6 @@ public class ProductController {
             @RequestHeader("Authorization") String authorization,
             @PathVariable Long id
     ) {
-        authorizationService.checkUserAuthorization(authorization);
-
         productService.deleteProduct(id);
     }
 }

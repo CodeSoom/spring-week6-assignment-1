@@ -4,6 +4,7 @@ import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserModificationData;
 import com.codesoom.assignment.dto.UserRegistrationData;
+import com.codesoom.assignment.errors.LoginFailException;
 import com.codesoom.assignment.errors.UserEmailDuplicationException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import com.github.dozermapper.core.Mapper;
@@ -47,8 +48,14 @@ public class UserService {
         return user;
     }
 
-    private User findUser(Long id) {
+    public User findUser(Long id) {
         return userRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
+
+    public User findUserByEmail(String email) throws UserNotFoundException{
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
 }

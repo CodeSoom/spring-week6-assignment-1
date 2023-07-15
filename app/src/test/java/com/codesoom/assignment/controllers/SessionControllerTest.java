@@ -58,7 +58,6 @@ class SessionControllerTest {
         verify(authenticationService).login(any(UserLoginData.class));
     }
 
-
     @Test
     void loginWithEmptyLoginData() throws Exception {
         mockMvc.perform(post("/session")

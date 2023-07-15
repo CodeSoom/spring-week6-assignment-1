@@ -55,10 +55,10 @@ class UserControllerTest {
                 });
 
         given(userService.updateUser(eq(100L), any(UserModificationData.class)))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundException());
 
         given(userService.deleteUser(100L))
-                .willThrow(new UserNotFoundException(100L));
+                .willThrow(new UserNotFoundException());
     }
 
     @Test

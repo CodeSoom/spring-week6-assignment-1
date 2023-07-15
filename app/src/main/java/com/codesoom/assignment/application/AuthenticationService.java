@@ -5,6 +5,7 @@ import com.codesoom.assignment.domain.UserRepository;
 import com.codesoom.assignment.dto.UserLoginData;
 import com.codesoom.assignment.errors.InvalidAccessTokenException;
 import com.codesoom.assignment.errors.LoginFailException;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import com.codesoom.assignment.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureException;
@@ -22,7 +23,7 @@ public class AuthenticationService {
     }
 
     public String login(UserLoginData userLoginData){
-        User user = userRepository.findByEmail(userLoginData.getEmail()).orElseThrow(() -> new LoginFailException());
+        User user = userRepository.findByEmail(userLoginData.getEmail()).orElseThrow(() -> new UserNotFoundException());
 
         if(!user.getPassword().equals(userLoginData.getPassword())){
             throw new LoginFailException();
@@ -33,14 +34,14 @@ public class AuthenticationService {
 
     public Long parseToken(String accessToken) {
         if(accessToken == null || accessToken.isBlank()){
-            throw new InvalidAccessTokenException(accessToken);
+            throw new InvalidAccessTokenException();
         }
 
         try{
             Claims claims = jwtUtil.decode(accessToken);
             return claims.get("userId", Long.class);
         }catch (SignatureException e){
-            throw new InvalidAccessTokenException(accessToken);
+            throw new InvalidAccessTokenException();
         }
     }
 

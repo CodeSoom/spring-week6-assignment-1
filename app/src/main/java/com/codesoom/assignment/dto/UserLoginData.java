@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserLoginData {
     @NotBlank
     private String email;

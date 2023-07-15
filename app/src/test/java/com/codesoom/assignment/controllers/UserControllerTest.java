@@ -42,7 +42,6 @@ class UserControllerTest {
                             .build();
                 });
 
-
         given(userService.updateUser(eq(1L), any(UserModificationData.class)))
                 .will(invocation -> {
                     Long id = invocation.getArgument(0);

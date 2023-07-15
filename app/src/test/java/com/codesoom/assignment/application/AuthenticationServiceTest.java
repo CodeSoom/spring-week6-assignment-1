@@ -27,7 +27,7 @@ class AuthenticationServiceTest  {
     public static final String VALID_EMAIL = "dh@gmail.com";
     private static final String VALID_PASSWORD = "1111";
     public static final String INVALID_EMAIL = "dh";
-    private static final String INVALID_PASSWORD = "";
+    private static final String INVALID_PASSWORD = "0";
     private static final UserLoginData VALID_LOGIN_DATA = UserLoginData.builder()
                                                             .email(VALID_EMAIL)
                                                             .password(VALID_PASSWORD)
@@ -80,6 +80,5 @@ class AuthenticationServiceTest  {
 
         assertThatThrownBy(() -> authenticationService.parseToken(INVALID_TOKEN))
                 .isInstanceOf(InvalidAccessTokenException.class);
-
     }
 }

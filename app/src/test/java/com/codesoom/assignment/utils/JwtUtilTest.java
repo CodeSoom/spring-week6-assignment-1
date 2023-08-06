@@ -34,7 +34,7 @@ class JwtUtilTest {
         @Test
         void It_returns_claims() {
             assertThat(jwtUtil.decode(VALID_TOKEN)).isNotNull();
-            assertThat(jwtUtil.decode(VALID_TOKEN).get("userId")).isEqualTo(USER_ID);
+            assertThat(jwtUtil.decode(VALID_TOKEN).get("userId",Long.class)).isEqualTo(USER_ID);
         }
     }
 }

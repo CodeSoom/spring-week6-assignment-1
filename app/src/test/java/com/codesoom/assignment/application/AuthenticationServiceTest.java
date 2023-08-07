@@ -8,14 +8,13 @@ import org.junit.jupiter.api.*;
 
 @SuppressWarnings({"InnerClassMayBeStatic", "NonAsciiCharacters"})
 @DisplayName("AuthenticationService 클래스")
-class AuthenticationServiceTest extends JpaTest{
-    private AuthenticationService authenticationService = new AuthenticationService(getUserRepository(), getJwtUtil());
+class AuthenticationServiceTest extends JpaTest {
+
     private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
 
     private final String AUTH_NAME = "AUTH_NAME";
     private final String AUTH_EMAIL = "auth@foo.com";
     private final String AUTH_PASSWORD = "12345678";
-
 
 
     private UserLoginData AUTH_USER_DATA = UserLoginData.builder()
@@ -26,8 +25,11 @@ class AuthenticationServiceTest extends JpaTest{
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
     class login_메서드는 {
+        private AuthenticationService authenticationService;
+
         @BeforeEach
         void setUp() {
+            authenticationService = new AuthenticationService(getUserRepository(), getJwtUtil());
             getUserRepository().deleteAll();
             getUserRepository().save(User.builder()
                     .name(AUTH_NAME)

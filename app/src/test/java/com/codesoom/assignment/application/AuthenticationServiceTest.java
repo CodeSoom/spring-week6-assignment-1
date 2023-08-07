@@ -37,6 +37,7 @@ class AuthenticationServiceTest extends JpaTest{
         }
 
         @DisplayName("유저로그인정보를 받아 인증토큰을 반환한다.")
+        @Test
         void It_returns_token() {
             String accessToken = authenticationService.login(AUTH_USER_DATA);
             Assertions.assertThat(accessToken).isNotNull();

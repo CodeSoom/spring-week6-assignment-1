@@ -5,22 +5,21 @@ import com.codesoom.assignment.dto.UserLoginData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(SessionController.class)
 @SuppressWarnings({"InnerClassMayBeStatic", "NonAsciiCharacters"})
 @DisplayName("SessionController 클래스")
 class SessionControllerTest {
-
     private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
     private final String AUTH_NAME = "AUTH_NAME";
     private final String AUTH_EMAIL = "auth@foo.com";
@@ -29,8 +28,9 @@ class SessionControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
-    @Autowired
+    @MockBean
     AuthenticationService authenticationService;
+    
     private UserLoginData AUTH_USER_DATA = UserLoginData.builder()
             .email(AUTH_EMAIL)
             .password(AUTH_PASSWORD)
@@ -40,10 +40,16 @@ class SessionControllerTest {
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
     class login_메서드는 {
 
+        @BeforeEach
+        void setUp() {
+            given(authenticationService.login(any(UserLoginData.class)))
+                    .willReturn(VALID_TOKEN);
+        }
+
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 유효한_유저로그인정보_요청를_받으면 {
-            
+
             @DisplayName("인증토큰을 반환한다.")
             @Test
             void It_returns_token() throws Exception {
@@ -53,7 +59,7 @@ class SessionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonString))
                         .andExpect(status().isCreated())
-                        .andExpect(content().string(containsString(VALID_TOKEN)));
+                        .andExpect(jsonPath("accessToken").value(VALID_TOKEN));
             }
         }
     }

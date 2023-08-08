@@ -122,7 +122,6 @@ class UserServiceTest {
         verify(userRepository).findByIdAndDeletedIsFalse(100L);
     }
 
-
     @Test
     void updateUserWithDeletedId() {
         UserModificationData modificationData = UserModificationData.builder()

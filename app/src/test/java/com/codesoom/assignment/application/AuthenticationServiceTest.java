@@ -42,7 +42,6 @@ class AuthenticationServiceTest extends JpaTest {
         @Test
         void It_returns_token() {
             String accessToken = authenticationService.login(AUTH_USER_DATA);
-            Assertions.assertThat(accessToken).isNotNull();
             Assertions.assertThat(accessToken).isEqualTo(VALID_TOKEN);
         }
     }

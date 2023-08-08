@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class JpaTest {
     private final String SECRET = "12345678901234567890123456789010";
     private final JwtUtil jwtUtil = new JwtUtil(SECRET);
+
     @Autowired
     public UserRepository userRepository;
 

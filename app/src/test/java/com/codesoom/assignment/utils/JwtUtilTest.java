@@ -1,18 +1,18 @@
 package com.codesoom.assignment.utils;
 
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings({"InnerClassMayBeStatic", "NonAsciiCharacters"})
 @DisplayName("JwtUtil 클래스")
 class JwtUtilTest {
     private final String SECRET = "12345678901234567890123456789010";
     private final String VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.neCsyNLzy3lQ4o2yliotWT06FwSGZagaHpKdAkjnGGw";
-    JwtUtil jwtUtil = new JwtUtil(SECRET);
     private final Long USER_ID = 1L;
+    
+    JwtUtil jwtUtil = new JwtUtil(SECRET);
 
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -34,7 +34,7 @@ class JwtUtilTest {
         @Test
         void It_returns_claims() {
             assertThat(jwtUtil.decode(VALID_TOKEN)).isNotNull();
-            assertThat(jwtUtil.decode(VALID_TOKEN).get("userId",Long.class)).isEqualTo(USER_ID);
+            assertThat(jwtUtil.decode(VALID_TOKEN).get("userId", Long.class)).isEqualTo(USER_ID);
         }
     }
 }

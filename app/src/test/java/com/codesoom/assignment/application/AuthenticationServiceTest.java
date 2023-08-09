@@ -27,22 +27,42 @@ class AuthenticationServiceTest extends JpaTest {
     class login_메서드는 {
         private AuthenticationService authenticationService;
 
-        @BeforeEach
-        void setUp() {
-            authenticationService = new AuthenticationService(getUserRepository(), getJwtUtil());
-            getUserRepository().deleteAll();
-            getUserRepository().save(User.builder()
-                    .name(AUTH_NAME)
-                    .email(AUTH_EMAIL)
-                    .password(AUTH_PASSWORD)
-                    .build());
+        @Nested
+        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        class 유효한_유저로그인정보_요청를_받으면 {
+            @BeforeEach
+            void setUp() {
+                authenticationService = new AuthenticationService(getUserRepository(), getJwtUtil());
+                getUserRepository().deleteAll();
+                getUserRepository().save(User.builder()
+                        .name(AUTH_NAME)
+                        .email(AUTH_EMAIL)
+                        .password(AUTH_PASSWORD)
+                        .build());
+            }
+
+            @DisplayName("인증토큰을 반환한다.")
+            @Test
+            void It_returns_token() {
+                String accessToken = authenticationService.login(AUTH_USER_DATA);
+                Assertions.assertThat(accessToken).isEqualTo(VALID_TOKEN);
+            }
+
         }
 
-        @DisplayName("유저로그인정보를 받아 인증토큰을 반환한다.")
-        @Test
-        void It_returns_token() {
-            String accessToken = authenticationService.login(AUTH_USER_DATA);
-            Assertions.assertThat(accessToken).isEqualTo(VALID_TOKEN);
+        @Nested
+        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        class 유효하지_않은_로그인정보를_받으면 {
+            private UserLoginData IS_NOT_EXISTS_USER_DATA = UserLoginData.builder()
+                    .email("InvalidEmail")
+                    .password(AUTH_PASSWORD).build();
+
+            @DisplayName("해당 정보의 회원이 존재하지 않으면 UserNotFoundException을 반환한다.")
+            @Test
+            void It_throws_UserNotFoundException() {
+                Assertions.assertThatThrownBy(() -> authenticationService.login(IS_NOT_EXISTS_USER_DATA));
+            }
         }
+
     }
 }

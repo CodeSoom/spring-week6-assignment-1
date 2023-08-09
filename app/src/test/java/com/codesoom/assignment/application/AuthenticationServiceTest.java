@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.UserNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 
@@ -25,14 +26,13 @@ class AuthenticationServiceTest extends JpaTest {
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
     class login_메서드는 {
-        private AuthenticationService authenticationService;
+        private AuthenticationService authenticationService = new AuthenticationService(getUserRepository(), getJwtUtil());
 
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 유효한_유저로그인정보_요청를_받으면 {
             @BeforeEach
             void setUp() {
-                authenticationService = new AuthenticationService(getUserRepository(), getJwtUtil());
                 getUserRepository().deleteAll();
                 getUserRepository().save(User.builder()
                         .name(AUTH_NAME)
@@ -60,7 +60,7 @@ class AuthenticationServiceTest extends JpaTest {
             @DisplayName("해당 정보의 회원이 존재하지 않으면 UserNotFoundException을 반환한다.")
             @Test
             void It_throws_UserNotFoundException() {
-                Assertions.assertThatThrownBy(() -> authenticationService.login(IS_NOT_EXISTS_USER_DATA));
+                Assertions.assertThatThrownBy(() -> authenticationService.login(IS_NOT_EXISTS_USER_DATA)).isInstanceOf(UserNotFoundException.class);
             }
         }
 

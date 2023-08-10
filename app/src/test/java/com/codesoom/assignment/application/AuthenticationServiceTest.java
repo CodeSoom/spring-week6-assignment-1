@@ -60,11 +60,20 @@ class AuthenticationServiceTest extends JpaTest {
             private UserLoginData IS_NOT_EXISTS_USER_DATA = UserLoginData.builder()
                     .email(INVALID_EMAIL)
                     .password(AUTH_PASSWORD).build();
-
             private UserLoginData INVALID_PASSWORD_USER_DATA = UserLoginData.builder()
                     .email(AUTH_EMAIL)
                     .password(INVALID_PASSWORD)
                     .build();
+
+            @BeforeEach
+            void setUp() {
+                getUserRepository().deleteAll();
+                getUserRepository().save(User.builder()
+                        .name(AUTH_NAME)
+                        .email(AUTH_EMAIL)
+                        .password(AUTH_PASSWORD)
+                        .build());
+            }
 
             @DisplayName("해당 정보의 회원이 존재하지 않으면 UserNotFoundException을 반환한다.")
             @Test

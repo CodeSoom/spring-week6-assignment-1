@@ -15,22 +15,24 @@ class AuthenticationServiceTest extends JpaTest {
 
     private final String AUTH_NAME = "AUTH_NAME";
     private final String AUTH_EMAIL = "auth@foo.com";
+    private final String INVALID_EMAIL = AUTH_EMAIL + "INVALID";
     private final String AUTH_PASSWORD = "12345678";
 
-
-    private UserLoginData AUTH_USER_DATA = UserLoginData.builder()
-            .email(AUTH_EMAIL)
-            .password(AUTH_PASSWORD)
-            .build();
 
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
     class login_메서드는 {
         private AuthenticationService authenticationService = new AuthenticationService(getUserRepository(), getJwtUtil());
 
+
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 유효한_유저로그인정보_요청를_받으면 {
+            private UserLoginData AUTH_USER_DATA = UserLoginData.builder()
+                    .email(AUTH_EMAIL)
+                    .password(AUTH_PASSWORD)
+                    .build();
+
             @BeforeEach
             void setUp() {
                 getUserRepository().deleteAll();
@@ -54,7 +56,7 @@ class AuthenticationServiceTest extends JpaTest {
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 유효하지_않은_로그인정보를_받으면 {
             private UserLoginData IS_NOT_EXISTS_USER_DATA = UserLoginData.builder()
-                    .email("InvalidEmail")
+                    .email(INVALID_EMAIL)
                     .password(AUTH_PASSWORD).build();
 
             @DisplayName("해당 정보의 회원이 존재하지 않으면 UserNotFoundException을 반환한다.")

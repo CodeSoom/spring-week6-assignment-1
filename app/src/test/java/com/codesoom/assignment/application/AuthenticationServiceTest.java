@@ -2,6 +2,7 @@ package com.codesoom.assignment.application;
 
 import com.codesoom.assignment.domain.User;
 import com.codesoom.assignment.dto.UserLoginData;
+import com.codesoom.assignment.errors.InvalidLoginException;
 import com.codesoom.assignment.errors.UserNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -17,6 +18,7 @@ class AuthenticationServiceTest extends JpaTest {
     private final String AUTH_EMAIL = "auth@foo.com";
     private final String INVALID_EMAIL = AUTH_EMAIL + "INVALID";
     private final String AUTH_PASSWORD = "12345678";
+    private final String INVALID_PASSWORD = AUTH_PASSWORD + "INVALID";
 
 
     @Nested
@@ -59,10 +61,21 @@ class AuthenticationServiceTest extends JpaTest {
                     .email(INVALID_EMAIL)
                     .password(AUTH_PASSWORD).build();
 
+            private UserLoginData INVALID_PASSWORD_USER_DATA = UserLoginData.builder()
+                    .email(AUTH_EMAIL)
+                    .password(INVALID_PASSWORD)
+                    .build();
+
             @DisplayName("해당 정보의 회원이 존재하지 않으면 UserNotFoundException을 반환한다.")
             @Test
             void It_throws_UserNotFoundException() {
                 Assertions.assertThatThrownBy(() -> authenticationService.login(IS_NOT_EXISTS_USER_DATA)).isInstanceOf(UserNotFoundException.class);
+            }
+
+            @DisplayName("비밀번호가 일치하지 않으면 InvalidLoginException을 반환한다.")
+            @Test
+            void It_throws_InvalidLoginRequest() {
+                Assertions.assertThatThrownBy(() -> authenticationService.login(INVALID_PASSWORD_USER_DATA)).isInstanceOf(InvalidLoginException.class);
             }
         }
 

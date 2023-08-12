@@ -45,7 +45,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         return request.getMethod().equals("DELETE");
     }
 
-    private boolean checkAccessToken(HttpServletRequest request) {
+    private boolean checkAccessToken(HttpServletRequest request) throws InvalidAccessTokenException, AccessTokenNotFoundException {
         String authorization = request.getHeader("Authorization");
         if (authorization == null) throw new AccessTokenNotFoundException();
         String accessToken = authorization.substring("Bearer ".length());

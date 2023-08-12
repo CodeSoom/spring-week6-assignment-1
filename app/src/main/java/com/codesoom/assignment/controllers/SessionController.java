@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/session")
+@CrossOrigin
 public class SessionController {
 
     private final AuthenticationService authenticationService;

@@ -21,6 +21,31 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        isGetMethod(request);
+        if (isPostMethod(request) || isPatchMethod(request) || isDeleteMethod(request)) {
+            checkAccessToken(request);
+        }
+
+        return true;
+    }
+
+    private boolean isGetMethod(HttpServletRequest request) {
+        return request.getMethod().equals("GET");
+    }
+
+    private boolean isPostMethod(HttpServletRequest request) {
+        return request.getMethod().equals("POST");
+    }
+
+    private boolean isPatchMethod(HttpServletRequest request) {
+        return request.getMethod().equals("PATCH");
+    }
+
+    private boolean isDeleteMethod(HttpServletRequest request) {
+        return request.getMethod().equals("DELETE");
+    }
+
+    private boolean checkAccessToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         if (authorization == null) throw new AccessTokenNotFoundException();
         String accessToken = authorization.substring("Bearer ".length());
@@ -31,4 +56,5 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
         return true;
     }
+
 }

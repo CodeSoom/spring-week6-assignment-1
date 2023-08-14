@@ -24,7 +24,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (isGetMethod(request)) {
             return true;
         }
-        
+
         if (isPostMethod(request) || isPatchMethod(request) || isDeleteMethod(request)) {
             return checkAccessToken(request);
         }
@@ -50,14 +50,16 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private boolean checkAccessToken(HttpServletRequest request) throws InvalidAccessTokenException, AccessTokenNotFoundException {
         String authorization = request.getHeader("Authorization");
-        if (authorization == null) throw new AccessTokenNotFoundException();
+        if (authorization == null) {
+            throw new AccessTokenNotFoundException();
+        }
         String accessToken = authorization.substring("Bearer ".length());
         try {
             jwtUtil.decode(accessToken);
+            return true;
         } catch (Exception e) {
             throw new InvalidAccessTokenException(e.getMessage());
         }
-        return true;
     }
 
 }

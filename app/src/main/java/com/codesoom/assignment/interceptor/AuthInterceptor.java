@@ -21,9 +21,12 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        isGetMethod(request);
+        if (isGetMethod(request)) {
+            return true;
+        }
+        
         if (isPostMethod(request) || isPatchMethod(request) || isDeleteMethod(request)) {
-            checkAccessToken(request);
+            return checkAccessToken(request);
         }
 
         return true;
